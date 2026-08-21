@@ -72,3 +72,10 @@ z obrazovky sa prehrávanie zastaví.
 - Ovládanie klávesnicou, `aria` popisy, viditeľný focus, respektuje
   `prefers-reduced-motion`.
 - Videá sa načítavajú až pri prehratí (`preload="none"`), obrázky lazy-load.
+
+---
+
+## Ďalší projekt v repozitári
+
+`nadacia/` — moderný web pre **Nadáciu Anjelské krídla** (hero slider, galéria
+s lightboxom, 2 % z dane, darcovská sekcia). Detaily v `nadacia/README.md`.

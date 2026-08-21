@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nadácia Anjelské krídla — pomoc, ktorá nesie ďalej</title>
+<meta name="description" content="Nadácia Anjelské krídla pomáha vážne chorým deťom, ich rodinám, mamám, ktoré sa o choré deti starajú samy, seniorom a ľuďom v núdzi. Podporte nás darom alebo 2 % z dane.">
+<meta name="theme-color" content="#fffaf4">
+<meta property="og:title" content="Nadácia Anjelské krídla">
+<meta property="og:description" content="Pomáhame vážne chorým deťom, ich rodinám a ľuďom v núdzi. Bez štátnych dotácií — vďaka darcom a 2 % z dane.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/img/hero-1.svg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%231b1533'/><path d='M16 23c-6-3-9-6-9-9.6A3.6 3.6 0 0 1 16 11a3.6 3.6 0 0 1 9 2.4C25 17 22 20 16 23z' fill='%23ffb648'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#hlavny">Preskočiť na obsah</a>
+
+<!-- ══════════ HLAVIČKA ══════════ -->
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top" aria-label="Nadácia Anjelské krídla — domov">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 48 32" fill="none"><path d="M24 27c-3.6-1.4-7.2-3.6-9.6-6.4-2.6-3-3-6.6-.6-8.6 2.4-2 6-1.2 8 1.4l2.2 2.8 2.2-2.8c2-2.6 5.6-3.4 8-1.4 2.4 2 2 5.6-.6 8.6C31.2 23.4 27.6 25.6 24 27z" fill="currentColor"/><path d="M14 10C10 8 5.5 7.4 1 8c3.4 1.6 6 3.4 8 5.4M34 10c4-2 8.5-2.6 13-2-3.4 1.6-6 3.4-8 5.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></svg>
+      </span>
+      <span class="brand__txt">Anjelské<b>krídla</b><small>nadácia</small></span>
+    </a>
+
+    <nav class="nav__links" id="navLinks" aria-label="Hlavná navigácia">
+      <a href="#o-nas">O nás</a>
+      <a href="#pomoc">Ako pomáhame</a>
+      <a href="#projekty">Projekty</a>
+      <a href="#galeria">Galéria</a>
+      <a href="#dve-percenta">2 % z dane</a>
+      <a href="#kontakt">Kontakt</a>
+      <a class="btn btn--primary nav__cta" href="#podpora">Podporiť</a>
+    </nav>
+
+    <button class="burger" id="burger" aria-label="Otvoriť menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__progress" id="navProgress" aria-hidden="true"></div>
+</header>
+
+<main id="hlavny">
+
+<!-- ══════════ HERO SLIDER ══════════ -->
+<section class="hero" id="top" aria-roledescription="carousel" aria-label="Predstavenie nadácie">
+  <div class="hero__slides" id="heroSlides"></div>
+
+  <div class="hero__shade" aria-hidden="true"></div>
+
+  <div class="wrap hero__in">
+    <div class="hero__copy" id="heroCopy" aria-live="polite"></div>
+
+    <div class="hero__ui">
+      <button class="hero__arrow" id="heroPrev" aria-label="Predchádzajúca snímka">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="hero__dots" id="heroDots" role="tablist" aria-label="Snímky"></div>
+      <button class="hero__arrow" id="heroNext" aria-label="Nasledujúca snímka">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <button class="hero__play" id="heroPlay" aria-label="Pozastaviť automatické prehrávanie"></button>
+    </div>
+  </div>
+
+  <a class="hero__scroll" href="#cisla" aria-label="Posunúť nižšie">
+    <span></span>
+  </a>
+</section>
+
+<!-- ══════════ ČÍSLA ══════════ -->
+<section class="stats" id="cisla" aria-label="Nadácia v číslach">
+  <div class="wrap stats__grid">
+    <div class="stat"><b data-count="2016" data-plain="1">2016</b><span>rok vzniku nadácie</span></div>
+    <div class="stat"><b data-count="100" data-suffix="&nbsp;%">0</b><span>práce dobrovoľníkov</span></div>
+    <div class="stat"><b data-count="0" data-suffix="&nbsp;€">0</b><span>štátnych dotácií</span></div>
+    <div class="stat"><b data-count="2" data-suffix="&nbsp;%">0</b><span>z dane pre nadáciu</span></div>
+  </div>
+</section>
+
+<!-- ══════════ O NÁS ══════════ -->
+<section class="sec about" id="o-nas">
+  <div class="wrap about__grid">
+    <div class="about__media reveal">
+      <img src="assets/img/about.svg" alt="Dlane držiace srdce v svetle úsvitu" width="1200" height="900" loading="lazy" decoding="async">
+      <div class="about__badge">
+        <b>od roku 2016</b>
+        <span>pomáhame tam, kde je to najviac treba</span>
+      </div>
+    </div>
+
+    <div class="about__copy reveal">
+      <p class="eyebrow">O nadácii</p>
+      <h2>Nič v živote sa nedeje náhodou</h2>
+      <p class="lead">
+        Nadácia Anjelské krídla vznikla 22. decembra 2016. Nezištne pomáha vážne chorým deťom
+        a ich rodinám, mamám, ktoré sa o choré deti starajú samy, rodinám v núdzi, týraným
+        matkám a deťom, seniorom, krízovým centrám a sociálnym zariadeniam.
+      </p>
+      <p>
+        Nadáciu tvoria odborníci a dobrovoľníci, ktorí pomáhajú vo svojom voľnom čase — bez nároku
+        na odmenu či mzdu. Nadácia nepoberá štátne dotácie a je apolitická. Všetko, čo dokáže rozdať,
+        vzniká z darov ľudí a firiem a z 2 % zaplatenej dane.
+      </p>
+
+      <ul class="ticks">
+        <li>Vážne choré deti a ich rodiny</li>
+        <li>Mamy, ktoré sa starajú samy</li>
+        <li>Rodiny v núdzi a krízové centrá</li>
+        <li>Seniori a sociálne zariadenia</li>
+      </ul>
+
+      <blockquote class="quote">
+        „Pomoc, ktorá príde načas, dokáže rodine vrátiť pokoj aj nádej.“
+        <cite>Ing. Alexandra Majeríková — zakladateľka nadácie</cite>
+      </blockquote>
+
+      <div class="row">
+        <a class="btn btn--primary" href="#podpora">Chcem pomôcť</a>
+        <a class="btn btn--ghost" href="#kontakt">Potrebujem pomoc</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ AKO POMÁHAME ══════════ -->
+<section class="sec pomoc" id="pomoc">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Ako pomáhame</p>
+      <h2>Štyri spôsoby, ako sa pomoc dostane k ľuďom</h2>
+      <p class="sec__sub">Každá žiadosť je iná. Preto pomáhame konkrétne — vecami, financiami aj časom.</p>
+    </header>
+
+    <div class="cards">
+      <article class="card reveal">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5-9 5-9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+        </span>
+        <h3>Materiálna pomoc</h3>
+        <p>Balíky s potravinami, hygienou, zdravotníckymi pomôckami, oblečením a hračkami — posielame priamo rodinám.</p>
+      </article>
+
+      <article class="card reveal">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M16.5 7.5A3.5 3.5 0 0 0 13 5h-1.5a3 3 0 0 0 0 6h1a3 3 0 0 1 0 6H11a3.5 3.5 0 0 1-3.5-2.5"/></svg>
+        </span>
+        <h3>Finančná pomoc</h3>
+        <p>Príspevok na konkrétnu situáciu — lieky, pomôcky, doprava do nemocnice, nedoplatky či nečakaný výdavok.</p>
+      </article>
+
+      <article class="card reveal">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M5 18v-5a7 7 0 0 1 14 0v5"/><path d="M12 3v2"/><path d="M4.5 7.5L6 9M19.5 7.5L18 9"/></svg>
+        </span>
+        <h3>Pobyty a rehabilitácia</h3>
+        <p>Relaxačné, ozdravné a rehabilitačné pobyty, ktoré rodinám vrátia silu pokračovať ďalej.</p>
+      </article>
+
+      <article class="card reveal">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="16" r="2.5"/></svg>
+        </span>
+        <h3>Benefičné podujatia</h3>
+        <p>Koncerty, behy a zbierky, ktoré spájajú ľudí a menia dobrú vôľu na konkrétnu pomoc.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROJEKTY ══════════ -->
+<section class="sec projekty" id="projekty">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Projekty</p>
+      <h2>Čo robíme počas roka</h2>
+      <p class="sec__sub">Dlhodobé programy aj jednorazové zbierky — vždy s konkrétnym cieľom.</p>
+    </header>
+
+    <div class="projects">
+      <article class="proj reveal">
+        <div class="proj__media">
+          <img src="assets/img/card-1.svg" alt="Balíky pomoci pripravené pre rodiny" width="1200" height="900" loading="lazy" decoding="async">
+          <span class="tag">Celoročne</span>
+        </div>
+        <div class="proj__body">
+          <h3>Balíčky pre rodiny</h3>
+          <p>Posielame potraviny, hygienu a pomôcky rodinám, ktoré sa starajú o vážne choré dieťa.</p>
+          <a class="link" href="#kontakt">Požiadať o pomoc<span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="proj__media">
+          <img src="assets/img/card-2.svg" alt="Účastníci charitatívneho behu v krajine" width="1200" height="900" loading="lazy" decoding="async">
+          <span class="tag">Jar &amp; jeseň</span>
+        </div>
+        <div class="proj__body">
+          <h3>Charitatívne behy</h3>
+          <p>Behy pre deti a rodiny — spájame ľudí, ktorí chcú pomáhať pohybom aj štartovným.</p>
+          <a class="link" href="#podpora">Podporiť podujatie<span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="proj__media">
+          <img src="assets/img/card-3.svg" alt="Benefičný koncert, publikum a svetlá" width="1200" height="900" loading="lazy" decoding="async">
+          <span class="tag">Benefícia</span>
+        </div>
+        <div class="proj__body">
+          <h3>Benefičné koncerty</h3>
+          <p>Prvý benefičný koncert nadácie v Žiline vyzbieral 2 000 € pre onkologických pacientov.</p>
+          <a class="link" href="#kontakt">Chcem sa zapojiť<span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GALÉRIA ══════════ -->
+<section class="sec galeria" id="galeria">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Galéria</p>
+      <h2>Momenty, ktoré nesú ďalej</h2>
+      <p class="sec__sub">Kliknutím obrázok zväčšíte. Prechádzať môžete šípkami alebo potiahnutím prsta.</p>
+    </header>
+
+    <div class="gal" id="gal"></div>
+
+    <p class="note reveal">Fotografie sú zatiaľ ilustračné — v priečinku <code>assets/img/</code> ich stačí nahradiť vlastnými.</p>
+  </div>
+</section>
+
+<!-- ══════════ 2 % Z DANE ══════════ -->
+<section class="sec dve" id="dve-percenta">
+  <div class="wrap dve__grid">
+    <div class="dve__copy reveal">
+      <p class="eyebrow">2 % z dane</p>
+      <h2>Dve percentá, ktoré vás nič nestoja</h2>
+      <p class="lead">
+        Nadácia nedostáva štátne dotácie. Vaše 2 % zo zaplatenej dane sú pre nás jedným
+        z najdôležitejších zdrojov pomoci — a vás nestoja nič navyše.
+      </p>
+
+      <ol class="steps">
+        <li><b>Vypočítajte 2 %</b><span>Suma musí byť aspoň 3 €.</span></li>
+        <li><b>Vyplňte údaje nadácie</b><span>Do vyhlásenia alebo daňového priznania.</span></li>
+        <li><b>Doručte tlačivo</b><span>Na daňový úrad do zákonného termínu.</span></li>
+      </ol>
+    </div>
+
+    <div class="dve__box reveal">
+      <h3>Údaje pre vyhlásenie</h3>
+      <dl class="data">
+        <div><dt>Obchodné meno</dt><dd><span>Nadácia Anjelské krídla</span><button class="copy" data-copy="Nadácia Anjelské krídla" aria-label="Kopírovať názov">Kopírovať</button></dd></div>
+        <div><dt>Právna forma</dt><dd><span>Nadácia</span></dd></div>
+        <div><dt>IČO</dt><dd><span>50622510</span><button class="copy" data-copy="50622510" aria-label="Kopírovať IČO">Kopírovať</button></dd></div>
+        <div><dt>Sídlo</dt><dd><span>Slovenských dobrovoľníkov 135/30,<br>010 03 Žilina</span><button class="copy" data-copy="Slovenských dobrovoľníkov 135/30, 010 03 Žilina" aria-label="Kopírovať sídlo">Kopírovať</button></dd></div>
+      </dl>
+      <p class="fine">Zamestnanci žiadajú zamestnávateľa o <i>Potvrdenie o zaplatení dane</i> a spolu s <i>Vyhlásením</i> ho doručia daňovému úradu.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PODPORA ══════════ -->
+<section class="sec podpora" id="podpora">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Podporte nás</p>
+      <h2>Tri cesty, ako sa pridať</h2>
+      <p class="sec__sub">Každý dar putuje k rodinám, ktoré oň požiadali a ktorých situáciu poznáme.</p>
+    </header>
+
+    <div class="give">
+      <article class="give__card give__card--main reveal">
+        <h3>Finančný dar</h3>
+        <p>Jednorazovo alebo pravidelne — na účet nadácie.</p>
+        <div class="iban">
+          <span class="iban__label">IBAN</span>
+          <strong id="ibanValue">SK37 1100 0000 0029 4603 3398</strong>
+          <button class="copy copy--solid" data-copy="SK3711000000002946033398" aria-label="Kopírovať IBAN">Kopírovať IBAN</button>
+        </div>
+        <p class="fine">Do poznámky pre prijímateľa môžete uviesť účel daru, napríklad „balíček pre rodinu“.</p>
+      </article>
+
+      <article class="give__card reveal">
+        <h3>2 % z dane</h3>
+        <p>Rozhodnite o podiele svojej dane. Údaje nájdete o sekciu vyššie.</p>
+        <a class="btn btn--ghost" href="#dve-percenta">Zobraziť údaje</a>
+      </article>
+
+      <article class="give__card reveal">
+        <h3>Čas a partnerstvo</h3>
+        <p>Dobrovoľníctvo, firemné partnerstvo, materiálny dar alebo pomoc s podujatím.</p>
+        <a class="btn btn--ghost" href="#kontakt">Ozvite sa nám</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PRÍBEHY ══════════ -->
+<section class="sec pribehy" aria-label="Ohlasy">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Príbehy</p>
+      <h2>Prečo to má zmysel</h2>
+    </header>
+    <div class="quotes">
+      <figure class="qcard reveal"><blockquote>„Keď sme ostali na všetko sami, prišiel balík a s ním pocit, že na nás niekto myslí.“</blockquote><figcaption>mama dvoch detí</figcaption></figure>
+      <figure class="qcard reveal"><blockquote>„Rehabilitačný pobyt bol prvý týždeň po rokoch, keď sme sa mohli nadýchnuť.“</blockquote><figcaption>rodina zo Žiliny</figcaption></figure>
+      <figure class="qcard reveal"><blockquote>„Pomoc prišla rýchlo a bez zbytočných otázok. To v takej chvíli znamená veľa.“</blockquote><figcaption>sociálne zariadenie</figcaption></figure>
+    </div>
+    <p class="note reveal">Ohlasy sú ilustračné — nahraďte ich skutočnými príbehmi so súhlasom rodín.</p>
+  </div>
+</section>
+
+<!-- ══════════ KONTAKT ══════════ -->
+<section class="sec kontakt" id="kontakt">
+  <div class="wrap kontakt__grid">
+    <div class="kontakt__info reveal">
+      <p class="eyebrow">Kontakt</p>
+      <h2>Napíšte nám</h2>
+      <p class="lead">Žiadate o pomoc, chcete darovať alebo sa pridať ako dobrovoľník? Ozvite sa — odpovedáme každému.</p>
+
+      <ul class="contacts">
+        <li>
+          <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg></span>
+          <div><b>E-mail</b><a href="mailto:info@nadaciaanjelskekridla.sk">info@nadaciaanjelskekridla.sk</a></div>
+        </li>
+        <li>
+          <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16 16 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg></span>
+          <div><b>Telefón</b><a href="tel:+421948661333">+421 948 661 333</a></div>
+        </li>
+        <li>
+          <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <div><b>Sídlo</b><span>Slovenských dobrovoľníkov 135/30, 010 03 Žilina</span></div>
+        </li>
+      </ul>
+
+      <div class="socials">
+        <a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6c-.3 0-1.3-.1-2.45-.1-2.4 0-4.05 1.5-4.05 4.2v2.2H7.5V13h2.7v8h3.3z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17" cy="7" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.youtube.com/" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.75-1.77C18.25 5 12 5 12 5s-6.25 0-7.85.43A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.75 1.77C5.75 19 12 19 12 19s6.25 0 7.85-.43a2.5 2.5 0 0 0 1.75-1.77A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3L10 15z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <form class="form reveal" id="form" novalidate>
+      <div class="f">
+        <label for="fname">Meno a priezvisko</label>
+        <input id="fname" name="meno" type="text" required autocomplete="name" placeholder="Jana Nováková">
+        <em class="err" data-for="fname">Vyplňte, prosím, svoje meno.</em>
+      </div>
+      <div class="f">
+        <label for="femail">E-mail</label>
+        <input id="femail" name="email" type="email" required autocomplete="email" placeholder="jana@email.sk">
+        <em class="err" data-for="femail">Zadajte platnú e-mailovú adresu.</em>
+      </div>
+      <div class="f">
+        <label for="ftopic">Čoho sa správa týka</label>
+        <select id="ftopic" name="tema">
+          <option>Žiadosť o pomoc</option>
+          <option>Chcem darovať</option>
+          <option>2 % z dane</option>
+          <option>Dobrovoľníctvo</option>
+          <option>Firemné partnerstvo</option>
+          <option>Iné</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="fmsg">Správa</label>
+        <textarea id="fmsg" name="sprava" rows="5" required placeholder="Napíšte nám, ako vám vieme pomôcť alebo ako chcete pomôcť vy."></textarea>
+        <em class="err" data-for="fmsg">Napíšte, prosím, krátku správu.</em>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="fgdpr" required>
+        <span>Súhlasím so spracovaním osobných údajov na účel vybavenia mojej správy.</span>
+      </label>
+      <em class="err" data-for="fgdpr">Bez súhlasu vám, žiaľ, nevieme odpovedať.</em>
+      <button class="btn btn--primary btn--full" type="submit">Odoslať správu</button>
+      <p class="fine">Formulár otvorí váš e-mailový klient s pripravenou správou.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════ PÄTA ══════════ -->
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div class="foot__brand">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 48 32" fill="none"><path d="M24 27c-3.6-1.4-7.2-3.6-9.6-6.4-2.6-3-3-6.6-.6-8.6 2.4-2 6-1.2 8 1.4l2.2 2.8 2.2-2.8c2-2.6 5.6-3.4 8-1.4 2.4 2 2 5.6-.6 8.6C31.2 23.4 27.6 25.6 24 27z" fill="currentColor"/></svg>
+      </span>
+      <p><b>Nadácia Anjelské krídla</b><br>Nezisková, apolitická nadácia. Registrovaná Ministerstvom vnútra SR 22. 12. 2016 pod číslom 203/Na-2002/1152.</p>
+    </div>
+
+    <nav class="foot__nav" aria-label="Pätová navigácia">
+      <a href="#o-nas">O nás</a>
+      <a href="#pomoc">Ako pomáhame</a>
+      <a href="#projekty">Projekty</a>
+      <a href="#galeria">Galéria</a>
+      <a href="#dve-percenta">2 % z dane</a>
+      <a href="#podpora">Podporiť</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+
+    <div class="foot__meta">
+      <p>IČO 50622510 · IBAN SK37 1100 0000 0029 4603 3398</p>
+      <p>info@nadaciaanjelskekridla.sk · +421 948 661 333</p>
+    </div>
+  </div>
+  <div class="wrap foot__bottom">
+    <small>© <span id="year">2026</span> Nadácia Anjelské krídla</small>
+    <small>Slovenských dobrovoľníkov 135/30, 010 03 Žilina</small>
+  </div>
+</footer>
+
+<button class="totop" id="toTop" aria-label="Späť hore">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- lightbox -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Zväčšený obrázok" hidden>
+  <button class="lb__close" id="lbClose" aria-label="Zavrieť">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <button class="lb__nav lb__nav--prev" id="lbPrev" aria-label="Predchádzajúci">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <figure class="lb__fig">
+    <img id="lbImg" alt="">
+    <figcaption><span id="lbCap"></span><b id="lbCount"></b></figcaption>
+  </figure>
+  <button class="lb__nav lb__nav--next" id="lbNext" aria-label="Nasledujúci">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+  </button>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
