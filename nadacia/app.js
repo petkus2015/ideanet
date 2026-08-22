@@ -6,6 +6,10 @@
 (() => {
   'use strict';
 
+  /* Logo nadácie: keď súbor existuje, nahradí kreslenú značku v hlavičke
+     aj v pätičke. Stačí ho nahrať pod touto cestou (PNG alebo SVG). */
+  const LOGO = 'assets/img/logo.png';
+
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -436,7 +440,23 @@
   });
 
   /* ───────────────────────────────────────────
-     10) DROBNOSTI
+     10) LOGO NADÁCIE
+  ─────────────────────────────────────────── */
+  const probe = new Image();
+  probe.addEventListener('load', () => {
+    $$('.brand__mark').forEach(mark => {
+      mark.classList.add('brand__mark--img');
+      const img = document.createElement('img');
+      img.className = 'brand__logo';
+      img.src = LOGO;
+      img.alt = '';
+      mark.prepend(img);
+    });
+  });
+  probe.src = LOGO;
+
+  /* ───────────────────────────────────────────
+     11) DROBNOSTI
   ─────────────────────────────────────────── */
   $('#year').textContent = new Date().getFullYear();
 })();

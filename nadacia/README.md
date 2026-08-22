@@ -20,7 +20,7 @@ Nasadenie: nahrajte obsah priečinka `nadacia/` na akýkoľvek statický hosting
 
 ```
 index.html        obsah a texty stránky
-styles.css        dizajn (biela + modrá #0d5cab/#1a7ae0, takmer čierny text)
+styles.css        dizajn (biela + tyrkysová #28afc3, doplnková červená #f9193e)
 app.js            slider, galéria, lightbox, formulár, kopírovanie údajov
 assets/img/       obrázky (hero-*.svg, gal-*.svg, card-*.svg, about.svg)
 assets/dokumenty/ tlačivá na stiahnutie (PDF) — podrobnosti v README priečinka
@@ -56,6 +56,20 @@ fotky komponované inak, zmeňte túto hodnotu v `styles.css`.
 
 **Pri fotkách rodín a detí nezabudnite na písomný súhlas so zverejnením.**
 
+## Logo nadácie
+
+Web má pripravený slot na skutočné logo. Uložte ho ako **`assets/img/logo.png`**
+(alebo `.svg` — vtedy zmeňte cestu v konštante `LOGO` na začiatku `app.js`) a logo
+sa automaticky objaví v hlavičke aj v pätičke namiesto kreslenej značky. Kým súbor
+neexistuje, zostáva kreslená značka — nič sa nerozbije.
+
+- V hlavičke má logo výšku 46 px, v pätičke 44 px; šírka sa dopočíta.
+- Nad tmavým hero je hlavička priehľadná, preto sa tam logo zobrazuje ako biela
+  silueta (`filter: brightness(0) invert(1)` v `styles.css`). Ak to pre vaše logo
+  nesedí, pravidlo `.nav:not(.is-stuck) .brand__logo` stačí odstrániť.
+- Ak je vaše logo celá zostava vrátane názvu nadácie, zmažte v `index.html`
+  vedľajší text `<span class="brand__txt">…</span>`, aby sa názov nezdvojil.
+
 ## Čo pred spustením doplniť
 
 | Kde | Čo |
@@ -63,6 +77,7 @@ fotky komponované inak, zmeňte túto hodnotu v `styles.css`.
 | `index.html` — sekcia *Príbehy* | ohlasy sú ilustračné, nahraďte ich skutočnými so súhlasom rodín |
 | `index.html` — pätička, sekcia *Kontakt* | odkazy na Facebook, Instagram a YouTube vedú zatiaľ na domovské stránky sietí |
 | `assets/img/` | ilustračné scény nahraďte fotografiami |
+| `assets/img/logo.png` | logo nadácie (viď sekcia vyššie) |
 | `assets/dokumenty/` | doplňte 3 PDF tlačivá: `ziadost-o-prispevok.pdf`, `suhlas-ochrana-osobnych-udajov.pdf`, `vyhlasenie-2-percenta.pdf` (viď README v priečinku) |
 | `app.js` — `form.addEventListener('submit')` | formulár otvára e-mailového klienta (`mailto:`); pre odosielanie na server nahraďte záver handlera volaním `fetch()` na váš endpoint |
 
@@ -84,8 +99,10 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 
 ## Prispôsobenie
 
-- **Farby, rádiusy, šírka obsahu, typografia** — premenné v `:root` v `styles.css`
-  (`--blue`, `--blue-2`, `--grad` menia celý akcent naraz).
+- **Farby, rádiusy, šírka obsahu, typografia** — premenné v `:root` v `styles.css`.
+  Hlavná tyrkysová je `--brand` (#28afc3), jej tmavší odtieň na text `--brand-dk`,
+  doplnková červená `--red` (#f9193e). Identita (logo, ikony, kroky, čísla) používa
+  prechod `--grad`, hlavné tlačidlá červený `--grad-cta`.
 - **Texty** — priamo v `index.html` (hero a galéria v `app.js`).
 - **Rýchlosť slidera** — konštanta `DUR` v `app.js` (predvolene 6500 ms).
 
