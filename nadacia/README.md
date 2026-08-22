@@ -20,7 +20,7 @@ Nasadenie: nahrajte obsah priečinka `nadacia/` na akýkoľvek statický hosting
 
 ```
 index.html        obsah a texty stránky
-styles.css        dizajn (krémová + zlatá/ružová, tmavý indigo text)
+styles.css        dizajn (biela + modrá #0d5cab/#1a7ae0, takmer čierny text)
 app.js            slider, galéria, lightbox, formulár, kopírovanie údajov
 assets/img/       obrázky (hero-*.svg, gal-*.svg, card-*.svg, about.svg)
 ```
@@ -81,7 +81,8 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 
 ## Prispôsobenie
 
-- **Farby, rádiusy, šírka obsahu, typografia** — premenné v `:root` v `styles.css`.
+- **Farby, rádiusy, šírka obsahu, typografia** — premenné v `:root` v `styles.css`
+  (`--blue`, `--blue-2`, `--grad` menia celý akcent naraz).
 - **Texty** — priamo v `index.html` (hero a galéria v `app.js`).
 - **Rýchlosť slidera** — konštanta `DUR` v `app.js` (predvolene 6500 ms).
 
