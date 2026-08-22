@@ -377,7 +377,32 @@
   });
 
   /* ───────────────────────────────────────────
-     8) FORMULÁR
+     8) TLAČIVÁ NA STIAHNUTIE
+     Ak súbor v assets/dokumenty/ ešte nie je nahratý,
+     namiesto chybovej stránky ukážeme návštevníkovi,
+     ako sa k tlačivu dostane.
+  ─────────────────────────────────────────── */
+  $$('[data-doc]').forEach(a => {
+    a.addEventListener('click', async e => {
+      e.preventDefault();                   // o stiahnutie sa postaráme až po overení súboru
+      const href = a.getAttribute('href');
+      let ok = false;
+      try{ ok = (await fetch(href, {method:'HEAD'})).ok; }catch{ ok = false; }
+      if (!ok){
+        say(`Tlačivo „${a.dataset.doc}“ vám radi pošleme na info@nadaciaanjelskekridla.sk`);
+        return;
+      }
+      const tmp = document.createElement('a');
+      tmp.href = href;
+      tmp.download = href.split('/').pop();
+      document.body.appendChild(tmp);
+      tmp.click();
+      tmp.remove();
+    });
+  });
+
+  /* ───────────────────────────────────────────
+     9) FORMULÁR
   ─────────────────────────────────────────── */
   const form = $('#form');
   const bad = (input, on) => {
@@ -411,7 +436,7 @@
   });
 
   /* ───────────────────────────────────────────
-     9) DROBNOSTI
+     10) DROBNOSTI
   ─────────────────────────────────────────── */
   $('#year').textContent = new Date().getFullYear();
 })();

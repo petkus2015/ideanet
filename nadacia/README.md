@@ -23,6 +23,7 @@ index.html        obsah a texty stránky
 styles.css        dizajn (biela + modrá #0d5cab/#1a7ae0, takmer čierny text)
 app.js            slider, galéria, lightbox, formulár, kopírovanie údajov
 assets/img/       obrázky (hero-*.svg, gal-*.svg, card-*.svg, about.svg)
+assets/dokumenty/ tlačivá na stiahnutie (PDF) — podrobnosti v README priečinka
 ```
 
 ## Obrázky — ako nasadiť skutočné fotky
@@ -62,6 +63,7 @@ fotky komponované inak, zmeňte túto hodnotu v `styles.css`.
 | `index.html` — sekcia *Príbehy* | ohlasy sú ilustračné, nahraďte ich skutočnými so súhlasom rodín |
 | `index.html` — pätička, sekcia *Kontakt* | odkazy na Facebook, Instagram a YouTube vedú zatiaľ na domovské stránky sietí |
 | `assets/img/` | ilustračné scény nahraďte fotografiami |
+| `assets/dokumenty/` | doplňte 3 PDF tlačivá: `ziadost-o-prispevok.pdf`, `suhlas-ochrana-osobnych-udajov.pdf`, `vyhlasenie-2-percenta.pdf` (viď README v priečinku) |
 | `app.js` — `form.addEventListener('submit')` | formulár otvára e-mailového klienta (`mailto:`); pre odosielanie na server nahraďte záver handlera volaním `fetch()` na váš endpoint |
 
 Overené údaje nadácie, ktoré web už obsahuje: IČO 50622510, sídlo
@@ -77,6 +79,7 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 | hero slider | šípky, bodky, klávesy ← →, potiahnutie prstom, tlačidlo pauzy; sám sa zastaví pri prejdení myšou a pri prepnutí záložky |
 | galéria | klik alebo Enter otvorí lightbox; ← → prepína, Esc zatvára, potiahnutie prstom prepína |
 | údaje 2 % a IBAN | tlačidlo *Kopírovať* vloží hodnotu do schránky |
+| tlačivá na stiahnutie | tlačidlo stiahne PDF; kým súbor v `assets/dokumenty/` chýba, zobrazí sa odkaz na e-mail nadácie namiesto chybovej stránky |
 | formulár | validácia na strane prehliadača + zvýraznenie chybných polí |
 
 ## Prispôsobenie

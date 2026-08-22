@@ -105,6 +105,8 @@ p{margin:0 0 1.1em}
 .btn--outline{--b:rgba(255,255,255,.6);color:#fff}
 .btn--outline:hover{--b:#fff;background:rgba(255,255,255,.14)}
 .btn--full{width:100%}
+.btn--file{padding:.7rem 1.2rem;font-size:.92rem}
+.btn--file svg{width:18px;flex:none}
 
 .link{display:inline-flex;align-items:center;gap:.45rem;font-weight:600;color:var(--ink)}
 .link span{transition:transform .25s}
@@ -285,6 +287,28 @@ p{margin:0 0 1.1em}
 .card h3{margin-bottom:.4em}
 .card p{margin:0;font-size:.95rem;color:var(--muted)}
 
+/* ── žiadosť o pomoc ──────────────────────── */
+.ziadost{background:var(--bg-2)}
+.ziadost__grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.ziadost__box{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-xl);
+  padding:clamp(1.5rem,3vw,2.4rem);box-shadow:var(--shadow);
+}
+.ziadost__box h3{margin-bottom:1.1em}
+.ziadost__box .fine a{color:var(--blue);font-weight:600;border-bottom:1px solid transparent}
+.ziadost__box .fine a:hover{border-color:var(--blue)}
+.docs{list-style:none;padding:0;margin:0 0 1.4rem;display:grid;gap:.9rem}
+.docs li{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1rem;
+  padding:1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);
+  transition:border-color .25s, box-shadow .25s, transform .25s;
+}
+.docs li:hover{border-color:var(--blue-3);box-shadow:var(--shadow-s);transform:translateY(-2px)}
+.docs__ico{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--grad-soft);color:var(--blue);flex:none}
+.docs__ico svg{width:22px}
+.docs__txt b{display:block;color:var(--ink);font-size:1rem;line-height:1.35}
+.docs__txt span{font-size:.82rem;color:var(--muted)}
+
 /* ── projekty ─────────────────────────────── */
 .projekty{background:var(--bg-2)}
 .projects{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.2rem,2.4vw,2rem)}
@@ -360,7 +384,8 @@ body.lb-open{overflow:hidden}
   box-shadow:0 8px 18px -10px rgba(13,92,171,.9);
 }
 .steps b{display:block;color:var(--ink);font-family:var(--display);font-size:1.08rem}
-.steps span{font-size:.92rem;color:var(--muted)}
+.steps span{display:block;font-size:.92rem;color:var(--muted)}
+.steps .btn{margin-top:.7rem}
 
 .dve__box{
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius-xl);
@@ -498,7 +523,7 @@ body.lb-open{overflow:hidden}
   .give__card--main{grid-column:1 / -1}
   .foot__in{grid-template-columns:1fr 1fr}
 }
-@media (max-width:900px){
+@media (max-width:1080px){
   .nav__links{
     position:fixed;inset:var(--nav-h) 0 auto;flex-direction:column;align-items:stretch;
     background:rgba(255,255,255,.98);backdrop-filter:blur(16px);padding:1.2rem clamp(1rem,4vw,2rem) 2rem;
@@ -511,10 +536,14 @@ body.lb-open{overflow:hidden}
   .nav__links a:not(.btn)::after{display:none}
   .nav__cta{margin-top:1rem;padding:.85rem 1.4rem}
   .burger{display:block}
-  .about__grid,.dve__grid,.kontakt__grid{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .about__grid,.dve__grid,.kontakt__grid,.ziadost__grid{grid-template-columns:1fr}
   .about__media{order:-1;max-width:34rem}
   .projects,.quotes{grid-template-columns:1fr}
   .gal{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}
+  .docs li{grid-template-columns:auto 1fr;row-gap:.8rem}
+  .docs li .btn{grid-column:1 / -1;justify-content:center}
   .stats__grid{grid-template-columns:repeat(2,1fr)}
   .hero__scroll{display:none}
 }
