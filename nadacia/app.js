@@ -6,9 +6,10 @@
 (() => {
   'use strict';
 
-  /* Logo nadácie: keď súbor existuje, nahradí kreslenú značku v hlavičke
-     aj v pätičke. Stačí ho nahrať pod touto cestou (PNG alebo SVG). */
-  const LOGO = 'assets/img/logo.png';
+  /* Logo nadácie. V hlavičke je samotná značka (krídla so srdcom), v pätičke
+     celé logo aj s názvom. Ak súbor chýba, zostane kreslená značka. */
+  const LOGO_MARK = 'assets/img/logo-mark.png';
+  const LOGO_FULL = 'assets/img/logo.png';
 
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -442,18 +443,31 @@
   /* ───────────────────────────────────────────
      10) LOGO NADÁCIE
   ─────────────────────────────────────────── */
-  const probe = new Image();
-  probe.addEventListener('load', () => {
-    $$('.brand__mark').forEach(mark => {
-      mark.classList.add('brand__mark--img');
-      const img = document.createElement('img');
-      img.className = 'brand__logo';
-      img.src = LOGO;
-      img.alt = '';
-      mark.prepend(img);
-    });
+  const putLogo = (mark, src, cls) => {
+    if (!mark) return;
+    mark.classList.add(cls);
+    const img = document.createElement('img');
+    img.className = 'brand__logo';
+    img.src = src;
+    img.alt = '';
+    mark.prepend(img);
+  };
+  const ifExists = (src, done) => {
+    const probe = new Image();
+    probe.addEventListener('load', done);
+    probe.src = src;
+  };
+
+  ifExists(LOGO_MARK, () => $$('.nav .brand__mark').forEach(m => putLogo(m, LOGO_MARK, 'brand__mark--img')));
+  ifExists(LOGO_FULL, () => {
+    putLogo($('.foot .brand__mark'), LOGO_FULL, 'brand__mark--full');
+    const name = $('.foot__brand p b');       // názov už nesie samotné logo
+    if (name){
+      const br = name.nextElementSibling;
+      if (br && br.tagName === 'BR') br.remove();
+      name.remove();
+    }
   });
-  probe.src = LOGO;
 
   /* ───────────────────────────────────────────
      11) DROBNOSTI

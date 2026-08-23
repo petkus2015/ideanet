@@ -22,7 +22,7 @@ Nasadenie: nahrajte obsah priečinka `nadacia/` na akýkoľvek statický hosting
 index.html        obsah a texty stránky
 styles.css        dizajn (biela + tyrkysová #28afc3, doplnková červená #f9193e)
 app.js            slider, galéria, lightbox, formulár, kopírovanie údajov
-assets/img/       obrázky (hero-*.svg, gal-*.svg, card-*.svg, about.svg)
+assets/img/       obrázky (hero-*.svg, gal-*.svg, card-*.svg, about.svg) a logo
 assets/dokumenty/ tlačivá na stiahnutie (PDF) — podrobnosti v README priečinka
 ```
 
@@ -58,17 +58,25 @@ fotky komponované inak, zmeňte túto hodnotu v `styles.css`.
 
 ## Logo nadácie
 
-Web má pripravený slot na skutočné logo. Uložte ho ako **`assets/img/logo.png`**
-(alebo `.svg` — vtedy zmeňte cestu v konštante `LOGO` na začiatku `app.js`) a logo
-sa automaticky objaví v hlavičke aj v pätičke namiesto kreslenej značky. Kým súbor
-neexistuje, zostáva kreslená značka — nič sa nerozbije.
+Logo je už nasadené:
 
-- V hlavičke má logo výšku 46 px, v pätičke 44 px; šírka sa dopočíta.
-- Nad tmavým hero je hlavička priehľadná, preto sa tam logo zobrazuje ako biela
-  silueta (`filter: brightness(0) invert(1)` v `styles.css`). Ak to pre vaše logo
-  nesedí, pravidlo `.nav:not(.is-stuck) .brand__logo` stačí odstrániť.
-- Ak je vaše logo celá zostava vrátane názvu nadácie, zmažte v `index.html`
-  vedľajší text `<span class="brand__txt">…</span>`, aby sa názov nezdvojil.
+| Súbor | Kde sa používa |
+|---|---|
+| `assets/img/logo.png` | celé logo aj s rukou písaným názvom — v pätičke na tmavom podklade |
+| `assets/img/logo-mark.png` | samotná značka (krídla so srdcom) — na tyrkysovej dlaždici v hlavičke |
+
+Logo je biele s červeným srdcom, teda určené na tmavý podklad. Preto v hlavičke
+sedí na tyrkysovej dlaždici — funguje tak nad tmavým hero aj na bielej hlavičke
+po odrolovaní. `logo-mark.png` je orez z `logo.png` bez názvu, ktorý by bol
+vo veľkosti hlavičky nečitateľný.
+
+Ak logo vymeníte, zachovajte oba súbory a rovnaké názvy. Cesty sú v konštantách
+`LOGO_MARK` a `LOGO_FULL` na začiatku `app.js`, veľkosti v `styles.css`
+(`.brand__mark--img` pre hlavičku, `.foot .brand__mark--full` pre pätičku).
+Keby súbory chýbali, web sa nerozbije — vráti sa ku kreslenej značke.
+
+Pre ostrejšie zobrazenie na retina displejoch sa hodí logo vo väčšom rozlíšení
+(súčasné má 120 × 120 px) alebo vo formáte SVG.
 
 ## Čo pred spustením doplniť
 
@@ -77,7 +85,6 @@ neexistuje, zostáva kreslená značka — nič sa nerozbije.
 | `index.html` — sekcia *Príbehy* | ohlasy sú ilustračné, nahraďte ich skutočnými so súhlasom rodín |
 | `index.html` — pätička, sekcia *Kontakt* | odkazy na Facebook, Instagram a YouTube vedú zatiaľ na domovské stránky sietí |
 | `assets/img/` | ilustračné scény nahraďte fotografiami |
-| `assets/img/logo.png` | logo nadácie (viď sekcia vyššie) |
 | `assets/dokumenty/` | doplňte 3 PDF tlačivá: `ziadost-o-prispevok.pdf`, `suhlas-ochrana-osobnych-udajov.pdf`, `vyhlasenie-2-percenta.pdf` (viď README v priečinku) |
 | `app.js` — `form.addEventListener('submit')` | formulár otvára e-mailového klienta (`mailto:`); pre odosielanie na server nahraďte záver handlera volaním `fetch()` na váš endpoint |
 
