@@ -71,7 +71,23 @@
   ];
 
   /* ───────────────────────────────────────────
-     3) HERO SLIDER
+     3) NÁHĽAD ČLÁNKOV
+     Po prepojení s redakčným systémom sem stačí
+     doplniť odkaz do "href".
+  ─────────────────────────────────────────── */
+  const POSTS = [
+    { img:'assets/img/gal-09.svg', meta:'Pomoc rodinám',   title:'Balíčky pre desať rodín putovali na severné Slovensko', href:'#' },
+    { img:'assets/img/gal-02.svg', meta:'Podujatia',        title:'Benefičný koncert opäť spojil ľudí v správnej veci',     href:'#' },
+    { img:'assets/img/gal-01.svg', meta:'Charitatívny beh', title:'Bežali sme za deti — štartovné išlo celé na pomoc',      href:'#' },
+    { img:'assets/img/gal-06.svg', meta:'Príbehy',          title:'Mama troch detí: „Zrazu sme na to neboli sami“',         href:'#' },
+    { img:'assets/img/gal-07.svg', meta:'Inklúzia',         title:'Popoludnie pre deti a rodičov v komunitnom centre',      href:'#' },
+    { img:'assets/img/gal-05.svg', meta:'Seniori',          title:'Návštevy v zariadení, na ktoré sa tešíme celý rok',      href:'#' },
+    { img:'assets/img/gal-04.svg', meta:'Rehabilitácia',    title:'Týždenný ozdravný pobyt pre šesť rodín',                 href:'#' },
+    { img:'assets/img/gal-10.svg', meta:'Dobrovoľníci',     title:'Nové tváre v tíme — vitajte medzi anjelmi',              href:'#' }
+  ];
+
+  /* ───────────────────────────────────────────
+     4) HERO SLIDER
   ─────────────────────────────────────────── */
   const DUR = 6500;
   const slidesWrap = $('#heroSlides');
@@ -189,7 +205,101 @@
   if (reduce) pause(); else play();
 
   /* ───────────────────────────────────────────
-     4) GALÉRIA + LIGHTBOX
+     4b) KARUSEL ČLÁNKOV
+     Posun prstom rieši natívne scrollovanie,
+     šípky a guličky posúvajú po kartách.
+  ─────────────────────────────────────────── */
+  const track = $('#postsTrack');
+  const dotsBox = $('#postsDots');
+  const prevBtn = $('#postsPrev');
+  const nextBtn = $('#postsNext');
+
+  track.innerHTML = POSTS.map(p => `
+    <li class="post">
+      <a class="post__link" href="${p.href}" aria-label="${p.title}">
+        <span class="post__media"><img src="${p.img}" alt="" loading="lazy" decoding="async"></span>
+        <span class="post__meta">${p.meta}</span>
+        <span class="post__title">${p.title}</span>
+      </a>
+    </li>`).join('');
+
+  const cards = $$('.post', track);
+
+  const step      = () => cards.length > 1
+    ? cards[1].getBoundingClientRect().left - cards[0].getBoundingClientRect().left
+    : cards[0].getBoundingClientRect().width;
+  const maxScroll = () => track.scrollWidth - track.clientWidth;
+  const atEnd     = () => track.scrollLeft >= maxScroll() - 2;
+  const startX    = () => Math.max(0, track.scrollLeft + (cards[0].getBoundingClientRect().left - track.getBoundingClientRect().left));
+  const atStart   = () => track.scrollLeft <= startX() + 2;
+
+  // karta, ktorá je najbližšie k ľavému okraju pásu
+  const nearest = () => {
+    const x = track.getBoundingClientRect().left;
+    let best = 0, bd = Infinity;
+    cards.forEach((c, i) => {
+      const d = Math.abs(c.getBoundingClientRect().left - x);
+      if (d < bd){ bd = d; best = i; }
+    });
+    return best;
+  };
+
+  const slideTo = i => {
+    i = Math.max(0, Math.min(cards.length - 1, i));
+    const x = track.scrollLeft + (cards[i].getBoundingClientRect().left - track.getBoundingClientRect().left);
+    track.scrollTo({ left: Math.min(x, maxScroll()), behavior: reduce ? 'auto' : 'smooth' });
+  };
+
+  // guličiek je toľko, koľko je skutočných pozícií posunu — každá je dosiahnuteľná
+  let dots = [];
+  function buildDots(){
+    const pages = Math.max(1, Math.ceil(maxScroll() / step()) + 1);
+    if (dots.length === pages) return;
+    dotsBox.innerHTML = Array.from({length: pages}, (_, i) => `
+      <button class="slider__dot" data-i="${i}" role="tab" aria-selected="false"
+        aria-label="Posunúť na ${i + 1}. pozíciu z ${pages}"></button>`).join('');
+    dots = $$('.slider__dot', dotsBox);
+  }
+
+  const syncSlider = () => {
+    const i = atEnd() ? dots.length - 1 : Math.min(dots.length - 1, Math.round(track.scrollLeft / step()));
+    dots.forEach((d, k) => {
+      d.classList.toggle('is-on', k === i);
+      d.setAttribute('aria-selected', String(k === i));
+    });
+    prevBtn.setAttribute('aria-disabled', String(atStart()));
+    nextBtn.setAttribute('aria-disabled', String(atEnd()));
+  };
+
+  let ticking = false;
+  track.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { syncSlider(); ticking = false; });
+  }, {passive:true});
+
+  prevBtn.addEventListener('click', () => slideTo(nearest() - 1));
+  nextBtn.addEventListener('click', () => slideTo(nearest() + 1));
+  dotsBox.addEventListener('click', e => {
+    const b = e.target.closest('.slider__dot');
+    if (b) slideTo(+b.dataset.i);
+  });
+  track.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); slideTo(nearest() - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); slideTo(nearest() + 1); }
+  });
+
+  let resizeT = null;
+  addEventListener('resize', () => {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(() => { buildDots(); syncSlider(); }, 150);
+  }, {passive:true});
+
+  buildDots();
+  syncSlider();
+
+  /* ───────────────────────────────────────────
+     5) GALÉRIA + LIGHTBOX
   ─────────────────────────────────────────── */
   const gal = $('#gal');
   gal.innerHTML = GALLERY.map((g, i) => `
@@ -257,7 +367,7 @@
   }, {passive:true});
 
   /* ───────────────────────────────────────────
-     5) NAVIGÁCIA, SCROLLSPY, PROGRES
+     6) NAVIGÁCIA, SCROLLSPY, PROGRES
   ─────────────────────────────────────────── */
   const nav = $('#nav'), links = $('#navLinks'), burger = $('#burger'), progress = $('#navProgress');
 
@@ -309,7 +419,7 @@
   });
 
   /* ───────────────────────────────────────────
-     6) ODHAĽOVANIE + POČÍTADLÁ
+     7) ODHAĽOVANIE + POČÍTADLÁ
   ─────────────────────────────────────────── */
   const io = new IntersectionObserver((entries) => {
     entries.forEach(en => {
@@ -341,7 +451,7 @@
   }
 
   /* ───────────────────────────────────────────
-     7) KOPÍROVANIE ÚDAJOV
+     8) KOPÍROVANIE ÚDAJOV
   ─────────────────────────────────────────── */
   const toast = $('#toast');
   let toastT = null;
@@ -382,7 +492,7 @@
   });
 
   /* ───────────────────────────────────────────
-     8) TLAČIVÁ NA STIAHNUTIE
+     9) TLAČIVÁ NA STIAHNUTIE
      Ak súbor v assets/dokumenty/ ešte nie je nahratý,
      namiesto chybovej stránky ukážeme návštevníkovi,
      ako sa k tlačivu dostane.
@@ -407,7 +517,7 @@
   });
 
   /* ───────────────────────────────────────────
-     9) FORMULÁR
+     10) FORMULÁR
   ─────────────────────────────────────────── */
   const form = $('#form');
   const bad = (input, on) => {
@@ -441,7 +551,7 @@
   });
 
   /* ───────────────────────────────────────────
-     10) LOGO NADÁCIE
+     11) LOGO NADÁCIE
   ─────────────────────────────────────────── */
   const putLogo = (mark, src, cls) => {
     if (!mark) return;
@@ -470,7 +580,7 @@
   });
 
   /* ───────────────────────────────────────────
-     11) DROBNOSTI
+     12) DROBNOSTI
   ─────────────────────────────────────────── */
   $('#year').textContent = new Date().getFullYear();
 })();

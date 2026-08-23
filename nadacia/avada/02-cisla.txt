@@ -1,0 +1,10 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" background_color="#eff8fa" padding_top="46px" padding_bottom="46px" border_sizes_top="1px" border_sizes_bottom="1px" border_color="rgba(6,34,42,0.12)" status="published"][fusion_builder_row][fusion_builder_column type="1_1" layout="1_1" align_self="center" spacing="" center_content="no" hover_type="none" border_style="solid" last="true" first="true"]
+
+[fusion_counters_box columns="4" color="#14707f" title_size="34" icon_size="" body_color="#5c757e" body_size="14" border_color="rgba(6,34,42,0.12)" animation_type="fade" animation_direction="up" animation_speed="0.7"]
+[fusion_counter_box value="2016" delimiter="" unit="" unit_pos="suffix" icon="" direction="up"]rok vzniku nadácie[/fusion_counter_box]
+[fusion_counter_box value="100" delimiter="" unit=" %" unit_pos="suffix" icon="" direction="up"]práce dobrovoľníkov[/fusion_counter_box]
+[fusion_counter_box value="0" delimiter="" unit=" €" unit_pos="suffix" icon="" direction="up"]štátnych dotácií[/fusion_counter_box]
+[fusion_counter_box value="2" delimiter="" unit=" %" unit_pos="suffix" icon="" direction="up"]z dane pre nadáciu[/fusion_counter_box]
+[/fusion_counters_box]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

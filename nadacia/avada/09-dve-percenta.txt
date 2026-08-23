@@ -1,0 +1,38 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="dve-percenta" background_color="#eff8fa" padding_top="100px" padding_bottom="100px" status="published"][fusion_builder_row][fusion_builder_column type="1_2" layout="1_2" align_self="center" spacing="5%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" last="false" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]2 % z dane[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="18px"]Dve percentá, ktoré vás nič nestoja[/fusion_title]
+
+[fusion_text font_size="18px" line_height="1.7" text_color="#2a4750" margin_bottom="24px"]
+Nadácia nedostáva štátne dotácie. Vaše 2 % zo zaplatenej dane sú pre nás jedným z najdôležitejších zdrojov pomoci — a vás nestoja nič navyše.
+[/fusion_text]
+
+[fusion_text text_color="#2a4750" margin_bottom="18px"]
+<ol class="ak-steps">
+<li><b>Vypočítajte 2 %</b><span>Suma musí byť aspoň 3 €.</span></li>
+<li><b>Vyplňte údaje nadácie</b><span>Do vyhlásenia alebo daňového priznania.</span></li>
+<li><b>Doručte tlačivo</b><span>Na daňový úrad do zákonného termínu.</span></li>
+</ol>
+[/fusion_text]
+
+[fusion_button link="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/vyhlasenie-2-percenta.pdf" target="_blank" color="custom" button_gradient_top_color="#f9193e" button_gradient_bottom_color="#d20e2e" button_gradient_top_color_hover="#ff4f66" button_gradient_bottom_color_hover="#f9193e" accent_color="#ffffff" accent_hover_color="#ffffff" type="flat" border_radius_top_left="999px" border_radius_top_right="999px" border_radius_bottom_right="999px" border_radius_bottom_left="999px" size="large" icon="fa-download fas" icon_position="left"]Stiahnuť vyhlásenie[/fusion_button]
+
+[/fusion_builder_column][fusion_builder_column type="1_2" layout="1_2" align_self="center" spacing="5%" hover_type="none" border_style="solid" background_color="#ffffff" border_radius_top_left="36px" border_radius_top_right="36px" border_radius_bottom_right="36px" border_radius_bottom_left="36px" box_shadow="yes" box_shadow_blur="60" box_shadow_spread="-20" box_shadow_color="rgba(6,34,42,0.22)" padding_top="40px" padding_right="40px" padding_bottom="40px" padding_left="40px" animation_type="fade" animation_direction="up" animation_speed="0.7" last="true" first="false"]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#0a1f26" style_type="none" margin_bottom="24px"]Údaje pre vyhlásenie[/fusion_title]
+
+[fusion_text class="ak-data"]
+<dl>
+<dt>Obchodné meno</dt><dd>Nadácia Anjelské krídla</dd>
+<dt>Právna forma</dt><dd>Nadácia</dd>
+<dt>IČO</dt><dd>50622510</dd>
+<dt>Sídlo</dt><dd>Slovenských dobrovoľníkov 135/30, 010 03 Žilina</dd>
+</dl>
+[/fusion_text]
+
+[fusion_text font_size="13px" text_color="#5c757e" margin_top="16px"]
+Zamestnanci žiadajú zamestnávateľa o <i>Potvrdenie o zaplatení dane</i> a spolu s <i>Vyhlásením</i> ho doručia daňovému úradu.
+[/fusion_text]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

@@ -1,0 +1,41 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="projekty" background_color="#ffffff" padding_top="100px" padding_bottom="80px" status="published"][fusion_builder_row][fusion_builder_column type="1_1" layout="1_1" spacing="" hover_type="none" border_style="solid" last="true" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]Projekty[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="14px"]Čo robíme počas roka[/fusion_title]
+
+[fusion_text text_color="#5c757e" margin_bottom="10px"]
+Dlhodobé programy aj jednorazové zbierky — vždy s konkrétnym cieľom.
+[/fusion_text]
+
+[/fusion_builder_column][fusion_builder_column type="1_3" layout="1_3" spacing="3%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" last="false" first="true"]
+
+[fusion_imageframe borderradius="28px" hover_type="zoomin" align="none" lightbox="no" alt="Balíky pomoci pripravené pre rodiny" style_type="none" bordersize="0"]https://VASA-DOMENA.sk/wp-content/uploads/nadacia/projekt-balicky.jpg[/fusion_imageframe]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#0a1f26" style_type="none" margin_top="20px" margin_bottom="10px"]Balíčky pre rodiny[/fusion_title]
+
+[fusion_text text_color="#5c757e"]Posielame potraviny, hygienu a pomôcky rodinám, ktoré sa starajú o vážne choré dieťa.[/fusion_text]
+
+[fusion_button link="#ziadost-o-pomoc" color="custom" button_gradient_top_color="rgba(0,0,0,0)" button_gradient_bottom_color="rgba(0,0,0,0)" accent_color="#14707f" accent_hover_color="#0a1f26" type="flat" size="small" icon="fa-arrow-right fas" icon_position="right" padding_left="0px" padding_right="0px"]Požiadať o pomoc[/fusion_button]
+
+[/fusion_builder_column][fusion_builder_column type="1_3" layout="1_3" spacing="3%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" animation_delay="0.1" last="false" first="false"]
+
+[fusion_imageframe borderradius="28px" hover_type="zoomin" align="none" lightbox="no" alt="Účastníci charitatívneho behu" style_type="none" bordersize="0"]https://VASA-DOMENA.sk/wp-content/uploads/nadacia/projekt-beh.jpg[/fusion_imageframe]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#0a1f26" style_type="none" margin_top="20px" margin_bottom="10px"]Charitatívne behy[/fusion_title]
+
+[fusion_text text_color="#5c757e"]Behy pre deti a rodiny — spájame ľudí, ktorí chcú pomáhať pohybom aj štartovným.[/fusion_text]
+
+[fusion_button link="#podpora" color="custom" button_gradient_top_color="rgba(0,0,0,0)" button_gradient_bottom_color="rgba(0,0,0,0)" accent_color="#14707f" accent_hover_color="#0a1f26" type="flat" size="small" icon="fa-arrow-right fas" icon_position="right" padding_left="0px" padding_right="0px"]Podporiť podujatie[/fusion_button]
+
+[/fusion_builder_column][fusion_builder_column type="1_3" layout="1_3" spacing="0%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" animation_delay="0.2" last="true" first="false"]
+
+[fusion_imageframe borderradius="28px" hover_type="zoomin" align="none" lightbox="no" alt="Benefičný koncert" style_type="none" bordersize="0"]https://VASA-DOMENA.sk/wp-content/uploads/nadacia/projekt-koncert.jpg[/fusion_imageframe]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#0a1f26" style_type="none" margin_top="20px" margin_bottom="10px"]Benefičné koncerty[/fusion_title]
+
+[fusion_text text_color="#5c757e"]Prvý benefičný koncert nadácie v Žiline vyzbieral 2 000 € pre onkologických pacientov.[/fusion_text]
+
+[fusion_button link="#kontakt" color="custom" button_gradient_top_color="rgba(0,0,0,0)" button_gradient_bottom_color="rgba(0,0,0,0)" accent_color="#14707f" accent_hover_color="#0a1f26" type="flat" size="small" icon="fa-arrow-right fas" icon_position="right" padding_left="0px" padding_right="0px"]Chcem sa zapojiť[/fusion_button]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

@@ -1,0 +1,87 @@
+/* ═══════════════════════════════════════════════
+   Nadácia Anjelské krídla — doplnkové CSS pre Avadu
+   Vložte do: Avada → Options → Custom CSS
+   (alebo Vzhľad → Prispôsobiť → Dodatočné CSS)
+   ═══════════════════════════════════════════════ */
+
+:root{
+  --ak-brand:#28afc3;      /* hlavná tyrkysová */
+  --ak-brand-dk:#14707f;   /* tmavší odtieň na text */
+  --ak-red:#f9193e;        /* doplnková červená */
+  --ak-ink:#0a1f26;
+  --ak-muted:#5c757e;
+  --ak-line:rgba(6,34,42,.12);
+}
+
+/* nadpisik nad titulkom sekcie */
+.ak-eyebrow p{
+  font-size:.78rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ak-brand-dk);margin:0;display:flex;align-items:center;gap:.6rem;
+}
+.ak-eyebrow p::before{
+  content:"";width:26px;height:2px;border-radius:2px;
+  background:linear-gradient(115deg,#14707f,#28afc3 58%,#5fcede);
+}
+.ak-eyebrow--light p{color:#9fe4ee}
+
+/* číslované kroky (Žiadosť o pomoc, 2 % z dane) */
+ol.ak-steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:1.1rem}
+ol.ak-steps li{position:relative;padding-left:3.6rem;min-height:2.6rem}
+ol.ak-steps li::before{
+  counter-increment:s;content:counter(s);
+  position:absolute;left:0;top:0;width:2.6rem;height:2.6rem;border-radius:50%;
+  display:grid;place-items:center;font-weight:700;color:#fff;
+  background:linear-gradient(115deg,#14707f,#28afc3 58%,#5fcede);
+}
+ol.ak-steps b{display:block;color:var(--ak-ink);font-size:1.08rem;line-height:1.4}
+ol.ak-steps span{display:block;font-size:.92rem;color:var(--ak-muted)}
+
+/* riadok s názvom tlačiva nad tlačidlom Stiahnuť */
+.ak-doc b{display:block;color:var(--ak-ink);font-size:1rem;line-height:1.35}
+.ak-doc span{font-size:.82rem;color:var(--ak-muted)}
+
+/* údaje pre vyhlásenie */
+.ak-data dl{margin:0;display:grid;gap:.2rem}
+.ak-data dt{
+  font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ak-muted);
+  margin-top:.9rem;
+}
+.ak-data dt:first-child{margin-top:0}
+.ak-data dd{
+  margin:0 0 .9rem;padding-bottom:.9rem;border-bottom:1px dashed var(--ak-line);
+  font-weight:600;color:var(--ak-ink);font-size:1.02rem;
+}
+.ak-data dd:last-child{border:0;padding-bottom:0;margin-bottom:0}
+
+/* číslo účtu na tmavej karte */
+.ak-iban{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;padding:1.1rem 1.2rem;display:grid;gap:.5rem;
+}
+.ak-iban span{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.ak-iban strong{font-size:1.25rem;color:#fff;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+
+/* jemné zaoblenie a tieň kariet článkov */
+.ak-blog .fusion-post-grid .fusion-post-wrapper{
+  border-radius:18px;overflow:hidden;border:1px solid var(--ak-line);
+}
+.ak-blog .fusion-post-grid .fusion-post-wrapper:hover{
+  box-shadow:0 10px 30px -12px rgba(6,34,42,.22);
+}
+
+/* ── polovičná karta v karuseli článkov ──────────────────────────────
+   Avada ukazuje celé karty. Toto pridá pohľad na kúsok ďalšej karty
+   — 4,5 karty na desktope, 1,5 na mobile — presne ako v návrhu.
+   Ak vám stačia celé karty, túto časť nevkladajte.
+   .ak-carousel je trieda, ktorú dáte elementu Post Cards
+   (Advanced → CSS Class).                                            */
+.ak-carousel .awb-carousel .swiper-slide{width:calc(100% / 4.5) !important}
+@media (max-width:1200px){
+  .ak-carousel .awb-carousel .swiper-slide{width:calc(100% / 3.5) !important}
+}
+@media (max-width:900px){
+  .ak-carousel .awb-carousel .swiper-slide{width:calc(100% / 2.5) !important}
+}
+@media (max-width:640px){
+  .ak-carousel .awb-carousel .swiper-slide{width:calc(100% / 1.5) !important}
+}

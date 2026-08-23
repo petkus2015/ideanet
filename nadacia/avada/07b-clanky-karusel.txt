@@ -1,0 +1,31 @@
+--------------------------------------------------------------------------
+KARUSEL ČLÁNKOV — nastavuje sa v builderi, netreba vkladať shortcode
+--------------------------------------------------------------------------
+Blok 07-clanky.txt vloží články ako mriežku (element Blog). Ak chcete presne
+taký posuvač ako v návrhu — 4,5 karty na desktope, 1,5 na mobile, posun prstom,
+guličky aj šípky — použite v Avada Builderi element "Post Cards" (Karty
+príspevkov). Nastavuje sa klikaním, nie shortcodom, preto tu nie je kód:
+
+1. Avada → Library → Post Cards → Add New. Nazvite ju napr. "Karta článku".
+2. Do karty vložte: element Image (Featured image), pod to Title (Post title)
+   a Text (kategória alebo dátum). Presne v tomto poradí — obrázok hore,
+   názov pod ním.
+3. Uložte a vráťte sa na stránku. Do sekcie Články vložte element
+   "Post Cards" a v jeho nastaveniach zvoľte:
+   - Layout / Rozloženie:  Carousel
+   - Post Card:            Karta článku (tá z kroku 1)
+   - Post Type:            Posts, počet napr. 8
+   - Columns / Stĺpce:     4  →  v záložke Responsive dajte pre tablet 3
+                                 a pre mobil 1
+   - Column Spacing:       24
+   - Navigation / Šípky:   Yes
+   - Pagination / Bodky:   Yes
+   - Autoplay:             No (odporúčame — návštevník ovláda posun sám)
+   - Mouse Scroll / Swipe: Yes (posun prstom na dotykových zariadeniach)
+4. Polovičnú kartu na okraji ("4,5 na desktope, 1,5 na mobile") Avada v
+   nastaveniach nemá. Doplní ju CSS zo súboru custom-css.css — sekcia
+   "polovičná karta v karuseli". Ak vám stačia celé karty, tú časť CSS
+   jednoducho nevkladajte.
+
+Ak by ste Post Cards v svojej verzii Avady nenašli, funguje aj element
+"Image Carousel" s obrázkami článkov, prípadne zostane mriežka z bloku 07.

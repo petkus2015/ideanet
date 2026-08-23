@@ -1,0 +1,24 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="galeria" background_color="#ffffff" padding_top="100px" padding_bottom="100px" status="published"][fusion_builder_row][fusion_builder_column type="1_1" layout="1_1" spacing="" hover_type="none" border_style="solid" last="true" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]Galéria[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="14px"]Momenty, ktoré nesú ďalej[/fusion_title]
+
+[fusion_text text_color="#5c757e" margin_bottom="34px"]
+Kliknutím obrázok zväčšíte. Prechádzať môžete šípkami alebo potiahnutím prsta.
+[/fusion_text]
+
+[fusion_gallery image_ids="" layout="masonry" picture_size="auto" columns="4" column_spacing="16" gallery_masonry_grid_ratio="1.5" hover_type="zoomin" border_size="0" border_radius="18px" lightbox="yes" lightbox_content="titles" bordercolor="" animation_type="fade" animation_direction="up" animation_speed="0.7"]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-01.jpg" image_id="" link="" linktarget="_self" alt="Charitatívny beh pre rodiny" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-02.jpg" image_id="" link="" linktarget="_self" alt="Radosť je najlepšie poďakovanie" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-03.jpg" image_id="" link="" linktarget="_self" alt="Pomoc, ktorá drží pokope" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-04.jpg" image_id="" link="" linktarget="_self" alt="Benefičný koncert v Žiline" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-05.jpg" image_id="" link="" linktarget="_self" alt="Aktivity pre deti a rodičov" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-06.jpg" image_id="" link="" linktarget="_self" alt="Mama a dieťa" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-07.jpg" image_id="" link="" linktarget="_self" alt="Balíčky pripravené na cestu" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-08.jpg" image_id="" link="" linktarget="_self" alt="Nezabúdame na seniorov" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-09.jpg" image_id="" link="" linktarget="_self" alt="Tím dobrovoľníkov nadácie" /]
+[fusion_gallery_image image="https://VASA-DOMENA.sk/wp-content/uploads/nadacia/galeria-10.jpg" image_id="" link="" linktarget="_self" alt="Anjelské krídla nad Žilinou" /]
+[/fusion_gallery]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

@@ -24,6 +24,7 @@ styles.css        dizajn (biela + tyrkysová #28afc3, doplnková červená #f919
 app.js            slider, galéria, lightbox, formulár, kopírovanie údajov
 assets/img/       obrázky (hero-*.svg, gal-*.svg, card-*.svg, about.svg) a logo
 assets/dokumenty/ tlačivá na stiahnutie (PDF) — podrobnosti v README priečinka
+avada/            tá istá jednostránka ako bloky pre Avada Builder (WordPress)
 ```
 
 ## Obrázky — ako nasadiť skutočné fotky
@@ -47,6 +48,9 @@ Nahradiť ich vlastnými fotkami je otázka dvoch krokov:
 
 // app.js — galéria (span: 'w2' širšia dlaždica, 'h2' vyššia, '' základná)
 { src:'assets/img/gal-01.jpg', cap:'Popis fotky', span:'w2' }
+
+// app.js — články v karuseli
+{ img:'assets/img/clanok-01.jpg', meta:'Pomoc rodinám', title:'Titulok článku', href:'/clanok/…' }
 ```
 
 Kompozícia dlaždíc sa skladá automaticky (`grid-auto-flow:dense`), takže
@@ -99,10 +103,17 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 | Prvok | Ovládanie |
 |---|---|
 | hero slider | šípky, bodky, klávesy ← →, potiahnutie prstom, tlačidlo pauzy; sám sa zastaví pri prejdení myšou a pri prepnutí záložky |
+| karusel článkov | 4,5 karty na desktope a 1,5 na mobile; posun prstom, šípkami, guličkami aj klávesmi ← → |
 | galéria | klik alebo Enter otvorí lightbox; ← → prepína, Esc zatvára, potiahnutie prstom prepína |
 | údaje 2 % a IBAN | tlačidlo *Kopírovať* vloží hodnotu do schránky |
 | tlačivá na stiahnutie | tlačidlo stiahne PDF; kým súbor v `assets/dokumenty/` chýba, zobrazí sa odkaz na e-mail nadácie namiesto chybovej stránky |
 | formulár | validácia na strane prehliadača + zvýraznenie chybných polí |
+
+## Verzia pre WordPress (Avada)
+
+Priečinok `avada/` obsahuje tú istú stránku rozdelenú na bloky pre Avada Builder —
+jeden súbor na sekciu, doplnkové CSS a návod na vloženie. Podrobnosti v
+`avada/README.md`.
 
 ## Prispôsobenie
 
