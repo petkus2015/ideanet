@@ -633,7 +633,7 @@ body.lb-open{overflow:hidden}
   .posts{--per:1.5}
   .slider__ui{width:100%;justify-content:flex-end}
   .foot__in{grid-template-columns:1fr}
-  .hero__media{max-width:16rem}
+  .hero__media{max-width:none;justify-self:stretch}   /* na mobile fotka vypĺňa šírku */
   .gal__item--w2{grid-column:span 2}
   .gal__item--h2{grid-row:span 1}
   .lb__nav{width:44px;height:44px}
