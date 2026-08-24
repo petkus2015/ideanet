@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------
+HERO — keď sa má meniť aj text, nielen fotka
+--------------------------------------------------------------------------
+Blok 01-hero.txt má vľavo pevný text a vpravo posuvač fotiek v pomere 4:5
+(element Image Carousel s jedným stĺpcom a autoplay). Pre väčšinu stránok to
+stačí — text je stabilný a fotky sa striedajú.
+
+Ak chcete presne ako v návrhu — vľavo sa mení nadpis, veta aj tlačidlá spolu
+s fotkou vpravo — v Avade sa to skladá ako Avada Slider. Shortcode sa preň
+nedá pripraviť, robí sa klikaním:
+
+1. Avada → Sliders → Add New. Názov napríklad "Hero nadácia".
+2. Pridajte štyri snímky. V každej:
+   - Slide Content (obsah snímky): nadpis, veta a dve tlačidlá.
+     Texty nájdete v súbore hero-texty.txt.
+   - Background: nechajte prázdne, fotka pôjde do obsahu snímky, nie na pozadie.
+   - Layout: ak vaša verzia ponúka rozdelenie snímky na dva stĺpce, dajte text
+     doľava a fotku doprava. Ak nie, použite postup z bodu 4.
+3. Nastavenia slidera: Autoplay zapnúť, rýchlosť 6500 ms, šípky aj bodky
+   zapnúť, "Pause on hover" zapnúť.
+4. Jednoduchšia alternatíva, ktorá vyzerá takmer rovnako: nechajte blok
+   01-hero.txt tak, ako je, a do pravého stĺpca vložte namiesto Image Carousel
+   Avada Slider len s fotkami. Text vľavo zostane pevný — návštevník ho tak
+   stihne prečítať, čo je pri nadácii skôr výhoda.
+
+Pomer 4:5 nastaví fotkám CSS zo súboru custom-css.css (trieda ak-hero-photo).
+Fotky preto stačí nahrať na výšku, orez dorobí prehliadač.

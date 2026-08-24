@@ -33,7 +33,7 @@ Obrázky v `assets/img/` sú **ilustračné vektorové scény**, nie fotografie.
 Nahradiť ich vlastnými fotkami je otázka dvoch krokov:
 
 1. Fotky nahrajte do `assets/img/` (odporúčaný formát `.webp` alebo `.jpg`,
-   šírka 1600–2000 px, hero na šírku 16:10, galéria na šírku 4:3 a na výšku 3:4).
+   šírka 1600–2000 px, **hero na výšku v pomere 4:5**, galéria na šírku 4:3 a na výšku 3:4).
 2. Upravte cesty v `app.js` — polia `SLIDES` (hero) a `GALLERY` (galéria) —
    a v `index.html` obrázky sekcie *O nás* a *Projekty*.
 
@@ -102,7 +102,7 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 
 | Prvok | Ovládanie |
 |---|---|
-| hero slider | šípky, bodky, klávesy ← →, potiahnutie prstom, tlačidlo pauzy; sám sa zastaví pri prejdení myšou a pri prepnutí záložky |
+| hero banner | vľavo sa mení text a tlačidlá, vpravo fotky v pomere 4:5; šípky, bodky, klávesy ← →, potiahnutie prstom po fotke, tlačidlo pauzy; sám sa zastaví pri prejdení myšou a pri prepnutí záložky |
 | karusel článkov | 4,5 karty na desktope a 1,5 na mobile; posun prstom, šípkami, guličkami aj klávesmi ← → |
 | galéria | klik alebo Enter otvorí lightbox; ← → prepína, Esc zatvára, potiahnutie prstom prepína |
 | údaje 2 % a IBAN | tlačidlo *Kopírovať* vloží hodnotu do schránky |

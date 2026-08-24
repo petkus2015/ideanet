@@ -67,7 +67,9 @@ Kontajnery majú nastavené kotvy (`menu_anchor`): `uvod`, `o-nas`, `ako-pomaham
 
 | Súbor | Sekcia | Použité elementy Avady |
 |---|---|---|
-| `01-hero.txt` | úvodný panel s fotkou a tlačidlami | Container s pozadím, Title, Text, Button |
+| `01-hero.txt` | úvodný panel: vľavo text a tlačidlá, vpravo posuvač fotiek 4:5 | Title, Text, Button, Image Carousel |
+| `01b-hero-meniaci-sa-text.txt` | návod, ako rozhýbať aj text v hero | Avada Slider (nastavuje sa v builderi) |
+| `hero-texty.txt` | texty štyroch snímok hero bannera | — |
 | `02-cisla.txt` | pás so štyrmi číslami | Counters Box |
 | `03-o-nas.txt` | o nadácii + zoznam, komu pomáhame | Image Frame, Title, Text, Checklist, Button |
 | `04-ako-pomahame.txt` | štyri spôsoby pomoci | Content Boxes |

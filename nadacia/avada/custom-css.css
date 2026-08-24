@@ -61,6 +61,20 @@ ol.ak-steps span{display:block;font-size:.92rem;color:var(--ak-muted)}
 .ak-iban span{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6)}
 .ak-iban strong{font-size:1.25rem;color:#fff;letter-spacing:.04em;font-variant-numeric:tabular-nums}
 
+/* hero — fotka v pomere 4:5 so zaoblením a tieňom */
+.ak-hero-photo img{
+  aspect-ratio:4/5;object-fit:cover;width:100%;
+  border-radius:36px;box-shadow:0 30px 70px -30px rgba(6,34,42,.45);
+}
+.ak-hero-photo .fusion-carousel-item-wrapper{overflow:visible}
+
+/* hero — fotka v pomere 4:5 so zaoblením a tieňom */
+.ak-hero-photo img{
+  aspect-ratio:4/5;object-fit:cover;width:100%;
+  border-radius:36px;box-shadow:0 30px 70px -30px rgba(6,34,42,.45);
+}
+.ak-hero-photo .fusion-carousel-item-wrapper{overflow:visible}
+
 /* jemné zaoblenie a tieň kariet článkov */
 .ak-blog .fusion-post-grid .fusion-post-wrapper{
   border-radius:18px;overflow:hidden;border:1px solid var(--ak-line);

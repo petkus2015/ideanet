@@ -50,30 +50,31 @@
 
 <main id="hlavny">
 
-<!-- ══════════ HERO SLIDER ══════════ -->
+<!-- ══════════ HERO ══════════ -->
 <section class="hero" id="top" aria-roledescription="carousel" aria-label="Predstavenie nadácie">
-  <div class="hero__slides" id="heroSlides"></div>
+  <div class="wrap hero__grid">
 
-  <div class="hero__shade" aria-hidden="true"></div>
+    <div class="hero__side">
+      <div class="hero__copy" id="heroCopy" aria-live="polite"></div>
 
-  <div class="wrap hero__in">
-    <div class="hero__copy" id="heroCopy" aria-live="polite"></div>
-
-    <div class="hero__ui">
-      <button class="hero__arrow" id="heroPrev" aria-label="Predchádzajúca snímka">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-      <div class="hero__dots" id="heroDots" role="tablist" aria-label="Snímky"></div>
-      <button class="hero__arrow" id="heroNext" aria-label="Nasledujúca snímka">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-      </button>
-      <button class="hero__play" id="heroPlay" aria-label="Pozastaviť automatické prehrávanie"></button>
+      <div class="hero__ui">
+        <button class="hero__arrow" id="heroPrev" aria-label="Predchádzajúca snímka">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="hero__dots" id="heroDots" role="tablist" aria-label="Snímky"></div>
+        <button class="hero__arrow" id="heroNext" aria-label="Nasledujúca snímka">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button class="hero__play" id="heroPlay" aria-label="Pozastaviť automatické prehrávanie"></button>
+      </div>
     </div>
-  </div>
 
-  <a class="hero__scroll" href="#cisla" aria-label="Posunúť nižšie">
-    <span></span>
-  </a>
+    <div class="hero__media">
+      <span class="hero__blob" aria-hidden="true"></span>
+      <div class="hero__frame" id="heroSlides"></div>
+    </div>
+
+  </div>
 </section>
 
 <!-- ══════════ ČÍSLA ══════════ -->

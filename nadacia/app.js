@@ -25,7 +25,7 @@
       eyebrow:'Nadácia Anjelské krídla',
       title:'Pomoc, ktorá nesie ďalej',
       text:'Pomáhame vážne chorým deťom, ich rodinám a všetkým, ktorým sa život zrazu obrátil naruby.',
-      cta:[{t:'Chcem pomôcť', href:'#podpora', k:'light'},{t:'Ako pomáhame', href:'#pomoc', k:'outline'}]
+      cta:[{t:'Chcem pomôcť', href:'#podpora', k:'primary'},{t:'Ako pomáhame', href:'#pomoc', k:'ghost'}]
     },
     {
       img:'assets/img/hero-2.svg',
@@ -33,7 +33,7 @@
       eyebrow:'Od roku 2016',
       title:'Nikto nemá ostať na to sám',
       text:'Podporujeme mamy, ktoré sa o choré deti starajú samy, rodiny v núdzi aj krízové centrá.',
-      cta:[{t:'Príbeh nadácie', href:'#o-nas', k:'light'},{t:'Napíšte nám', href:'#kontakt', k:'outline'}]
+      cta:[{t:'Príbeh nadácie', href:'#o-nas', k:'primary'},{t:'Napíšte nám', href:'#kontakt', k:'ghost'}]
     },
     {
       img:'assets/img/hero-3.svg',
@@ -41,7 +41,7 @@
       eyebrow:'2 % z dane',
       title:'Dve percentá, ktoré vás nič nestoja',
       text:'Nadácia nedostáva štátne dotácie. Vaše 2 % zo zaplatenej dane menia konkrétne rodiny.',
-      cta:[{t:'Údaje pre vyhlásenie', href:'#dve-percenta', k:'light'},{t:'Podporiť darom', href:'#podpora', k:'outline'}]
+      cta:[{t:'Údaje pre vyhlásenie', href:'#dve-percenta', k:'primary'},{t:'Podporiť darom', href:'#podpora', k:'ghost'}]
     },
     {
       img:'assets/img/hero-4.svg',
@@ -49,7 +49,7 @@
       eyebrow:'Dobrovoľníci',
       title:'Sto percent práce z voľného času',
       text:'Nadáciu tvoria odborníci a dobrovoľníci, ktorí pomáhajú bez nároku na odmenu.',
-      cta:[{t:'Pridať sa', href:'#kontakt', k:'light'},{t:'Naše projekty', href:'#projekty', k:'outline'}]
+      cta:[{t:'Pridať sa', href:'#kontakt', k:'primary'},{t:'Naše projekty', href:'#projekty', k:'ghost'}]
     }
   ];
 
@@ -192,9 +192,10 @@
   });
 
   // ťahanie prstom
+  const heroMedia = $('.hero__media');
   let sx = 0, sy = 0, drag = false;
-  hero.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; drag = true; }, {passive:true});
-  hero.addEventListener('touchend', e => {
+  heroMedia.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; drag = true; }, {passive:true});
+  heroMedia.addEventListener('touchend', e => {
     if (!drag) return;
     drag = false;
     const dx = e.changedTouches[0].clientX - sx;
