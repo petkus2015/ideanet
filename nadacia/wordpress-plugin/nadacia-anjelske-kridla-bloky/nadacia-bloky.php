@@ -219,7 +219,16 @@ function ak_bloky_stranka() {
 		</ol>
 		<p>Ak by sa bloky v knižnici nezobrazili, použite náhradnú cestu: skopírujte shortcode nižšie, v editore stránky prepnite <em>Toggle Builder</em> na klasický editor, vložte a prepnite späť.</p>
 
-		<h2>3. Čo doplniť</h2>
+		<h2>3. Farby menu a témy</h2>
+		<p>Bloky majú farby nastavené v sebe, hlavičku a menu však ovláda téma:</p>
+		<ul style="list-style:disc;margin-left:22px">
+			<li><strong>Avada → Options → Header</strong>: Header Background Color <code>#28afc3</code>.</li>
+			<li><strong>Avada → Options → Menu → Main Menu</strong>: farba písma aj pri prejdení myšou <code>#ffffff</code>, pozadie rozbaľovacieho menu <code>#28afc3</code>.</li>
+			<li><strong>Avada → Options → Menu → Mobile Menu</strong>: pozadie <code>#28afc3</code>, text <code>#ffffff</code>.</li>
+			<li><strong>Avada → Options → Colors</strong>: Primary <code>#28afc3</code>, Text <code>#2a4750</code>, Headings <code>#0a1f26</code>, Link <code>#14707f</code>.</li>
+		</ul>
+
+		<h2>4. Čo doplniť</h2>
 		<ul style="list-style:disc;margin-left:22px">
 			<li>Fotky sú zatiaľ ilustračné a nesie ich tento plugin. Nahraďte ich vlastnými priamo v builderi (klik na obrázok → Select Image).</li>
 			<li>Tlačivá na stiahnutie plugin neobsahuje. Nahrajte do knižnice médií súbory <code>ziadost-o-prispevok.pdf</code>, <code>suhlas-ochrana-osobnych-udajov.pdf</code> a <code>vyhlasenie-2-percenta.pdf</code> a v blokoch 05 a 09 opravte odkazy tlačidiel.</li>
@@ -228,7 +237,7 @@ function ak_bloky_stranka() {
 			<li>Ohlasy v bloku 11 sú ilustračné — nahraďte ich skutočnými so súhlasom rodín.</li>
 		</ul>
 
-		<h2>4. Bloky na skopírovanie</h2>
+		<h2>5. Bloky na skopírovanie</h2>
 		<?php foreach ( ak_bloky_zoznam() as $kluc => $blok ) : ?>
 			<?php $id = ak_bloky_najdi_blok( $kluc ); ?>
 			<h3 style="margin-bottom:4px">

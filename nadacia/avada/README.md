@@ -28,6 +28,12 @@ jedna sekcia — vložíte ju do stránky a ďalej ju upravujete klikaním v bui
 | Link Color | `#14707f` |
 | Link Hover Color | `#0a1f26` |
 
+**Avada → Options → Header:** Header Background Color `#28afc3`.
+
+**Avada → Options → Menu → Main Menu:** farba písma `#ffffff`, farba pri prejdení
+myšou `#ffffff`, pozadie rozbaľovacieho menu `#28afc3` a jeho text `#ffffff`.
+V časti **Mobile Menu** rovnako: pozadie `#28afc3`, text `#ffffff`.
+
 **Avada → Options → Typography:** nadpisy `Fraunces` (700), text `Inter` (400/600).
 Obe sú na Google Fonts, Avada ich ponúkne v zozname.
 

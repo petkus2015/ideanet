@@ -49,6 +49,10 @@ zvyšok webu, v **Avada → Options → Colors** odporúčame nastaviť:
 | Headings Color | `#0a1f26` |
 | Link Color | `#14707f` |
 
+A v **Avada → Options → Header** dajte *Header Background Color* `#28afc3`,
+v **Avada → Options → Menu** nastavte hlavnému aj mobilnému menu biely text
+(`#ffffff`) a rozbaľovaciemu menu tyrkysové pozadie `#28afc3`.
+
 Písma: nadpisy **Fraunces**, text **Inter** (Avada → Options → Typography).
 
 ## Čo plugin obsahuje
