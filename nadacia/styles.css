@@ -177,7 +177,7 @@ p{margin:0 0 1.1em}
   background:linear-gradient(180deg,var(--bg-2) 0%, var(--bg-2) 45%, var(--bg) 100%);
 }
 .hero__grid{
-  display:grid;grid-template-columns:1.02fr .98fr;
+  display:grid;grid-template-columns:1.15fr .85fr;
   gap:clamp(2rem,5vw,4.5rem);align-items:center;
 }
 .hero__side{display:grid;gap:clamp(1.6rem,3vw,2.4rem);align-content:center}
@@ -194,7 +194,7 @@ p{margin:0 0 1.1em}
 @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 
 /* pravá strana — snímky v pomere 4:5 */
-.hero__media{position:relative;justify-self:center;width:100%;max-width:33rem}
+.hero__media{position:relative;justify-self:center;width:100%;max-width:27rem}
 .hero__frame{
   position:relative;aspect-ratio:4/5;overflow:hidden;background:#04171d;
   border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);
@@ -229,8 +229,9 @@ p{margin:0 0 1.1em}
 .hero__dot.is-on i{width:100%;transition:width var(--dur,6500ms) linear}
 .hero__dot.is-on.is-paused i{transition:none}
 .hero__play{
-  width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
-  border:1.5px solid var(--line-2);color:var(--ink);transition:background .25s, color .25s;
+  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;
+  border:1.5px solid var(--line-2);color:var(--ink);background:var(--card);
+  transition:background .25s, color .25s, border-color .25s, transform .25s;
 }
 .hero__play::before{
   content:"";width:0;height:0;border-style:solid;
@@ -240,7 +241,7 @@ p{margin:0 0 1.1em}
   border:0;width:10px;height:11px;margin:0;background:currentColor;
   clip-path:polygon(0 0,3px 0,3px 100%,0 100%,0 0,7px 0,10px 0,10px 100%,7px 100%,7px 0);
 }
-.hero__play:hover{background:var(--bg-3)}
+.hero__play:hover{background:var(--grad);color:#fff;border-color:transparent;transform:translateY(-2px)}
 
 /* ── čísla ────────────────────────────────── */
 .stats{background:var(--bg-2);border-block:1px solid var(--line)}
@@ -616,7 +617,7 @@ body.lb-open{overflow:hidden}
 @media (max-width:900px){
   .about__grid,.dve__grid,.kontakt__grid,.ziadost__grid{grid-template-columns:1fr}
   .hero__grid{grid-template-columns:1fr;gap:clamp(1.8rem,5vw,2.6rem)}
-  .hero__media{order:-1;max-width:26rem;justify-self:start}
+  .hero__media{order:-1;max-width:22rem;justify-self:start}
   .hero__side{justify-items:start}
   .about__media{order:-1;max-width:34rem}
   .projects,.quotes{grid-template-columns:1fr}
@@ -632,8 +633,7 @@ body.lb-open{overflow:hidden}
   .posts{--per:1.5}
   .slider__ui{width:100%;justify-content:flex-end}
   .foot__in{grid-template-columns:1fr}
-  .hero__media{max-width:18rem}
-  .hero__play{display:none}
+  .hero__media{max-width:16rem}
   .gal__item--w2{grid-column:span 2}
   .gal__item--h2{grid-row:span 1}
   .lb__nav{width:44px;height:44px}

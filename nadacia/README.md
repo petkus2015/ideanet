@@ -102,7 +102,7 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 
 | Prvok | Ovládanie |
 |---|---|
-| hero banner | vľavo sa mení text a tlačidlá, vpravo fotky v pomere 4:5; šípky, bodky, klávesy ← →, potiahnutie prstom po fotke, tlačidlo pauzy; sám sa zastaví pri prejdení myšou a pri prepnutí záložky |
+| hero banner | prehráva sa sám hneď po načítaní; vľavo sa mení text a tlačidlá, vpravo fotky v pomere 4:5. Posun šípkami, bodkami, klávesmi ← → a prstom prehrávanie nezastaví, len reštartuje odpočet. Zastaviť sa dá tlačidlom pauzy (aj na mobile), ďalej sa sám pozastaví pri prejdení myšou a pri prepnutí záložky. |
 | karusel článkov | 4,5 karty na desktope a 1,5 na mobile; posun prstom, šípkami, guličkami aj klávesmi ← → |
 | galéria | klik alebo Enter otvorí lightbox; ← → prepína, Esc zatvára, potiahnutie prstom prepína |
 | údaje 2 % a IBAN | tlačidlo *Kopírovať* vloží hodnotu do schránky |

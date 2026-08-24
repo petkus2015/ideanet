@@ -132,8 +132,8 @@
     dotEls[cur].classList.add('is-on');
     dotEls[cur].setAttribute('aria-selected', 'true');
     renderCopy(cur);
-    restartProgress();
-    if (user) pause();
+    if (user && playing) play();     // reštart odpočtu, prehrávanie beží ďalej
+    else restartProgress();
   }
 
   function restartProgress(){
