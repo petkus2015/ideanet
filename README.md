@@ -1,7 +1,9 @@
 # IDEANET — one-page web pre tvorcu reels
 
 Statická jednostránka pre videografa, ktorý pre klientov **natáča a strihá vertikálny obsah**
-(sám nestojí pred kamerou). Ťažiskom je interaktívne portfólio videí na výšku.
+(sám nestojí pred kamerou). Okrem interaktívneho portfólia obsahuje kompletnú ponuku —
+mesačné balíky pre firmy, white-label cenník pre agentúry, eventy, kalkulačku ceny
+a podmienky spolupráce.
 
 Bez build kroku a bez závislostí — čisté HTML, CSS a JavaScript.
 
@@ -20,29 +22,50 @@ Nasadenie: nahrajte obsah priečinka na akýkoľvek statický hosting
 ```
 index.html          obsah stránky
 styles.css          dizajn (tmavá modrá → čierna, magenta akcent)
-app.js              interakcie + dáta portfólia
+app.js              interakcie, dáta portfólia, kalkulačka
 assets/posters/     náhľady kariet 9:16 (SVG)
 assets/videos/      videá portfólia
 ```
 
-## Ako vymeniť videá za vlastné
+## Obsah stránky
 
-1. Nahrajte **MP4 na výšku (9:16)** do `assets/videos/`, napr. `reel-01.mp4`.
-2. V `app.js` upravte pole `REELS` — cesty, názov, popis, kategóriu, dĺžku a štítky.
-3. Ako plagát (`poster`) použite snímku z videa; SVG v `assets/posters/` sú len zástupné.
+| Sekcia | Čo obsahuje |
+|---|---|
+| Hero | pozicionovanie „prídem → natočím → zostrihám → máte obsah“ |
+| Portfólio | interaktívny pás vertikálnych videí |
+| Služby | tri cesty spolupráce (firmy / agentúry / eventy) + čo je vždy v cene |
+| Pre koho | segmenty, kde video priamo pomáha predávať |
+| Proces | štyri kroky od zadania po dodanie |
+| Cenník | prepínač troch pohľadov — firmy, agentúry (white-label), eventy |
+| Kalkulačka | orientačná cena podľa balíka, expresu, dopravy, extra hodín a RAW |
+| Podmienky | revízie, termíny, doprava, storno, RAW, NDA, platby, práca navyše |
+| Kontakt | dopytový formulár s predvyplneným balíkom |
+
+## Cenník
+
+Ceny sú v `index.html` uvedené priamo v texte, kalkulačka ich číta
+z atribútov `value` v `#calcPkg`. **Pri zmene ceny upravte obe miesta.**
+
+**Firmy — mesačne:** START 390 € · GROW 690 € · PRO 990 €
+**Firmy — jednorazovo:** 1 Reel 160 € · 3 Reels 350 € · 5 Reels 520 €
+**Agentúry (white-label):** Reel Basic 120 € · Content Mini 250 € · Content Day 390 €
+· Content Plus 550 € · Same-Day Event 290 € · Event Plus 450 € · Partner od 1 200 €/mes.
+**Eventy:** Event Mini 290 € · Event 450 € · Event Same-Day 590 € · ďalšia hodina 70 €
+
+Sadzby v kalkulačke sú konštanty na začiatku bloku *9) KALKULAČKA* v `app.js`:
 
 ```js
-{ id:'r1', cat:'Gastro', title:'Ranná káva',
-  desc:'Brand film pre mestskú kaviareň.', dur:'0:18',
-  poster:'assets/posters/reel-01.svg',
-  video:'assets/videos/reel-01.mp4',      // vaše video (má prednosť)
-  demo:'assets/videos/reel-01.webm',      // zástupný klip
-  tags:['Brand film','Grading','Zvuk'] }
+const KM_RATE = .4, HOUR_RATE = 60, RAW_FEE = 80;
 ```
 
-Prehliadač si vyberie prvý zdroj, ktorý vie prehrať — kým `.mp4` nedodáte,
-prehrá sa zástupný `.webm` klip. Keď chýbajú oba, karta zostane na plagáte
-a zobrazí sa poznámka.
+Príplatky za expres (30 % / 50 %) sú v `value` atribútoch `#calcSpeed`.
+
+## Prepínač cenníka
+
+Tri panely (`#panel-firmy`, `#panel-agentury`, `#panel-eventy`) prepína
+`role="tablist"` — myšou aj šípkami ← →. Karty v sekcii Služby majú
+`data-tab` a otvoria príslušný pohľad. Každé tlačidlo balíka nesie
+`data-package` — po kliknutí predvyplní výber v kontaktnom formulári.
 
 ## Interakcie portfólia
 
@@ -61,7 +84,7 @@ z obrazovky sa prehrávanie zastaví.
 ## Prispôsobenie
 
 - **Farby, rádiusy, šírka obsahu** — premenné v `:root` v `styles.css`.
-- **Texty, ceny, kontakt** — priamo v `index.html`.
+- **Texty, ceny, kontakt** — priamo v `index.html` (ceny aj v `#calcPkg`).
 - **Formulár** momentálne otvára e-mailového klienta (`mailto:`).
   Pre odosielanie na server nahraďte záver `submit` handlera v `app.js`
   volaním `fetch()` na váš endpoint.

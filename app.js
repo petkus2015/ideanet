@@ -349,6 +349,117 @@
     c.style.setProperty('--my', (e.clientY - r.top) + 'px');
   }));
 
+  /* ───────────────────────────────────────────
+     8) CENNÍK — prepínanie pohľadov
+  ─────────────────────────────────────────── */
+  const tabBtns = $$('.tabs__btn');
+  const showTab = (key, focus) => {
+    tabBtns.forEach(b => {
+      const on = b.dataset.tab === key;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+      const panel = $('#panel-' + b.dataset.tab);
+      if (panel) {
+        panel.hidden = !on;
+        panel.classList.toggle('is-active', on);
+        /* obsah skrytého panelu observer nezachytí — odkryjeme ho ručne */
+        if (on) $$('.reveal', panel).forEach(el => el.classList.add('is-in'));
+      }
+      if (on && focus) b.focus();
+    });
+  };
+
+  tabBtns.forEach((btn, i) => {
+    btn.addEventListener('click', () => showTab(btn.dataset.tab));
+    btn.addEventListener('keydown', (e) => {
+      const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!dir) return;
+      e.preventDefault();
+      showTab(tabBtns[(i + dir + tabBtns.length) % tabBtns.length].dataset.tab, true);
+    });
+  });
+
+  /* karty služieb otvoria príslušný pohľad v cenníku */
+  $$('.lane[data-tab]').forEach(lane => {
+    lane.addEventListener('click', () => showTab(lane.dataset.tab));
+  });
+
+  /* ───────────────────────────────────────────
+     9) KALKULAČKA
+  ─────────────────────────────────────────── */
+  const calc = $('#calcForm');
+  if (calc) {
+    const pkg   = $('#calcPkg'),   speed = $('#calcSpeed'),
+          km    = $('#calcKm'),    hours = $('#calcHours'),
+          raw   = $('#calcRaw');
+    const outTotal = $('#calcTotal'), outUnit = $('#calcUnit'),
+          outRows  = $('#calcRows'),  outCta  = $('#calcCta');
+
+    const KM_RATE = .4, HOUR_RATE = 60, RAW_FEE = 80;
+    const eur = (n) => Math.round(n).toLocaleString('sk-SK') + ' €';
+
+    const recalc = () => {
+      const opt  = pkg.options[pkg.selectedIndex];
+      const base = +opt.value;
+      const unit = opt.dataset.unit || '';
+      const rush = +speed.value;
+      /* účtuje sa každá začatá polhodina */
+      const extraH = Math.ceil(Math.max(0, +hours.value || 0) * 2) / 2;
+      const kmOne  = Math.max(0, +km.value || 0);
+
+      const rushFee  = base * rush;
+      const hoursFee = extraH * HOUR_RATE;
+      const travel   = kmOne * 2 * KM_RATE;
+      const rawFee   = raw.checked ? RAW_FEE : 0;
+      const total    = base + rushFee + hoursFee + travel + rawFee;
+
+      const rows = [[opt.textContent.split(' · ')[0], eur(base), 'is-base']];
+      if (rushFee)  rows.push([rush === .5 ? 'Same-day (+50 %)' : 'Expres do 24 h (+30 %)', eur(rushFee)]);
+      if (hoursFee) rows.push([`Natáčanie navyše — ${extraH} h`, eur(hoursFee)]);
+      if (travel)   rows.push([`Doprava — ${kmOne * 2} km`, eur(travel)]);
+      if (rawFee)   rows.push(['RAW materiál', eur(rawFee)]);
+
+      outRows.innerHTML = rows
+        .map(([l, v, cls]) => `<li class="${cls || ''}"><span>${l}</span><b>${v}</b></li>`)
+        .join('');
+
+      outTotal.textContent = Math.round(total).toLocaleString('sk-SK');
+      outUnit.textContent  = (unit === 'mesačne' ? 'mesačne, bez DPH' : unit + ', bez DPH');
+
+      /* prenos výberu do kontaktného formulára */
+      outCta.dataset.package = opt.textContent.split(' · ')[0];
+      outCta.dataset.summary = rows.map(([l, v]) => `${l}: ${v}`).join('\n')
+        + `\nSpolu (orientačne): ${eur(total)} ${unit === 'mesačne' ? 'mesačne' : ''}`.trimEnd();
+    };
+
+    calc.addEventListener('input', recalc);
+    calc.addEventListener('change', recalc);
+    recalc();
+  }
+
+  /* ───────────────────────────────────────────
+     10) PREDVYPLNENIE DOPYTU
+  ─────────────────────────────────────────── */
+  const typeSel = $('#type'), msgField = $('#msg');
+  const pickOption = (label) => {
+    if (!typeSel || !label) return;
+    const opt = [...typeSel.options].find(o => o.textContent.trim() === label.trim())
+             || [...typeSel.options].find(o => o.textContent.toLowerCase().includes(label.toLowerCase().split(' —')[0]));
+    if (opt) typeSel.value = opt.value || opt.textContent;
+  };
+
+  $$('[data-package]').forEach(el => el.addEventListener('click', () => {
+    pickOption(el.dataset.package);
+    if (el.dataset.summary && msgField && !msgField.value.trim()) {
+      msgField.value = 'Rozpočet podľa kalkulačky:\n' + el.dataset.summary + '\n\n';
+    }
+    if (typeSel) {
+      typeSel.classList.add('is-flash');
+      setTimeout(() => typeSel.classList.remove('is-flash'), 1200);
+    }
+  }));
+
   /* formulár */
   const form = $('#contactForm'), status = $('#formStatus');
   const setErr = (input, msg) => {
