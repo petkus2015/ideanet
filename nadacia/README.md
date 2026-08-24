@@ -25,6 +25,7 @@ app.js            slider, galéria, lightbox, formulár, kopírovanie údajov
 assets/img/       obrázky (hero-*.svg, gal-*.svg, card-*.svg, about.svg) a logo
 assets/dokumenty/ tlačivá na stiahnutie (PDF) — podrobnosti v README priečinka
 avada/            tá istá jednostránka ako bloky pre Avada Builder (WordPress)
+wordpress-plugin/ inštalačný ZIP pluginu, ktorý bloky pridá do Avada Library
 ```
 
 ## Obrázky — ako nasadiť skutočné fotky
@@ -111,9 +112,14 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 
 ## Verzia pre WordPress (Avada)
 
-Priečinok `avada/` obsahuje tú istú stránku rozdelenú na bloky pre Avada Builder —
-jeden súbor na sekciu, doplnkové CSS a návod na vloženie. Podrobnosti v
-`avada/README.md`.
+Sú dve možnosti, obe vedú k tomu istému — sekcie sa dajú skladať v Avada Builderi:
+
+- **Plugin (odporúčame)** — `wordpress-plugin/nadacia-anjelske-kridla-bloky.zip`
+  nainštalujete cez Pluginy → Pridať nový → Nahrať plugin. Po aktivácii kliknete
+  na *Bloky nadácie → Importovať* a sekcie sa objavia v Avada Library, aj so
+  štýlmi a ilustračnými obrázkami. Návod je v `wordpress-plugin/nadacia-anjelske-kridla-bloky/README.md`.
+- **Ručne** — priečinok `avada/` obsahuje tie isté sekcie ako textové súbory
+  so shortcodmi, ktoré sa vkladajú cez klasický editor. Podrobnosti v `avada/README.md`.
 
 ## Prispôsobenie
 

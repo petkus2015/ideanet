@@ -1,0 +1,40 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="ziadost-o-pomoc" background_color="#eff8fa" padding_top="100px" padding_bottom="100px" status="published"][fusion_builder_row][fusion_builder_column type="1_2" layout="1_2" align_self="center" spacing="5%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" last="false" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]Žiadosť o pomoc[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="18px"]Ako požiadať o pomoc[/fusion_title]
+
+[fusion_text font_size="18px" line_height="1.7" text_color="#2a4750" margin_bottom="24px"]
+O pomoc môže požiadať rodina, jednotlivec aj zariadenie. Stačí vyplniť dve tlačivá — žiadosť o príspevok a súhlas so spracovaním osobných údajov. Bez oboch, žiaľ, žiadosť nevieme posúdiť.
+[/fusion_text]
+
+[fusion_text text_color="#2a4750"]
+<ol class="ak-steps">
+<li><b>Stiahnite si obe tlačivá</b><span>Žiadosť o príspevok aj súhlas s ochranou osobných údajov.</span></li>
+<li><b>Vyplňte a podpíšte</b><span>Opíšte situáciu čo najkonkrétnejšie a priložte doklady, ktoré ju dokladujú.</span></li>
+<li><b>Doručte nám ich</b><span>E-mailom na info@nadaciaanjelskekridla.sk alebo poštou na adresu nadácie.</span></li>
+<li><b>Ozveme sa vám</b><span>Každú žiadosť posudzuje správna rada nadácie individuálne.</span></li>
+</ol>
+[/fusion_text]
+
+[/fusion_builder_column][fusion_builder_column type="1_2" layout="1_2" align_self="center" spacing="5%" hover_type="none" border_style="solid" background_color="#ffffff" border_radius_top_left="36px" border_radius_top_right="36px" border_radius_bottom_right="36px" border_radius_bottom_left="36px" box_shadow="yes" box_shadow_blur="60" box_shadow_spread="-20" box_shadow_color="rgba(6,34,42,0.22)" padding_top="40px" padding_right="40px" padding_bottom="40px" padding_left="40px" animation_type="fade" animation_direction="up" animation_speed="0.7" last="true" first="false"]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#0a1f26" style_type="none" margin_bottom="24px"]Tlačivá na stiahnutie[/fusion_title]
+
+[fusion_text class="ak-doc" margin_bottom="8px"]
+<b>Žiadosť o príspevok</b><span>Pre žiadateľov o pomoc · PDF</span>
+[/fusion_text]
+
+[fusion_button link="{{AK_DOC}}ziadost-o-prispevok.pdf" target="_blank" color="custom" button_gradient_top_color="#f9193e" button_gradient_bottom_color="#d20e2e" button_gradient_top_color_hover="#ff4f66" button_gradient_bottom_color_hover="#f9193e" accent_color="#ffffff" accent_hover_color="#ffffff" type="flat" border_radius_top_left="999px" border_radius_top_right="999px" border_radius_bottom_right="999px" border_radius_bottom_left="999px" size="medium" stretch="yes" icon="fa-download fas" icon_position="left" margin_bottom="26px"]Stiahnuť tlačivo[/fusion_button]
+
+[fusion_text class="ak-doc" margin_bottom="8px"]
+<b>Súhlas s ochranou osobných údajov</b><span>Povinná príloha k žiadosti · PDF</span>
+[/fusion_text]
+
+[fusion_button link="{{AK_DOC}}suhlas-ochrana-osobnych-udajov.pdf" target="_blank" color="custom" button_gradient_top_color="#f9193e" button_gradient_bottom_color="#d20e2e" button_gradient_top_color_hover="#ff4f66" button_gradient_bottom_color_hover="#f9193e" accent_color="#ffffff" accent_hover_color="#ffffff" type="flat" border_radius_top_left="999px" border_radius_top_right="999px" border_radius_bottom_right="999px" border_radius_bottom_left="999px" size="medium" stretch="yes" icon="fa-download fas" icon_position="left" margin_bottom="20px"]Stiahnuť tlačivo[/fusion_button]
+
+[fusion_text font_size="13px" text_color="#5c757e"]
+Vyplnené a podpísané tlačivá pošlite na <a href="mailto:info@nadaciaanjelskekridla.sk">info@nadaciaanjelskekridla.sk</a> alebo poštou na adresu Nadácia Anjelské krídla, Slovenských dobrovoľníkov 135/30, 010 03 Žilina.
+[/fusion_text]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

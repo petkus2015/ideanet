@@ -1,0 +1,39 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="podpora" background_color="#ffffff" padding_top="100px" padding_bottom="90px" status="published"][fusion_builder_row][fusion_builder_column type="1_1" layout="1_1" spacing="" hover_type="none" border_style="solid" last="true" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]Podporte nás[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="14px"]Tri cesty, ako sa pridať[/fusion_title]
+
+[fusion_text text_color="#5c757e" margin_bottom="34px"]
+Každý dar putuje k rodinám, ktoré oň požiadali a ktorých situáciu poznáme.
+[/fusion_text]
+
+[/fusion_builder_column][fusion_builder_column type="2_5" layout="2_5" spacing="3%" hover_type="none" border_style="solid" background_color="#04171d" background_type="gradient" gradient_start_color="#04171d" gradient_end_color="#14707f" gradient_start_position="0" gradient_end_position="100" gradient_type="linear" linear_angle="150" border_radius_top_left="28px" border_radius_top_right="28px" border_radius_bottom_right="28px" border_radius_bottom_left="28px" padding_top="36px" padding_right="36px" padding_bottom="36px" padding_left="36px" animation_type="fade" animation_direction="up" animation_speed="0.7" last="false" first="true"]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#ffffff" style_type="none" margin_bottom="10px"]Finančný dar[/fusion_title]
+
+[fusion_text text_color="rgba(255,255,255,0.72)" margin_bottom="22px"]Jednorazovo alebo pravidelne — na účet nadácie.[/fusion_text]
+
+[fusion_text class="ak-iban"]
+<span>IBAN</span><strong>SK37 1100 0000 0029 4603 3398</strong>
+[/fusion_text]
+
+[fusion_text font_size="13px" text_color="rgba(255,255,255,0.55)" margin_top="16px"]Do poznámky pre prijímateľa môžete uviesť účel daru, napríklad „balíček pre rodinu“.[/fusion_text]
+
+[/fusion_builder_column][fusion_builder_column type="1_4" layout="1_4" spacing="3%" hover_type="none" border_style="solid" border_sizes_top="1px" border_sizes_bottom="1px" border_sizes_left="1px" border_sizes_right="1px" border_color="rgba(6,34,42,0.12)" border_radius_top_left="28px" border_radius_top_right="28px" border_radius_bottom_right="28px" border_radius_bottom_left="28px" padding_top="36px" padding_right="30px" padding_bottom="36px" padding_left="30px" animation_type="fade" animation_direction="up" animation_speed="0.7" animation_delay="0.1" last="false" first="false"]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#0a1f26" style_type="none" margin_bottom="10px"]2 % z dane[/fusion_title]
+
+[fusion_text text_color="#5c757e" margin_bottom="22px"]Rozhodnite o podiele svojej dane. Údaje nájdete o sekciu vyššie.[/fusion_text]
+
+[fusion_button link="#dve-percenta" color="custom" button_gradient_top_color="rgba(0,0,0,0)" button_gradient_bottom_color="rgba(0,0,0,0)" button_gradient_top_color_hover="#eff8fa" button_gradient_bottom_color_hover="#eff8fa" accent_color="#0a1f26" accent_hover_color="#0a1f26" type="flat" border_top="2px" border_right="2px" border_bottom="2px" border_left="2px" border_color="rgba(6,34,42,0.2)" border_hover_color="#14707f" border_radius_top_left="999px" border_radius_top_right="999px" border_radius_bottom_right="999px" border_radius_bottom_left="999px" size="medium"]Zobraziť údaje[/fusion_button]
+
+[/fusion_builder_column][fusion_builder_column type="1_4" layout="1_4" spacing="0%" hover_type="none" border_style="solid" border_sizes_top="1px" border_sizes_bottom="1px" border_sizes_left="1px" border_sizes_right="1px" border_color="rgba(6,34,42,0.12)" border_radius_top_left="28px" border_radius_top_right="28px" border_radius_bottom_right="28px" border_radius_bottom_left="28px" padding_top="36px" padding_right="30px" padding_bottom="36px" padding_left="30px" animation_type="fade" animation_direction="up" animation_speed="0.7" animation_delay="0.2" last="true" first="false"]
+
+[fusion_title title_type="text" content_align="left" size="3" text_color="#0a1f26" style_type="none" margin_bottom="10px"]Čas a partnerstvo[/fusion_title]
+
+[fusion_text text_color="#5c757e" margin_bottom="22px"]Dobrovoľníctvo, firemné partnerstvo, materiálny dar alebo pomoc s podujatím.[/fusion_text]
+
+[fusion_button link="#kontakt" color="custom" button_gradient_top_color="rgba(0,0,0,0)" button_gradient_bottom_color="rgba(0,0,0,0)" button_gradient_top_color_hover="#eff8fa" button_gradient_bottom_color_hover="#eff8fa" accent_color="#0a1f26" accent_hover_color="#0a1f26" type="flat" border_top="2px" border_right="2px" border_bottom="2px" border_left="2px" border_color="rgba(6,34,42,0.2)" border_hover_color="#14707f" border_radius_top_left="999px" border_radius_top_right="999px" border_radius_bottom_right="999px" border_radius_bottom_left="999px" size="medium"]Ozvite sa nám[/fusion_button]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

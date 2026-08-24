@@ -1,0 +1,32 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="o-nas" background_color="#ffffff" padding_top="100px" padding_bottom="100px" status="published"][fusion_builder_row][fusion_builder_column type="1_2" layout="1_2" align_self="center" spacing="4%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" last="false" first="true"]
+
+[fusion_imageframe image_id="" max_width="" style_type="none" blur="" stylecolor="" hover_type="none" bordersize="0" bordercolor="" borderradius="36px" align="none" lightbox="no" alt="Dlane držiace srdce" link="" linktarget="_self" animation_type="" animation_direction="left" animation_speed="0.3"]{{AK_IMG}}about.svg[/fusion_imageframe]
+
+[/fusion_builder_column][fusion_builder_column type="1_2" layout="1_2" align_self="center" spacing="4%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" last="true" first="false"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]O nadácii[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="20px"]Nič v živote sa nedeje náhodou[/fusion_title]
+
+[fusion_text font_size="18px" line_height="1.7" text_color="#2a4750" margin_bottom="16px"]
+Nadácia Anjelské krídla vznikla 22. decembra 2016. Nezištne pomáha vážne chorým deťom a ich rodinám, mamám, ktoré sa o choré deti starajú samy, rodinám v núdzi, týraným matkám a deťom, seniorom, krízovým centrám a sociálnym zariadeniam.
+[/fusion_text]
+
+[fusion_text text_color="#2a4750" margin_bottom="22px"]
+Nadáciu tvoria odborníci a dobrovoľníci, ktorí pomáhajú vo svojom voľnom čase — bez nároku na odmenu či mzdu. Nadácia nepoberá štátne dotácie a je apolitická.
+[/fusion_text]
+
+[fusion_checklist icon="fa-check fas" iconcolor="#14707f" circle="yes" circlecolor="#dcf0f3" size="15px" divider="no"]
+[fusion_li_item icon=""]Vážne choré deti a ich rodiny[/fusion_li_item]
+[fusion_li_item icon=""]Mamy, ktoré sa starajú samy[/fusion_li_item]
+[fusion_li_item icon=""]Rodiny v núdzi a krízové centrá[/fusion_li_item]
+[fusion_li_item icon=""]Seniori a sociálne zariadenia[/fusion_li_item]
+[/fusion_checklist]
+
+[fusion_separator style_type="none" top_margin="24px" bottom_margin="0px" /]
+
+[fusion_button link="#podpora" color="custom" button_gradient_top_color="#f9193e" button_gradient_bottom_color="#d20e2e" button_gradient_top_color_hover="#ff4f66" button_gradient_bottom_color_hover="#f9193e" accent_color="#ffffff" accent_hover_color="#ffffff" type="flat" border_radius_top_left="999px" border_radius_top_right="999px" border_radius_bottom_right="999px" border_radius_bottom_left="999px" size="large" margin_right="12px"]Chcem pomôcť[/fusion_button]
+
+[fusion_button link="#ziadost-o-pomoc" color="custom" button_gradient_top_color="rgba(0,0,0,0)" button_gradient_bottom_color="rgba(0,0,0,0)" button_gradient_top_color_hover="#eff8fa" button_gradient_bottom_color_hover="#eff8fa" accent_color="#0a1f26" accent_hover_color="#0a1f26" type="flat" border_top="2px" border_right="2px" border_bottom="2px" border_left="2px" border_color="rgba(6,34,42,0.2)" border_hover_color="#14707f" border_radius_top_left="999px" border_radius_top_right="999px" border_radius_bottom_right="999px" border_radius_bottom_left="999px" size="large"]Potrebujem pomoc[/fusion_button]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

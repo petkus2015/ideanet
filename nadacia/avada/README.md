@@ -3,6 +3,12 @@
 Jednostránka rozdelená na bloky pre **Avada Builder** (WordPress). Každý súbor je
 jedna sekcia — vložíte ju do stránky a ďalej ju upravujete klikaním v builderi.
 
+> **Jednoduchšia cesta:** tie isté sekcie sú aj ako WordPress plugin —
+> `../wordpress-plugin/nadacia-anjelske-kridla-bloky.zip`. Po inštalácii a jednom
+> kliknutí sa objavia v Avada Library aj so štýlmi a obrázkami, takže nemusíte
+> nič kopírovať ani nahrávať. Tento priečinok je pre prípad, že chcete bloky
+> vkladať ručne alebo si ich upraviť pred vložením.
+
 > **Overte si vzhľad po vložení.** Bloky sú napísané v shortcode syntaxi Avada
 > Builderu (rad 7.x). Neznáme atribúty Avada ticho ignoruje a chýbajúce dopĺňa
 > z Global Options, takže import prejde — ale konkrétne rozostupy či veľkosti

@@ -1,0 +1,18 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="ako-pomahame" background_color="#ffffff" padding_top="20px" padding_bottom="100px" status="published"][fusion_builder_row][fusion_builder_column type="1_1" layout="1_1" align_self="flex-start" spacing="" hover_type="none" border_style="solid" last="true" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]Ako pomáhame[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="14px"]Štyri spôsoby, ako sa pomoc dostane k ľuďom[/fusion_title]
+
+[fusion_text text_color="#5c757e" margin_bottom="40px"]
+Každá žiadosť je iná. Preto pomáhame konkrétne — vecami, financiami aj časom.
+[/fusion_text]
+
+[fusion_content_boxes layout="icon-boxed" columns="4" title_size="20" heading_size="3" icon_align="left" iconcolor="#14707f" circlecolor="#dcf0f3" circlebordercolor="" backgroundcolor="#ffffff" icon_circle="yes" icon_size="24" body_color="#5c757e" animation_type="fade" animation_direction="up" animation_speed="0.7" animation_delay="0.1"]
+[fusion_content_box title="Materiálna pomoc" icon="fa-box-open fas" backgroundcolor="" iconcolor="" circlecolor="" circlebordercolor="" image="" link="" linktarget="_self" linktext=""]Balíky s potravinami, hygienou, zdravotníckymi pomôckami, oblečením a hračkami — posielame priamo rodinám.[/fusion_content_box]
+[fusion_content_box title="Finančná pomoc" icon="fa-hand-holding-heart fas" backgroundcolor="" iconcolor="" circlecolor="" circlebordercolor="" image="" link="" linktarget="_self" linktext=""]Príspevok na konkrétnu situáciu — lieky, pomôcky, doprava do nemocnice, nedoplatky či nečakaný výdavok.[/fusion_content_box]
+[fusion_content_box title="Pobyty a rehabilitácia" icon="fa-spa fas" backgroundcolor="" iconcolor="" circlecolor="" circlebordercolor="" image="" link="" linktarget="_self" linktext=""]Relaxačné, ozdravné a rehabilitačné pobyty, ktoré rodinám vrátia silu pokračovať ďalej.[/fusion_content_box]
+[fusion_content_box title="Benefičné podujatia" icon="fa-music fas" backgroundcolor="" iconcolor="" circlecolor="" circlebordercolor="" image="" link="" linktarget="_self" linktext=""]Koncerty, behy a zbierky, ktoré spájajú ľudí a menia dobrú vôľu na konkrétnu pomoc.[/fusion_content_box]
+[/fusion_content_boxes]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]

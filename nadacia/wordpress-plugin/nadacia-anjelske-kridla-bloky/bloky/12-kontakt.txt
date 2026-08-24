@@ -1,0 +1,32 @@
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="kontakt" background_color="#ffffff" padding_top="100px" padding_bottom="100px" status="published"][fusion_builder_row][fusion_builder_column type="1_2" layout="1_2" align_self="flex-start" spacing="5%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" last="false" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]Kontakt[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="18px"]Napíšte nám[/fusion_title]
+
+[fusion_text font_size="18px" line_height="1.7" text_color="#2a4750" margin_bottom="26px"]
+Žiadate o pomoc, chcete darovať alebo sa pridať ako dobrovoľník? Ozvite sa — odpovedáme každému.
+[/fusion_text]
+
+[fusion_checklist icon="fa-envelope fas" iconcolor="#14707f" circle="yes" circlecolor="#dcf0f3" size="16px" divider="no"]
+[fusion_li_item icon="fa-envelope fas"]<b>E-mail</b><br /><a href="mailto:info@nadaciaanjelskekridla.sk">info@nadaciaanjelskekridla.sk</a>[/fusion_li_item]
+[fusion_li_item icon="fa-phone fas"]<b>Telefón</b><br /><a href="tel:+421948661333">+421 948 661 333</a>[/fusion_li_item]
+[fusion_li_item icon="fa-map-marker-alt fas"]<b>Sídlo</b><br />Slovenských dobrovoľníkov 135/30, 010 03 Žilina[/fusion_li_item]
+[/fusion_checklist]
+
+[fusion_separator style_type="none" top_margin="26px" bottom_margin="0px" /]
+
+[fusion_social_links icons_boxed="yes" icons_boxed_radius="50%" color_type="custom" icon_colors="#0a1f26" box_colors="rgba(0,0,0,0)" box_border_color="rgba(6,34,42,0.2)" box_border_size="2px" facebook="https://www.facebook.com/" instagram="https://www.instagram.com/" youtube="https://www.youtube.com/" alignment="left" /]
+
+[/fusion_builder_column][fusion_builder_column type="1_2" layout="1_2" align_self="flex-start" spacing="5%" hover_type="none" border_style="solid" background_color="#ffffff" border_sizes_top="1px" border_sizes_bottom="1px" border_sizes_left="1px" border_sizes_right="1px" border_color="rgba(6,34,42,0.12)" border_radius_top_left="36px" border_radius_top_right="36px" border_radius_bottom_right="36px" border_radius_bottom_left="36px" box_shadow="yes" box_shadow_blur="60" box_shadow_spread="-20" box_shadow_color="rgba(6,34,42,0.22)" padding_top="40px" padding_right="40px" padding_bottom="40px" padding_left="40px" animation_type="fade" animation_direction="up" animation_speed="0.7" last="true" first="false"]
+
+[fusion_text]
+<!-- SEM PATRÍ FORMULÁR.
+     Avada → Forms → Add New: polia Meno, E-mail, Téma (výber: Žiadosť o pomoc,
+     Chcem darovať, 2 % z dane, Dobrovoľníctvo, Firemné partnerstvo, Iné),
+     Správa, súhlas so spracovaním osobných údajov (povinný checkbox).
+     Formulár uložte, potom tento text nahraďte elementom "Form" a vyberte ho.
+     Alebo vložte shortcode: [fusion_form form_post_id="ID_VASHO_FORMULARA"] -->
+[/fusion_text]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]
