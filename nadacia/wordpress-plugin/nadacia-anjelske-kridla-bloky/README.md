@@ -8,7 +8,8 @@ Nadácie Anjelské krídla.
 1. Nástenka → **Pluginy → Pridať nový → Nahrať plugin**, vyberte
    `nadacia-anjelske-kridla-bloky.zip` a nainštalujte.
 2. Plugin **aktivujte**.
-3. V ľavom menu otvorte **Bloky nadácie** a kliknite na
+3. V ľavom menu otvorte **Bloky nadácie**, do poľa hore vložte odkaz na
+   **transparentný účet** (voliteľné) a kliknite na
    **Importovať bloky do Avada Library**.
 
 Plugin potrebuje tému **Avada** a aktívny **Avada Builder (Fusion Builder)**.
@@ -33,6 +34,7 @@ Odporúčané poradie: 01 → 12. Kotvy v kontajneroch (`uvod`, `o-nas`, `ako-po
 | všetky bloky s fotkou | ilustračné obrázky nahraďte fotografiami nadácie |
 | blok 05 a 09 | odkazy na PDF tlačivá — nahrajte ich do knižnice médií a opravte odkazy tlačidiel |
 | blok 12 | kontaktný formulár vytvorte v Avada → Forms a vložte do pravého stĺpca |
+| blok 10 | odkaz na transparentný účet — vyplňte ho v nastaveniach pluginu pred importom |
 | blok 12 | odkazy na Facebook, Instagram a YouTube |
 | blok 11 | ohlasy sú ilustračné — nahraďte ich skutočnými so súhlasom rodín |
 

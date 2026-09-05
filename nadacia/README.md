@@ -92,6 +92,7 @@ Pre ostrejšie zobrazenie na retina displejoch sa hodí logo vo väčšom rozlí
 | `assets/img/` | ilustračné scény nahraďte fotografiami |
 | `assets/dokumenty/` | doplňte 3 PDF tlačivá: `ziadost-o-prispevok.pdf`, `suhlas-ochrana-osobnych-udajov.pdf`, `vyhlasenie-2-percenta.pdf` (viď README v priečinku) |
 | `app.js` — `form.addEventListener('submit')` | formulár otvára e-mailového klienta (`mailto:`); pre odosielanie na server nahraďte záver handlera volaním `fetch()` na váš endpoint |
+| `app.js` — `UCET_LINK` | odkaz na výpis transparentného účtu (zatiaľ vedie na stránku banky) |
 
 Overené údaje nadácie, ktoré web už obsahuje: IČO 50622510, sídlo
 Slovenských dobrovoľníkov 135/30, 010 03 Žilina, IBAN
@@ -103,12 +104,13 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 
 | Prvok | Ovládanie |
 |---|---|
-| hero banner | prehráva sa sám hneď po načítaní; vľavo sa mení text a tlačidlá, vpravo fotky v pomere 4:5. Posun šípkami, bodkami, klávesmi ← → a prstom prehrávanie nezastaví, len reštartuje odpočet. Zastaviť sa dá tlačidlom pauzy (aj na mobile), ďalej sa sám pozastaví pri prejdení myšou a pri prepnutí záložky. |
+| hero banner | prehráva sa sám hneď po načítaní; vľavo sa mení text a tlačidlá, vpravo fotky v pomere 4:5. Ovládanie sú dve šípky a tlačidlo stop/play. Posun šípkami, klávesmi ← → a prstom po fotke prehrávanie nezastaví, len reštartuje odpočet. Sám sa pozastaví pri prejdení myšou a pri prepnutí záložky. |
 | karusel článkov | 4,5 karty na desktope a 1,5 na mobile; posun prstom, šípkami, guličkami aj klávesmi ← → |
 | galéria | klik alebo Enter otvorí lightbox; ← → prepína, Esc zatvára, potiahnutie prstom prepína |
 | údaje 2 % a IBAN | tlačidlo *Kopírovať* vloží hodnotu do schránky |
 | tlačivá na stiahnutie | tlačidlo stiahne PDF; kým súbor v `assets/dokumenty/` chýba, zobrazí sa odkaz na e-mail nadácie namiesto chybovej stránky |
-| formulár | validácia na strane prehliadača + zvýraznenie chybných polí |
+| formulár | validácia na strane prehliadača + zvýraznenie chybných polí; pri téme *Žiadosť o pomoc* pribudne pole na prílohy |
+| transparentný účet | odkaz v darcovskej karte, adresu nastavíte v konštante `UCET_LINK` v `app.js` |
 
 ## Verzia pre WordPress (Avada)
 
@@ -120,6 +122,14 @@ Sú dve možnosti, obe vedú k tomu istému — sekcie sa dajú skladať v Avada
   štýlmi a ilustračnými obrázkami. Návod je v `wordpress-plugin/nadacia-anjelske-kridla-bloky/README.md`.
 - **Ručne** — priečinok `avada/` obsahuje tie isté sekcie ako textové súbory
   so shortcodmi, ktoré sa vkladajú cez klasický editor. Podrobnosti v `avada/README.md`.
+
+### Prílohy k žiadosti
+
+Pri téme *Žiadosť o pomoc* sa vo formulári objaví pole na prílohy. Keďže stránka
+odosiela cez `mailto:`, prehliadač samotné súbory pripojiť nevie — do správy sa
+doplnia ich názvy a návštevník ich pripojí k otvorenému e-mailu. Ak chcete, aby
+sa súbory naozaj nahrávali, formulár napojte na serverový endpoint
+(alebo použite formulár Avady, ktorý pole Upload podporuje).
 
 ## Prispôsobenie
 

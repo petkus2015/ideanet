@@ -22,9 +22,18 @@
 
 [fusion_text]
 <!-- SEM PATRÍ FORMULÁR.
-     Avada → Forms → Add New: polia Meno, E-mail, Téma (výber: Žiadosť o pomoc,
-     Chcem darovať, 2 % z dane, Dobrovoľníctvo, Firemné partnerstvo, Iné),
-     Správa, súhlas so spracovaním osobných údajov (povinný checkbox).
+     Avada → Forms → Add New a pridajte polia:
+       1. Meno a priezvisko  (Text, povinné)
+       2. E-mail             (Email, povinné)
+       3. Čoho sa správa týka (Select: Žiadosť o pomoc, Chcem darovať, 2 % z dane,
+          Dobrovoľníctvo, Firemné partnerstvo, Iné)
+       4. Správa             (Textarea, povinné)
+       5. Prílohy k žiadosti (Upload — povolené typy pdf,doc,docx,jpg,jpeg,png,
+          viac súborov zapnúť). V nastaveniach poľa zapnite Conditional Logic:
+          zobraziť, keď pole "Čoho sa správa týka" = "Žiadosť o pomoc".
+          Na karte Form Options nastavte, kam sa prílohy ukladajú, prípadne
+          "Send as attachment" pri notifikačnom e-maile.
+       6. Súhlas so spracovaním osobných údajov (Checkbox, povinný)
      Formulár uložte, potom tento text nahraďte elementom "Form" a vyberte ho.
      Alebo vložte shortcode: [fusion_form form_post_id="ID_VASHO_FORMULARA"] -->
 [/fusion_text]

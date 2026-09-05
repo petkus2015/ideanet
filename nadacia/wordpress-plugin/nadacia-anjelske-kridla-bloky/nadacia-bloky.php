@@ -46,16 +46,25 @@ function ak_bloky_obsah( $kluc ) {
 	if ( ! file_exists( $subor ) ) {
 		return '';
 	}
-	$obsah = file_get_contents( $subor ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	$obsah  = file_get_contents( $subor ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 	$uploads = wp_get_upload_dir();
+	$ucet    = ak_bloky_ucet();
 
 	return strtr(
 		$obsah,
 		array(
-			'{{AK_IMG}}' => AK_BLOKY_URL . 'assets/img/',
-			'{{AK_DOC}}' => trailingslashit( $uploads['baseurl'] ) . 'nadacia/',
+			'{{AK_IMG}}'  => AK_BLOKY_URL . 'assets/img/',
+			'{{AK_DOC}}'  => trailingslashit( $uploads['baseurl'] ) . 'nadacia/',
+			'{{AK_UCET}}' => '' !== $ucet ? $ucet : '#podpora',
 		)
 	);
+}
+
+/**
+ * Odkaz na výpis transparentného účtu (prázdny, kým ho nevyplníte).
+ */
+function ak_bloky_ucet() {
+	return (string) get_option( 'ak_bloky_ucet', '' );
 }
 
 /* ─────────────────────────────────────────────
@@ -167,6 +176,12 @@ function ak_bloky_stranka() {
 	$sprava = '';
 	$chyba  = '';
 
+	if ( isset( $_POST['ak_ulozit_ucet'] ) && check_admin_referer( 'ak_bloky_ucet' ) ) {
+		$novy = isset( $_POST['ak_ucet'] ) ? esc_url_raw( wp_unslash( $_POST['ak_ucet'] ) ) : '';
+		update_option( 'ak_bloky_ucet', $novy );
+		$sprava = '' !== $novy ? 'Odkaz na transparentný účet je uložený.' : 'Odkaz na transparentný účet sme vymazali.';
+	}
+
 	if ( isset( $_POST['ak_import'] ) && check_admin_referer( 'ak_bloky_import' ) ) {
 		if ( ! ak_bloky_ma_avadu() ) {
 			$chyba = 'Avada Builder nie je aktívny, knižnica sa nedá naplniť. Bloky si zatiaľ môžete skopírovať nižšie.';
@@ -203,14 +218,30 @@ function ak_bloky_stranka() {
 			</div>
 		<?php endif; ?>
 
-		<h2>1. Import do knižnice</h2>
+		<h2>1. Odkaz na transparentný účet</h2>
+		<p>Adresa výpisu účtu v internet bankingu. Doplní sa do tlačidla
+			<em>Transparentný účet — pozrieť pohyby</em> v bloku <strong>10 Podporte nás</strong>.
+			Ak pole necháte prázdne, tlačidlo bude odkazovať späť na sekciu podpory.</p>
+		<form method="post">
+			<?php wp_nonce_field( 'ak_bloky_ucet' ); ?>
+			<p>
+				<input type="url" name="ak_ucet" value="<?php echo esc_attr( ak_bloky_ucet() ); ?>"
+					class="regular-text" style="width:520px;max-width:100%"
+					placeholder="https://www.banka.sk/transparentne-ucty/SK37...">
+			</p>
+			<p><button type="submit" name="ak_ulozit_ucet" value="1" class="button">Uložiť odkaz</button></p>
+		</form>
+		<p class="description">Odkaz sa vkladá do blokov pri importe. Ak ho zmeníte neskôr, spustite import znova —
+			prepíše sa tým položka v knižnici. V stránkach, kde už blok máte vložený, odkaz opravte priamo v builderi.</p>
+
+		<h2>2. Import do knižnice</h2>
 		<p>Tlačidlo uloží všetkých dvanásť sekcií do <strong>Avada → Library</strong>. Import môžete spustiť aj opakovane — bloky sa prepíšu, nevzniknú duplikáty.</p>
 		<form method="post">
 			<?php wp_nonce_field( 'ak_bloky_import' ); ?>
 			<p><button type="submit" name="ak_import" value="1" class="button button-primary">Importovať bloky do Avada Library</button></p>
 		</form>
 
-		<h2>2. Vloženie do stránky</h2>
+		<h2>3. Vloženie do stránky</h2>
 		<ol>
 			<li>Stránky → Pridať novú, zapnite <strong>Avada Builder</strong>.</li>
 			<li>Kliknite na <strong>Library</strong> (ikona knižnice v hornej lište buildera) a v záložke <em>Containers</em> vyberte blok.</li>
@@ -219,7 +250,7 @@ function ak_bloky_stranka() {
 		</ol>
 		<p>Ak by sa bloky v knižnici nezobrazili, použite náhradnú cestu: skopírujte shortcode nižšie, v editore stránky prepnite <em>Toggle Builder</em> na klasický editor, vložte a prepnite späť.</p>
 
-		<h2>3. Farby menu a témy</h2>
+		<h2>4. Farby menu a témy</h2>
 		<p>Bloky majú farby nastavené v sebe, hlavičku a menu však ovláda téma:</p>
 		<ul style="list-style:disc;margin-left:22px">
 			<li><strong>Avada → Options → Header</strong>: Header Background Color <code>#28afc3</code>.</li>
@@ -228,7 +259,7 @@ function ak_bloky_stranka() {
 			<li><strong>Avada → Options → Colors</strong>: Primary <code>#28afc3</code>, Text <code>#2a4750</code>, Headings <code>#0a1f26</code>, Link <code>#14707f</code>.</li>
 		</ul>
 
-		<h2>4. Čo doplniť</h2>
+		<h2>5. Čo doplniť</h2>
 		<ul style="list-style:disc;margin-left:22px">
 			<li>Fotky sú zatiaľ ilustračné a nesie ich tento plugin. Nahraďte ich vlastnými priamo v builderi (klik na obrázok → Select Image).</li>
 			<li>Tlačivá na stiahnutie plugin neobsahuje. Nahrajte do knižnice médií súbory <code>ziadost-o-prispevok.pdf</code>, <code>suhlas-ochrana-osobnych-udajov.pdf</code> a <code>vyhlasenie-2-percenta.pdf</code> a v blokoch 05 a 09 opravte odkazy tlačidiel.</li>
@@ -237,7 +268,7 @@ function ak_bloky_stranka() {
 			<li>Ohlasy v bloku 11 sú ilustračné — nahraďte ich skutočnými so súhlasom rodín.</li>
 		</ul>
 
-		<h2>5. Bloky na skopírovanie</h2>
+		<h2>6. Bloky na skopírovanie</h2>
 		<?php foreach ( ak_bloky_zoznam() as $kluc => $blok ) : ?>
 			<?php $id = ak_bloky_najdi_blok( $kluc ); ?>
 			<h3 style="margin-bottom:4px">

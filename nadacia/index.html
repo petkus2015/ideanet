@@ -61,7 +61,6 @@
         <button class="hero__arrow" id="heroPrev" aria-label="Predchádzajúca snímka">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
         </button>
-        <div class="hero__dots" id="heroDots" role="tablist" aria-label="Snímky"></div>
         <button class="hero__arrow" id="heroNext" aria-label="Nasledujúca snímka">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
         </button>
@@ -371,6 +370,16 @@
           <strong id="ibanValue">SK37 1100 0000 0029 4603 3398</strong>
           <button class="copy copy--solid" data-copy="SK3711000000002946033398" aria-label="Kopírovať IBAN">Kopírovať IBAN</button>
         </div>
+        <a class="ucet" id="ucetLink" href="#" target="_blank" rel="noopener" hidden>
+          <span class="ucet__ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v9M19 10v9M9 10v9M15 10v9"/><path d="M3 20h18"/></svg>
+          </span>
+          <span>
+            <b>Transparentný účet</b>
+            <small>Každý pohyb na účte si viete pozrieť online</small>
+          </span>
+          <span class="ucet__sip" aria-hidden="true">→</span>
+        </a>
         <p class="fine">Do poznámky pre prijímateľa môžete uviesť účel daru, napríklad „balíček pre rodinu“.</p>
       </article>
 
@@ -468,6 +477,19 @@
         <textarea id="fmsg" name="sprava" rows="5" required placeholder="Napíšte nám, ako vám vieme pomôcť alebo ako chcete pomôcť vy."></textarea>
         <em class="err" data-for="fmsg">Napíšte, prosím, krátku správu.</em>
       </div>
+      <div class="f f--file" id="fileWrap" hidden>
+        <label for="ffile">Prílohy k žiadosti</label>
+        <label class="drop" for="ffile">
+          <span class="drop__ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M8 8l4-4 4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </span>
+          <span class="drop__txt"><b>Vybrať súbory</b><small>Vyplnené tlačivá alebo doklady — PDF, DOC, JPG, PNG</small></span>
+        </label>
+        <input id="ffile" name="priloha" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+        <ul class="files" id="fileList"></ul>
+        <em class="hint" id="fileHint" hidden>Súbory pripojte k e-mailu, ktorý sa o chvíľu otvorí — ich mená sme do správy už doplnili.</em>
+      </div>
+
       <label class="check">
         <input type="checkbox" id="fgdpr" required>
         <span>Súhlasím so spracovaním osobných údajov na účel vybavenia mojej správy.</span>

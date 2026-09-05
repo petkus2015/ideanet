@@ -18,6 +18,8 @@ Každý dar putuje k rodinám, ktoré oň požiadali a ktorých situáciu pozná
 <span>IBAN</span><strong>SK37 1100 0000 0029 4603 3398</strong>
 [/fusion_text]
 
+[fusion_button link="{{AK_UCET}}" target="_blank" color="custom" button_gradient_top_color="rgba(255,255,255,0.06)" button_gradient_bottom_color="rgba(255,255,255,0.06)" button_gradient_top_color_hover="rgba(255,255,255,0.16)" button_gradient_bottom_color_hover="rgba(255,255,255,0.16)" accent_color="#ffffff" accent_hover_color="#ffffff" type="flat" border_top="1px" border_right="1px" border_bottom="1px" border_left="1px" border_color="rgba(255,255,255,0.18)" border_hover_color="rgba(255,255,255,0.4)" border_radius_top_left="18px" border_radius_top_right="18px" border_radius_bottom_right="18px" border_radius_bottom_left="18px" size="medium" stretch="yes" icon="fa-university fas" icon_position="left" margin_top="16px" margin_bottom="0px"]Transparentný účet — pozrieť pohyby[/fusion_button]
+
 [fusion_text font_size="13px" text_color="rgba(255,255,255,0.55)" margin_top="16px"]Do poznámky pre prijímateľa môžete uviesť účel daru, napríklad „balíček pre rodinu“.[/fusion_text]
 
 [/fusion_builder_column][fusion_builder_column type="1_4" layout="1_4" spacing="3%" hover_type="none" border_style="solid" border_sizes_top="1px" border_sizes_bottom="1px" border_sizes_left="1px" border_sizes_right="1px" border_color="rgba(6,34,42,0.12)" border_radius_top_left="28px" border_radius_top_right="28px" border_radius_bottom_right="28px" border_radius_bottom_left="28px" padding_top="36px" padding_right="30px" padding_bottom="36px" padding_left="30px" animation_type="fade" animation_direction="up" animation_speed="0.7" animation_delay="0.1" last="false" first="false"]

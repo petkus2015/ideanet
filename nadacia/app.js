@@ -11,6 +11,11 @@
   const LOGO_MARK = 'assets/img/logo-mark.png';
   const LOGO_FULL = 'assets/img/logo.png';
 
+  /* Odkaz na výpis transparentného účtu v banke. Zatiaľ vedie na stránku
+     banky — nahraďte ho adresou konkrétneho účtu nadácie.
+     Prázdna hodnota odkaz z darcovskej karty skryje. */
+  const UCET_LINK = 'https://www.tatrabanka.sk/';
+
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -92,7 +97,6 @@
   const DUR = 6500;
   const slidesWrap = $('#heroSlides');
   const copyWrap   = $('#heroCopy');
-  const dotsWrap   = $('#heroDots');
   const playBtn    = $('#heroPlay');
 
   let cur = 0, timer = null, playing = !reduce;
@@ -102,12 +106,7 @@
       <img src="${s.img}" alt="${s.alt}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async">
     </div>`).join('');
 
-  dotsWrap.innerHTML = SLIDES.map((s, i) => `
-    <button class="hero__dot${i === 0 ? ' is-on' : ''}" role="tab" data-i="${i}"
-      aria-selected="${i === 0}" aria-label="Snímka ${i + 1}: ${s.title}"><i></i></button>`).join('');
-
   const slideEls = $$('.hero__slide', slidesWrap);
-  const dotEls   = $$('.hero__dot', dotsWrap);
 
   function renderCopy(i){
     const s = SLIDES[i];
@@ -123,32 +122,12 @@
     if (i === cur && copyWrap.childElementCount) return;
     slideEls[cur].classList.remove('is-on');
     slideEls[cur].setAttribute('aria-hidden', 'true');
-    dotEls[cur].classList.remove('is-on');
-    dotEls[cur].setAttribute('aria-selected', 'false');
 
     cur = i;
     slideEls[cur].classList.add('is-on');
     slideEls[cur].setAttribute('aria-hidden', 'false');
-    dotEls[cur].classList.add('is-on');
-    dotEls[cur].setAttribute('aria-selected', 'true');
     renderCopy(cur);
-    if (user && playing) play();     // reštart odpočtu, prehrávanie beží ďalej
-    else restartProgress();
-  }
-
-  function restartProgress(){
-    dotEls.forEach(d => { d.classList.remove('is-paused'); d.style.removeProperty('--dur'); });
-    const bar = dotEls[cur].querySelector('i');
-    bar.style.transition = 'none';
-    bar.style.width = '0';
-    void bar.offsetWidth;                       // vynúti reflow
-    if (playing){
-      dotEls[cur].style.setProperty('--dur', DUR + 'ms');
-      bar.style.transition = '';
-      bar.style.width = '';                     // dobehne cez CSS
-    } else {
-      dotEls[cur].classList.add('is-paused');
-    }
+    if (user && playing) play();     // posun používateľom reštartuje odpočet, prehrávanie beží ďalej
   }
 
   function play(){
@@ -156,29 +135,25 @@
     playing = true;
     playBtn.dataset.state = 'playing';
     playBtn.setAttribute('aria-label', 'Pozastaviť automatické prehrávanie');
+    playBtn.setAttribute('title', 'Pozastaviť');
     clearInterval(timer);
     timer = setInterval(() => go(cur + 1), DUR);
-    restartProgress();
   }
   function pause(){
     playing = false;
     playBtn.dataset.state = 'paused';
     playBtn.setAttribute('aria-label', 'Spustiť automatické prehrávanie');
+    playBtn.setAttribute('title', 'Prehrať');
     clearInterval(timer);
-    restartProgress();
   }
 
   renderCopy(0);
   playBtn.addEventListener('click', () => (playing ? pause() : play()));
   $('#heroPrev').addEventListener('click', () => go(cur - 1, true));
   $('#heroNext').addEventListener('click', () => go(cur + 1, true));
-  dotsWrap.addEventListener('click', e => {
-    const b = e.target.closest('.hero__dot');
-    if (b) go(+b.dataset.i, true);
-  });
 
   const hero = $('.hero');
-  hero.addEventListener('mouseenter', () => { if (playing) { clearInterval(timer); dotEls[cur].classList.add('is-paused'); const b = dotEls[cur].querySelector('i'); b.style.transition='none'; b.style.width = getComputedStyle(b).width; } });
+  hero.addEventListener('mouseenter', () => { if (playing) clearInterval(timer); });
   hero.addEventListener('mouseleave', () => { if (playing) play(); });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) clearInterval(timer);
@@ -191,7 +166,7 @@
     if (e.key === 'ArrowRight') { go(cur + 1, true); }
   });
 
-  // ťahanie prstom
+  // ťahanie prstom po fotke
   const heroMedia = $('.hero__media');
   let sx = 0, sy = 0, drag = false;
   heroMedia.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; drag = true; }, {passive:true});
@@ -527,6 +502,35 @@
     else $(`.err[data-for="${input.id}"]`)?.classList.toggle('is-on', on);
   };
 
+  /* pole na prílohu sa ukáže len pri žiadosti o pomoc */
+  const temaEl   = $('#ftopic');
+  const fileWrap = $('#fileWrap');
+  const fileIn   = $('#ffile');
+  const fileList = $('#fileList');
+  const fileHint = $('#fileHint');
+  const TEMA_ZIADOST = 'Žiadosť o pomoc';
+
+  const velkost = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' kB';
+
+  function prepniPrilohu(){
+    const treba = temaEl.value === TEMA_ZIADOST;
+    fileWrap.hidden = !treba;
+    if (!treba){
+      fileIn.value = '';
+      fileList.innerHTML = '';
+      fileHint.hidden = true;
+    }
+  }
+  temaEl.addEventListener('change', prepniPrilohu);
+  prepniPrilohu();
+
+  fileIn.addEventListener('change', () => {
+    const subory = [...fileIn.files];
+    fileList.innerHTML = subory.map(f =>
+      `<li>${f.name}<span>${velkost(f.size)}</span></li>`).join('');
+    fileHint.hidden = subory.length === 0;
+  });
+
   ['fname','femail','fmsg','fgdpr'].forEach(id => {
     const el = $('#' + id);
     el.addEventListener('input',  () => bad(el, false));
@@ -546,9 +550,15 @@
 
     if (first){ first.focus(); say('Skontrolujte, prosím, zvýraznené polia.'); return; }
 
-    const body = `Meno: ${name.value.trim()}\nE-mail: ${mail.value.trim()}\nTéma: ${$('#ftopic').value}\n\n${msg.value.trim()}`;
+    const subory = fileWrap.hidden ? [] : [...fileIn.files];
+    const prilohy = subory.length
+      ? `\n\nPrílohy (pripojte ich, prosím, k tomuto e-mailu):\n` + subory.map(f => `– ${f.name}`).join('\n')
+      : '';
+    const body = `Meno: ${name.value.trim()}\nE-mail: ${mail.value.trim()}\nTéma: ${$('#ftopic').value}\n\n${msg.value.trim()}${prilohy}`;
     location.href = `mailto:info@nadaciaanjelskekridla.sk?subject=${encodeURIComponent('Web — ' + $('#ftopic').value)}&body=${encodeURIComponent(body)}`;
-    say('Otvárame váš e-mailový klient…');
+    say(subory.length
+      ? 'Otvárame e-mail — nezabudnite pripojiť vybrané súbory.'
+      : 'Otvárame váš e-mailový klient…');
   });
 
   /* ───────────────────────────────────────────
@@ -581,7 +591,16 @@
   });
 
   /* ───────────────────────────────────────────
-     12) DROBNOSTI
+     12) TRANSPARENTNÝ ÚČET
+  ─────────────────────────────────────────── */
+  const ucet = $('#ucetLink');
+  if (ucet && UCET_LINK){
+    ucet.href = UCET_LINK;
+    ucet.hidden = false;
+  }
+
+  /* ───────────────────────────────────────────
+     13) DROBNOSTI
   ─────────────────────────────────────────── */
   $('#year').textContent = new Date().getFullYear();
 })();

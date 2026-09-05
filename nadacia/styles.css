@@ -225,17 +225,8 @@ p{margin:0 0 1.1em}
 }
 .hero__arrow svg{width:20px}
 .hero__arrow:hover{background:var(--grad);color:#fff;border-color:transparent;transform:translateY(-2px)}
-.hero__dots{display:flex;gap:.5rem;margin-inline:.3rem}
-.hero__dot{
-  width:34px;height:5px;border-radius:999px;background:rgba(6,34,42,.14);
-  position:relative;overflow:hidden;transition:width .35s, background .35s;
-}
-.hero__dot.is-on{width:64px}
-.hero__dot i{position:absolute;inset:0;width:0;border-radius:999px;background:var(--grad)}
-.hero__dot.is-on i{width:100%;transition:width var(--dur,6500ms) linear}
-.hero__dot.is-on.is-paused i{transition:none}
 .hero__play{
-  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;
+  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;margin-left:.4rem;
   border:1.5px solid var(--line-2);color:var(--ink);background:var(--card);
   transition:background .25s, color .25s, border-color .25s, transform .25s;
 }
@@ -509,6 +500,21 @@ body.lb-open{overflow:hidden}
 .iban__label{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6)}
 .iban strong{font-size:clamp(1.05rem,2vw,1.35rem);color:#fff;letter-spacing:.04em;font-variant-numeric:tabular-nums}
 
+/* odkaz na transparentný účet v darcovskej karte */
+.ucet{
+  display:flex;align-items:center;gap:.9rem;margin-top:1.1rem;
+  padding:.85rem 1rem;border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);
+  color:#fff;transition:background .25s, border-color .25s, transform .25s;
+}
+.ucet:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.4);transform:translateY(-2px)}
+.ucet__ico{width:34px;height:34px;flex:none;display:grid;place-items:center;color:var(--brand-lt)}
+.ucet__ico svg{width:22px}
+.ucet b{display:block;font-size:.95rem;line-height:1.3}
+.ucet small{font-size:.78rem;color:rgba(255,255,255,.62)}
+.ucet__sip{margin-left:auto;font-size:1.1rem;color:var(--brand-lt);transition:transform .25s}
+.ucet:hover .ucet__sip{transform:translateX(4px)}
+
 /* ── príbehy ──────────────────────────────── */
 .pribehy{background:var(--bg-2)}
 .quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1rem,2vw,1.6rem)}
@@ -555,6 +561,28 @@ body.lb-open{overflow:hidden}
   outline:0;border-color:var(--brand-dk);box-shadow:0 0 0 4px rgba(40,175,195,.22);
 }
 .err{display:none;font-style:normal;font-size:.8rem;color:#cf0f2c}
+
+/* príloha k žiadosti */
+.f--file input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.drop{
+  display:flex;align-items:center;gap:.9rem;cursor:pointer;
+  padding:1rem;border-radius:14px;border:1.5px dashed var(--line-2);background:var(--bg);
+  transition:border-color .25s, background .25s;
+}
+.drop:hover,.f--file input[type="file"]:focus-visible + .files ~ .drop,
+.drop:focus-within{border-color:var(--brand);background:var(--bg-2)}
+.drop__ico{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:12px;background:var(--grad-soft);color:var(--brand-dk)}
+.drop__ico svg{width:20px}
+.drop__txt b{display:block;font-size:.95rem;color:var(--ink)}
+.drop__txt small{display:block;font-size:.8rem;font-weight:400;color:var(--muted)}
+.files{list-style:none;margin:.7rem 0 0;padding:0;display:grid;gap:.4rem}
+.files li{
+  display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--ink);
+  background:var(--bg-2);border-radius:10px;padding:.45rem .7rem;
+}
+.files li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--grad);flex:none}
+.files li span{margin-left:auto;color:var(--muted);font-size:.78rem;font-variant-numeric:tabular-nums}
+.hint{display:block;font-style:normal;font-size:.8rem;color:var(--muted);margin-top:.6rem}
 .f.is-bad input,.f.is-bad textarea{border-color:#cf0f2c}
 .f.is-bad .err,.err.is-on{display:block}
 .check{display:flex;gap:.7rem;align-items:flex-start;font-size:.86rem;color:var(--muted)}
