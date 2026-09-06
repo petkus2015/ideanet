@@ -478,7 +478,8 @@ body.lb-open{overflow:hidden}
 .copy--solid{background:var(--grad);color:#fff;border:0;padding:.6rem 1.1rem;font-size:.9rem}
 
 /* ── podpora ──────────────────────────────── */
-.give{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:clamp(1rem,2vw,1.6rem);align-items:stretch}
+/* na desktope: vľavo vysoká karta s účtami, vpravo dve karty pod sebou */
+.give{display:grid;grid-template-columns:1.3fr .95fr;gap:clamp(1rem,2vw,1.6rem);align-items:stretch}
 .give__card{
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);
   padding:clamp(1.5rem,2.6vw,2.2rem);box-shadow:var(--shadow-s);display:flex;flex-direction:column;
@@ -488,6 +489,7 @@ body.lb-open{overflow:hidden}
 .give__card p{color:var(--muted);font-size:.96rem}
 .give__card .btn{align-self:flex-start;margin-top:auto}
 .give__card--main{
+  grid-column:1;grid-row:1 / span 2;
   background:linear-gradient(150deg,#04171d,#0a3b46 55%,#14707f);color:rgba(255,255,255,.86);border:0;
 }
 .give__card--main h3{color:#fff}
@@ -633,7 +635,7 @@ body.lb-open{overflow:hidden}
 @media (max-width:1080px){
   .cards{grid-template-columns:repeat(2,1fr)}
   .give{grid-template-columns:1fr 1fr}
-  .give__card--main{grid-column:1 / -1}
+  .give__card--main{grid-column:1 / -1;grid-row:auto}
   .foot__in{grid-template-columns:1fr 1fr}
 }
 @media (max-width:1080px){

@@ -89,6 +89,22 @@ ol.ak-steps span{display:block;font-size:.92rem;color:var(--ak-muted)}
 .ak-iban--ucet{margin-top:14px}
 .ak-iban--ucet strong{font-size:1.1rem}
 
+/* karty „2 % z dane" a „Čas a partnerstvo" v sekcii Podporte nás */
+.ak-karta{
+  border:1px solid var(--ak-line);border-radius:28px;
+  padding:clamp(1.5rem,2.6vw,2.2rem);background:#fff;
+  transition:transform .3s, box-shadow .3s;
+}
+.ak-karta:hover{transform:translateY(-5px);box-shadow:0 10px 30px -12px rgba(6,34,42,.22)}
+.ak-karta h3{margin:0 0 .5em;color:var(--ak-ink)}
+.ak-karta p{margin:0 0 1.4em;color:var(--ak-muted);font-size:.96rem}
+.ak-btn{
+  display:inline-flex;align-items:center;padding:.7rem 1.3rem;border-radius:999px;
+  border:2px solid rgba(6,34,42,.2);color:var(--ak-ink);font-weight:600;font-size:.92rem;
+  text-decoration:none;transition:border-color .25s, background .25s, transform .25s;
+}
+.ak-btn:hover{border-color:var(--ak-brand);background:#eff8fa;transform:translateY(-2px)}
+
 /* jemné zaoblenie a tieň kariet článkov */
 .ak-blog .fusion-post-grid .fusion-post-wrapper{
   border-radius:18px;overflow:hidden;border:1px solid var(--ak-line);
