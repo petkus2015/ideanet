@@ -8,3 +8,4 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 delete_option( 'ak_bloky_verzia' );
 delete_option( 'ak_bloky_ucet' );
+delete_option( 'ak_bloky_ucet_iban' );

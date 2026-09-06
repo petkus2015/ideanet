@@ -96,6 +96,18 @@ Kontajnery majú nastavené kotvy (`menu_anchor`): `uvod`, `o-nas`, `ako-pomaham
 | `12-kontakt.txt` | kontaktné údaje + miesto na formulár | Checklist, Social Links, Form |
 | `vsetky-bloky.txt` | všetko v jednom súbore | — |
 
+## Transparentný účet a kopírovanie IBAN
+
+Blok 10 obsahuje dva účty — bežný a transparentný. V texte bloku nahraďte
+`IBAN-TRANSPARENTNEHO-UCTU` skutočným číslom (na dvoch miestach: vo výpise
+a v atribúte `data-ak-copy`, tam bez medzier) a `ODKAZ-NA-TRANSPARENTNY-UCET`
+adresou výpisu v internet bankingu.
+
+Tlačidlá *Kopírovať IBAN* potrebujú kúsok JavaScriptu, ktorý nesie plugin
+z priečinka `../wordpress-plugin/`. Ak bloky vkladáte ručne bez pluginu, buď
+plugin doinštalujte, alebo tlačidlá z bloku vymažte — číslo účtu zostane
+čitateľné aj tak.
+
 ## Čo treba doplniť po vložení
 
 - **Adresy obrázkov a PDF** namiesto `VASA-DOMENA.sk` (viď krok 2).

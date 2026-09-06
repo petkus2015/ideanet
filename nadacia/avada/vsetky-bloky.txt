@@ -264,7 +264,13 @@ Každý dar putuje k rodinám, ktoré oň požiadali a ktorých situáciu pozná
 [fusion_text text_color="rgba(255,255,255,0.72)" margin_bottom="22px"]Jednorazovo alebo pravidelne — na účet nadácie.[/fusion_text]
 
 [fusion_text class="ak-iban"]
-<span>IBAN</span><strong>SK37 1100 0000 0029 4603 3398</strong>
+<span>IBAN — účet nadácie</span><strong>SK37 1100 0000 0029 4603 3398</strong>
+<button type="button" class="ak-copy" data-ak-copy="SK3711000000002946033398">Kopírovať IBAN</button>
+[/fusion_text]
+
+[fusion_text class="ak-iban ak-iban--ucet" margin_top="14px"]
+<span>IBAN — transparentný účet</span><strong>IBAN-TRANSPARENTNEHO-UCTU</strong>
+<button type="button" class="ak-copy" data-ak-copy="IBAN-TRANSPARENTNEHO-UCTU">Kopírovať IBAN</button>
 [/fusion_text]
 
 [fusion_button link="ODKAZ-NA-TRANSPARENTNY-UCET" target="_blank" color="custom" button_gradient_top_color="rgba(255,255,255,0.06)" button_gradient_bottom_color="rgba(255,255,255,0.06)" button_gradient_top_color_hover="rgba(255,255,255,0.16)" button_gradient_bottom_color_hover="rgba(255,255,255,0.16)" accent_color="#ffffff" accent_hover_color="#ffffff" type="flat" border_top="1px" border_right="1px" border_bottom="1px" border_left="1px" border_color="rgba(255,255,255,0.18)" border_hover_color="rgba(255,255,255,0.4)" border_radius_top_left="18px" border_radius_top_right="18px" border_radius_bottom_right="18px" border_radius_bottom_left="18px" size="medium" stretch="yes" icon="fa-university fas" icon_position="left" margin_top="16px" margin_bottom="0px"]Transparentný účet — pozrieť pohyby[/fusion_button]

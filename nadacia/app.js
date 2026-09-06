@@ -11,10 +11,13 @@
   const LOGO_MARK = 'assets/img/logo-mark.png';
   const LOGO_FULL = 'assets/img/logo.png';
 
-  /* Odkaz na výpis transparentného účtu v banke. Zatiaľ vedie na stránku
-     banky — nahraďte ho adresou konkrétneho účtu nadácie.
-     Prázdna hodnota odkaz z darcovskej karty skryje. */
-  const UCET_LINK = 'https://www.tatrabanka.sk/';
+  /* Transparentný účet nadácie. Doplňte IBAN a odkaz na jeho výpis v banke.
+     Kým je IBAN prázdny, v karte sa ukáže len naznačené miesto pre číslo účtu
+     a tlačidlo Kopírovať na to upozorní. Prázdny odkaz sa skryje. */
+  const UCET = {
+    iban: '',                              // napríklad 'SK12 3456 7890 1234 5678 9012'
+    link: 'https://www.tatrabanka.sk/'     // adresa výpisu transparentného účtu
+  };
 
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -458,6 +461,10 @@
   $$('[data-copy]').forEach(btn => {
     const label = btn.textContent;
     btn.addEventListener('click', async () => {
+      if (!btn.dataset.copy){
+        say('IBAN transparentného účtu zatiaľ nie je doplnený.');
+        return;
+      }
       const ok = await toClipboard(btn.dataset.copy);
       say(ok ? 'Skopírované do schránky' : 'Kopírovanie sa nepodarilo — skúste označiť text ručne.');
       if (!ok) return;
@@ -593,10 +600,19 @@
   /* ───────────────────────────────────────────
      12) TRANSPARENTNÝ ÚČET
   ─────────────────────────────────────────── */
-  const ucet = $('#ucetLink');
-  if (ucet && UCET_LINK){
-    ucet.href = UCET_LINK;
-    ucet.hidden = false;
+  const ucetIban = $('#ucetIban');
+  const ucetCopy = $('#ucetCopy');
+  const ucetLink = $('#ucetLink');
+
+  if (UCET.iban){
+    const cislo = UCET.iban.trim();
+    ucetIban.textContent = cislo;
+    ucetIban.setAttribute('data-vyplnene', '');
+    ucetCopy.dataset.copy = cislo.replace(/\s+/g, '');
+  }
+  if (UCET.link){
+    ucetLink.href = UCET.link;
+    ucetLink.hidden = false;
   }
 
   /* ───────────────────────────────────────────

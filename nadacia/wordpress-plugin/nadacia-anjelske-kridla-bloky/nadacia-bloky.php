@@ -55,7 +55,9 @@ function ak_bloky_obsah( $kluc ) {
 		array(
 			'{{AK_IMG}}'  => AK_BLOKY_URL . 'assets/img/',
 			'{{AK_DOC}}'  => trailingslashit( $uploads['baseurl'] ) . 'nadacia/',
-			'{{AK_UCET}}' => '' !== $ucet ? $ucet : '#podpora',
+			'{{AK_UCET}}'            => '' !== $ucet ? $ucet : '#podpora',
+			'{{AK_UCET_IBAN}}'       => '' !== ak_bloky_ucet_iban() ? ak_bloky_ucet_iban() : 'SK.. .... .... .... .... ....',
+			'{{AK_UCET_IBAN_PLAIN}}' => ak_bloky_ucet_iban_plain(),
 		)
 	);
 }
@@ -67,6 +69,20 @@ function ak_bloky_ucet() {
 	return (string) get_option( 'ak_bloky_ucet', '' );
 }
 
+/**
+ * IBAN transparentného účtu tak, ako ho vypísať na stránke.
+ */
+function ak_bloky_ucet_iban() {
+	return (string) get_option( 'ak_bloky_ucet_iban', '' );
+}
+
+/**
+ * IBAN bez medzier — to sa kopíruje do schránky.
+ */
+function ak_bloky_ucet_iban_plain() {
+	return preg_replace( '/\s+/', '', ak_bloky_ucet_iban() );
+}
+
 /* ─────────────────────────────────────────────
    Štýly blokov
    ───────────────────────────────────────────── */
@@ -76,6 +92,13 @@ function ak_bloky_styly() {
 		AK_BLOKY_URL . 'assets/css/nadacia-bloky.css',
 		array(),
 		AK_BLOKY_VERSION
+	);
+	wp_enqueue_script(
+		'nadacia-bloky',
+		AK_BLOKY_URL . 'assets/js/nadacia-bloky.js',
+		array(),
+		AK_BLOKY_VERSION,
+		true
 	);
 }
 add_action( 'wp_enqueue_scripts', 'ak_bloky_styly', 20 );
@@ -179,7 +202,12 @@ function ak_bloky_stranka() {
 	if ( isset( $_POST['ak_ulozit_ucet'] ) && check_admin_referer( 'ak_bloky_ucet' ) ) {
 		$novy = isset( $_POST['ak_ucet'] ) ? esc_url_raw( wp_unslash( $_POST['ak_ucet'] ) ) : '';
 		update_option( 'ak_bloky_ucet', $novy );
-		$sprava = '' !== $novy ? 'Odkaz na transparentný účet je uložený.' : 'Odkaz na transparentný účet sme vymazali.';
+
+		$iban = isset( $_POST['ak_ucet_iban'] ) ? sanitize_text_field( wp_unslash( $_POST['ak_ucet_iban'] ) ) : '';
+		$iban = strtoupper( preg_replace( '/[^A-Za-z0-9 ]/', '', $iban ) );
+		update_option( 'ak_bloky_ucet_iban', trim( $iban ) );
+
+		$sprava = 'Údaje transparentného účtu sú uložené.';
 	}
 
 	if ( isset( $_POST['ak_import'] ) && check_admin_referer( 'ak_bloky_import' ) ) {
@@ -218,18 +246,26 @@ function ak_bloky_stranka() {
 			</div>
 		<?php endif; ?>
 
-		<h2>1. Odkaz na transparentný účet</h2>
-		<p>Adresa výpisu účtu v internet bankingu. Doplní sa do tlačidla
-			<em>Transparentný účet — pozrieť pohyby</em> v bloku <strong>10 Podporte nás</strong>.
-			Ak pole necháte prázdne, tlačidlo bude odkazovať späť na sekciu podpory.</p>
+		<h2>1. Transparentný účet</h2>
+		<p>Číslo účtu a odkaz na jeho výpis sa doplnia do bloku <strong>10 Podporte nás</strong> —
+			IBAN aj s tlačidlom <em>Kopírovať IBAN</em> a odkaz do tlačidla
+			<em>Transparentný účet — pozrieť pohyby</em>. Prázdne polia znamenajú naznačené miesto
+			pre číslo a odkaz späť na sekciu podpory.</p>
 		<form method="post">
 			<?php wp_nonce_field( 'ak_bloky_ucet' ); ?>
 			<p>
-				<input type="url" name="ak_ucet" value="<?php echo esc_attr( ak_bloky_ucet() ); ?>"
+				<label for="ak_ucet_iban" style="display:block;font-weight:600">IBAN transparentného účtu</label>
+				<input type="text" id="ak_ucet_iban" name="ak_ucet_iban" value="<?php echo esc_attr( ak_bloky_ucet_iban() ); ?>"
 					class="regular-text" style="width:520px;max-width:100%"
-					placeholder="https://www.banka.sk/transparentne-ucty/SK37...">
+					placeholder="SK12 3456 7890 1234 5678 9012">
 			</p>
-			<p><button type="submit" name="ak_ulozit_ucet" value="1" class="button">Uložiť odkaz</button></p>
+			<p>
+				<label for="ak_ucet" style="display:block;font-weight:600">Odkaz na výpis účtu</label>
+				<input type="url" id="ak_ucet" name="ak_ucet" value="<?php echo esc_attr( ak_bloky_ucet() ); ?>"
+					class="regular-text" style="width:520px;max-width:100%"
+					placeholder="https://www.banka.sk/transparentne-ucty/SK12...">
+			</p>
+			<p><button type="submit" name="ak_ulozit_ucet" value="1" class="button">Uložiť údaje účtu</button></p>
 		</form>
 		<p class="description">Odkaz sa vkladá do blokov pri importe. Ak ho zmeníte neskôr, spustite import znova —
 			prepíše sa tým položka v knižnici. V stránkach, kde už blok máte vložený, odkaz opravte priamo v builderi.</p>

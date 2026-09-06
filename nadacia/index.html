@@ -366,20 +366,25 @@
         <h3>Finančný dar</h3>
         <p>Jednorazovo alebo pravidelne — na účet nadácie.</p>
         <div class="iban">
-          <span class="iban__label">IBAN</span>
+          <span class="iban__label">IBAN — účet nadácie</span>
           <strong id="ibanValue">SK37 1100 0000 0029 4603 3398</strong>
-          <button class="copy copy--solid" data-copy="SK3711000000002946033398" aria-label="Kopírovať IBAN">Kopírovať IBAN</button>
+          <button class="copy copy--solid" data-copy="SK3711000000002946033398" aria-label="Kopírovať IBAN účtu nadácie">Kopírovať IBAN</button>
         </div>
-        <a class="ucet" id="ucetLink" href="#" target="_blank" rel="noopener" hidden>
-          <span class="ucet__ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v9M19 10v9M9 10v9M15 10v9"/><path d="M3 20h18"/></svg>
+
+        <div class="iban iban--ucet">
+          <span class="iban__label">
+            <span class="iban__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v9M19 10v9M9 10v9M15 10v9"/><path d="M3 20h18"/></svg>
+            </span>
+            IBAN — transparentný účet
           </span>
-          <span>
-            <b>Transparentný účet</b>
-            <small>Každý pohyb na účte si viete pozrieť online</small>
-          </span>
-          <span class="ucet__sip" aria-hidden="true">→</span>
-        </a>
+          <strong id="ucetIban">SK.. .... .... .... .... ....</strong>
+          <div class="iban__akcie">
+            <button class="copy copy--solid" id="ucetCopy" data-copy="" aria-label="Kopírovať IBAN transparentného účtu">Kopírovať IBAN</button>
+            <a class="iban__odkaz" id="ucetLink" href="#" target="_blank" rel="noopener" hidden>Pozrieť pohyby na účte<span aria-hidden="true">→</span></a>
+          </div>
+          <small class="iban__pozn">Na transparentnom účte vidí každý, čo prišlo a čo sme z neho poslali.</small>
+        </div>
         <p class="fine">Do poznámky pre prijímateľa môžete uviesť účel daru, napríklad „balíček pre rodinu“.</p>
       </article>
 

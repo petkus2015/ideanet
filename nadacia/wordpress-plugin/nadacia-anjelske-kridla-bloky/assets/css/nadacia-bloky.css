@@ -75,6 +75,20 @@ ol.ak-steps span{display:block;font-size:.92rem;color:var(--ak-muted)}
 }
 .ak-hero-photo .fusion-carousel-item-wrapper{overflow:visible}
 
+/* tlačidlo na skopírovanie čísla účtu */
+.ak-copy{
+  margin-top:.8rem;display:inline-flex;align-items:center;
+  padding:.6rem 1.1rem;border:0;border-radius:999px;cursor:pointer;
+  font:inherit;font-size:.9rem;font-weight:600;color:#fff;
+  background:linear-gradient(115deg,#14707f,#28afc3 58%,#5fcede);
+  transition:transform .25s, filter .25s;
+}
+.ak-copy:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.ak-copy.is-done{background:#14707f}
+.ak-copy[data-ak-stav]::after{content:" — " attr(data-ak-stav)}
+.ak-iban--ucet{margin-top:14px}
+.ak-iban--ucet strong{font-size:1.1rem}
+
 /* jemné zaoblenie a tieň kariet článkov */
 .ak-blog .fusion-post-grid .fusion-post-wrapper{
   border-radius:18px;overflow:hidden;border:1px solid var(--ak-line);

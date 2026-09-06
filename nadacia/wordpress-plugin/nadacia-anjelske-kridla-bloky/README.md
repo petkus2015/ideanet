@@ -8,8 +8,8 @@ Nadácie Anjelské krídla.
 1. Nástenka → **Pluginy → Pridať nový → Nahrať plugin**, vyberte
    `nadacia-anjelske-kridla-bloky.zip` a nainštalujte.
 2. Plugin **aktivujte**.
-3. V ľavom menu otvorte **Bloky nadácie**, do poľa hore vložte odkaz na
-   **transparentný účet** (voliteľné) a kliknite na
+3. V ľavom menu otvorte **Bloky nadácie**, hore vyplňte **IBAN transparentného
+   účtu** a **odkaz na jeho výpis** (oboje voliteľné) a kliknite na
    **Importovať bloky do Avada Library**.
 
 Plugin potrebuje tému **Avada** a aktívny **Avada Builder (Fusion Builder)**.
@@ -34,7 +34,7 @@ Odporúčané poradie: 01 → 12. Kotvy v kontajneroch (`uvod`, `o-nas`, `ako-po
 | všetky bloky s fotkou | ilustračné obrázky nahraďte fotografiami nadácie |
 | blok 05 a 09 | odkazy na PDF tlačivá — nahrajte ich do knižnice médií a opravte odkazy tlačidiel |
 | blok 12 | kontaktný formulár vytvorte v Avada → Forms a vložte do pravého stĺpca |
-| blok 10 | odkaz na transparentný účet — vyplňte ho v nastaveniach pluginu pred importom |
+| blok 10 | IBAN transparentného účtu a odkaz na výpis — vyplňte ich v nastaveniach pluginu pred importom |
 | blok 12 | odkazy na Facebook, Instagram a YouTube |
 | blok 11 | ohlasy sú ilustračné — nahraďte ich skutočnými so súhlasom rodín |
 
@@ -62,7 +62,8 @@ Písma: nadpisy **Fraunces**, text **Inter** (Avada → Options → Typography).
 ```
 nadacia-bloky.php            plugin, admin stránka, import do knižnice
 bloky/*.txt                  shortcody dvanástich sekcií
-assets/css/nadacia-bloky.css štýly nadpisíkov, krokov, údajov a čísla účtu
+assets/css/nadacia-bloky.css štýly nadpisíkov, krokov, údajov a čísel účtov
+assets/js/nadacia-bloky.js   kopírovanie čísla účtu do schránky
 assets/img/                  ilustračné obrázky a logo
 readme.txt                   popis pre WordPress
 uninstall.php                upratanie po odinštalovaní (obsah nemaže)
