@@ -15,8 +15,8 @@
      Kým je IBAN prázdny, v karte sa ukáže len naznačené miesto pre číslo účtu
      a tlačidlo Kopírovať na to upozorní. Prázdny odkaz sa skryje. */
   const UCET = {
-    iban: '',                              // napríklad 'SK12 3456 7890 1234 5678 9012'
-    link: 'https://www.tatrabanka.sk/'     // adresa výpisu transparentného účtu
+    iban: 'SK23 8330 0000 0027 0189 5491',            // transparentný účet nadácie
+    link: 'https://www.fio.sk/'                    // sem patrí adresa výpisu účtu v banke
   };
 
   const $  = (s, r = document) => r.querySelector(s);

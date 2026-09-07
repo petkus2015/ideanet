@@ -8,8 +8,9 @@ Nadácie Anjelské krídla.
 1. Nástenka → **Pluginy → Pridať nový → Nahrať plugin**, vyberte
    `nadacia-anjelske-kridla-bloky.zip` a nainštalujte.
 2. Plugin **aktivujte**.
-3. V ľavom menu otvorte **Bloky nadácie**, hore vyplňte **IBAN transparentného
-   účtu** a **odkaz na jeho výpis** (oboje voliteľné) a kliknite na
+3. V ľavom menu otvorte **Bloky nadácie**. IBAN transparentného účtu je už
+   predvyplnený (`SK23 8330 0000 0027 0189 5491`) — ak treba, prepíšte ho a
+   doplňte **odkaz na výpis účtu**. Potom kliknite na
    **Importovať bloky do Avada Library**.
 
 Plugin potrebuje tému **Avada** a aktívny **Avada Builder (Fusion Builder)**.

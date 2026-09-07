@@ -69,11 +69,15 @@ function ak_bloky_ucet() {
 	return (string) get_option( 'ak_bloky_ucet', '' );
 }
 
+/** Predvolený IBAN transparentného účtu nadácie. */
+define( 'AK_BLOKY_UCET_IBAN', 'SK23 8330 0000 0027 0189 5491' );
+
 /**
  * IBAN transparentného účtu tak, ako ho vypísať na stránke.
+ * Predvyplnený je účet nadácie, v nastaveniach sa dá prepísať.
  */
 function ak_bloky_ucet_iban() {
-	return (string) get_option( 'ak_bloky_ucet_iban', '' );
+	return (string) get_option( 'ak_bloky_ucet_iban', AK_BLOKY_UCET_IBAN );
 }
 
 /**
@@ -257,7 +261,7 @@ function ak_bloky_stranka() {
 				<label for="ak_ucet_iban" style="display:block;font-weight:600">IBAN transparentného účtu</label>
 				<input type="text" id="ak_ucet_iban" name="ak_ucet_iban" value="<?php echo esc_attr( ak_bloky_ucet_iban() ); ?>"
 					class="regular-text" style="width:520px;max-width:100%"
-					placeholder="SK12 3456 7890 1234 5678 9012">
+					placeholder="<?php echo esc_attr( AK_BLOKY_UCET_IBAN ); ?>">
 			</p>
 			<p>
 				<label for="ak_ucet" style="display:block;font-weight:600">Odkaz na výpis účtu</label>

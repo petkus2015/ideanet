@@ -98,10 +98,10 @@ Kontajnery majú nastavené kotvy (`menu_anchor`): `uvod`, `o-nas`, `ako-pomaham
 
 ## Transparentný účet a kopírovanie IBAN
 
-Blok 10 obsahuje dva účty — bežný a transparentný. V texte bloku nahraďte
-`IBAN-TRANSPARENTNEHO-UCTU` skutočným číslom (na dvoch miestach: vo výpise
-a v atribúte `data-ak-copy`, tam bez medzier) a `ODKAZ-NA-TRANSPARENTNY-UCET`
-adresou výpisu v internet bankingu.
+Blok 10 obsahuje dva účty — bežný a transparentný (SK23 8330 0000 0027 0189 5491).
+V texte bloku ešte nahraďte `ODKAZ-NA-TRANSPARENTNY-UCET` adresou výpisu
+v internet bankingu. Ak sa číslo účtu zmení, prepíšte ho na dvoch miestach:
+vo výpise a v atribúte `data-ak-copy`, tam bez medzier.
 
 Tlačidlá *Kopírovať IBAN* potrebujú kúsok JavaScriptu, ktorý nesie plugin
 z priečinka `../wordpress-plugin/`. Ak bloky vkladáte ručne bez pluginu, buď

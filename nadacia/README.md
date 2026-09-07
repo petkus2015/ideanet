@@ -92,7 +92,7 @@ Pre ostrejšie zobrazenie na retina displejoch sa hodí logo vo väčšom rozlí
 | `assets/img/` | ilustračné scény nahraďte fotografiami |
 | `assets/dokumenty/` | doplňte 3 PDF tlačivá: `ziadost-o-prispevok.pdf`, `suhlas-ochrana-osobnych-udajov.pdf`, `vyhlasenie-2-percenta.pdf` (viď README v priečinku) |
 | `app.js` — `form.addEventListener('submit')` | formulár otvára e-mailového klienta (`mailto:`); pre odosielanie na server nahraďte záver handlera volaním `fetch()` na váš endpoint |
-| `app.js` — `UCET` | IBAN transparentného účtu a odkaz na jeho výpis; kým je IBAN prázdny, v karte je len naznačené miesto pre číslo |
+| `app.js` — `UCET` | IBAN transparentného účtu (už vyplnený) a odkaz na jeho výpis — ten zatiaľ vedie len na stránku banky |
 
 Overené údaje nadácie, ktoré web už obsahuje: IČO 50622510, sídlo
 Slovenských dobrovoľníkov 135/30, 010 03 Žilina, IBAN
