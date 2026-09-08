@@ -105,6 +105,23 @@ ol.ak-steps span{display:block;font-size:.92rem;color:var(--ak-muted)}
 }
 .ak-btn:hover{border-color:var(--ak-brand);background:#eff8fa;transform:translateY(-2px)}
 
+/* logá partnerov */
+.ak-partneri{
+  list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem;
+}
+.ak-partner{
+  display:grid;place-items:center;min-height:112px;padding:1.2rem 1.4rem;margin:0;
+  background:#fff;border:1px solid var(--ak-line);border-radius:18px;
+  transition:transform .3s, box-shadow .3s, border-color .3s;
+}
+.ak-partner:hover{transform:translateY(-4px);box-shadow:0 2px 8px rgba(6,34,42,.06),0 12px 28px -18px rgba(6,34,42,.35);border-color:#5fcede}
+.ak-partner img{max-height:56px;width:auto;max-width:100%;object-fit:contain;filter:grayscale(1);opacity:.72;transition:filter .3s, opacity .3s}
+.ak-partner:hover img{filter:none;opacity:1}
+.ak-partner-nazov{font-weight:700;font-size:1.08rem;line-height:1.3;color:var(--ak-ink);text-align:center}
+.ak-partner:hover .ak-partner-nazov{color:var(--ak-brand-dk)}
+.ak-partner a{display:grid;place-items:center;width:100%;height:100%;text-decoration:none}
+
 /* jemné zaoblenie a tieň kariet článkov */
 .ak-blog .fusion-post-grid .fusion-post-wrapper{
   border-radius:18px;overflow:hidden;border:1px solid var(--ak-line);

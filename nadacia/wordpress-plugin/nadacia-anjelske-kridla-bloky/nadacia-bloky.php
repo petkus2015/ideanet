@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Nadácia Anjelské krídla — bloky pre Avadu
  * Plugin URI:        https://nadaciaanjelskekridla.sk/
- * Description:       Hotové sekcie jednostránky nadácie pre Avada Builder. Po importe sa objavia v Avada Library a v builderi ich vložíte cez Library → Containers.
- * Version:           1.0.0
+ * Description:       Hotové sekcie jednostránky nadácie pre Avada Builder vrátane správy log partnerov. Po importe sa objavia v Avada Library a v builderi ich vložíte cez Library → Containers.
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Nadácia Anjelské krídla
@@ -13,7 +13,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AK_BLOKY_VERSION', '1.0.0' );
+define( 'AK_BLOKY_VERSION', '1.1.0' );
 define( 'AK_BLOKY_FILE', __FILE__ );
 define( 'AK_BLOKY_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AK_BLOKY_URL', plugin_dir_url( __FILE__ ) );
@@ -34,6 +34,7 @@ function ak_bloky_zoznam() {
 		'09-dve-percenta'    => array( 'nazov' => 'Nadácia — 09 Dve percentá z dane',     'popis' => 'Postup, údaje pre vyhlásenie a tlačivo na stiahnutie.' ),
 		'10-podpora'         => array( 'nazov' => 'Nadácia — 10 Podporte nás',            'popis' => 'Tri spôsoby podpory vrátane čísla účtu.' ),
 		'11-pribehy'         => array( 'nazov' => 'Nadácia — 11 Príbehy',                 'popis' => 'Ohlasy ľudí, ktorým nadácia pomohla.' ),
+		'13-partneri'        => array( 'nazov' => 'Nadácia — 13 Partneri',               'popis' => 'Logá partnerov z nastavení pluginu; firma bez loga sa vypíše názvom. Patrí pred blok 12 Kontakt.' ),
 		'12-kontakt'         => array( 'nazov' => 'Nadácia — 12 Kontakt',                 'popis' => 'Kontaktné údaje, siete a miesto na formulár.' ),
 	);
 }
@@ -88,6 +89,67 @@ function ak_bloky_ucet_iban_plain() {
 }
 
 /* ─────────────────────────────────────────────
+   Partneri
+   ───────────────────────────────────────────── */
+
+/**
+ * Zoznam partnerov: pole položiek s kľúčmi nazov, logo_id, url.
+ */
+function ak_bloky_partneri() {
+	$partneri = get_option( 'ak_bloky_partneri', array() );
+	return is_array( $partneri ) ? $partneri : array();
+}
+
+/**
+ * Adresa loga partnera. Pri SVG vracia priamy odkaz na súbor.
+ */
+function ak_bloky_logo_url( $id ) {
+	$id = (int) $id;
+	if ( ! $id ) {
+		return '';
+	}
+	$url = wp_get_attachment_image_url( $id, 'medium' );
+	return $url ? $url : (string) wp_get_attachment_url( $id );
+}
+
+/**
+ * Výpis partnerov — shortcode [nadacia_partneri].
+ * Firma s logom sa vypíše obrázkom, bez loga názvom.
+ */
+function ak_bloky_partneri_shortcode() {
+	$partneri = ak_bloky_partneri();
+	if ( ! $partneri ) {
+		return '';
+	}
+
+	$html = '<ul class="ak-partneri">';
+	foreach ( $partneri as $partner ) {
+		$nazov = isset( $partner['nazov'] ) ? (string) $partner['nazov'] : '';
+		$odkaz = isset( $partner['url'] ) ? (string) $partner['url'] : '';
+		$logo  = ak_bloky_logo_url( isset( $partner['logo_id'] ) ? $partner['logo_id'] : 0 );
+
+		if ( '' === $nazov && '' === $logo ) {
+			continue;
+		}
+
+		$obsah = '' !== $logo
+			? '<img src="' . esc_url( $logo ) . '" alt="' . esc_attr( $nazov ) . '" loading="lazy" decoding="async">'
+			: '<span class="ak-partner-nazov">' . esc_html( $nazov ) . '</span>';
+
+		if ( '' !== $odkaz ) {
+			$obsah = '<a href="' . esc_url( $odkaz ) . '" target="_blank" rel="noopener"'
+				. ' aria-label="' . esc_attr( $nazov ) . '">' . $obsah . '</a>';
+		}
+
+		$html .= '<li class="ak-partner">' . $obsah . '</li>';
+	}
+	$html .= '</ul>';
+
+	return $html;
+}
+add_shortcode( 'nadacia_partneri', 'ak_bloky_partneri_shortcode' );
+
+/* ─────────────────────────────────────────────
    Štýly blokov
    ───────────────────────────────────────────── */
 function ak_bloky_styly() {
@@ -112,6 +174,17 @@ function ak_bloky_styly_v_builderi( $hook ) {
 	// v editore stránok, aby náhľad v builderi sedel s webom
 	if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
 		ak_bloky_styly();
+	}
+	// na našej stránke potrebujeme knižnicu médií na výber loga
+	if ( 'toplevel_page_nadacia-bloky' === $hook ) {
+		wp_enqueue_media();
+		wp_enqueue_script(
+			'nadacia-bloky-admin',
+			AK_BLOKY_URL . 'assets/js/nadacia-bloky-admin.js',
+			array( 'jquery' ),
+			AK_BLOKY_VERSION,
+			true
+		);
 	}
 }
 
@@ -203,6 +276,32 @@ function ak_bloky_stranka() {
 	$sprava = '';
 	$chyba  = '';
 
+	if ( isset( $_POST['ak_ulozit_partnerov'] ) && check_admin_referer( 'ak_bloky_partneri' ) ) {
+		$novi   = array();
+		$vstupy = isset( $_POST['partner'] ) ? (array) wp_unslash( $_POST['partner'] ) : array();
+
+		foreach ( $vstupy as $riadok ) {
+			if ( ! empty( $riadok['zmazat'] ) ) {
+				continue;
+			}
+			$nazov   = isset( $riadok['nazov'] ) ? sanitize_text_field( $riadok['nazov'] ) : '';
+			$logo_id = isset( $riadok['logo_id'] ) ? (int) $riadok['logo_id'] : 0;
+			$url     = isset( $riadok['url'] ) ? esc_url_raw( $riadok['url'] ) : '';
+
+			if ( '' === $nazov && ! $logo_id ) {
+				continue;   // prázdny riadok preskočíme
+			}
+			$novi[] = array(
+				'nazov'   => $nazov,
+				'logo_id' => $logo_id,
+				'url'     => $url,
+			);
+		}
+
+		update_option( 'ak_bloky_partneri', $novi );
+		$sprava = sprintf( 'Zoznam partnerov je uložený (%d).', count( $novi ) );
+	}
+
 	if ( isset( $_POST['ak_ulozit_ucet'] ) && check_admin_referer( 'ak_bloky_ucet' ) ) {
 		$novy = isset( $_POST['ak_ucet'] ) ? esc_url_raw( wp_unslash( $_POST['ak_ucet'] ) ) : '';
 		update_option( 'ak_bloky_ucet', $novy );
@@ -274,14 +373,73 @@ function ak_bloky_stranka() {
 		<p class="description">Odkaz sa vkladá do blokov pri importe. Ak ho zmeníte neskôr, spustite import znova —
 			prepíše sa tým položka v knižnici. V stránkach, kde už blok máte vložený, odkaz opravte priamo v builderi.</p>
 
-		<h2>2. Import do knižnice</h2>
+		<h2>2. Partneri</h2>
+		<p>Logá sa zobrazia v bloku <strong>13 Partneri</strong>. Nahrávajú sa cez knižnicu médií
+			(PNG, JPG alebo SVG). Ak firma logo nemá, stačí vyplniť názov — vypíše sa textom.
+			Zmeny sa na webe prejavia hneď po uložení, blok netreba znova importovať.</p>
+		<form method="post" id="ak-partneri-form">
+			<?php wp_nonce_field( 'ak_bloky_partneri' ); ?>
+			<table class="widefat striped" id="ak-partneri-tabulka" style="max-width:900px">
+				<thead>
+					<tr>
+						<th style="width:120px">Logo</th>
+						<th>Názov firmy</th>
+						<th style="width:260px">Odkaz na web (nepovinné)</th>
+						<th style="width:90px">Zmazať</th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+				$partneri = ak_bloky_partneri();
+				$partneri[] = array( 'nazov' => '', 'logo_id' => 0, 'url' => '' ); // prázdny riadok na pridanie
+				foreach ( $partneri as $i => $partner ) :
+					$logo_id  = isset( $partner['logo_id'] ) ? (int) $partner['logo_id'] : 0;
+					$logo_url = ak_bloky_logo_url( $logo_id );
+					?>
+					<tr class="ak-partner-riadok">
+						<td>
+							<div class="ak-logo-nahlad" style="min-height:44px;display:flex;align-items:center">
+								<?php if ( $logo_url ) : ?>
+									<img src="<?php echo esc_url( $logo_url ); ?>" alt="" style="max-width:100px;max-height:44px">
+								<?php else : ?>
+									<span style="color:#787c82">bez loga</span>
+								<?php endif; ?>
+							</div>
+							<input type="hidden" class="ak-logo-id" name="partner[<?php echo (int) $i; ?>][logo_id]" value="<?php echo (int) $logo_id; ?>">
+							<p style="margin:6px 0 0">
+								<button type="button" class="button button-small ak-vybrat-logo">Vybrať</button>
+								<button type="button" class="button button-small ak-zmazat-logo" <?php disabled( ! $logo_id ); ?>>Odobrať</button>
+							</p>
+						</td>
+						<td><input type="text" class="regular-text" name="partner[<?php echo (int) $i; ?>][nazov]"
+							value="<?php echo esc_attr( isset( $partner['nazov'] ) ? $partner['nazov'] : '' ); ?>"
+							placeholder="Napríklad Stavebniny Považie"></td>
+						<td><input type="url" class="regular-text" name="partner[<?php echo (int) $i; ?>][url]"
+							value="<?php echo esc_attr( isset( $partner['url'] ) ? $partner['url'] : '' ); ?>"
+							placeholder="https://"></td>
+						<td style="text-align:center">
+							<label><input type="checkbox" name="partner[<?php echo (int) $i; ?>][zmazat]" value="1"> áno</label>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+			<p>
+				<button type="button" class="button" id="ak-pridat-partnera">Pridať ďalší riadok</button>
+				<button type="submit" name="ak_ulozit_partnerov" value="1" class="button button-primary">Uložiť partnerov</button>
+			</p>
+			<p class="description">SVG WordPress štandardne nahrávať nedovolí. Ak ho potrebujete, doplňte plugin
+				na bezpečné povolenie SVG, prípadne použite PNG s priehľadným pozadím.</p>
+		</form>
+
+		<h2>3. Import do knižnice</h2>
 		<p>Tlačidlo uloží všetkých dvanásť sekcií do <strong>Avada → Library</strong>. Import môžete spustiť aj opakovane — bloky sa prepíšu, nevzniknú duplikáty.</p>
 		<form method="post">
 			<?php wp_nonce_field( 'ak_bloky_import' ); ?>
 			<p><button type="submit" name="ak_import" value="1" class="button button-primary">Importovať bloky do Avada Library</button></p>
 		</form>
 
-		<h2>3. Vloženie do stránky</h2>
+		<h2>4. Vloženie do stránky</h2>
 		<ol>
 			<li>Stránky → Pridať novú, zapnite <strong>Avada Builder</strong>.</li>
 			<li>Kliknite na <strong>Library</strong> (ikona knižnice v hornej lište buildera) a v záložke <em>Containers</em> vyberte blok.</li>
@@ -290,7 +448,7 @@ function ak_bloky_stranka() {
 		</ol>
 		<p>Ak by sa bloky v knižnici nezobrazili, použite náhradnú cestu: skopírujte shortcode nižšie, v editore stránky prepnite <em>Toggle Builder</em> na klasický editor, vložte a prepnite späť.</p>
 
-		<h2>4. Farby menu a témy</h2>
+		<h2>5. Farby menu a témy</h2>
 		<p>Bloky majú farby nastavené v sebe, hlavičku a menu však ovláda téma:</p>
 		<ul style="list-style:disc;margin-left:22px">
 			<li><strong>Avada → Options → Header</strong>: Header Background Color <code>#28afc3</code>.</li>
@@ -299,7 +457,7 @@ function ak_bloky_stranka() {
 			<li><strong>Avada → Options → Colors</strong>: Primary <code>#28afc3</code>, Text <code>#2a4750</code>, Headings <code>#0a1f26</code>, Link <code>#14707f</code>.</li>
 		</ul>
 
-		<h2>5. Čo doplniť</h2>
+		<h2>6. Čo doplniť</h2>
 		<ul style="list-style:disc;margin-left:22px">
 			<li>Fotky sú zatiaľ ilustračné a nesie ich tento plugin. Nahraďte ich vlastnými priamo v builderi (klik na obrázok → Select Image).</li>
 			<li>Tlačivá na stiahnutie plugin neobsahuje. Nahrajte do knižnice médií súbory <code>ziadost-o-prispevok.pdf</code>, <code>suhlas-ochrana-osobnych-udajov.pdf</code> a <code>vyhlasenie-2-percenta.pdf</code> a v blokoch 05 a 09 opravte odkazy tlačidiel.</li>
@@ -308,7 +466,7 @@ function ak_bloky_stranka() {
 			<li>Ohlasy v bloku 11 sú ilustračné — nahraďte ich skutočnými so súhlasom rodín.</li>
 		</ul>
 
-		<h2>6. Bloky na skopírovanie</h2>
+		<h2>7. Bloky na skopírovanie</h2>
 		<?php foreach ( ak_bloky_zoznam() as $kluc => $blok ) : ?>
 			<?php $id = ak_bloky_najdi_blok( $kluc ); ?>
 			<h3 style="margin-bottom:4px">

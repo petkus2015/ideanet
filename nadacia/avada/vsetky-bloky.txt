@@ -311,6 +311,23 @@ Ohlasy sú ilustračné — nahraďte ich skutočnými príbehmi so súhlasom ro
 
 [/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]
 
+[fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="partneri" background_color="#eff8fa" padding_top="90px" padding_bottom="90px" status="published"][fusion_builder_row][fusion_builder_column type="1_1" layout="1_1" spacing="" hover_type="none" border_style="solid" last="true" first="true"]
+
+[fusion_text class="ak-eyebrow" margin_bottom="10px"]Partneri[/fusion_text]
+
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="14px"]Ďakujeme, že v tom nie sme sami[/fusion_title]
+
+[fusion_text text_color="#5c757e" margin_bottom="34px"]
+Firmy a ľudia, ktorí nadáciu podporujú dlhodobo alebo pomohli s konkrétnym projektom.
+[/fusion_text]
+
+[fusion_text]
+<!-- Logá partnerov spravuje plugin: Bloky nadácie → Partneri. Bez pluginu sem vložte obrázky ručne. -->
+[nadacia_partneri]
+[/fusion_text]
+
+[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]
+
 [fusion_builder_container type="flex" hundred_percent="no" container_tag="section" menu_anchor="kontakt" background_color="#ffffff" padding_top="100px" padding_bottom="100px" status="published"][fusion_builder_row][fusion_builder_column type="1_2" layout="1_2" align_self="flex-start" spacing="5%" hover_type="none" border_style="solid" animation_type="fade" animation_direction="up" animation_speed="0.7" last="false" first="true"]
 
 [fusion_text class="ak-eyebrow" margin_bottom="10px"]Kontakt[/fusion_text]

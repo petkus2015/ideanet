@@ -108,6 +108,7 @@ Pred spustením ich odporúčame ešte raz porovnať s aktuálnymi dokumentmi na
 | karusel článkov | 4,5 karty na desktope a 1,5 na mobile; posun prstom, šípkami, guličkami aj klávesmi ← → |
 | galéria | klik alebo Enter otvorí lightbox; ← → prepína, Esc zatvára, potiahnutie prstom prepína |
 | údaje 2 % a IBAN | tlačidlo *Kopírovať* vloží hodnotu do schránky |
+| partneri | logá v mriežke, firma bez loga sa vypíše názvom; zoznam je v poli `PARTNERI` v `app.js` |
 | tlačivá na stiahnutie | tlačidlo stiahne PDF; kým súbor v `assets/dokumenty/` chýba, zobrazí sa odkaz na e-mail nadácie namiesto chybovej stránky |
 | formulár | validácia na strane prehliadača + zvýraznenie chybných polí; pri téme *Žiadosť o pomoc* pribudne pole na prílohy |
 | transparentný účet | vlastný IBAN s tlačidlom *Kopírovať* a odkazom na výpis; údaje nastavíte v objekte `UCET` v `app.js` |

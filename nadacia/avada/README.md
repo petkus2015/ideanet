@@ -93,6 +93,7 @@ Kontajnery majú nastavené kotvy (`menu_anchor`): `uvod`, `o-nas`, `ako-pomaham
 | `09-dve-percenta.txt` | postup + údaje + vyhlásenie na stiahnutie | Title, Text, Button |
 | `10-podpora.txt` | tri spôsoby podpory + IBAN | Title, Text, Button |
 | `11-pribehy.txt` | ohlasy | Testimonials |
+| `13-partneri.txt` | logá partnerov (vkladá sa pred blok 12) | shortcode `[nadacia_partneri]` z pluginu |
 | `12-kontakt.txt` | kontaktné údaje + miesto na formulár | Checklist, Social Links, Form |
 | `vsetky-bloky.txt` | všetko v jednom súbore | — |
 
@@ -107,6 +108,17 @@ Tlačidlá *Kopírovať IBAN* potrebujú kúsok JavaScriptu, ktorý nesie plugin
 z priečinka `../wordpress-plugin/`. Ak bloky vkladáte ručne bez pluginu, buď
 plugin doinštalujte, alebo tlačidlá z bloku vymažte — číslo účtu zostane
 čitateľné aj tak.
+
+## Partneri
+
+Blok 13 vypisuje logá cez shortcode `[nadacia_partneri]`, ktorý pridáva plugin
+z priečinka `../wordpress-plugin/`. Partnerov potom spravujete v administrácii
+(**Bloky nadácie → Partneri**) — nahráte logo z knižnice médií, alebo pri firme
+bez loga vyplníte len názov, ktorý sa vypíše textom. Zmeny sú na webe hneď,
+blok netreba znova vkladať.
+
+Bez pluginu shortcode nič nevypíše — vtedy do sekcie vložte logá ručne
+(napríklad elementom Image Carousel alebo stĺpcami s Image Frame).
 
 ## Čo treba doplniť po vložení
 

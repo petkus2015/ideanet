@@ -28,6 +28,21 @@ Odporúčané poradie: 01 → 12. Kotvy v kontajneroch (`uvod`, `o-nas`, `ako-po
 `ziadost-o-pomoc`, `projekty`, `clanky`, `galeria`, `dve-percenta`, `podpora`,
 `kontakt`) fungujú ako ciele pre položky menu, napríklad `#o-nas`.
 
+## Partneri
+
+V administrácii **Bloky nadácie → Partneri** pridávate a odoberáte logá:
+
+- **Logo** sa vyberá z knižnice médií (PNG, JPG; SVG len ak máte plugin, ktorý
+  jeho nahrávanie povolí — WordPress ho štandardne blokuje).
+- **Firma bez loga** — stačí vyplniť názov, vypíše sa textom v rovnakej dlaždici.
+- **Odkaz na web** je nepovinný; keď je vyplnený, logo je klikateľné.
+- **Odobrať partnera** — zaškrtnite *Zmazať* v jeho riadku a uložte.
+- **Pridať ďalšieho** — tlačidlo *Pridať ďalší riadok*.
+
+Zmeny sa prejavia okamžite v každej stránke, kde je blok 13 vložený — ten totiž
+vypisuje partnerov cez shortcode `[nadacia_partneri]`, takže sa nemusí
+znova importovať. Shortcode viete vložiť aj kdekoľvek inde.
+
 ## Čo doplniť
 
 | Kde | Čo |

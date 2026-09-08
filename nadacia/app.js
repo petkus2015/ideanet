@@ -278,6 +278,33 @@
   syncSlider();
 
   /* ───────────────────────────────────────────
+     4c) PARTNERI
+     Firma s logom má vyplnené "logo", bez loga
+     sa vypíše len názov. "url" je nepovinná.
+  ─────────────────────────────────────────── */
+  const PARTNERI = [
+    { nazov:'Aurora',              logo:'assets/img/partner-1.svg', url:'' },
+    { nazov:'Vitalis',             logo:'assets/img/partner-2.svg', url:'' },
+    { nazov:'Riečka',              logo:'assets/img/partner-3.svg', url:'' },
+    { nazov:'Stavebniny Považie',  logo:'',                         url:'' },
+    { nazov:'Kaviareň Pod Vežou',  logo:'',                         url:'' },
+    { nazov:'Autodoprava Kováč',   logo:'',                         url:'' }
+  ];
+
+  const partneriGrid = $('#partneriGrid');
+  if (partneriGrid){
+    partneriGrid.innerHTML = PARTNERI.map(p => {
+      const obsah = p.logo
+        ? `<img src="${p.logo}" alt="${p.nazov}" loading="lazy" decoding="async">`
+        : `<span class="partner__nazov">${p.nazov}</span>`;
+      const vnutro = p.url
+        ? `<a href="${p.url}" target="_blank" rel="noopener" aria-label="${p.nazov}">${obsah}</a>`
+        : obsah;
+      return `<li class="partner">${vnutro}</li>`;
+    }).join('');
+  }
+
+  /* ───────────────────────────────────────────
      5) GALÉRIA + LIGHTBOX
   ─────────────────────────────────────────── */
   const gal = $('#gal');
