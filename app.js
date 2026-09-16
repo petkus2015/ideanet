@@ -1,294 +1,384 @@
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    IDEANET — interakcie
-   ═══════════════════════════════════════════════ */
+   Vanilla JS, bez závislostí.
+   ═══════════════════════════════════════════════════════════ */
 (() => {
   'use strict';
 
-  /* ───────────────────────────────────────────
+  /* ─────────────────────────────────────────────────────────
      1) DÁTA PORTFÓLIA
-     Vlastné video pridáte tak, že do assets/videos/
-     nahráte .mp4 (9:16) a doplníte cestu do "video".
-     Ak súbor neexistuje, karta zostane na plagáte.
-  ─────────────────────────────────────────── */
-  const REELS = [
-    { id:'r1', cat:'Gastro',   title:'Ranná káva',        desc:'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.',      dur:'0:18', poster:'assets/posters/reel-01.svg', video:'assets/videos/reel-01.mp4', demo:'assets/videos/reel-01.webm', tags:['Brand film','Grading','Zvuk'] },
-    { id:'r2', cat:'Fitness',  title:'Séria pre klub',     desc:'Dvanásť tréningových reels natočených počas jedného popoludnia.',        dur:'0:22', poster:'assets/posters/reel-02.svg', video:'assets/videos/reel-02.mp4', demo:'assets/videos/reel-02.webm', tags:['Séria','Titulky','Slow-mo'] },
-    { id:'r3', cat:'Produkt',  title:'Detail chuti',       desc:'Makro produktové zábery pre e-shop s pralinkami.',                        dur:'0:15', poster:'assets/posters/reel-03.svg', video:'assets/videos/reel-03.mp4', demo:'assets/videos/reel-03.webm', tags:['Makro','Produkt','Svetlo'] },
-    { id:'r4', cat:'Reality',  title:'Prehliadka bytu',    desc:'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.',          dur:'0:29', poster:'assets/posters/reel-04.svg', video:'assets/videos/reel-04.mp4', demo:'assets/videos/reel-04.webm', tags:['Gimbal','Tour','Hudba'] },
-    { id:'r5', cat:'Event',    title:'Aftermovie',         desc:'Zostrih z firemnej konferencie dodaný do 24 hodín.',                      dur:'0:34', poster:'assets/posters/reel-05.svg', video:'assets/videos/reel-05.mp4', demo:'assets/videos/reel-05.webm', tags:['Event','Rýchle dodanie'] },
-    { id:'r6', cat:'Fashion',  title:'Lookbook jeseň',     desc:'Vertikálny lookbook pre lokálnu módnu značku.',                           dur:'0:20', poster:'assets/posters/reel-06.svg', video:'assets/videos/reel-06.mp4', demo:'assets/videos/reel-06.webm', tags:['Fashion','Grading','Motion'] },
-    { id:'r7', cat:'Beauty',   title:'Pred a po',          desc:'Premenový formát pre kadernícky salón, kompletne na kľúč.',              dur:'0:24', poster:'assets/posters/reel-07.svg', video:'assets/videos/reel-07.mp4', demo:'assets/videos/reel-07.webm', tags:['Transformácia','Titulky'] },
-    { id:'r8', cat:'Startup',  title:'Ako to funguje',     desc:'Vysvetľovacie video k aplikácii — scenár, natáčanie, motion.',            dur:'0:31', poster:'assets/posters/reel-08.svg', video:'assets/videos/reel-08.mp4', demo:'assets/videos/reel-08.webm', tags:['Explainer','Motion','Scenár'] },
-  ];
+     Tu meníte obsah karuselov. Poradie v poli = poradie na webe.
 
+     video / social:
+       poster — statický náhľad (9:16)
+       video  — vaše finálne video (má prednosť), napr. assets/videos/reel-01.mp4
+       demo   — zástupný klip, ktorý sa prehrá, kým vaše video nedodáte
+     graphic:
+       image  — ukážka grafiky (4:5)
+  ───────────────────────────────────────────────────────── */
+  const DATA = {
+    video: [
+      { id:'v1', cat:'Gastro',  title:'Ranná káva',       desc:'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', dur:'0:18',
+        poster:'assets/posters/video-01.svg', video:'assets/videos/reel-01.mp4', demo:'assets/videos/reel-01.webm' },
+      { id:'v2', cat:'Fitness', title:'Séria pre klub',   desc:'Dvanásť tréningových videí natočených počas jedného popoludnia.',  dur:'0:22',
+        poster:'assets/posters/video-02.svg', video:'assets/videos/reel-02.mp4', demo:'assets/videos/reel-02.webm' },
+      { id:'v3', cat:'Produkt', title:'Detail chuti',     desc:'Makro produktové zábery pre e-shop s pralinkami.',                 dur:'0:15',
+        poster:'assets/posters/video-03.svg', video:'assets/videos/reel-03.mp4', demo:'assets/videos/reel-03.webm' },
+      { id:'v4', cat:'Reality', title:'Prehliadka bytu',  desc:'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.',    dur:'0:29',
+        poster:'assets/posters/video-04.svg', video:'assets/videos/reel-04.mp4', demo:'assets/videos/reel-04.webm' },
+      { id:'v5', cat:'Event',   title:'Aftermovie',       desc:'Zostrih z firemnej konferencie dodaný do 24 hodín.',               dur:'0:34',
+        poster:'assets/posters/video-05.svg', video:'assets/videos/reel-05.mp4', demo:'assets/videos/reel-05.webm' },
+      { id:'v6', cat:'Fashion', title:'Lookbook jeseň',   desc:'Vertikálny lookbook pre lokálnu módnu značku.',                    dur:'0:20',
+        poster:'assets/posters/video-06.svg', video:'assets/videos/reel-06.mp4', demo:'assets/videos/reel-06.webm' },
+      { id:'v7', cat:'Beauty',  title:'Pred a po',        desc:'Premenový formát pre kadernícky salón, kompletne na kľúč.',        dur:'0:24',
+        poster:'assets/posters/video-07.svg', video:'assets/videos/reel-07.mp4', demo:'assets/videos/reel-07.webm' },
+      { id:'v8', cat:'Startup', title:'Ako to funguje',   desc:'Vysvetľovacie video k aplikácii — scenár, natáčanie, motion.',     dur:'0:31',
+        poster:'assets/posters/video-08.svg', video:'assets/videos/reel-08.mp4', demo:'assets/videos/reel-08.webm' },
+    ],
+
+    graphic: [
+      { id:'g1', cat:'Identita',  title:'NORDA Studio',      desc:'Logo, značkový systém a pravidlá používania.',        meta:'Logo',
+        image:'assets/posters/graphic-01.svg' },
+      { id:'g2', cat:'Typografia',title:'Typografický systém',desc:'Výber rezov a hierarchia pre web aj tlač.',           meta:'Brand manuál',
+        image:'assets/posters/graphic-02.svg' },
+      { id:'g3', cat:'Identita',  title:'Farebná paleta',    desc:'Paleta a jej použitie naprieč kanálmi.',              meta:'Paleta',
+        image:'assets/posters/graphic-03.svg' },
+      { id:'g4', cat:'Tlač',      title:'Letná scéna',       desc:'Plagátová séria pre mestský festival.',               meta:'Plagát B1',
+        image:'assets/posters/graphic-04.svg' },
+      { id:'g5', cat:'Tlač',      title:'Vizitky a tlačoviny',desc:'Sada firemných tlačovín s razbou.',                  meta:'Tlačoviny',
+        image:'assets/posters/graphic-05.svg' },
+      { id:'g6', cat:'Obaly',     title:'Roast No. 4',       desc:'Obalový dizajn pre pražiareň kávy.',                  meta:'Packaging',
+        image:'assets/posters/graphic-06.svg' },
+      { id:'g7', cat:'Kampaň',    title:'Vizuálny systém',   desc:'Deväť formátov pre jednu kampaň.',                    meta:'Kampaň',
+        image:'assets/posters/graphic-07.svg' },
+      { id:'g8', cat:'Gastro',    title:'Menu a cenník',     desc:'Sadzba jedálneho lístka pre reštauráciu.',            meta:'Sadzba',
+        image:'assets/posters/graphic-08.svg' },
+    ],
+
+    social: [
+      { id:'s1', cat:'Instagram', title:'Kaviareň Zrno',    desc:'Obsahový plán, príspevky a komunita — dosah +212 %.', dur:'IG',
+        poster:'assets/posters/social-01.svg', video:'assets/videos/social-01.mp4', demo:'assets/videos/reel-01.webm' },
+      { id:'s2', cat:'TikTok',    title:'Fit klub Nord',    desc:'Štyri videá týždenne a stabilný rast sledovateľov.',  dur:'TT',
+        poster:'assets/posters/social-02.svg', video:'assets/videos/social-02.mp4', demo:'assets/videos/reel-02.webm' },
+      { id:'s3', cat:'Instagram', title:'Studio Lumen',     desc:'Vizuálne zjednotený feed a pravidelné stories.',      dur:'IG',
+        poster:'assets/posters/social-03.svg', video:'assets/videos/social-03.mp4', demo:'assets/videos/reel-06.webm' },
+      { id:'s4', cat:'Facebook',  title:'Pekáreň Klas',     desc:'Lokálna komunikácia a podpora predajní.',             dur:'FB',
+        poster:'assets/posters/social-04.svg', video:'assets/videos/social-04.mp4', demo:'assets/videos/reel-03.webm' },
+      { id:'s5', cat:'Instagram', title:'Pralinky &amp; spol.', desc:'Produktové série a spolupráce s tvorcami.',       dur:'IG',
+        poster:'assets/posters/social-05.svg', video:'assets/videos/social-05.mp4', demo:'assets/videos/reel-07.webm' },
+      { id:'s6', cat:'LinkedIn',  title:'Appro Tech',       desc:'Odborný obsah a nábor pre technologickú firmu.',      dur:'IN',
+        poster:'assets/posters/social-06.svg', video:'assets/videos/social-06.mp4', demo:'assets/videos/reel-08.webm' },
+    ],
+  };
+
+  /* ── pomocníci ──────────────────────────────────────────── */
   const $  = (s, r = document) => r.querySelector(s);
-  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const FINE    = matchMedia('(hover: hover) and (pointer: fine)');
 
-  /* ───────────────────────────────────────────
-     2) STAVBA KARIET
-  ─────────────────────────────────────────── */
-  const rail = $('#rail');
-  const dotsWrap = $('#railDots');
-
-  const icon = {
-    sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 010 7"/></svg>',
-    mute :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M22 9l-5 6M17 9l5 6"/></svg>',
-    exp  :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>'
+  const ICON = {
+    expand:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>',
+    sound :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 010 7"/></svg>',
+    mute  :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M22 9l-5 6M17 9l5 6"/></svg>',
   };
 
-  rail.innerHTML = REELS.map((r, i) => `
-    <article class="reel" id="${r.id}" data-i="${i}" role="option" aria-selected="false" aria-label="${r.title}">
-      <div class="reel__media">
-        <img src="${r.poster}" alt="Náhľad videa ${r.title}" loading="lazy" decoding="async" width="1080" height="1920">
-        <video preload="none" playsinline muted loop poster="${r.poster}" aria-label="${r.title}">
-          <source src="${r.video}" type="video/mp4">
-          <source src="${r.demo}" type="video/webm">
-        </video>
-      </div>
-      <div class="reel__shade"></div>
-
-      <div class="reel__top">
-        <span class="reel__cat">${r.cat}</span>
-        <span class="reel__dur">${r.dur}</span>
-      </div>
-
-      <button class="reel__play" data-act="play" aria-label="Prehrať ukážku ${r.title}"></button>
-      <p class="reel__hint">Video sem doplníte do assets/videos/</p>
-
-      <div class="reel__body">
-        <h3>${r.title}</h3>
-        <p>${r.desc}</p>
-        <span class="tags">${r.tags.map(t => `<span>${t}</span>`).join('')}</span>
-        <div class="reel__tools">
-          <button class="tool" data-act="sound" aria-label="Zapnúť zvuk">${icon.mute}<span>Zvuk</span></button>
-          <button class="tool" data-act="expand" aria-label="Rozbaliť ${r.title}">${icon.exp}<span>Rozbaliť</span></button>
-        </div>
-      </div>
-      <span class="reel__line"></span>
-    </article>`).join('');
-
-  const cards  = $$('.reel', rail);
-  const videos = $$('.reel video', rail);
-
-  /* plagát ako fallback, keď video súbor chýba */
-  videos.forEach((v, i) => {
-    v.addEventListener('error', () => {
-      if (v.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) cards[i].classList.add('no-src');
-    }, true);
-    v.addEventListener('timeupdate', () => {
-      if (!v.duration) return;
-      cards[i].querySelector('.reel__line').style.width = (v.currentTime / v.duration * 100) + '%';
-    });
-  });
-
-  /* bodky */
-  dotsWrap.innerHTML = REELS.map((r, i) =>
-    `<button role="tab" data-i="${i}" aria-label="Video ${i + 1}: ${r.title}"></button>`).join('');
-  const dots = $$('button', dotsWrap);
-
-  /* ───────────────────────────────────────────
-     3) PREHRÁVANIE
-  ─────────────────────────────────────────── */
+  /* jediné prehrávané video na celej stránke */
+  let current = null;
+  let hoverTimer = null;
   function stopAll(except) {
-    videos.forEach((v, i) => {
-      if (v === except) return;
+    clearTimeout(hoverTimer);
+    $$('.slide.is-playing').forEach((slide) => {
+      const v = $('video', slide);
+      if (!v || v === except) return;
       v.pause();
-      cards[i].classList.remove('is-playing');
+      slide.classList.remove('is-playing');
     });
+    if (current && current !== except) current.pause();
+    current = except || null;
   }
 
-  function play(i) {
-    const v = videos[i], card = cards[i];
-    if (v.preload === 'none') { v.preload = 'auto'; v.load(); }
-    stopAll(v);
-    v.play().then(() => card.classList.add('is-playing'))
-            .catch(() => { if (!v.currentSrc) card.classList.add('no-src'); });
-  }
+  /* ─────────────────────────────────────────────────────────
+     2) KARUSEL
+     Desktop 5,5 karty · mobil 1,5 — počet riadi premenná --per
+     v styles.css. Posun: swajp, ťahanie myšou, šípky, klávesy.
+  ───────────────────────────────────────────────────────── */
+  function buildCarousel(root) {
+    const kind  = root.dataset.carousel;
+    const ratio = root.dataset.ratio || '9/16';
+    const items = DATA[kind] || [];
+    const rail  = $('[data-rail]', root);
+    const track = $('[data-progress]', root);
+    const thumb = track ? $('span', track) : null;
+    const arrows = $$('.arrow', root);
+    if (!rail || !items.length) return null;
 
-  function toggle(i) {
-    const v = videos[i];
-    if (v.paused) { center(i); play(i); }
-    else { v.pause(); cards[i].classList.remove('is-playing'); }
-  }
+    const isVideo = kind !== 'graphic';
 
-  rail.addEventListener('click', (e) => {
-    if (rail.dataset.moved === '1') return;          // klik po ťahaní ignorujeme
-    const card = e.target.closest('.reel');
-    if (!card) return;
-    const i = +card.dataset.i;
-    const btn = e.target.closest('[data-act]');
-    const act = btn ? btn.dataset.act : 'play';
+    rail.innerHTML = items.map((it, i) => {
+      const media = isVideo
+        ? `<img src="${it.poster}" alt="Náhľad ukážky ${it.title}" loading="lazy" decoding="async">
+           <video preload="none" playsinline muted loop poster="${it.poster}" aria-label="${it.title}">
+             <source src="${it.video}" type="video/mp4">
+             <source src="${it.demo}" type="video/webm">
+           </video>
+           <span class="tile__bar" data-bar></span>
+           <p class="tile__miss">Ukážka sa doplní do assets/videos/</p>`
+        : `<img src="${it.image}" alt="Ukážka grafiky — ${it.title}" loading="lazy" decoding="async">`;
 
-    if (act === 'expand') { openLightbox(i); return; }
-    if (act === 'sound') {
+      return `
+      <article class="slide" data-i="${i}" role="option" aria-selected="false" aria-label="${it.title}">
+        <div class="tile" style="--ratio:${ratio}">
+          ${media}
+          <span class="tile__shade"></span>
+          <span class="tile__cat">${it.cat}</span>
+          ${it.dur || it.meta ? `<span class="tile__dur">${it.dur || it.meta}</span>` : ''}
+          <button class="tile__play" data-act="${isVideo ? 'play' : 'open'}"
+                  aria-label="${isVideo ? 'Prehrať ukážku' : 'Zobraziť'} ${it.title}"></button>
+          <button class="tile__expand" data-act="open" aria-label="Otvoriť ${it.title} na celú obrazovku">${ICON.expand}</button>
+        </div>
+        <div class="slide__meta">
+          <h4>${it.title}</h4>
+          <p>${it.desc}</p>
+        </div>
+      </article>`;
+    }).join('') + '<span class="rail-end" aria-hidden="true"></span>';
+
+    const slides = $$('.slide', rail);
+    const videos = $$('video', rail);
+
+    /* keď video chýba, karta zostane na plagáte */
+    videos.forEach((v) => {
+      const slide = v.closest('.slide');
+      v.addEventListener('error', () => {
+        if (v.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) slide.classList.add('no-src');
+      }, true);
+      const bar = $('[data-bar]', slide);
+      v.addEventListener('timeupdate', () => {
+        if (bar && v.duration) bar.style.width = (v.currentTime / v.duration * 100) + '%';
+      });
+    });
+
+    /* ── prehrávanie ── */
+    function play(i) {
+      const slide = slides[i], v = videos[i];
+      if (!v) return;
+      if (v.preload === 'none') { v.preload = 'metadata'; v.load(); }
+      stopAll(v);
+      v.play()
+        .then(() => slide.classList.add('is-playing'))
+        .catch(() => { if (!v.currentSrc) slide.classList.add('no-src'); });
+    }
+    function pause(i) {
+      const slide = slides[i], v = videos[i];
+      if (!v) return;
+      v.pause();
+      slide.classList.remove('is-playing');
+    }
+    function toggle(i) {
       const v = videos[i];
-      v.muted = !v.muted;
-      btn.innerHTML = (v.muted ? icon.mute : icon.sound) + '<span>Zvuk</span>';
-      btn.setAttribute('aria-label', v.muted ? 'Zapnúť zvuk' : 'Vypnúť zvuk');
-      if (v.paused) toggle(i);
-      return;
+      if (!v) return;
+      v.paused ? play(i) : pause(i);
     }
-    toggle(i);
-  });
 
-  /* ───────────────────────────────────────────
-     4) POSÚVANIE — ťahanie, šípky, koliesko
-  ─────────────────────────────────────────── */
-  let active = 0;
+    /* ── kliky ── */
+    rail.addEventListener('click', (e) => {
+      if (rail.dataset.moved === '1') return;      // klik po ťahaní ignorujeme
+      const slide = e.target.closest('.slide');
+      if (!slide) return;
+      const i = +slide.dataset.i;
+      const act = e.target.closest('[data-act]')?.dataset.act;
+      if (act === 'open') { openLightbox(kind, i); return; }
+      if (isVideo) toggle(i); else openLightbox(kind, i);
+    });
 
-  function center(i, behavior = 'smooth') {
-    const card = cards[i];
-    if (!card) return;
-    const left = card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2;
-    rail.scrollTo({ left, behavior: reduce ? 'auto' : behavior });
+    /* ── náhľad pri prejdení myšou (len desktop) ── */
+    if (isVideo) {
+      slides.forEach((slide, i) => {
+        slide.addEventListener('mouseenter', () => {
+          if (!FINE.matches || REDUCED) return;
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(() => play(i), 220);
+        });
+        slide.addEventListener('mouseleave', () => {
+          clearTimeout(hoverTimer);
+          if (!FINE.matches) return;
+          pause(i);
+        });
+      });
+    }
+
+    /* ── posun ── */
+    const step = () => {
+      const first = slides[0];
+      const gap = parseFloat(getComputedStyle(rail).gap) || 18;
+      return first.getBoundingClientRect().width + gap;
+    };
+    const perView = () => Math.max(1, Math.round(rail.clientWidth / step() - 0.5));
+
+    function scrollByCards(dir, count) {
+      rail.scrollBy({
+        left: dir * step() * (count || perView()),
+        behavior: REDUCED ? 'auto' : 'smooth',
+      });
+    }
+    arrows.forEach((btn) => btn.addEventListener('click', () => scrollByCards(+btn.dataset.dir)));
+
+    /* ── klávesnica ── */
+    rail.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); scrollByCards(1, 1); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollByCards(-1, 1); }
+      if (e.key === 'Home') { e.preventDefault(); rail.scrollTo({ left:0, behavior:'smooth' }); }
+      if (e.key === 'End')  { e.preventDefault(); rail.scrollTo({ left: rail.scrollWidth, behavior:'smooth' }); }
+    });
+
+    /* ── ťahanie myšou (na dotyku sa swajpuje natívne) ── */
+    let dragging = false, startX = 0, startLeft = 0, moved = 0;
+    rail.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      dragging = true; moved = 0;
+      startX = e.clientX; startLeft = rail.scrollLeft;
+      rail.dataset.moved = '0';
+      rail.classList.add('is-drag');
+    });
+    rail.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) {
+        moved = Math.abs(dx);
+        rail.dataset.moved = '1';
+        rail.setPointerCapture?.(e.pointerId);
+      }
+      rail.scrollLeft = startLeft - dx;
+    });
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      rail.classList.remove('is-drag');
+      if (e && e.pointerId != null) rail.releasePointerCapture?.(e.pointerId);
+      if (moved > 4) settle();
+      setTimeout(() => { rail.dataset.moved = '0'; }, 40);
+    };
+    rail.addEventListener('pointerup', endDrag);
+    rail.addEventListener('pointercancel', endDrag);
+    rail.addEventListener('pointerleave', endDrag);
+
+    /* po ťahaní dorovnáme na najbližšiu kartu */
+    function settle() {
+      const s = step();
+      const target = Math.round(rail.scrollLeft / s) * s;
+      rail.scrollTo({ left: target, behavior: REDUCED ? 'auto' : 'smooth' });
+    }
+
+    /* ── ukazovateľ posunu + stav šípok ── */
+    function sync() {
+      const max = rail.scrollWidth - rail.clientWidth;
+      const ratioSeen = rail.clientWidth / rail.scrollWidth;
+      if (thumb && track) {
+        const w = Math.max(track.clientWidth * ratioSeen, 28);
+        thumb.style.width = w + 'px';
+        thumb.style.transform = `translateX(${max > 0 ? (rail.scrollLeft / max) * (track.clientWidth - w) : 0}px)`;
+      }
+      arrows.forEach((btn) => {
+        const dir = +btn.dataset.dir;
+        btn.disabled = dir < 0 ? rail.scrollLeft < 8 : rail.scrollLeft > max - 8;
+      });
+      slides.forEach((slide) => {
+        const box = slide.getBoundingClientRect();
+        const railBox = rail.getBoundingClientRect();
+        const seen = box.left >= railBox.left - 8 && box.right <= railBox.right + 8;
+        slide.setAttribute('aria-selected', seen ? 'true' : 'false');
+      });
+    }
+    rail.addEventListener('scroll', () => requestAnimationFrame(sync), { passive:true });
+    addEventListener('resize', sync);
+    sync();
+
+    /* ── zastavenie mimo obrazovky ── */
+    if (isVideo && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.intersectionRatio < 0.35) {
+            const i = +en.target.dataset.i;
+            if (videos[i] && !videos[i].paused) pause(i);
+          }
+        });
+      }, { root: rail, threshold:[0, 0.35, 0.8] });
+      slides.forEach((s) => io.observe(s));
+    }
+
+    return { kind, items, play, pause, sync };
   }
 
-  function updateActive() {
-    const max = rail.scrollWidth - rail.clientWidth;
-    const mid = rail.scrollLeft + rail.clientWidth / 2;
-    let best = 0, bestD = Infinity;
-    cards.forEach((c, i) => {
-      const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
-      if (d < bestD) { bestD = d; best = i; }
-    });
-    /* na krajoch sa karta vycentrovať nedá — aktívna je teda prvá / posledná */
-    if (rail.scrollLeft <= 2) best = 0;
-    else if (rail.scrollLeft >= max - 2) best = cards.length - 1;
-    if (best !== active) {
-      active = best;
-      stopAll(videos[active]);                       // mimo stredu sa neprehráva
-    }
-    cards.forEach((c, i) => {
-      c.classList.toggle('is-active', i === active);
-      c.setAttribute('aria-selected', i === active);
-    });
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
+  const carousels = $$('[data-carousel]').map(buildCarousel).filter(Boolean);
 
-    const pct = max > 0 ? rail.scrollLeft / max : 0;
-    const bar = $('#railBar');
-    bar.style.width = (100 / cards.length) + '%';
-    bar.style.transform = `translateX(${pct * (cards.length - 1) * 100}%)`;
+  /* ─────────────────────────────────────────────────────────
+     3) LIGHTBOX
+  ───────────────────────────────────────────────────────── */
+  const lb      = $('#lightbox');
+  const lbStage = $('#lbStage');
+  let lbKind = null, lbIndex = 0, lastFocus = null;
 
-    $('#prevReel').disabled = rail.scrollLeft < 4;
-    $('#nextReel').disabled = rail.scrollLeft > max - 4;
-  }
-
-  rail.addEventListener('scroll', () => {
-    if (rail._raf) return;
-    rail._raf = requestAnimationFrame(() => { rail._raf = null; updateActive(); });
-  }, { passive: true });
-
-  $('#prevReel').addEventListener('click', () => center(Math.max(0, active - 1)));
-  $('#nextReel').addEventListener('click', () => center(Math.min(cards.length - 1, active + 1)));
-  dots.forEach(d => d.addEventListener('click', () => center(+d.dataset.i)));
-
-  /* ťahanie myšou / prstom */
-  let down = false, startX = 0, startScroll = 0;
-  rail.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
-    down = true; startX = e.clientX; startScroll = rail.scrollLeft;
-    rail.dataset.moved = '0';
-  });
-  rail.addEventListener('pointermove', (e) => {
-    if (!down) return;
-    const dx = e.clientX - startX;
-    if (Math.abs(dx) > 6) {
-      rail.dataset.moved = '1';
-      rail.classList.add('is-dragging');
-      rail.setPointerCapture?.(e.pointerId);
-    }
-    if (rail.dataset.moved === '1') rail.scrollLeft = startScroll - dx;
-  });
-  const endDrag = () => {
-    if (!down) return;
-    down = false;
-    rail.classList.remove('is-dragging');
-    if (rail.dataset.moved === '1') {
-      requestAnimationFrame(() => { updateActive(); center(active); });
-      setTimeout(() => { rail.dataset.moved = '0'; }, 0);
-    }
-  };
-  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => rail.addEventListener(ev, endDrag));
-
-  /* vertikálne koliesko → horizontálny posun */
-  rail.addEventListener('wheel', (e) => {
-    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-    const max = rail.scrollWidth - rail.clientWidth;
-    const at = (e.deltaY < 0 && rail.scrollLeft <= 0) || (e.deltaY > 0 && rail.scrollLeft >= max - 1);
-    if (at) return;                                   // na kraji necháme skrolovať stránku
-    e.preventDefault();
-    rail.scrollLeft += e.deltaY;
-  }, { passive: false });
-
-  /* klávesnica */
-  rail.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); center(Math.min(cards.length - 1, active + 1)); }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); center(Math.max(0, active - 1)); }
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(active); }
-  });
-
-  /* mimo obrazovky → pauza */
-  new IntersectionObserver(([en]) => { if (!en.isIntersecting) stopAll(); }, { threshold: 0 })
-    .observe(rail);
-
-  requestAnimationFrame(() => { center(0, 'auto'); updateActive(); });
-  addEventListener('resize', () => { center(active, 'auto'); updateActive(); });
-
-  /* ───────────────────────────────────────────
-     5) LIGHTBOX
-  ─────────────────────────────────────────── */
-  const lb = $('#lightbox'), lbFrame = $('#lbFrame');
-  let lbIndex = 0, lastFocus = null;
-
-  function openLightbox(i) {
-    lbIndex = i;
-    const r = REELS[i];
-    stopAll();
+  function openLightbox(kind, index) {
+    const items = DATA[kind];
+    if (!items || !items[index]) return;
+    lbKind = kind; lbIndex = index;
     lastFocus = document.activeElement;
-    lbFrame.innerHTML =
-      `<img src="${r.poster}" alt="Náhľad videa ${r.title}">
-       <video poster="${r.poster}" playsinline controls autoplay loop>
-          <source src="${r.video}" type="video/mp4">
-          <source src="${r.demo}" type="video/webm">
-       </video>`;
-    $('#lbTitle').textContent = r.title;
-    $('#lbDesc').textContent  = r.desc;
-    $('#lbTags').innerHTML    = r.tags.map(t => `<span>${t}</span>`).join('');
+    stopAll(null);
+    renderLightbox();
     lb.hidden = false;
-    document.body.classList.add('is-locked');
+    document.body.style.overflow = 'hidden';
     $('#lbClose').focus();
-    const v = $('video', lbFrame);
-    v.addEventListener('error', () => { v.style.display = 'none'; }, true);
-    v.play?.().catch(() => {});
+  }
+
+  function renderLightbox() {
+    const it = DATA[lbKind][lbIndex];
+    const isVideo = lbKind !== 'graphic';
+    lbStage.innerHTML = isVideo
+      ? `<video controls autoplay playsinline loop poster="${it.poster}" aria-label="${it.title}">
+           <source src="${it.video}" type="video/mp4">
+           <source src="${it.demo}" type="video/webm">
+         </video>
+         <figcaption class="lb__cap"><b>${it.title}</b>${it.desc}</figcaption>`
+      : `<img src="${it.image}" alt="Ukážka grafiky — ${it.title}">
+         <figcaption class="lb__cap"><b>${it.title}</b>${it.desc}</figcaption>`;
+    const v = $('video', lbStage);
+    if (v) v.play().catch(() => {});
   }
 
   function closeLightbox() {
+    const v = $('video', lbStage);
+    if (v) v.pause();
     lb.hidden = true;
-    lbFrame.innerHTML = '';
-    document.body.classList.remove('is-locked');
+    lbStage.innerHTML = '';
+    document.body.style.overflow = '';
     lastFocus?.focus();
   }
 
-  const step = (d) => openLightbox((lbIndex + d + REELS.length) % REELS.length);
+  function stepLightbox(d) {
+    const len = DATA[lbKind].length;
+    lbIndex = (lbIndex + d + len) % len;
+    renderLightbox();
+  }
 
   $('#lbClose').addEventListener('click', closeLightbox);
-  $('#lbPrev').addEventListener('click', () => step(-1));
-  $('#lbNext').addEventListener('click', () => step(1));
+  $('#lbPrev').addEventListener('click', () => stepLightbox(-1));
+  $('#lbNext').addEventListener('click', () => stepLightbox(1));
   lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
   addEventListener('keydown', (e) => {
     if (lb.hidden) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') step(1);
-    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowRight') stepLightbox(1);
+    if (e.key === 'ArrowLeft')  stepLightbox(-1);
   });
 
-  /* ───────────────────────────────────────────
-     6) NAVIGÁCIA + MENU
-  ─────────────────────────────────────────── */
+  /* ─────────────────────────────────────────────────────────
+     4) NAVIGÁCIA
+  ───────────────────────────────────────────────────────── */
   const nav = $('#nav');
-  const onScroll = () => nav.classList.toggle('is-stuck', scrollY > 12);
-  onScroll(); addEventListener('scroll', onScroll, { passive: true });
+  const onScroll = () => nav.classList.toggle('is-stuck', scrollY > 10);
+  addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
 
   const burger = $('#burger'), menu = $('#mobileMenu');
   const setMenu = (open) => {
@@ -299,80 +389,116 @@
   burger.addEventListener('click', () => setMenu(menu.hidden));
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
-  matchMedia('(min-width: 861px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
+  matchMedia('(min-width: 981px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
 
-  /* aktívna sekcia v menu */
-  const links = $$('.nav__links a');
-  const sections = links.map(a => $(a.getAttribute('href'))).filter(Boolean);
-  const spy = new IntersectionObserver((ents) => {
-    ents.forEach(en => {
-      if (!en.isIntersecting) return;
-      links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + en.target.id));
-    });
-  }, { rootMargin: '-45% 0px -50%' });
-  sections.forEach(s => spy.observe(s));
+  /* zvýraznenie aktívnej sekcie */
+  const navLinks = $$('.nav__links a');
+  const sections = navLinks.map((a) => $(a.getAttribute('href'))).filter(Boolean);
+  if ('IntersectionObserver' in window && sections.length) {
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        navLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === '#' + en.target.id));
+      });
+    }, { rootMargin:'-45% 0px -50% 0px' });
+    sections.forEach((s) => spy.observe(s));
+  }
 
-  /* ───────────────────────────────────────────
-     7) DROBNOSTI
-  ─────────────────────────────────────────── */
-  /* reveal pri skrolovaní */
-  const io = new IntersectionObserver((ents) => {
-    ents.forEach(en => {
-      if (!en.isIntersecting) return;
-      en.target.classList.add('is-in');
-      io.unobserve(en.target);
-    });
-  }, { threshold: .12, rootMargin: '0px 0px -8%' });
-  $$('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+  /* ─────────────────────────────────────────────────────────
+     5) ODHALENIE OBSAHU + POČÍTADLÁ
+  ───────────────────────────────────────────────────────── */
+  const reveals = $$('.reveal');
+  if ('IntersectionObserver' in window && !REDUCED) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en, k) => {
+        if (!en.isIntersecting) return;
+        setTimeout(() => en.target.classList.add('in'), k * 70);
+        io.unobserve(en.target);
+      });
+    }, { rootMargin:'0px 0px -8% 0px', threshold:0.06 });
+    reveals.forEach((el) => io.observe(el));
+  } else {
+    reveals.forEach((el) => el.classList.add('in'));
+  }
 
-  /* počítadlá */
-  $$('[data-count]').forEach(el => {
-    const target = +el.dataset.count, suffix = el.dataset.suffix || '';
-    new IntersectionObserver((ents, obs) => {
-      if (!ents[0].isIntersecting) return;
-      obs.disconnect();
-      if (reduce) { el.textContent = target + suffix; return; }
-      const t0 = performance.now(), dur = 1400;
+  const counters = $$('[data-count]');
+  if (counters.length) {
+    const run = (el) => {
+      const to = +el.dataset.count;
+      if (REDUCED) { el.textContent = to; return; }
+      const t0 = performance.now(), dur = 1200;
       const tick = (t) => {
         const p = Math.min(1, (t - t0) / dur);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
+        el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
         if (p < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
-    }, { threshold: .6 }).observe(el);
-  });
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => { if (en.isIntersecting) { run(en.target); io.unobserve(en.target); } });
+      }, { threshold:0.5 });
+      counters.forEach((el) => io.observe(el));
+    } else counters.forEach(run);
+  }
 
-  /* svetlo pod kurzorom na kartách */
-  $$('.card').forEach(c => c.addEventListener('pointermove', (e) => {
-    const r = c.getBoundingClientRect();
-    c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-    c.style.setProperty('--my', (e.clientY - r.top) + 'px');
-  }));
-
-  /* formulár */
+  /* ─────────────────────────────────────────────────────────
+     6) FORMULÁR
+     Momentálne otvára e-mailového klienta. Pre odosielanie na
+     server nahraďte blok mailto volaním fetch('/api/...').
+  ───────────────────────────────────────────────────────── */
   const form = $('#contactForm'), status = $('#formStatus');
-  const setErr = (input, msg) => {
-    input.closest('.field').classList.toggle('is-err', !!msg);
-    const el = $(`.err[data-for="${input.id}"]`);
-    if (el) el.textContent = msg || '';
-  };
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = $('#name'), email = $('#email'), msg = $('#msg');
-    let ok = true;
-    if (!name.value.trim()) { setErr(name, 'Doplňte meno alebo názov značky.'); ok = false; } else setErr(name);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim())) { setErr(email, 'Zadajte platný e-mail.'); ok = false; } else setErr(email);
-    if (msg.value.trim().length < 10) { setErr(msg, 'Napíšte aspoň pár viet o projekte.'); ok = false; } else setErr(msg);
-    if (!ok) { status.textContent = ''; return; }
+  if (form) {
+    const setErr = (input, msg) => {
+      input.closest('.field').classList.toggle('has-err', !!msg);
+      const el = $(`.err[data-for="${input.id}"]`);
+      if (el) el.textContent = msg || '';
+      return !msg;
+    };
 
-    /* Bez backendu otvoríme e-mailového klienta.
-       Pri nasadení sem doplňte volanie na váš formulárový endpoint. */
-    const body = encodeURIComponent(
-      `Meno: ${name.value}\nE-mail: ${email.value}\nTyp: ${$('#type').value}\n\n${msg.value}`);
-    status.textContent = 'Ďakujem! Otváram e-mail s vaším dopytom…';
-    location.href = `mailto:ahoj@ideanet.sk?subject=${encodeURIComponent('Dopyt z webu — ' + name.value)}&body=${body}`;
-    form.reset();
-  });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = $('#name'), email = $('#email'), msg = $('#msg');
+      const ok = [
+        setErr(name,  name.value.trim().length < 2 ? 'Doplňte meno alebo názov firmy.' : ''),
+        setErr(email, /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email.value.trim()) ? '' : 'Skontrolujte tvar e-mailu.'),
+        setErr(msg,   msg.value.trim().length < 10 ? 'Napíšte aspoň pár viet o projekte.' : ''),
+      ].every(Boolean);
 
-  $('#year').textContent = new Date().getFullYear();
+      if (!ok) { status.textContent = 'Formulár ešte nie je kompletný.'; return; }
+
+      const services = $$('input[name="sluzba"]:checked').map((c) => c.value).join(', ') || 'neurčené';
+      const body = encodeURIComponent(
+        `Meno a firma: ${name.value.trim()}\nE-mail: ${email.value.trim()}\nZáujem o: ${services}\n\n${msg.value.trim()}`
+      );
+      location.href = `mailto:ahoj@ideanet.sk?subject=${encodeURIComponent('Dopyt z webu — ' + name.value.trim())}&body=${body}`;
+      status.textContent = 'Otváram váš e-mailový klient…';
+      form.reset();
+    });
+
+    ['#name', '#email', '#msg'].forEach((sel) => {
+      const el = $(sel);
+      el?.addEventListener('input', () => {
+        if (el.closest('.field').classList.contains('has-err')) setErr(el, '');
+      });
+    });
+  }
+
+  /* ── hero ukážka ── */
+  const heroVideo = $('#heroVideo');
+  if (heroVideo) {
+    if (REDUCED) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); }
+    else if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) heroVideo.play().catch(() => {});
+          else heroVideo.pause();
+        });
+      }, { threshold:0.25 }).observe(heroVideo);
+    }
+  }
+
+  /* rok v pätičke */
+  const year = $('#year');
+  if (year) year.textContent = new Date().getFullYear();
 })();
