@@ -8,8 +8,7 @@
 
   /* Logo nadácie. V hlavičke je samotná značka (krídla so srdcom), v pätičke
      celé logo aj s názvom. Ak súbor chýba, zostane kreslená značka. */
-  const LOGO_MARK = 'assets/img/logo-srdce.svg';   // značka do hlavičky
-  const LOGO_KRIDLA = 'assets/img/logo-mark.png';  // staršia značka s krídlami
+  const LOGO_MARK = 'assets/img/logo-mark.png';
   const LOGO_FULL = 'assets/img/logo.png';
 
   /* Transparentný účet nadácie. Doplňte IBAN a odkaz na jeho výpis v banke.
@@ -614,7 +613,12 @@
     probe.src = src;
   };
 
-  ifExists(LOGO_MARK, () => $$('.nav .brand__mark').forEach(m => putLogo(m, LOGO_MARK, 'brand__mark--srdce')));
+  ifExists(LOGO_FULL, () => {
+    $$('.nav .brand__mark').forEach(m => {
+      putLogo(m, LOGO_FULL, 'brand__mark--cele');
+      m.closest('.brand')?.classList.add('brand--logo');   // názov nesie samotné logo
+    });
+  });
   ifExists(LOGO_FULL, () => {
     putLogo($('.foot .brand__mark'), LOGO_FULL, 'brand__mark--full');
     const name = $('.foot__brand p b');       // názov už nesie samotné logo
