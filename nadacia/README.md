@@ -67,14 +67,18 @@ Logo je už nasadené:
 
 | Súbor | Kde sa používa |
 |---|---|
-| `assets/img/logo.png` | celé logo aj s rukou písaným názvom — v hlavičke aj v pätičke |
-| `assets/img/logo-mark.png` | samotná značka bez názvu — záloha, ak by ste chceli v hlavičke len krídla so srdcom |
+| `assets/img/logo-srdce.svg` | srdce z nového loga — značka v hlavičke (prekreslené do vektora) |
+| `assets/img/logo.png` | staršie logo s krídlami a rukou písaným názvom — v pätičke |
+| `assets/img/logo-mark.png` | krídla so srdcom bez názvu — záloha |
 
-Logo je biele s červeným srdcom, teda určené na tmavý podklad — v hlavičke je
-tyrkysové pozadie, takže vynikne bez akejkoľvek dlaždice. V hlavičke aj v pätičke
-je celé logo vrátane rukou písaného názvu, preto sa vedľa neho nesádže názov
-znova. Ak by ste chceli v hlavičke len krídla so srdcom, v `app.js` stačí
-v riadku pre hlavičku vymeniť `LOGO_FULL` za `LOGO_MARK`.
+V hlavičke je značka (srdce) a vedľa nej sadzaný názov nadácie; v pätičke je
+staršie logo aj s rukou písaným názvom. Cesty sú v konštantách `LOGO_MARK`
+a `LOGO_FULL` na začiatku `app.js` — výmena loga je otázka jedného riadka.
+
+`logo-srdce.svg` je **vektorové prekreslenie** srdca z nového loga, ktoré
+vzniklo podľa náhľadu (originálny súbor sa do projektu nedostal). Keď budete
+mať originál, stačí ho uložiť pod rovnakým názvom, prípadne zmeniť cestu
+v `LOGO_MARK`.
 
 Ak logo vymeníte, zachovajte oba súbory a rovnaké názvy. Cesty sú v konštantách
 `LOGO_MARK` a `LOGO_FULL` na začiatku `app.js`, veľkosti v `styles.css`

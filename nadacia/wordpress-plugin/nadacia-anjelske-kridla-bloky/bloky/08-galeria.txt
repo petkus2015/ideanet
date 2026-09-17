@@ -2,7 +2,7 @@
 
 [fusion_text class="ak-eyebrow" margin_bottom="10px"]Galéria[/fusion_text]
 
-[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="14px"]Momenty, ktoré nesú ďalej[/fusion_title]
+[fusion_title title_type="text" content_align="left" size="2" text_color="#0a1f26" style_type="none" margin_bottom="14px"]Momenty, ktoré zostávajú v srdciach[/fusion_title]
 
 [fusion_text text_color="#5c757e" margin_bottom="34px"]
 Kliknutím obrázok zväčšíte. Prechádzať môžete šípkami alebo potiahnutím prsta.
