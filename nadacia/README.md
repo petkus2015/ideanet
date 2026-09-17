@@ -67,13 +67,14 @@ Logo je už nasadené:
 
 | Súbor | Kde sa používa |
 |---|---|
-| `assets/img/logo.png` | celé logo aj s rukou písaným názvom — v pätičke na tmavom podklade |
-| `assets/img/logo-mark.png` | samotná značka (krídla so srdcom) — na tyrkysovej dlaždici v hlavičke |
+| `assets/img/logo.png` | celé logo aj s rukou písaným názvom — v hlavičke aj v pätičke |
+| `assets/img/logo-mark.png` | samotná značka bez názvu — záloha, ak by ste chceli v hlavičke len krídla so srdcom |
 
-Logo je biele s červeným srdcom, teda určené na tmavý podklad. Preto v hlavičke
-sedí na tyrkysovej dlaždici — funguje tak nad tmavým hero aj na bielej hlavičke
-po odrolovaní. `logo-mark.png` je orez z `logo.png` bez názvu, ktorý by bol
-vo veľkosti hlavičky nečitateľný.
+Logo je biele s červeným srdcom, teda určené na tmavý podklad — v hlavičke je
+tyrkysové pozadie, takže vynikne bez akejkoľvek dlaždice. V hlavičke aj v pätičke
+je celé logo vrátane rukou písaného názvu, preto sa vedľa neho nesádže názov
+znova. Ak by ste chceli v hlavičke len krídla so srdcom, v `app.js` stačí
+v riadku pre hlavičku vymeniť `LOGO_FULL` za `LOGO_MARK`.
 
 Ak logo vymeníte, zachovajte oba súbory a rovnaké názvy. Cesty sú v konštantách
 `LOGO_MARK` a `LOGO_FULL` na začiatku `app.js`, veľkosti v `styles.css`

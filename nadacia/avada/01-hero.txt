@@ -2,7 +2,7 @@
 
 [fusion_text class="ak-eyebrow" margin_bottom="12px"]Nadácia Anjelské krídla[/fusion_text]
 
-[fusion_title title_type="text" content_align="left" size="1" text_color="#0a1f26" style_type="none" line_height="1.05" margin_bottom="20px"]Pomoc, ktorá nesie ďalej[/fusion_title]
+[fusion_title title_type="text" content_align="left" size="1" text_color="#0a1f26" style_type="none" line_height="1.05" margin_bottom="20px"]Naše krídla sú aj vašimi krídlami[/fusion_title]
 
 [fusion_text font_size="18px" line_height="1.7" text_color="#2a4750" margin_bottom="30px"]
 Pomáhame vážne chorým deťom, ich rodinám a všetkým, ktorým sa život zrazu obrátil naruby.

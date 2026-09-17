@@ -31,7 +31,7 @@
       img:'assets/img/hero-1.svg',
       alt:'Dieťa s rozpaženými rukami pod anjelskými krídlami v úsvite',
       eyebrow:'Nadácia Anjelské krídla',
-      title:'Pomoc, ktorá nesie ďalej',
+      title:'Naše krídla sú aj vašimi krídlami',
       text:'Pomáhame vážne chorým deťom, ich rodinám a všetkým, ktorým sa život zrazu obrátil naruby.',
       cta:[{t:'Chcem pomôcť', href:'#podpora', k:'primary'},{t:'Ako pomáhame', href:'#pomoc', k:'ghost'}]
     },
@@ -613,7 +613,12 @@
     probe.src = src;
   };
 
-  ifExists(LOGO_MARK, () => $$('.nav .brand__mark').forEach(m => putLogo(m, LOGO_MARK, 'brand__mark--img')));
+  ifExists(LOGO_FULL, () => {
+    $$('.nav .brand__mark').forEach(m => {
+      putLogo(m, LOGO_FULL, 'brand__mark--cele');
+      m.closest('.brand')?.classList.add('brand--logo');   // názov nesie samotné logo
+    });
+  });
   ifExists(LOGO_FULL, () => {
     putLogo($('.foot .brand__mark'), LOGO_FULL, 'brand__mark--full');
     const name = $('.foot__brand p b');       // názov už nesie samotné logo
