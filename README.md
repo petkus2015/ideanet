@@ -3,7 +3,7 @@
 Statická jednostránka, ktorá prezentuje tri služby (**videografia**, **grafický dizajn**,
 **správa sociálnych sietí**) a ukážky prác v karuseloch.
 
-Čistý svetlý dizajn, bez build kroku a bez závislostí — HTML, CSS a vanilla JavaScript.
+Čistý tmavý dizajn, bez build kroku a bez závislostí — HTML, CSS a vanilla JavaScript.
 
 ## Spustenie
 
@@ -19,7 +19,7 @@ Nasadenie: nahrajte obsah priečinka na akýkoľvek statický hosting
 
 ```
 index.html          obsah a štruktúra stránky
-styles.css          dizajn (svetlá paleta, zelený akcent)
+styles.css          dizajn (tmavá paleta, mätový akcent)
 app.js              dáta portfólia + interakcie
 assets/posters/     náhľady kariet (SVG) — video 9:16, grafika 4:5, social 9:16
 assets/videos/      ukážkové klipy
@@ -96,6 +96,11 @@ Klip v hlavičke je `#heroVideo` v `index.html`. Nahraďte
 ## Prispôsobenie
 
 - **Farby, rádiusy, šírka obsahu, počet kariet** — premenné v `:root` v `styles.css`.
+  Celá paleta je tmavá a odvodená z tokenov: `--canvas` (pozadie), `--paper`
+  (karty), `--tint` (tónovaná sekcia), `--ink` / `--ink-2` / `--ink-3` (text),
+  `--accent` + `--accent-2` (akcent, pre text na akcentnej ploche slúži
+  `--accent-ink`) a `--warm` (teplý detail). Zmena odtieňa značky = prepísať
+  `--accent`, `--accent-2` a `--warm`; zvyšok webu sa prispôsobí sám.
 - **Texty, ceny, kontakt** — priamo v `index.html`.
 - **Formulár** momentálne otvára e-mailového klienta (`mailto:`).
   Pre odosielanie na server nahraďte blok `location.href = 'mailto:…'`
