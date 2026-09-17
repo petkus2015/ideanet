@@ -68,6 +68,7 @@ zvyšok webu, v **Avada → Options → Colors** odporúčame nastaviť:
 | Link Color | `#14707f` |
 
 A v **Avada → Options → Header** dajte *Header Background Color* `#28afc3`,
+*Header Height* `92px` a v **Avada → Options → Logo** *Logo Max Height* `64px`,
 v **Avada → Options → Menu** nastavte hlavnému aj mobilnému menu biely text
 (`#ffffff`) a rozbaľovaciemu menu tyrkysové pozadie `#28afc3`.
 

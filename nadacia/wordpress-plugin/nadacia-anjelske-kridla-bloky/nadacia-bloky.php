@@ -451,7 +451,8 @@ function ak_bloky_stranka() {
 		<h2>5. Farby menu a témy</h2>
 		<p>Bloky majú farby nastavené v sebe, hlavičku a menu však ovláda téma:</p>
 		<ul style="list-style:disc;margin-left:22px">
-			<li><strong>Avada → Options → Header</strong>: Header Background Color <code>#28afc3</code>.</li>
+			<li><strong>Avada → Options → Header</strong>: Header Background Color <code>#28afc3</code>, Header Height <code>92px</code>.</li>
+			<li><strong>Avada → Options → Logo</strong>: Logo Max Height <code>64px</code> — pri nižšom logu sú krídla so srdcom ťažko čitateľné.</li>
 			<li><strong>Avada → Options → Menu → Main Menu</strong>: farba písma aj pri prejdení myšou <code>#ffffff</code>, pozadie rozbaľovacieho menu <code>#28afc3</code>.</li>
 			<li><strong>Avada → Options → Menu → Mobile Menu</strong>: pozadie <code>#28afc3</code>, text <code>#ffffff</code>.</li>
 			<li><strong>Avada → Options → Colors</strong>: Primary <code>#28afc3</code>, Text <code>#2a4750</code>, Headings <code>#0a1f26</code>, Link <code>#14707f</code>.</li>

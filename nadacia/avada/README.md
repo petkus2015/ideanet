@@ -28,7 +28,9 @@ jedna sekcia — vložíte ju do stránky a ďalej ju upravujete klikaním v bui
 | Link Color | `#14707f` |
 | Link Hover Color | `#0a1f26` |
 
-**Avada → Options → Header:** Header Background Color `#28afc3`.
+**Avada → Options → Header:** Header Background Color `#28afc3`, Header Height `92px`
+(na mobile stačí 80 px) a v **Avada → Options → Logo** dajte logu *Logo Max Height*
+`64px`, aby bolo krídla so srdcom dobre vidno.
 
 **Avada → Options → Menu → Main Menu:** farba písma `#ffffff`, farba pri prejdení
 myšou `#ffffff`, pozadie rozbaľovacieho menu `#28afc3` a jeho text `#ffffff`.
