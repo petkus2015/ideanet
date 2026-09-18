@@ -59,7 +59,7 @@ body{
 img,svg,video{display:block;max-width:100%}
 button,input,textarea,select{font:inherit;color:inherit}
 a{color:inherit}
-h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.022em;line-height:1.08}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.022em;line-height:1.08;text-wrap:balance}
 h1 em,h2 em,h3 em{
   font-family:'Instrument Serif',Georgia,serif;
   font-style:italic;font-weight:400;letter-spacing:-.01em;
@@ -214,8 +214,8 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 
 @media (min-width:1100px){
   .hero__inner{
-    grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);
-    column-gap:clamp(40px,5vw,72px);align-items:center;
+    grid-template-columns:minmax(0,1.14fr) minmax(0,.86fr);
+    column-gap:clamp(36px,4vw,60px);align-items:center;
   }
   .hero__media{
     display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:center;
@@ -223,7 +223,7 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
   .hero__tile:first-child{transform:translateY(22px) scale(.92);opacity:.9}
   .hero__tile:last-child{transform:translateY(-22px) scale(.92);opacity:.9}
   .hero__tile--lead{transform:scale(1.04)}
-  .hero h1{max-width:none;font-size:clamp(40px,4.7vw,66px)}
+  .hero h1{max-width:none;font-size:clamp(38px,3.9vw,54px)}
   .stats{grid-column:1 / -1}
 }
 
