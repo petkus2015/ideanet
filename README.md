@@ -19,7 +19,7 @@ Nasadenie: nahrajte obsah priečinka na akýkoľvek statický hosting
 
 ```
 index.html          obsah a štruktúra stránky
-styles.css          dizajn (tmavá paleta, mätový akcent)
+styles.css          dizajn (tmavá paleta, magentový akcent)
 app.js              dáta portfólia + interakcie
 assets/posters/     náhľady kariet (SVG) — video 9:16, grafika 4:5, social 9:16
 assets/videos/      ukážkové klipy
@@ -99,8 +99,10 @@ Klip v hlavičke je `#heroVideo` v `index.html`. Nahraďte
   Celá paleta je tmavá a odvodená z tokenov: `--canvas` (pozadie), `--paper`
   (karty), `--tint` (tónovaná sekcia), `--ink` / `--ink-2` / `--ink-3` (text),
   `--accent` + `--accent-2` (akcent, pre text na akcentnej ploche slúži
-  `--accent-ink`) a `--warm` (teplý detail). Zmena odtieňa značky = prepísať
-  `--accent`, `--accent-2` a `--warm`; zvyšok webu sa prispôsobí sám.
+  `--accent-ink`, pre priehľadné plochy `--accent-soft` v tvare `R,G,B`)
+  a `--spark` (druhý akcent na drobné detaily). Zmena odtieňa značky =
+  prepísať `--accent`, `--accent-2`, `--accent-soft` a `--spark`;
+  zvyšok webu sa prispôsobí sám.
 - **Texty, ceny, kontakt** — priamo v `index.html`.
 - **Formulár** momentálne otvára e-mailového klienta (`mailto:`).
   Pre odosielanie na server nahraďte blok `location.href = 'mailto:…'`
