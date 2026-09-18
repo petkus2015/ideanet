@@ -232,6 +232,7 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
   padding-top:34px;border-top:1px solid var(--line);
 }
 @media (max-width:1099px){.hero__cta{margin-bottom:clamp(10px,2vw,20px)}}
+.hero .note{margin-top:20px}
 .stats dt{font-size:clamp(26px,3.2vw,40px);font-weight:600;letter-spacing:-.03em}
 .stats dt::after{content:'+';color:var(--warm);font-size:.55em;vertical-align:super;margin-left:2px}
 .stats div:last-child dt::after{content:'h';color:var(--warm);font-size:.5em;margin-left:3px;vertical-align:baseline}
@@ -417,6 +418,17 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
   transition:width .18s var(--ease),transform .18s var(--ease)}
 
 .rail-hint{margin-top:10px;font-size:13px;color:var(--ink-3)}
+
+/* drobná poznámka pod tvrdením o termínoch */
+.note{
+  display:flex;gap:9px;align-items:flex-start;
+  max-width:52ch;font-size:13.5px;line-height:1.55;color:var(--ink-3);
+}
+.note::before{
+  content:'';flex:none;width:14px;height:1px;margin-top:.7em;
+  background:var(--line);
+}
+.note--wide{margin-top:clamp(28px,3vw,40px);max-width:62ch}
 
 /* ── 10. Proces ─────────────────────────────────────────── */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,2vw,28px);counter-reset:s}
