@@ -188,15 +188,19 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 .mobile-menu .btn{width:100%}
 
 /* ── 6. Hero ────────────────────────────────────────────── */
-.hero{padding:clamp(56px,9vw,116px) 0 clamp(40px,6vw,72px);position:relative;overflow:hidden}
-.hero::before{
-  content:'';position:absolute;top:-360px;right:-200px;width:760px;height:760px;
-  background:radial-gradient(circle,rgba(var(--accent-soft),.18),transparent 68%);
-  pointer-events:none;
+.hero{
+  position:relative;overflow:hidden;
+  padding:clamp(56px,9vw,116px) 0 clamp(40px,6vw,72px);
+  /* značková farba je priamo v podklade a stráca sa do tmavej */
+  background:
+    radial-gradient(1020px 720px at 84% 2%, rgba(var(--accent-soft),.62), transparent 60%),
+    radial-gradient(820px 600px at 2% 112%, rgba(var(--accent-soft),.32), transparent 64%),
+    linear-gradient(166deg, #33001a 0%, #1a000d 38%, var(--canvas) 80%);
 }
+/* prechod do ďalšej sekcie, aby hrana nebola vidieť */
 .hero::after{
-  content:'';position:absolute;bottom:-300px;left:-220px;width:620px;height:620px;
-  background:radial-gradient(circle,rgba(var(--accent-soft),.11),transparent 70%);
+  content:'';position:absolute;left:0;right:0;bottom:0;height:180px;
+  background:linear-gradient(180deg,transparent,var(--canvas));
   pointer-events:none;
 }
 .hero__glow{
@@ -264,8 +268,15 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 
 /* ── 7. Sekcie ──────────────────────────────────────────── */
 .section{padding:clamp(64px,9vw,120px) 0}
-.section--tint{background:var(--tint)}
-.section--work{padding-bottom:clamp(48px,7vw,90px)}
+.section--tint{
+  background:
+    radial-gradient(880px 580px at 2% 0%, rgba(var(--accent-soft),.22), transparent 62%),
+    var(--tint);
+}
+.section--work{
+  padding-bottom:clamp(48px,7vw,90px);
+  background:radial-gradient(1100px 700px at 96% 40%, rgba(var(--accent-soft),.10), transparent 64%);
+}
 
 /* ── 8. Karty služieb ───────────────────────────────────── */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,1.8vw,24px)}
@@ -496,7 +507,11 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 .quote figcaption span{color:var(--ink-3)}
 
 /* ── 13. Kontakt ────────────────────────────────────────── */
-.section--contact{background:var(--tint)}
+.section--contact{
+  background:
+    radial-gradient(940px 640px at 100% 4%, rgba(var(--accent-soft),.30), transparent 62%),
+    linear-gradient(180deg, var(--tint), #14000a 100%);
+}
 .contact{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,64px);align-items:start}
 .contact h2{font-size:clamp(28px,3.6vw,46px);margin-bottom:18px}
 .contact__list{display:grid;gap:2px;margin-top:32px}
@@ -556,7 +571,10 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 .form__status{margin-top:12px;font-size:14px;color:var(--accent-2);text-align:center}
 
 /* ── 14. Pätička ────────────────────────────────────────── */
-.foot{padding:48px 0 32px;border-top:1px solid var(--line);background:var(--canvas)}
+.foot{
+  padding:48px 0 32px;border-top:1px solid var(--line);
+  background:linear-gradient(180deg, #14000a, var(--canvas) 60%);
+}
 .foot__inner{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .foot__note{margin-right:auto;font-size:14px;color:var(--ink-3)}
 .foot__links{display:flex;gap:18px;flex-wrap:wrap}
