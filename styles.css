@@ -199,32 +199,64 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
   background:radial-gradient(circle,rgba(168,107,255,.12),transparent 70%);
   pointer-events:none;
 }
-.hero__inner{position:relative;display:grid;gap:clamp(34px,4vw,56px)}
+.hero__glow{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:0;transition:opacity .55s var(--ease);
+  background:radial-gradient(460px circle at var(--mx,50%) var(--my,35%),
+             rgba(var(--accent-soft),.16), transparent 68%);
+}
+.hero.is-live .hero__glow{opacity:1}
+.hero__inner{position:relative;z-index:1;display:grid;gap:clamp(34px,4vw,56px)}
 .hero h1{font-size:clamp(38px,6.6vw,84px);margin-bottom:26px;max-width:16ch}
 .hero .lead{margin-bottom:34px}
 .hero__cta{display:flex;flex-wrap:wrap;gap:12px}
 
-/* ukážka v hlavičke — tri vertikálne karty */
-.hero__media{display:none}
-.hero__tile{
-  margin:0;border-radius:var(--r-lg);overflow:hidden;background:#101314;
-  aspect-ratio:9/16;box-shadow:var(--sh-1);
+/* ukážka v hlavičke — karusel troch posledných realizácií
+   mobil 1,5 karty (swajp) · desktop pevne 3                */
+.carousel--hero{--per:1.5;--gap:12px;margin-top:4px}
+.reel-lab{
+  margin-bottom:12px;
+  font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);
 }
-.hero__tile img,.hero__tile video{width:100%;height:100%;object-fit:cover}
-.hero__tile--lead{box-shadow:var(--sh-2)}
+.carousel--hero .rail{
+  --pad:var(--gutter);
+  margin-inline:calc(var(--gutter) * -1);
+  padding-block:4px 14px;
+}
+.carousel--hero .rail{perspective:1100px}
+.carousel--hero .slide{transition:opacity .4s var(--ease)}
+.carousel--hero.is-hover .slide:not(:hover){opacity:.55}
+.carousel--hero .tile{
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+}
+.carousel--hero .slide:hover .tile{
+  transform:translateY(-6px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  box-shadow:var(--sh-2);
+}
+/* jemné pritiahnutie hlavného tlačidla ku kurzoru */
+.hero__cta .btn{transform:translate3d(var(--tx,0px),var(--ty,0px),0)}
+.hero__cta .btn:hover{transform:translate3d(var(--tx,0px),calc(var(--ty,0px) - 2px),0)}
+
+.carousel--hero .slide__meta{padding-top:11px}
+.carousel--hero .slide__meta h4{font-size:14px}
+.carousel--hero .slide__meta p{display:none}
+.carousel--hero .progress{margin-top:4px}
 
 @media (min-width:1100px){
   .hero__inner{
     grid-template-columns:minmax(0,1.14fr) minmax(0,.86fr);
     column-gap:clamp(36px,4vw,60px);align-items:center;
   }
-  .hero__media{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:center;
-  }
-  .hero__tile:first-child{transform:translateY(22px) scale(.92);opacity:.9}
-  .hero__tile:last-child{transform:translateY(-22px) scale(.92);opacity:.9}
-  .hero__tile--lead{transform:scale(1.04)}
   .hero h1{max-width:none;font-size:clamp(38px,3.9vw,54px)}
+  .carousel--hero{--per:3;--gap:14px;margin-top:0}
+  .carousel--hero .rail{--pad:0;margin-inline:0;padding-block:6px 12px}
+  /* pri pevných troch kartách nesmie vzniknúť posuvník:
+     koncová medzera aj zaokrúhlenie by pás zbytočne predĺžili */
+  .carousel--hero .rail-end{display:none}
+  .carousel--hero .slide{flex-basis:calc((100% - (var(--per) - 1) * var(--gap) - 1px) / var(--per))}
+  .carousel--hero .progress{display:none}   /* tri karty, nie je čo posúvať */
 }
 
 @media (max-width:1099px){.hero__cta{margin-bottom:clamp(10px,2vw,20px)}}

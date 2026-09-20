@@ -106,7 +106,9 @@
   function buildCarousel(root) {
     const kind  = root.dataset.carousel;
     const ratio = root.dataset.ratio || '9/16';
-    const items = DATA[kind] || [];
+    const limit = +root.dataset.limit || 0;      // data-limit="3" = len prvé tri
+    const all   = DATA[kind] || [];
+    const items = limit ? all.slice(0, limit) : all;
     const rail  = $('[data-rail]', root);
     const track = $('[data-progress]', root);
     const thumb = track ? $('span', track) : null;
@@ -307,6 +309,16 @@
       slides.forEach((s) => io.observe(s));
     }
 
+    /* ── tichý náhľad prvej karty (hero) ── */
+    if (isVideo && root.dataset.autoplay === '1' && !REDUCED && 'IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) { if (!current) play(0); }
+          else pause(0);
+        });
+      }, { threshold:0.4 }).observe(slides[0]);
+    }
+
     return { kind, items, play, pause, sync };
   }
 
@@ -463,17 +475,68 @@
     });
   }
 
-  /* ── hero ukážka ── */
-  const heroVideo = $('#heroVideo');
-  if (heroVideo) {
-    if (REDUCED) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); }
-    else if ('IntersectionObserver' in window) {
-      new IntersectionObserver((entries) => {
-        entries.forEach((en) => {
-          if (en.isIntersecting) heroVideo.play().catch(() => {});
-          else heroVideo.pause();
+  /* ─────────────────────────────────────────────────────────
+     7) INTERAKCIE V HLAVIČKE
+     Svetlo za kurzorom, náklon kariet a magnetické tlačidlo.
+     Všetko len pre myš a len keď používateľ nežiada tlmený pohyb.
+  ───────────────────────────────────────────────────────── */
+  const hero = $('#hero');
+  if (hero && !REDUCED && FINE.matches) {
+    let raf = 0, mx = 50, my = 35;
+
+    hero.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const r = hero.getBoundingClientRect();
+      mx = ((e.clientX - r.left) / r.width) * 100;
+      my = ((e.clientY - r.top) / r.height) * 100;
+      hero.classList.add('is-live');
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        hero.style.setProperty('--mx', mx.toFixed(2) + '%');
+        hero.style.setProperty('--my', my.toFixed(2) + '%');
+      });
+    });
+    hero.addEventListener('pointerleave', () => hero.classList.remove('is-live'));
+
+    /* náklon kariet v hero karuseli */
+    const heroReel = $('#heroReel');
+    if (heroReel) {
+      const MAX = 7;                       // stupňov
+      heroReel.addEventListener('pointerenter', () => heroReel.classList.add('is-hover'));
+      heroReel.addEventListener('pointerleave', () => {
+        heroReel.classList.remove('is-hover');
+        $$('.tile', heroReel).forEach((t) => {
+          t.style.setProperty('--rx', '0deg');
+          t.style.setProperty('--ry', '0deg');
         });
-      }, { threshold:0.25 }).observe(heroVideo);
+      });
+      $$('.slide', heroReel).forEach((slide) => {
+        const tile = $('.tile', slide);
+        slide.addEventListener('pointermove', (e) => {
+          if (e.pointerType !== 'mouse') return;
+          const r = tile.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width - 0.5;
+          const py = (e.clientY - r.top) / r.height - 0.5;
+          tile.style.setProperty('--ry', (px * MAX).toFixed(2) + 'deg');
+          tile.style.setProperty('--rx', (-py * MAX).toFixed(2) + 'deg');
+        });
+      });
+    }
+
+    /* magnetické hlavné tlačidlo */
+    const magnet = $('.hero__cta .btn--dark');
+    if (magnet) {
+      const PULL = 7;                      // px
+      magnet.addEventListener('pointermove', (e) => {
+        const r = magnet.getBoundingClientRect();
+        magnet.style.setProperty('--tx', (((e.clientX - r.left) / r.width - .5) * PULL * 2).toFixed(1) + 'px');
+        magnet.style.setProperty('--ty', (((e.clientY - r.top) / r.height - .5) * PULL).toFixed(1) + 'px');
+      });
+      magnet.addEventListener('pointerleave', () => {
+        magnet.style.setProperty('--tx', '0px');
+        magnet.style.setProperty('--ty', '0px');
+      });
     }
   }
 

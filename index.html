@@ -56,7 +56,8 @@
 <main id="top">
 
   <!-- ══════════ HERO ══════════ -->
-  <section class="hero">
+  <section class="hero" id="hero">
+    <span class="hero__glow" aria-hidden="true"></span>
     <div class="wrap hero__inner">
      <div class="hero__copy">
       <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span> Expresná produkcia · video, grafika, sociálne siete</p>
@@ -80,19 +81,13 @@
       <p class="note reveal">Termíny dodania platia podľa dohody a rozsahu prác.</p>
      </div>
 
-      <div class="hero__media reveal" aria-hidden="true">
-        <figure class="hero__tile">
-          <img src="assets/posters/video-03.svg" alt="" width="1080" height="1920" decoding="async">
-        </figure>
-        <figure class="hero__tile hero__tile--lead">
-          <video id="heroVideo" autoplay muted loop playsinline preload="metadata" poster="assets/posters/video-06.svg">
-            <source src="assets/videos/hero.mp4" type="video/mp4">
-            <source src="assets/videos/reel-06.webm" type="video/webm">
-          </video>
-        </figure>
-        <figure class="hero__tile">
-          <img src="assets/posters/social-01.svg" alt="" width="1080" height="1920" decoding="async">
-        </figure>
+      <div class="carousel carousel--hero reveal" id="heroReel"
+           data-carousel="video" data-ratio="9/16" data-limit="3" data-autoplay="1">
+        <p class="reel-lab">Posledné realizácie</p>
+        <div class="rail-wrap">
+          <div class="rail" data-rail role="listbox" aria-label="Posledné realizácie" tabindex="0"></div>
+        </div>
+        <div class="progress" data-progress aria-hidden="true"><span></span></div>
       </div>
     </div>
   </section>

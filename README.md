@@ -27,7 +27,21 @@ assets/videos/      ukážkové klipy
 
 ## Karusely
 
-Tri nezávislé karusely — videografia, grafika, sociálne siete.
+Štyri nezávislé karusely — v hlavičke tri posledné realizácie,
+nižšie videografia, grafika a sociálne siete.
+
+Karusel v hlavičke (`#heroReel`) berie prvé položky z `DATA.video`
+a zobrazí **3 karty na desktope a 1,5 na mobile**:
+
+```html
+<div class="carousel carousel--hero" id="heroReel"
+     data-carousel="video"   <!-- z ktorej sekcie ťahá dáta -->
+     data-ratio="9/16"
+     data-limit="3"          <!-- koľko posledných položiek ukázať -->
+     data-autoplay="1">      <!-- prvá karta sa ticho rozbehne -->
+```
+
+Ostatné karusely majú pohyblivý počet kariet:
 
 | Šírka obrazovky | Kariet naraz |
 |---|---|
@@ -42,6 +56,20 @@ Počet mení jediná premenná `--per` v `styles.css` (sekcia *Responzívne*),
 medzeru medzi kartami premenná `--gap`.
 
 ### Ovládanie
+
+## Interakcie v hlavičke
+
+Len pre myš a len keď používateľ nemá zapnutý tlmený pohyb
+(`prefers-reduced-motion`):
+
+- svetlo v pozadí sleduje kurzor (`--mx` / `--my` na sekcii `.hero`),
+- karty sa jemne nakláňajú k pohybu myši, susedné sa stlmia,
+- hlavné tlačidlo sa mierne pritiahne ku kurzoru.
+
+Silu náklonu (`MAX`) a pritiahnutia (`PULL`) nájdete v `app.js`
+v sekcii *Interakcie v hlavičke*.
+
+## Ovládanie karuselov
 
 | Ovládanie | Čo robí |
 |---|---|
