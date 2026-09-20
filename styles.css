@@ -225,19 +225,10 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
   .hero__tile:last-child{transform:translateY(-22px) scale(.92);opacity:.9}
   .hero__tile--lead{transform:scale(1.04)}
   .hero h1{max-width:none;font-size:clamp(38px,3.9vw,54px)}
-  .stats{grid-column:1 / -1}
 }
 
-.stats{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,2.4vw,34px);
-  padding-top:34px;border-top:1px solid var(--line);
-}
 @media (max-width:1099px){.hero__cta{margin-bottom:clamp(10px,2vw,20px)}}
 .hero .note{margin-top:20px}
-.stats dt{font-size:clamp(26px,3.2vw,40px);font-weight:600;letter-spacing:-.03em}
-.stats dt::after{content:'+';color:var(--spark);font-size:.55em;vertical-align:super;margin-left:2px}
-.stats div:last-child dt::after{content:'h';color:var(--spark);font-size:.5em;margin-left:3px;vertical-align:baseline}
-.stats dd{margin:6px 0 0;font-size:14px;color:var(--ink-3)}
 
 /* ── 7. Sekcie ──────────────────────────────────────────── */
 .section{padding:clamp(64px,9vw,120px) 0}
@@ -590,7 +581,6 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
   .brand{margin-right:auto}
   .cards,.steps,.quotes{grid-template-columns:repeat(2,1fr)}
   .contact{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,1fr);gap:24px}
 }
 @media (max-width:720px){
   :root{--per:2.5}

@@ -421,27 +421,6 @@
     reveals.forEach((el) => el.classList.add('in'));
   }
 
-  const counters = $$('[data-count]');
-  if (counters.length) {
-    const run = (el) => {
-      const to = +el.dataset.count;
-      if (REDUCED) { el.textContent = to; return; }
-      const t0 = performance.now(), dur = 1200;
-      const tick = (t) => {
-        const p = Math.min(1, (t - t0) / dur);
-        el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((en) => { if (en.isIntersecting) { run(en.target); io.unobserve(en.target); } });
-      }, { threshold:0.5 });
-      counters.forEach((el) => io.observe(el));
-    } else counters.forEach(run);
-  }
-
   /* ─────────────────────────────────────────────────────────
      6) FORMULÁR
      Momentálne otvára e-mailového klienta. Pre odosielanie na
