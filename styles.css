@@ -193,9 +193,18 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
   padding:clamp(56px,9vw,116px) 0 clamp(40px,6vw,72px);
   /* značková farba je priamo v podklade a stráca sa do tmavej */
   background:
-    radial-gradient(1020px 720px at 84% 2%, rgba(var(--accent-soft),.62), transparent 60%),
-    radial-gradient(820px 600px at 2% 112%, rgba(var(--accent-soft),.32), transparent 64%),
-    linear-gradient(166deg, #33001a 0%, #1a000d 38%, var(--canvas) 80%);
+    /* čistá značková farba v rohu, odtiaľ sa stráca do tmavej */
+    radial-gradient(900px 660px at 97% 6%,
+      var(--accent) 0%,
+      rgba(var(--accent-soft),.82) 18%,
+      rgba(var(--accent-soft),.42) 38%,
+      rgba(var(--accent-soft),.12) 58%,
+      transparent 72%),
+    radial-gradient(700px 520px at -6% 108%,
+      rgba(var(--accent-soft),.55) 0%,
+      rgba(var(--accent-soft),.18) 40%,
+      transparent 66%),
+    linear-gradient(166deg, #2a0013 0%, #16000b 42%, var(--canvas) 82%);
 }
 /* prechod do ďalšej sekcie, aby hrana nebola vidieť */
 .hero::after{
@@ -509,7 +518,11 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 /* ── 13. Kontakt ────────────────────────────────────────── */
 .section--contact{
   background:
-    radial-gradient(940px 640px at 100% 4%, rgba(var(--accent-soft),.30), transparent 62%),
+    radial-gradient(820px 620px at 104% 0%,
+      var(--accent) 0%,
+      rgba(var(--accent-soft),.55) 16%,
+      rgba(var(--accent-soft),.18) 40%,
+      transparent 66%),
     linear-gradient(180deg, var(--tint), #14000a 100%);
 }
 .contact{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,64px);align-items:start}
