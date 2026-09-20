@@ -15,11 +15,11 @@
   --ink-3:#847a88;                  /* popisky */
   --line:#2c2433;                   /* výrazná linka */
   --line-2:#1f1926;                 /* jemná linka */
-  --accent:#ff2d94;                 /* akcent — tlačidlá, aktívne prvky */
-  --accent-2:#ff7ab8;               /* akcent na text a linky */
-  --accent-ink:#1b0310;             /* text na akcentnej ploche */
-  --accent-soft:255,45,148;         /* akcent pre priehľadné plochy */
-  --spark:#a86bff;                  /* druhý akcent — drobné detaily */
+  --accent:#ff0056;                 /* akcent — tlačidlá, aktívne prvky */
+  --accent-2:#ff5c8d;               /* akcent na text a linky */
+  --accent-ink:#1c0009;             /* text na akcentnej ploche */
+  --accent-soft:255,0,86;           /* akcent pre priehľadné plochy */
+  --spark:#ff7aa2;                  /* svetlejší tón akcentu — drobné detaily */
   --nav-bg:rgba(10,7,12,.72);
   --nav-bg-stuck:rgba(10,7,12,.92);
   --glass:rgba(16,11,18,.62);       /* štítky nad médiom */
@@ -191,12 +191,12 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 .hero{padding:clamp(56px,9vw,116px) 0 clamp(40px,6vw,72px);position:relative;overflow:hidden}
 .hero::before{
   content:'';position:absolute;top:-360px;right:-200px;width:760px;height:760px;
-  background:radial-gradient(circle,rgba(var(--accent-soft),.14),transparent 68%);
+  background:radial-gradient(circle,rgba(var(--accent-soft),.18),transparent 68%);
   pointer-events:none;
 }
 .hero::after{
   content:'';position:absolute;bottom:-300px;left:-220px;width:620px;height:620px;
-  background:radial-gradient(circle,rgba(168,107,255,.12),transparent 70%);
+  background:radial-gradient(circle,rgba(var(--accent-soft),.11),transparent 70%);
   pointer-events:none;
 }
 .hero__glow{
