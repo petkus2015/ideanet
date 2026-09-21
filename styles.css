@@ -102,7 +102,7 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 .sub{font-size:clamp(15.5px,1.15vw,17px);max-width:60ch}
 
 .head{max-width:var(--wrap);margin-bottom:clamp(32px,4vw,52px)}
-.head h2{font-size:clamp(30px,4.3vw,54px);margin-bottom:18px;max-width:18ch}
+.head h2{font-size:clamp(30px,4.3vw,54px);margin-bottom:18px;max-width:21ch}
 
 /* ── 4. Tlačidlá ────────────────────────────────────────── */
 .btn{
