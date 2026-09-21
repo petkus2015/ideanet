@@ -144,6 +144,13 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 .nav__inner{display:flex;align-items:center;gap:24px;height:72px}
 
 .brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex:none}
+.brand__name{
+  padding-right:13px;border-right:1px solid var(--line);
+  font-size:14.5px;font-weight:500;letter-spacing:.01em;color:var(--ink-2);
+  white-space:nowrap;
+  transition:color .2s var(--ease);
+}
+.brand:hover .brand__name{color:var(--ink)}
 .brand__mark{
   width:28px;height:28px;border-radius:9px;background:var(--accent);flex:none;
   position:relative;
@@ -622,6 +629,9 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 }
 @media (max-width:560px){
   :root{--per:1.5;--gap:14px}
+  .brand{gap:9px}
+  .brand__name{padding-right:10px;font-size:13.5px}
+  .brand__text{font-size:15px}
   .hero__cta .btn{flex:1 1 100%}
   .carousel__ctrl{display:none}          /* na mobile sa swajpuje */
   .lightbox{grid-template-columns:1fr}
