@@ -55,6 +55,9 @@ ORIGINS = {
 # Hľadáme iba lety s odletom najviac 3 mesiace dopredu (blok používa rovnakú hranicu).
 HORIZON_DAYS = 92
 
+# Koľko najlacnejších ponúk uložiť do deals.json (sledované mestá sa ukladajú zvlášť).
+MAX_DEALS = 80
+
 # Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
 # featured=True -> veľká karta na začiatku bloku; ostatné sa vždy pridajú medzi karty "kamkoľvek".
 WATCH = {
@@ -410,12 +413,22 @@ WIZZ_CHUNK_DAYS = 30  # cenový kalendár Wizz berie kratšie obdobia, 3 mesiace
 
 
 def wizz_api_base() -> str:
-    """Wizz mení verziu API s každým vydaním webu; aktuálnu nájdeme na /buildnumber."""
-    text = fetch_text(WIZZ_SITE + "/buildnumber", headers=WIZZ_HEADERS)
-    m = re.search(r"https://be\.wizzair\.com/[\w.]+", text)
-    if not m:
-        raise RuntimeError("Wizz Air: nepodarilo sa zistiť verziu API")
-    return m.group(0)
+    """Wizz mení verziu API s každým vydaním webu. Skúsime viac miest, kde je uvedená."""
+    tried = []
+    for url in (WIZZ_SITE + "/buildnumber",
+                WIZZ_SITE + "/static_fe/metadata.json",
+                WIZZ_SITE + "/en-gb"):
+        try:
+            text = fetch_text(url, headers=WIZZ_HEADERS)
+        except Exception as exc:
+            tried.append(f"{url}: {exc}")
+            continue
+        m = re.search(r"https://be\.wizzair\.com/[\d.]+", text)
+        if m:
+            print(f"Wizz Air API: {m.group(0)} (z {url})")
+            return m.group(0)
+        tried.append(f"{url}: verzia API nenájdená")
+    raise RuntimeError("nepodarilo sa zistiť verziu API – " + "; ".join(tried))
 
 
 def wizz_routes(base: str, origins) -> dict[str, list[dict]]:
@@ -542,7 +555,19 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     today = now.date().isoformat()
     horizon = (now.date() + dt.timedelta(days=HORIZON_DAYS)).isoformat()
     # do bloku idú len ponuky s odletom od zajtra do 3 mesiacov – bez dátumu ich nevieme overiť
+    all_deals = deals
     deals = [d for d in deals if d["depart"] and today < d["depart"] <= horizon]
+
+    # Diagnostika sledovaných miest: čo zdroje vrátili a prečo to prípadne vypadlo.
+    for name, w in WATCH.items():
+        raw = [d for d in all_deals if d["dest"] in w["airports"]]
+        ok = [d for d in deals if d["dest"] in w["airports"] and d["return"]]
+        if raw:
+            print(f"{name}: {len(raw)} ponúk od zdrojov, {len(ok)} spiatočných s odletom do {HORIZON_DAYS} dní"
+                  f" (najlacnejšia vôbec {min(d['price'] for d in raw)} {raw[0]['currency']},"
+                  f" odlety {min(d['depart'] or '?' for d in raw)} – {max(d['depart'] or '?' for d in raw)})")
+        else:
+            print(f"{name}: žiadny zdroj nevrátil ponuku")
 
     # Na každú trasu necháme najlacnejšiu ponuku.
     best: dict[tuple[str, str], dict] = {}
@@ -551,6 +576,14 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         if key not in best or d["price"] < best[key]["price"]:
             best[key] = d
     out = sorted(best.values(), key=lambda d: d["price"])
+    # Rovnaký let pod viacerými kódmi (napr. Miláno MIL/MXP, Varšava WAW/WMI) ukážeme raz.
+    seen, unique = set(), []
+    for d in out:
+        key = (d["origin"], d["city"], d["price"], d["depart"], d["return"])
+        if key not in seen:
+            seen.add(key)
+            unique.append(d)
+    out = unique
     for d in out:
         d["prevPrice"] = prev_prices.get((d["origin"], d["dest"]))
         d["city"] = CITY_SK.get(d["city"], d["city"])
@@ -574,6 +607,9 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
             # keď momondo nič nevráti, blok ponúkne aspoň odkaz na vyhľadávanie
             "searchUrl": f"{SITE}/explore/VIE-{w['airports'][0]}",
         })
+
+    # Blok ukazuje najviac 24 kariet; menší súbor = rýchlejšie načítanie aj vo WordPresse.
+    out = out[:MAX_DEALS]
 
     return {
         "source": "momondo.co.uk",
