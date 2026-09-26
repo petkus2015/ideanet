@@ -472,7 +472,20 @@ def cheapest_round_trip(outs: dict, rets: dict, min_n: int = 2, max_n: int = 14)
     return best
 
 
-def fetch_wizz(origins, today: dt.date, pause: float = 0.8) -> tuple[list[dict], list[str]]:
+def wizz_timetable(base: str, body: dict, attempts: int = 4) -> dict:
+    """Cenový kalendár; pri preťažení (HTTP 429/503) Wizz chvíľu počkáme a skúsime znova."""
+    for attempt in range(attempts):
+        try:
+            return fetch_json(base + "/Api/search/timetable", body=body, headers=WIZZ_HEADERS,
+                              label="Wizz Air", retries=1)
+        except RuntimeError as exc:
+            if attempt == attempts - 1 or not re.search(r"HTTP Error (429|503)", str(exc)):
+                raise
+            time.sleep(15 * (attempt + 1))
+    raise RuntimeError("Wizz Air: vyčerpané pokusy")
+
+
+def fetch_wizz(origins, today: dt.date, pause: float = 1.5) -> tuple[list[dict], list[str]]:
     base = wizz_api_base()
     routes = wizz_routes(base, origins)
     deals, errors = [], []
@@ -495,8 +508,7 @@ def fetch_wizz(origins, today: dt.date, pause: float = 0.8) -> tuple[list[dict],
                         ],
                         "priceType": "regular", "adultCount": 1, "childCount": 0, "infantCount": 0,
                     }
-                    res = fetch_json(base + "/Api/search/timetable", body=body, headers=WIZZ_HEADERS,
-                                     label="Wizz Air", retries=2)
+                    res = wizz_timetable(base, body)
                     outs.update(wizz_prices(res.get("outboundFlights")))
                     for k, v in wizz_prices(res.get("returnFlights")).items():
                         if k not in rets or v[0] < rets[k][0]:
