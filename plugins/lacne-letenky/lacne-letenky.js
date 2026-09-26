@@ -7,18 +7,18 @@
  *   <div data-lacne-letenky data-src="plugins/lacne-letenky/data/deals.json"></div>
  *   <script src="plugins/lacne-letenky/lacne-letenky.js" defer></script>
  *
- * Alebo ručne: LacneLetenky.mount(element, { src: '…/deals.json', limit: 12 })
+ * Alebo ručne: LacneLetenky.mount(element, { src: '…/deals.json', limit: 8 })
  *
  * Blok ukazuje iba ponuky z poslednej úspešnej aktualizácie – nikdy nie vymyslené ceny.
  */
 (function () {
   'use strict';
 
-  var FONTS = 'https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800' +
-    '&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap';
-  // základný odtieň "oblohy" na kartách podľa regiónu
-  var HUES = { 'Európa': 222, 'Ázia': 338, 'Afrika': 28, 'Amerika': 262, 'Oceánia': 188, 'Svet': 205 };
-  var ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 11 5M6 5h5v5"/></svg>';
+  var FONTS = 'https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700' +
+    '&family=JetBrains+Mono:wght@500;600&display=swap';
+  var ARROW = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg>';
+  var PLANE = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M21.5 15.5v-2l-8-5V3.2c0-.9-.7-1.7-1.5-1.7s-1.5.8-1.5 1.7v5.3l-8 5v2l8-2.5v5.2l-2 1.5V21l3.5-1 3.5 1v-1.3l-2-1.5V13l8 2.5z" transform="rotate(90 12 12)"/></svg>';
+  var CAL = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4.5" width="14" height="12.5" rx="2.5"/><path d="M3 8.5h14M7 2.5v4M13 2.5v4"/></svg>';
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -57,17 +57,6 @@
     if (s === 1) return '1 prestup';
     return s + ' prestupy';
   }
-  function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
-  function hues(d) {
-    var h = hash(d.dest), base = HUES[d.region] != null ? HUES[d.region] : 205;
-    var h1 = base + (h % 70) - 35;
-    return '--h1:' + h1 + ';--h2:' + (h1 + 34 + (h % 20));
-  }
-  function arc(d) {
-    var h = hash(d.origin + d.dest), y1 = 78 + (h % 12), y2 = 30 + (h % 22), cy = 4 + (h % 18);
-    return '<svg class="ll-arc" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
-      '<path d="M8 ' + y1 + ' Q 48 ' + cy + ' 90 ' + y2 + '"/></svg>';
-  }
   function ensureFonts() {
     if (document.querySelector('link[data-ll-fonts]')) return;
     var l = document.createElement('link');
@@ -89,7 +78,7 @@
           return r.json();
         });
 
-    el.innerHTML = '<div class="ll-grid"><div class="ll-skel"></div><div class="ll-skel"></div><div class="ll-skel"></div></div>';
+    el.innerHTML = '<div class="ll-grid"><div class="ll-skel"></div><div class="ll-skel"></div><div class="ll-skel"></div><div class="ll-skel"></div></div>';
     return ready.then(function (data) { render(el, data, opts); }, function (err) {
       el.innerHTML = '<div class="ll-empty"><p>Letenky sa nepodarilo načítať (' + esc(err.message) +
         '). Skontrolujte cestu k súboru deals.json v atribúte data-src.</p></div>';
@@ -109,50 +98,44 @@
 
   function render(el, data, opts) {
     var deals = freshDeals(data);
-    var limit = opts.limit || 12;
+    var limit = opts.limit || 8;
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });
 
-    function trendTag(d) {
-      if (!d.prevPrice || d.prevPrice <= d.price) return '';
-      return '<span class="ll-tag" data-kind="drop">▼ ' + money(d.prevPrice - d.price, d.currency) + '</span>';
-    }
     function datesText(d) {
-      return d.depart ? esc(day(d.depart)) + (d['return'] ? ' – ' + esc(day(d['return'])) : '') : 'flexibilný termín';
+      if (!d.depart) return 'Flexibilný termín';
+      return esc(day(d.depart)) + (d['return'] ? ' – ' + esc(day(d['return'])) : '') + ' · ' + nights(d.nights);
     }
     function cardHtml(d) {
       var from = cities[d.origin] || d.origin;
+      var drop = d.prevPrice && d.prevPrice > d.price
+        ? '<span class="ll-drop" title="Zlacnené od poslednej aktualizácie">▼ ' + money(d.prevPrice - d.price, d.currency) + '</span>' : '';
       return '<li><a class="ll-card" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
-          esc(d.city + ', ' + d.country + ' z ' + from + ' od ' + money(d.price, d.currency) + ' – otvoriť na momondo') + '">' +
-        '<div class="ll-art" style="' + hues(d) + '">' + arc(d) +
-          '<span class="ll-watermark" aria-hidden="true">' + esc(d.dest) + '</span>' +
-          '<div class="ll-tags">' + (d.stops === 0 ? '<span class="ll-tag">Priamy</span>' : '') + trendTag(d) + '</div>' +
-        '</div>' +
-        '<div class="ll-body">' +
-          '<div><span class="ll-route">' + esc(d.origin) + ' → ' + esc(d.dest) + ' · z ' + esc(from) + '</span>' +
-            '<p class="ll-city">' + esc(d.city) + '</p><p class="ll-country">' + esc(d.country) + '</p></div>' +
-          '<div class="ll-row"><div class="ll-dates">' + datesText(d) + '<small>' + nights(d.nights) +
-              (d.stops > 0 ? ' · ' + stopsLabel(d.stops) : '') + '</small></div>' +
-            '<div class="ll-price"><small>od</small><strong>' + money(d.price, d.currency) + '</strong></div></div>' +
-          '<span class="ll-go">Hľadať let ' + ARROW + '</span>' +
-        '</div></a></li>';
+          esc(d.city + ', ' + d.country + ', let z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na momondo') + '">' +
+        '<div class="ll-card-top"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
+          (stopsLabel(d.stops) ? '<span class="ll-chip">' + stopsLabel(d.stops) + '</span>' : '') + '</div>' +
+        '<div><p class="ll-city">' + esc(d.city) + '</p><p class="ll-country">' + esc(d.country) + ' · z ' + esc(from) + '</p></div>' +
+        '<p class="ll-dates">' + CAL + '<span>' + datesText(d) + '</span></p>' +
+        '<div class="ll-card-bottom"><div class="ll-price"><span class="ll-price-label"><small>' + (d['return'] ? 'spiatočná od' : 'od') + '</small>' + drop + '</span>' +
+          '<strong>' + money(d.price, d.currency) + '</strong></div>' +
+          '<span class="ll-go" aria-hidden="true">' + ARROW + '</span></div>' +
+      '</a></li>';
     }
 
-    var status = deals.length
-      ? '<span class="ll-live">Aktualizované ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) + '</span>' +
-        '<span>ceny z momondo.co.uk</span>'
-      : '<span class="ll-live" data-stale="true">Ponuky sa aktualizujú</span>';
+    var updated = deals.length
+      ? '<p class="ll-updated">Aktualizované <b>' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) + '</b></p>'
+      : '<p class="ll-updated" data-stale="true">Ponuky sa aktualizujú</p>';
 
     el.innerHTML =
-      '<div class="ll-heading">' +
-        '<p class="ll-status">' + status + '</p>' +
-        '<h2 class="ll-title">' + esc(opts.title || 'Lacné letenky') + '<span>z Viedne a Bratislavy kamkoľvek do sveta</span></h2>' +
-      '</div>' +
+      '<div class="ll-head"><div>' +
+          '<p class="ll-eyebrow">Lacné letenky</p>' +
+          '<h2 class="ll-title">' + esc(opts.title || 'Kam lacno z Viedne a Bratislavy') + '</h2>' +
+        '</div>' + updated + '</div>' +
       (deals.length
         ? '<ul class="ll-grid">' + deals.slice(0, limit).map(cardHtml).join('') + '</ul>' +
-          '<p class="ll-foot">Najnižšie ceny za osobu nájdené na <a href="https://www.momondo.co.uk/explore" target="_blank" rel="noopener">momondo.co.uk</a> ' +
-            'pri poslednej aktualizácii. Ceny sa menia, pred nákupom ich overte.</p>'
-        : '<div class="ll-empty"><p>Práve nemáme aktuálne ponuky. Nové ceny pribudnú pri najbližšej aktualizácii o 7:00, 12:00 alebo 18:00.</p></div>');
+          '<div class="ll-foot"><span>Najnižšie ceny za osobu z momondo.co.uk. Ceny sa menia, pred nákupom ich overte.</span>' +
+            '<a class="ll-more" href="https://www.momondo.co.uk/explore" target="_blank" rel="noopener">Všetky destinácie na momondo →</a></div>'
+        : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšej aktualizácii o 7:00, 12:00 alebo 18:00.</span></div>');
   }
 
   function auto() {

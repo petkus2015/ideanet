@@ -17,7 +17,7 @@ Náhľad: otvorte `plugins/lacne-letenky/index.html` (funguje aj bez servera).
 | Atribút | Význam |
 |---|---|
 | `data-src` | cesta k `deals.json` |
-| `data-limit` | počet kariet (predvolene 12) |
+| `data-limit` | počet kariet (predvolene 8) |
 | `data-title` | vlastný nadpis |
 | `data-fonts="false"` | nenačítavať Google Fonts |
 | `data-theme="dark"` / `"light"` | vynútiť tému (inak podľa systému) |

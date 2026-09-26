@@ -6,50 +6,58 @@
 <title>Lacné letenky VIE · BTS</title>
 <link rel="stylesheet" href="lacne-letenky.css">
 <style>
+  /* Ukážková stránka – iba rám okolo bloku, aby bolo vidno, ako zapadne do webu. */
   :root {
-    --pg-bg: #e4e9f1; --pg-ink: #0f1b2d; --pg-ink-2: #4a5872; --pg-code: #ffffff; --pg-line: #cfd6e3;
+    --pg-bg: #ffffff; --pg-band: #f6f8fb; --pg-ink: #0f172a; --pg-ink-2: #64748b; --pg-line: #e5e8ef; --pg-accent: #2563eb;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --pg-bg: #060b15; --pg-ink: #e6ecf5; --pg-ink-2: #9aa8c0; --pg-code: #0f1829; --pg-line: #22304a; color-scheme: dark; }
+    :root:not([data-theme="light"]) { --pg-bg: #0b111c; --pg-band: #0f1623; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
   }
-  :root[data-theme="dark"] { --pg-bg: #060b15; --pg-ink: #e6ecf5; --pg-ink-2: #9aa8c0; --pg-code: #0f1829; --pg-line: #22304a; color-scheme: dark; }
-  body {
-    margin: 0; background: var(--pg-bg); color: var(--pg-ink);
-    font: 15px/1.5 "Figtree", system-ui, sans-serif;
-  }
-  .pg { max-width: 1120px; margin: 0 auto; padding: 28px 16px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .pg-intro { display: grid; gap: 4px; max-width: 65ch; }
-  .pg-intro p { margin: 0; color: var(--pg-ink-2); }
-  .pg-kicker { font: 600 12px/1.2 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--pg-ink-2); }
-  .pg-intro h1 { margin: 0; font: 800 clamp(30px, 5vw, 44px)/1 "Big Shoulders Display", "Arial Narrow", sans-serif; text-transform: uppercase; text-wrap: balance; }
-  .pg-embed h2 { margin: 0; font: 700 18px/1.2 "Figtree", system-ui, sans-serif; }
-  .pg-embed { display: grid; gap: 10px; }
-  .pg-embed p { margin: 0; color: var(--pg-ink-2); max-width: 65ch; }
-  pre {
-    margin: 0; overflow-x: auto; background: var(--pg-code); border: 1px solid var(--pg-line);
-    border-radius: 10px; padding: 14px 16px; font: 13px/1.6 "JetBrains Mono", ui-monospace, monospace;
-  }
+  :root[data-theme="dark"] { --pg-bg: #0b111c; --pg-band: #0f1623; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
+  body { margin: 0; background: var(--pg-bg); color: var(--pg-ink); font: 16px/1.55 "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .pg-wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
+  .pg-nav { border-bottom: 1px solid var(--pg-line); }
+  .pg-nav .pg-wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+  .pg-logo { display: inline-flex; gap: 10px; align-items: center; font-weight: 700; letter-spacing: -.01em; color: inherit; text-decoration: none; }
+  .pg-logo i { width: 26px; height: 26px; border-radius: 8px; background: var(--pg-accent); }
+  .pg-links { display: flex; gap: 22px; font-size: 14px; }
+  .pg-links a { color: var(--pg-ink-2); text-decoration: none; }
+  .pg-links a[aria-current] { color: var(--pg-ink); font-weight: 600; }
+  .pg-intro { padding-block: 56px 36px; display: grid; gap: 12px; max-width: 62ch; }
+  .pg-intro h1 { margin: 0; font-size: clamp(32px, 5vw, 48px); line-height: 1.08; letter-spacing: -.03em; text-wrap: balance; }
+  .pg-intro p { margin: 0; color: var(--pg-ink-2); font-size: 18px; }
+  .pg-band { background: var(--pg-band); border-block: 1px solid var(--pg-line); padding-block: 48px 56px; }
+  .pg-foot { padding-block: 28px 40px; font-size: 13px; color: var(--pg-ink-2); }
+  @media (max-width: 560px) { .pg-links a:not([aria-current]) { display: none; } .pg-intro { padding-block: 36px 24px; } }
 </style>
 </head>
 <body>
-<main class="pg">
-  <header class="pg-intro">
-    <span class="pg-kicker">Náhľad pluginu</span>
-    <p>Takto blok uvidia návštevníci vášho webu. Zobrazuje iba ponuky z poslednej úspešnej aktualizácie z momondo.co.uk; klik na kartu otvorí vyhľadávanie letu.</p>
-  </header>
+<header class="pg-nav">
+  <div class="pg-wrap">
+    <a class="pg-logo" href="#"><i></i>Váš web</a>
+    <nav class="pg-links"><a href="#">Domov</a><a href="#" aria-current="page">Letenky</a><a href="#">Kontakt</a></nav>
+  </div>
+</header>
 
-  <!-- Samotný plugin -->
-  <div data-lacne-letenky data-src="data/deals.json"></div>
+<main>
+  <section class="pg-wrap">
+    <div class="pg-intro">
+      <h1>Letenky z Viedne a Bratislavy</h1>
+      <p>Najlacnejšie aktuálne ponuky do celého sveta, obnovované ráno, na obed a večer.</p>
+    </div>
+  </section>
 
-  <section class="pg-embed">
-    <h2>Vloženie na web</h2>
-    <p>Skopírujte tieto tri riadky na ľubovoľnú stránku. Atribút <code>data-limit</code> určí počet kariet (predvolene 12), <code>data-title</code> zmení nadpis.</p>
-<pre>&lt;link rel="stylesheet" href="/plugins/lacne-letenky/lacne-letenky.css"&gt;
-&lt;div data-lacne-letenky data-src="/plugins/lacne-letenky/data/deals.json" data-limit="12"&gt;&lt;/div&gt;
-&lt;script src="/plugins/lacne-letenky/lacne-letenky.js" defer&gt;&lt;/script&gt;</pre>
+  <section class="pg-band">
+    <div class="pg-wrap">
+      <!-- Blok Lacné letenky -->
+      <div data-lacne-letenky data-src="data/deals.json"></div>
+    </div>
   </section>
 </main>
+
+<footer class="pg-wrap pg-foot">© Váš web · Ceny letov poskytuje momondo.co.uk</footer>
+
 <!-- deals.js umožní otvoriť náhľad aj priamo zo súboru (file://), bez servera -->
 <script src="data/deals.js"></script>
 <script src="lacne-letenky.js"></script>
