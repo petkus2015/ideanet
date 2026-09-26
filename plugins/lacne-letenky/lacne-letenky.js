@@ -85,6 +85,31 @@
     });
   }
 
+  var SITE = 'https://www.momondo.co.uk';
+  var ANYWHERE = 'anywhere';
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function isoDate(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+
+  // Odkaz na momondo podľa výberu vo vyhľadávaní.
+  // Kamkoľvek -> mapa momondo Explore; konkrétne mesto -> vyhľadávanie s flexibilnými dátumami ±3 dni.
+  function searchUrl(origins, dest, month) {
+    if (dest === ANYWHERE) {
+      // Explore berie jedno letisko; pri "oboch" otvoríme Viedeň, Bratislava sa prepne priamo na mape.
+      return SITE + '/explore/' + origins.split(',')[0] + '-anywhere';
+    }
+    var now = new Date(), dep;
+    if (month) {
+      var p = month.split('-');
+      dep = new Date(+p[0], +p[1] - 1, 15);
+      if (dep < now) dep = new Date(now.getTime() + 7 * 864e5);
+    } else {
+      dep = new Date(now.getTime() + 21 * 864e5);
+    }
+    var ret = new Date(dep.getTime() + 12 * 864e5);
+    return SITE + '/flight-search/' + origins + '-' + dest + '/' + isoDate(dep) + '-flexible-3days/' +
+      isoDate(ret) + '-flexible-3days?sort=price_a';
+  }
+
   // Ponuky staršie ako toto sa už nezobrazia (aktualizácia zlyhala viackrát po sebe).
   var MAX_AGE_H = 36;
 
@@ -158,6 +183,28 @@
         '</div></a>';
     }
 
+    function searchHtml() {
+      var months = '<option value="">Kedykoľvek</option>', d = new Date();
+      for (var i = 0; i < 7; i++) {
+        var m = new Date(d.getFullYear(), d.getMonth() + i, 1);
+        var label = m.toLocaleDateString('sk-SK', { month: 'long', year: 'numeric' });
+        months += '<option value="' + m.getFullYear() + '-' + pad(m.getMonth() + 1) + '">' + esc(label.charAt(0).toUpperCase() + label.slice(1)) + '</option>';
+      }
+      var dests = '<option value="' + ANYWHERE + '">Kamkoľvek do sveta</option>' +
+        (data.watch || []).map(function (w) {
+          return '<option value="' + esc(w.airports.join(',')) + '">' + esc(w.name) + '</option>';
+        }).join('');
+      return '<form class="ll-search" data-search>' +
+        '<label class="ll-field"><span>Odkiaľ</span><select name="from">' +
+          '<option value="VIE,BTS">Viedeň a Bratislava</option><option value="VIE">Viedeň (VIE)</option><option value="BTS">Bratislava (BTS)</option>' +
+        '</select></label>' +
+        '<label class="ll-field"><span>Kam</span><select name="to">' + dests + '</select></label>' +
+        '<label class="ll-field" data-when><span>Kedy</span><select name="when">' + months + '</select></label>' +
+        '<a class="ll-search-go" href="#" target="_blank" rel="noopener">Hľadať na momondo ' + ARROW + '</a>' +
+        '<p class="ll-search-note" data-note hidden>Mapa momondo otvorí ceny z Viedne, Bratislavu prepnete priamo na mape.</p>' +
+      '</form>';
+    }
+
     var updated = isFresh(data)
       ? '<p class="ll-updated">Aktualizované <b>' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) + '</b></p>'
       : '<p class="ll-updated" data-stale="true">Ponuky sa aktualizujú</p>';
@@ -167,6 +214,7 @@
           '<p class="ll-eyebrow">Lacné letenky</p>' +
           '<h2 class="ll-title">' + esc(opts.title || 'Kam lacno z Viedne a Bratislavy') + '</h2>' +
         '</div>' + updated + '</div>' +
+      searchHtml() +
       watch.map(watchHtml).join('') +
       (deals.length
         ? '<ul class="ll-grid">' + deals.slice(0, limit).map(cardHtml).join('') + '</ul>' +
@@ -175,6 +223,19 @@
             '. Ceny sa menia, pred nákupom ich overte.</span>' +
             '<a class="ll-more" href="https://www.momondo.co.uk/explore" target="_blank" rel="noopener">Všetky destinácie na momondo →</a></div>'
         : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšej aktualizácii o 7:00, 12:00 alebo 18:00.</span></div>');
+
+    var form = el.querySelector('[data-search]');
+    function syncSearch() {
+      var from = form.elements.from.value, to = form.elements.to.value;
+      var anywhere = to === ANYWHERE;
+      // mapa Explore nemá výber mesiaca – pole "Kedy" pri "Kamkoľvek" skryjeme
+      form.querySelector('[data-when]').hidden = anywhere;
+      form.querySelector('[data-note]').hidden = !(anywhere && from.indexOf(',') > -1);
+      form.querySelector('.ll-search-go').href = searchUrl(from, to, anywhere ? '' : form.elements.when.value);
+    }
+    form.addEventListener('change', syncSearch);
+    form.addEventListener('submit', function (e) { e.preventDefault(); form.querySelector('.ll-search-go').click(); });
+    syncSearch();
   }
 
   function auto() {
