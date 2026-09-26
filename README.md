@@ -24,6 +24,7 @@ index.html          obsah stránky
 styles.css          dizajn (tmavá modrá → čierna, magenta akcent)
 app.js              interakcie, dáta portfólia, kalkulačka
 ponuka/             samostatné ponuky na poslanie klientovi
+docs/               stratégia a cenník v textovej podobe
 assets/posters/     náhľady kariet 9:16 (SVG)
 assets/videos/      videá portfólia
 ```
@@ -39,7 +40,7 @@ assets/videos/      videá portfólia
 | Proces | štyri kroky od zadania po dodanie |
 | Cenník | prepínač troch pohľadov — firmy, agentúry (white-label), eventy |
 | Kalkulačka | orientačná cena podľa balíka, expresu, dopravy, extra hodín a RAW |
-| Podmienky | revízie, termíny, doprava, storno, RAW, NDA, platby, práca navyše |
+| Podmienky | osem krátkych kariet + odkaz na plnú ponuku |
 | Kontakt | dopytový formulár s predvyplneným balíkom |
 
 ## Cenník
@@ -67,6 +68,15 @@ Tri panely (`#panel-firmy`, `#panel-agentury`, `#panel-eventy`) prepína
 `role="tablist"` — myšou aj šípkami ← →. Karty v sekcii Služby majú
 `data-tab` a otvoria príslušný pohľad. Každé tlačidlo balíka nesie
 `data-package` — po kliknutí predvyplní výber v kontaktnom formulári.
+
+## Stratégia a ponuka v textovej podobe
+
+V priečinku `docs/` sú dva interné dokumenty — nie sú určené klientom.
+
+| Súbor | Obsah |
+|---|---|
+| `docs/strategia.md` | pozicionovanie, tri zdroje príjmu, koho a ako oslovovať, white-label model, čo nerobiť, plán na prvý týždeň, čo ešte treba rozhodnúť |
+| `docs/ponuka.md` | celý cenník a podmienky v texte plus hotové texty na skopírovanie do správy alebo e-mailu |
 
 ## Ponuky na poslanie klientovi
 
