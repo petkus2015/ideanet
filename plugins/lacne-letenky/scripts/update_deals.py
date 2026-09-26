@@ -21,6 +21,7 @@ import argparse
 import datetime as dt
 import gzip
 import json
+import re
 import sys
 import time
 import urllib.error
@@ -37,6 +38,8 @@ except Exception:  # pragma: no cover - zoneinfo chýba len na starých Pythonoc
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 SITE = "https://www.momondo.co.uk"
+CURRENCY = "EUR"  # ceny v bloku sú vždy v eurách
+ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
 EXPLORE_PATH = "/s/horizon/exploreapi/destinations"
 
 ORIGINS = {
@@ -123,6 +126,7 @@ def explore_url(origin: str) -> str:
         "exactDates": "false", "flightMaxStops": "", "stopsFilterActive": "false",
         "topRightLat": "", "topRightLon": "", "bottomLeftLat": "", "bottomLeftLon": "",
         "zoomLevel": "2", "selectedMarker": "", "themeCode": "", "selectedDestination": "",
+        "currency": CURRENCY,
     }
     return SITE + EXPLORE_PATH + "?" + urllib.parse.urlencode(params)
 
@@ -141,6 +145,35 @@ def fetch_json(url: str, retries: int = 3) -> dict:
             last = exc
             time.sleep(2 ** (attempt + 1))
     raise RuntimeError(f"momondo neodpovedalo ({url}): {last}")
+
+
+def fetch_ecb_rates() -> tuple[dict[str, float], str]:
+    """Denné kurzy ECB: koľko jednotiek meny stojí 1 EUR (napr. GBP -> 0.84)."""
+    req = urllib.request.Request(ECB_URL, headers={"User-Agent": HEADERS["User-Agent"]})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        xml = resp.read().decode("utf-8")
+    rates = {m.group(1): float(m.group(2))
+             for m in re.finditer(r"currency=['\"]([A-Z]{3})['\"]\s+rate=['\"]([\d.]+)['\"]", xml)}
+    day = re.search(r"time=['\"](\d{4}-\d{2}-\d{2})['\"]", xml)
+    if not rates:
+        raise RuntimeError("ECB nevrátila kurzy")
+    return rates, day.group(1) if day else ""
+
+
+def to_eur(deals: list[dict], rates: dict[str, float] | None) -> list[str]:
+    """Prepočíta ceny, ktoré neprišli v EUR. Vráti zoznam použitých mien."""
+    used = set()
+    for d in deals:
+        cur = (d.get("currency") or "").upper()
+        if cur == CURRENCY:
+            continue
+        if not rates or cur not in rates:
+            raise RuntimeError(f"chýba kurz pre {cur or 'neznámu menu'} – ceny nemožno uviesť v EUR")
+        d["priceOriginal"], d["currencyOriginal"] = d["price"], cur
+        d["price"] = max(1, round(d["price"] / rates[cur]))
+        d["currency"] = CURRENCY
+        used.add(cur)
+    return sorted(used)
 
 
 def pick(obj, *paths, default=None):
@@ -252,9 +285,10 @@ def next_update(now: dt.datetime) -> dt.datetime:
     return now + dt.timedelta(hours=8)
 
 
-def build(deals: list[dict], now: dt.datetime, errors: list[str]) -> dict:
+def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | None = None) -> dict:
     prev = load_previous()
-    prev_prices = {(d["origin"], d["dest"]): d["price"] for d in prev.get("deals", [])}
+    prev_prices = {(d["origin"], d["dest"]): d["price"] for d in prev.get("deals", [])
+                   if d.get("currency") == CURRENCY}
     today = now.date().isoformat()
     # do bloku idú len ponuky s odletom od zajtra – dnešné a staršie už nekúpite
     deals = [d for d in deals if not d["depart"] or d["depart"] > today]
@@ -271,6 +305,8 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str]) -> dict:
 
     return {
         "source": "momondo.co.uk",
+        "currency": CURRENCY,
+        "fx": fx,  # None = momondo vrátilo ceny priamo v EUR
         "updatedAt": now.isoformat(timespec="minutes"),
         "slot": slot_for(now),
         "nextUpdate": next_update(now).isoformat(timespec="minutes"),
@@ -295,6 +331,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--from-file", type=Path, help="spracuje uloženú odpoveď explore API")
     ap.add_argument("--origin", default="VIE", help="letisko pre --from-file (predvolene VIE)")
+    ap.add_argument("--rate", action="append", default=[], metavar="MENA=KURZ",
+                    help="kurz 1 EUR voči mene namiesto ECB, napr. --rate GBP=0.84 (na testovanie)")
     args = ap.parse_args()
 
     now = dt.datetime.now(VIENNA)
@@ -318,7 +356,26 @@ def main() -> int:
         print("Žiadne ponuky – dáta sa neprepisujú.", file=sys.stderr)
         return 1
 
-    write(build(deals, now, errors))
+    fx = None
+    if any((d.get("currency") or "").upper() != CURRENCY for d in deals):
+        if args.rate:
+            rates = {k.upper(): float(v) for k, v in (r.split("=") for r in args.rate)}
+            day = "ručne zadaný"
+        else:
+            try:
+                rates, day = fetch_ecb_rates()
+            except Exception as exc:
+                print(f"Kurzy ECB nedostupné ({exc}) – dáta sa neprepisujú.", file=sys.stderr)
+                return 1
+        try:
+            used = to_eur(deals, rates)
+        except RuntimeError as exc:
+            print(f"{exc} – dáta sa neprepisujú.", file=sys.stderr)
+            return 1
+        fx = {"source": "ECB", "date": day, "rates": {c: rates[c] for c in used}}
+        print(f"Prepočítané na EUR kurzom ECB ({day}): {fx['rates']}")
+
+    write(build(deals, now, errors, fx))
     print(f"Zapísaných {len(deals)} ponúk ({now:%Y-%m-%d %H:%M} Europe/Vienna).")
     return 0
 

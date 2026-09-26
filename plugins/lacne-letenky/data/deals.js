@@ -1,6 +1,8 @@
 /* Vygenerované skriptom scripts/update_deals.py – needitovať ručne. */
 window.LACNE_LETENKY_DATA = {
  "source": "momondo.co.uk",
+ "currency": "EUR",
+ "fx": null,
  "updatedAt": null,
  "slot": null,
  "nextUpdate": null,

@@ -27,7 +27,7 @@
   }
   function money(v, cur) {
     try {
-      return new Intl.NumberFormat('sk-SK', { style: 'currency', currency: cur || 'GBP', currencyDisplay: 'narrowSymbol', maximumFractionDigits: 0 }).format(v);
+      return new Intl.NumberFormat('sk-SK', { style: 'currency', currency: cur || 'EUR', currencyDisplay: 'narrowSymbol', maximumFractionDigits: 0 }).format(v);
     } catch (e) { return v + ' ' + (cur || ''); }
   }
   function day(iso) {
@@ -133,7 +133,9 @@
         '</div>' + updated + '</div>' +
       (deals.length
         ? '<ul class="ll-grid">' + deals.slice(0, limit).map(cardHtml).join('') + '</ul>' +
-          '<div class="ll-foot"><span>Najnižšie ceny za osobu z momondo.co.uk. Ceny sa menia, pred nákupom ich overte.</span>' +
+          '<div class="ll-foot"><span>Najnižšie ceny za osobu v eurách z momondo.co.uk' +
+            (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
+            '. Ceny sa menia, pred nákupom ich overte.</span>' +
             '<a class="ll-more" href="https://www.momondo.co.uk/explore" target="_blank" rel="noopener">Všetky destinácie na momondo →</a></div>'
         : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšej aktualizácii o 7:00, 12:00 alebo 18:00.</span></div>');
   }

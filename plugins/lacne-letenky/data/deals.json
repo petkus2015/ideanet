@@ -1,5 +1,7 @@
 {
  "source": "momondo.co.uk",
+ "currency": "EUR",
+ "fx": null,
  "updatedAt": null,
  "slot": null,
  "nextUpdate": null,

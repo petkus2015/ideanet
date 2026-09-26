@@ -28,7 +28,7 @@ Alebo z JavaScriptu: `LacneLetenky.mount(element, { src, limit, title })`.
 
 Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filtrov a bez vymyslených cien:
 
-- karty zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena)
+- karty zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena v €)
 - štítok „Priamy“ a ▼ o koľko ponuka zlacnela od predchádzajúcej aktualizácie
 - čas poslednej aktualizácie
 - klik na kartu otvorí vyhľadávanie danej trasy a termínu na momondo.co.uk
@@ -44,8 +44,12 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
 
 1. pre VIE aj BTS zavolá momondo explore endpoint
    (`/s/horizon/exploreapi/destinations?airport=VIE…`),
-2. na každú trasu nechá najlacnejšiu ponuku a doplní odkaz na vyhľadávanie,
-3. zapíše `data/deals.json` + `data/deals.js` a commitne ich, ak sa ceny zmenili.
+2. ceny uloží v **eurách**: od momondo si ich pýta v EUR (`currency=EUR`); ak by momondo
+   vrátilo inú menu (momondo.co.uk má predvolene libry), prepočíta ich denným kurzom
+   **ECB** a v bloku pribudne poznámka „prepočítané kurzom ECB“. Keď kurz nie je
+   dostupný, staré dáta ostanú a beh skončí chybou – ceny v librách sa nikdy nezobrazia,
+3. na každú trasu nechá najlacnejšiu ponuku a doplní odkaz na vyhľadávanie,
+4. zapíše `data/deals.json` + `data/deals.js` a commitne ich, ak sa ceny zmenili.
 
 Ak momondo nevráti nič, staré dáta ostanú a beh skončí chybou (uvidíte ho v záložke Actions).
 Plánované behy GitHub spúšťa len z **predvolenej vetvy** – workflow začne bežať po zlúčení.
