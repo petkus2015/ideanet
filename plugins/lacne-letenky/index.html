@@ -18,12 +18,12 @@
     margin: 0; background: var(--pg-bg); color: var(--pg-ink);
     font: 15px/1.5 "Figtree", system-ui, sans-serif;
   }
-  .pg { max-width: 1120px; margin: 0 auto; padding: 28px 16px 48px; display: grid; gap: 28px; }
-  .pg-intro { display: grid; gap: 6px; max-width: 65ch; }
+  .pg { max-width: 1120px; margin: 0 auto; padding: 28px 16px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pg-intro { display: grid; gap: 4px; max-width: 65ch; }
   .pg-intro p { margin: 0; color: var(--pg-ink-2); }
   .pg-kicker { font: 600 12px/1.2 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--pg-ink-2); }
-  .pg h1 { margin: 0; font: 800 clamp(30px, 5vw, 44px)/1 "Big Shoulders Display", "Arial Narrow", sans-serif; text-transform: uppercase; text-wrap: balance; }
-  .pg h2 { margin: 0; font: 700 18px/1.2 "Figtree", system-ui, sans-serif; }
+  .pg-intro h1 { margin: 0; font: 800 clamp(30px, 5vw, 44px)/1 "Big Shoulders Display", "Arial Narrow", sans-serif; text-transform: uppercase; text-wrap: balance; }
+  .pg-embed h2 { margin: 0; font: 700 18px/1.2 "Figtree", system-ui, sans-serif; }
   .pg-embed { display: grid; gap: 10px; }
   .pg-embed p { margin: 0; color: var(--pg-ink-2); max-width: 65ch; }
   pre {
@@ -36,8 +36,7 @@
 <main class="pg">
   <header class="pg-intro">
     <span class="pg-kicker">Náhľad pluginu</span>
-    <h1>Lacné letenky z Viedne a Bratislavy</h1>
-    <p>Najlacnejšie spiatočné letenky kamkoľvek podľa momondo.co.uk. Ceny sa obnovujú 3× denne o 7:00, 12:00 a 18:00 (viedenský čas).</p>
+    <p>Takto blok uvidia návštevníci vášho webu. Klik na kartu otvorí vyhľadávanie letu na momondo.co.uk.</p>
   </header>
 
   <!-- Samotný plugin -->
