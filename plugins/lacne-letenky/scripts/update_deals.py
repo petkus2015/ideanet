@@ -47,6 +47,9 @@ ORIGINS = {
     "BTS": {"city": "Bratislava", "name": "M. R. Štefánik"},
 }
 
+# Hľadáme iba lety s odletom najviac 3 mesiace dopredu (blok používa rovnakú hranicu).
+HORIZON_DAYS = 92
+
 # Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
 WATCH = {
     "Bangkok": {"countryCode": "TH", "airports": ["BKK", "DMK"]},  # Suvarnabhumi aj Don Mueang
@@ -295,8 +298,9 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     prev_prices = {(d["origin"], d["dest"]): d["price"] for d in prev.get("deals", [])
                    if d.get("currency") == CURRENCY}
     today = now.date().isoformat()
-    # do bloku idú len ponuky s odletom od zajtra – dnešné a staršie už nekúpite
-    deals = [d for d in deals if not d["depart"] or d["depart"] > today]
+    horizon = (now.date() + dt.timedelta(days=HORIZON_DAYS)).isoformat()
+    # do bloku idú len ponuky s odletom od zajtra do 3 mesiacov – bez dátumu ich nevieme overiť
+    deals = [d for d in deals if d["depart"] and today < d["depart"] <= horizon]
 
     # Na každú trasu necháme najlacnejšiu ponuku.
     best: dict[tuple[str, str], dict] = {}
@@ -313,7 +317,8 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
                   if w.get("deal") and w["deal"].get("currency") == CURRENCY}
     watch = []
     for name, w in WATCH.items():
-        hits = [d for d in out if d["dest"] in w["airports"]]
+        # iba spiatočné letenky (s dátumom návratu)
+        hits = [d for d in out if d["dest"] in w["airports"] and d["return"]]
         deal = dict(min(hits, key=lambda d: d["price"])) if hits else None
         if deal:
             deal["city"] = name
@@ -337,6 +342,7 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         "timezone": "Europe/Vienna",
         "origins": [{"code": k, **v} for k, v in ORIGINS.items()],
         "errors": errors,
+        "horizonDays": HORIZON_DAYS,
         "watch": watch,
         "deals": out,
     }

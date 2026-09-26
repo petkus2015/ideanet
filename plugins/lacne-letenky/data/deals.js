@@ -34,6 +34,7 @@ window.LACNE_LETENKY_DATA = {
   }
  ],
  "errors": [],
+ "horizonDays": 92,
  "watch": [
   {
    "name": "Bangkok",

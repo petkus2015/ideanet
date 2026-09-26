@@ -28,11 +28,11 @@ Alebo z JavaScriptu: `LacneLetenky.mount(element, { src, limit, title })`.
 
 Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filtrov a bez vymyslených cien:
 
-- **vyhľadávanie na momondo**: Odkiaľ (Viedeň a Bratislava / Viedeň / Bratislava),
-  Kam (kamkoľvek do sveta / Bangkok), Kedy (mesiac) a tlačidlo „Hľadať na momondo“.
-  Kamkoľvek otvorí mapu momondo Explore, Bangkok vyhľadávanie VIE,BTS → BKK,DMK
-  s dátumami ±3 dni.
-- **Bangkok** má vlastnú zvýraznenú kartu: najlacnejšia ponuka z VIE alebo BTS na letisko
+- **tlačidlo „Vyhľadať lacné letenky“** – jediné ovládanie, bez ručného zadávania. Načíta
+  najnovšie ponuky z posledného hľadania na momondo (obíde cache prehliadača) a napíše,
+  či pribudli nové, alebo kedy prebehne ďalšie hľadanie.
+- hľadajú sa iba lety s **odletom najviac 3 mesiace dopredu** (`HORIZON_DAYS` v skripte)
+- **Bangkok je vždy prvý**: najlacnejšia **spiatočná** letenka z VIE alebo BTS na letisko
   BKK alebo DMK. Ak ju momondo pri aktualizácii nevráti, blok napíše, že ponuku nenašiel,
   a ponúkne odkaz na vyhľadávanie. Ďalšie sledované mestá sa pridávajú do `WATCH`
   v `scripts/update_deals.py`.

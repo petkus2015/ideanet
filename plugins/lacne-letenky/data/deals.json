@@ -33,6 +33,7 @@
   }
  ],
  "errors": [],
+ "horizonDays": 92,
  "watch": [
   {
    "name": "Bangkok",

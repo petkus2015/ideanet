@@ -54,11 +54,10 @@
 .ll-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; }
 .ll-eyebrow { font-size: 13px; font-weight: 600; color: var(--ll-accent); }
 .ll .ll-title { margin: 6px 0 0; font: 700 clamp(24px, 3.4vw, 34px)/1.12 var(--ll-font); letter-spacing: -.02em; text-wrap: balance; }
-.ll-updated {
-  display: inline-flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ll-ink-2);
-  padding: 7px 12px; border-radius: 999px; background: var(--ll-card);
+.ll .ll-updated {
+  display: flex; gap: 8px; align-items: center; margin-top: 10px; font-size: 14px; color: var(--ll-ink-2);
 }
-.ll-updated::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ll-good); }
+.ll-updated::before { flex: none; content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ll-good); }
 .ll-updated[data-stale="true"]::before { background: var(--ll-warn); }
 .ll-updated b { color: var(--ll-ink); font-weight: 600; }
 
@@ -94,35 +93,21 @@
 .ll-card:hover .ll-go { background: var(--ll-accent); color: var(--ll-surface); }
 .ll-card:hover .ll-go svg { transform: translateX(2px); }
 
-/* ---------- vyhľadávanie na momondo ---------- */
-.ll-search {
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 6px; align-items: stretch;
-  padding: 6px; border-radius: 20px; background: var(--ll-surface); border: 1px solid var(--ll-line);
-  box-shadow: 0 10px 30px -18px rgba(15, 23, 42, .25);
+/* ---------- tlačidlo Vyhľadať lacné letenky ---------- */
+.ll-refresh {
+  display: inline-flex; gap: 10px; align-items: center; justify-content: center; white-space: nowrap;
+  border: 0; cursor: pointer; padding: 15px 24px; border-radius: 999px;
+  background: var(--ll-accent); color: #ffffff; font: 700 16px/1 var(--ll-font);
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--ll-accent) 70%, transparent);
+  transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
 }
-.ll-field { display: grid; gap: 2px; padding: 10px 14px; border-radius: 14px; cursor: pointer; transition: background-color .15s ease; min-width: 0; }
-.ll-field:hover, .ll-field:focus-within { background: var(--ll-card); }
-.ll-field span { font-size: 12px; font-weight: 600; color: var(--ll-ink-2); }
-.ll-field select {
-  width: 100%; border: 0; background: transparent; padding: 0; margin: 0; cursor: pointer;
-  font: 600 15px/1.3 var(--ll-font); color: var(--ll-ink); appearance: none; -webkit-appearance: none;
-  text-overflow: ellipsis; padding-right: 20px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right center / 12px;
-}
-.ll-field select option { color: #0f172a; background: #ffffff; }
-.ll-field select:focus-visible { outline: none; }
-.ll-field:focus-within { outline: 2px solid var(--ll-accent); outline-offset: -2px; }
-.ll-field[hidden] { display: none; }
-.ll-search:has([data-when][hidden]) { grid-template-columns: repeat(2, minmax(0, 1fr)) auto; }
-.ll-search-go {
-  display: inline-flex; gap: 8px; align-items: center; justify-content: center; white-space: nowrap;
-  padding: 0 22px; border-radius: 14px; background: var(--ll-accent); color: #ffffff;
-  font-weight: 700; font-size: 15px; text-decoration: none; transition: filter .15s ease;
-}
-.ll-search-go:hover { filter: brightness(1.08); }
-.ll-search-go svg { width: 18px; height: 18px; transition: transform .2s ease; }
-.ll-search-go:hover svg { transform: translateX(3px); }
-.ll .ll-search-note { grid-column: 1 / -1; padding: 2px 14px 6px; font-size: 12px; color: var(--ll-ink-2); }
+.ll-refresh:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.ll-refresh:active { transform: translateY(0); }
+.ll-refresh svg { width: 18px; height: 18px; }
+.ll-refresh[aria-busy="true"] { cursor: progress; filter: saturate(.8); }
+.ll-refresh[aria-busy="true"] svg { animation: ll-spin .9s linear infinite; }
+@keyframes ll-spin { to { transform: rotate(360deg); } }
+.ll .ll-msg { padding: 12px 16px; border-radius: 14px; background: var(--ll-accent-soft); color: var(--ll-ink); font-size: 14px; }
 
 /* ---------- sledovaná destinácia (Bangkok) ---------- */
 .ll-feature {
@@ -168,15 +153,9 @@
 @keyframes ll-shimmer { to { background-position: -200% 0; } }
 
 /* mobil: vodorovný posuvný pás kariet */
-@media (max-width: 760px) {
-  .ll-search, .ll-search:has([data-when][hidden]) { grid-template-columns: 1fr 1fr; }
-  .ll-search-go { grid-column: 1 / -1; padding-block: 14px; }
-  .ll-search [data-when] { grid-column: 1 / -1; }
-}
-@media (max-width: 480px) {
-  .ll-search, .ll-search:has([data-when][hidden]) { grid-template-columns: 1fr; }
-}
 @media (max-width: 640px) {
+  .ll-head > div { flex-basis: 100%; }
+  .ll-refresh { width: 100%; }
   .ll-feature { grid-template-columns: 1fr; align-items: start; }
   .ll-feature-side { justify-items: start; text-align: left; grid-template-columns: 1fr auto; align-items: end; }
   .ll-feature-side small { grid-column: 1 / -1; }
