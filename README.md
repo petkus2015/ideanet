@@ -23,6 +23,7 @@ Nasadenie: nahrajte obsah priečinka na akýkoľvek statický hosting
 index.html          obsah stránky
 styles.css          dizajn (tmavá modrá → čierna, magenta akcent)
 app.js              interakcie, dáta portfólia, kalkulačka
+ponuka/             samostatné ponuky na poslanie klientovi
 assets/posters/     náhľady kariet 9:16 (SVG)
 assets/videos/      videá portfólia
 ```
@@ -66,6 +67,25 @@ Tri panely (`#panel-firmy`, `#panel-agentury`, `#panel-eventy`) prepína
 `role="tablist"` — myšou aj šípkami ← →. Karty v sekcii Služby majú
 `data-tab` a otvoria príslušný pohľad. Každé tlačidlo balíka nesie
 `data-package` — po kliknutí predvyplní výber v kontaktnom formulári.
+
+## Ponuky na poslanie klientovi
+
+V priečinku `ponuka/` sú dve samostatné jednostránkové ponuky. Sú úplne
+sebestačné — štýly majú vnútri súboru a nenačítavajú nič zvonku, takže sa dajú
+poslať e-mailom ako príloha, vytlačiť alebo uložiť do PDF (tlačidlo **Uložiť
+ako PDF** v hlavičke, pred tlačou sa automaticky rozbalia všetky otázky).
+
+| Súbor | Pre koho | Čím argumentuje |
+|---|---|---|
+| `ponuka/pre-firmy.html` | menšie firmy a živnostníci | mesačné balíky, priebeh spolupráce, FAQ pre klientov, ktorí video ešte nerobili |
+| `ponuka/pre-agentury.html` | agentúry a väčšie firmy | white-label model, rozdelenie práce, cenník produkcie, paušál Partner a výpočet marže |
+
+Obe majú `<meta name="robots" content="noindex">` — sú určené na priame
+poslanie, nie do vyhľadávania.
+
+**Pozor pri úprave cien:** každý súbor si nesie vlastnú kópiu štýlov aj čísel.
+Pri zmene cenníka treba upraviť `index.html`, `#calcPkg` v `index.html`
+a obe ponuky v `ponuka/`.
 
 ## Interakcie portfólia
 

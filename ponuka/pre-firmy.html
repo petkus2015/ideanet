@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ponuka — video obsah pre vašu firmu | IDEANET</title>
+<meta name="description" content="Raz mesačne prídem, natočím a dodám hotové Reels. Mesačné balíky od 390 €, jednorazová produkcia od 160 €, eventy od 290 €.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230b1130'/><path d='M12 9l12 7-12 7z' fill='%23ff2d94'/></svg>">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --ink:#0e1426; --ink-2:#39415c; --muted:#5b6480;
+  --line:#e6e9f2; --line-2:#d3d8e6;
+  --bg:#ffffff; --soft:#f6f7fb; --soft-2:#eceff7;
+  --brand:#e0146f; --brand-dark:#b30f58; --brand-tint:#fdeaf3; --brand-lite:#ff2d94;
+  --navy:#0b1130;
+  --r:16px; --r-lg:22px;
+  --shell:min(1060px,92vw);
+  --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+  font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0 0 .5em;line-height:1.12;letter-spacing:-.022em;font-weight:750}
+h1{font-size:clamp(1.9rem,4.6vw,3rem);letter-spacing:-.032em}
+h2{font-size:clamp(1.4rem,2.8vw,1.95rem)}
+h3{font-size:1.07rem}
+h4{font-size:.97rem}
+p{margin:0 0 1rem}
+a{color:var(--brand-dark)}
+b,strong{font-weight:700;color:var(--ink)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:6px}
+.wrap{width:var(--shell);margin-inline:auto}
+
+/* ── horná lišta ─────────────────────────── */
+.bar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar__in{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.7rem 0}
+.logo{display:flex;align-items:center;gap:.55rem;font-weight:800;letter-spacing:-.02em;font-size:1.02rem;color:var(--ink);text-decoration:none}
+.logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--brand-lite),var(--brand-dark));display:grid;place-items:center}
+.logo i::after{content:"";border-left:7px solid #fff;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;margin-left:2px}
+.logo span{color:var(--brand)}
+.bar__act{display:flex;gap:.5rem;align-items:center}
+.mini{font-size:.82rem;color:var(--muted);white-space:nowrap}
+@media(max-width:620px){.mini{display:none}}
+
+/* ── tlačidlá ────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:.45rem;justify-content:center;
+  padding:.68rem 1.15rem;border-radius:999px;font-weight:650;font-size:.92rem;
+  border:1px solid var(--line-2);background:#fff;color:var(--ink);cursor:pointer;
+  text-decoration:none;transition:.2s;white-space:nowrap;
+}
+.btn:hover{border-color:var(--brand);color:var(--brand-dark)}
+.btn--primary{background:linear-gradient(120deg,var(--brand-lite),var(--brand-dark));border-color:transparent;color:#fff;box-shadow:0 10px 24px -10px rgba(224,20,111,.75)}
+.btn--primary:hover{color:#fff;filter:brightness(1.06)}
+.btn--sm{padding:.5rem .9rem;font-size:.84rem}
+.btn--ghostlight{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.35);color:#fff}
+.btn--ghostlight:hover{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.6)}
+
+/* ── hlavička ────────────────────────────── */
+.band{
+  position:relative;overflow:hidden;color:#fff;
+  background:radial-gradient(120% 130% at 12% -10%,#1b2358 0%,#0d1334 45%,#080c22 100%);
+  padding:clamp(2.6rem,6vw,4.4rem) 0 clamp(2.4rem,5vw,3.6rem);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.band::after{
+  content:"";position:absolute;width:52vw;height:52vw;right:-14vw;top:-18vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,45,148,.5),transparent 68%);filter:blur(50px);pointer-events:none;
+}
+.band>*{position:relative;z-index:1}
+.band h1{color:#fff;margin-bottom:.55rem}
+.band .lead{font-size:clamp(1rem,1.5vw,1.14rem);color:#c3cae6;max-width:60ch;margin-bottom:1.5rem}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;margin:0 0 1rem;
+  font-size:.74rem;font-weight:750;letter-spacing:.13em;text-transform:uppercase;color:var(--brand-lite);
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brand-lite)}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:.45rem;padding:0;margin:0}
+.chips li{
+  font-size:.8rem;padding:.4rem .8rem;border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#dfe4f5;
+}
+.band__cta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
+
+/* ── sekcie ──────────────────────────────── */
+.sec{padding:clamp(2.4rem,5vw,3.6rem) 0;border-bottom:1px solid var(--line)}
+.sec--soft{background:var(--soft)}
+.sec:last-of-type{border-bottom:0}
+.sec__head{margin-bottom:clamp(1.3rem,2.6vw,2rem);max-width:70ch}
+.sec__head h2{margin-bottom:.35rem}
+.sec__head p{color:var(--muted);margin:0}
+.num{
+  display:inline-block;font-size:.74rem;font-weight:750;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--brand);margin-bottom:.5rem;
+}
+
+/* ── kroky ───────────────────────────────── */
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,218px),1fr));counter-reset:s}
+.steps li{
+  position:relative;padding:1.2rem 1.25rem;border-radius:var(--r);
+  border:1px solid var(--line);background:#fff;counter-increment:s;
+}
+.steps li::before{
+  content:"0" counter(s);display:block;font-size:.78rem;font-weight:800;
+  letter-spacing:.1em;color:var(--brand);margin-bottom:.45rem;
+}
+.steps h3{margin:0 0 .3rem}
+.steps p{margin:0;font-size:.9rem;color:var(--muted)}
+
+/* ── balíky ──────────────────────────────── */
+.packs{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,262px),1fr));align-items:stretch}
+.pack{
+  display:flex;flex-direction:column;padding:1.5rem;border-radius:var(--r-lg);
+  border:1px solid var(--line);background:#fff;
+}
+.pack--best{
+  border:2px solid var(--brand);box-shadow:0 20px 50px -28px rgba(224,20,111,.7);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.pack__badge{
+  align-self:flex-start;margin:-2.05rem 0 .8rem;padding:.3rem .75rem;border-radius:999px;
+  background:var(--brand);color:#fff;font-size:.7rem;font-weight:750;letter-spacing:.09em;text-transform:uppercase;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.pack__name{font-size:1.28rem;font-weight:800;letter-spacing:-.02em;margin:0}
+.pack__for{color:var(--muted);font-size:.87rem;margin:.15rem 0 .9rem;min-height:3.24em}
+.pack__price{display:flex;align-items:baseline;gap:.35rem;margin:0 0 1rem;padding-bottom:1rem;border-bottom:1px solid var(--line)}
+.pack__price b{font-size:2.15rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.pack__price span{color:var(--muted);font-size:.88rem}
+.pack ul{list-style:none;padding:0;margin:0 0 1.2rem;display:grid;gap:.52rem;font-size:.92rem}
+.pack li{display:flex;gap:.6rem;align-items:flex-start;color:var(--ink-2)}
+.tick{flex:none;width:17px;height:17px;margin-top:.22rem;border-radius:50%;background:var(--brand-tint);position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tick::after{content:"";position:absolute;left:5px;top:4px;width:4px;height:8px;border:2px solid var(--brand);border-top:0;border-left:0;transform:rotate(42deg)}
+.pack__note{margin:auto 0 0;padding-top:.9rem;border-top:1px dashed var(--line-2);font-size:.82rem;color:var(--muted)}
+
+/* ── zoznam riadkov ──────────────────────── */
+.rows{list-style:none;padding:0;margin:0;display:grid;gap:.5rem}
+.row{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.35rem 1rem;
+  padding:.95rem 1.15rem;border-radius:var(--r);border:1px solid var(--line);background:#fff;
+}
+.row--hl{border-color:var(--brand);background:var(--brand-tint);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.row__t{flex:1 1 240px}
+.row__t b{display:block;font-size:1rem}
+.row__t span{color:var(--muted);font-size:.87rem}
+.row__p{font-size:1.22rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap;margin-left:auto}
+
+/* ── odrážky s fajkou ────────────────────── */
+.checks{list-style:none;padding:0;margin:0;display:grid;gap:.55rem .9rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,238px),1fr))}
+.checks li{display:flex;gap:.6rem;align-items:flex-start;font-size:.93rem;color:var(--ink-2)}
+
+/* ── štítky ──────────────────────────────── */
+.tags{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.45rem}
+.tags li{font-size:.86rem;padding:.42rem .85rem;border-radius:999px;background:#fff;border:1px solid var(--line-2);color:var(--ink-2)}
+
+/* ── zvýraznený blok ─────────────────────── */
+.note{
+  display:grid;gap:1rem;align-items:center;padding:1.4rem 1.5rem;border-radius:var(--r-lg);
+  border:1px solid var(--brand);background:var(--brand-tint);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+@media(min-width:760px){.note--split{grid-template-columns:1fr auto}}
+.note h3{margin:0 0 .35rem}
+.note p{margin:0;font-size:.93rem;color:var(--ink-2)}
+.note__p{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap}
+.note__p small{display:block;font-size:.8rem;font-weight:500;color:var(--muted);letter-spacing:0}
+
+/* ── FAQ ─────────────────────────────────── */
+.faq{display:grid;gap:.5rem}
+.faq details{border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden}
+.faq details[open]{border-color:var(--brand)}
+.faq summary{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;
+  padding:1rem 1.2rem;font-weight:650;list-style:none;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--brand);font-size:1.3rem;font-weight:700;line-height:1}
+.faq details[open] summary::after{content:"\2212"}
+.faq p{margin:0;padding:0 1.2rem 1.15rem;color:var(--muted);font-size:.93rem}
+
+/* ── podmienky ───────────────────────────── */
+.terms{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+.term{padding:1.1rem 1.2rem;border-radius:var(--r);border:1px solid var(--line);background:#fff}
+.term h4{margin:0 0 .3rem;color:var(--brand-dark)}
+.term p{margin:0;font-size:.88rem;color:var(--muted)}
+
+/* ── tok / diagram ───────────────────────── */
+.flow{display:grid;gap:.7rem;grid-template-columns:1fr;align-items:stretch;margin-bottom:1.2rem}
+@media(min-width:780px){.flow{grid-template-columns:1fr auto 1fr auto 1fr}}
+.flow__box{padding:1.15rem 1.25rem;border-radius:var(--r);border:1px solid var(--line);background:#fff;text-align:center}
+.flow__box b{display:block;font-size:1rem}
+.flow__box span{font-size:.85rem;color:var(--muted)}
+.flow__box--me{border:2px solid var(--brand);background:var(--brand-tint);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.flow__ar{display:grid;place-items:center;color:var(--brand);font-size:1.3rem;font-weight:700}
+@media(max-width:779px){.flow__ar{transform:rotate(90deg)}}
+
+/* ── kalkul marže ────────────────────────── */
+.math{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:#fff}
+.math__r{display:flex;flex-wrap:wrap;gap:.3rem 1rem;align-items:baseline;padding:1rem 1.25rem;border-bottom:1px solid var(--line)}
+.math__r:last-child{border-bottom:0}
+.math__r span{flex:1 1 220px;color:var(--ink-2);font-size:.95rem}
+.math__r b{font-size:1.1rem;font-weight:750;white-space:nowrap;margin-left:auto}
+.math__r--out{background:var(--brand-tint);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.math__r--out span{font-weight:650;color:var(--ink)}
+.math__r--out b{color:var(--brand-dark);font-size:1.3rem;font-weight:800}
+.math__r--minus b{color:var(--muted)}
+
+/* ── záver ───────────────────────────────── */
+.end{background:radial-gradient(110% 140% at 85% 0%,#1b2358 0%,#0d1334 48%,#080c22 100%);color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.end h2{color:#fff}
+.end p{color:#c3cae6;max-width:58ch}
+.end__links{list-style:none;padding:0;margin:1.4rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 2rem}
+.end__links a{color:#fff;text-decoration:none;font-weight:650;display:flex;align-items:center;gap:.5rem}
+.end__links a:hover{color:var(--brand-lite)}
+.end__links i{font-style:normal;color:var(--brand-lite)}
+.foot{padding:1.6rem 0;font-size:.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;justify-content:space-between}
+.foot a{color:var(--muted)}
+
+/* ── tlač ────────────────────────────────── */
+@page{margin:13mm}
+@media print{
+  :root{--shell:100%}
+  .noprint{display:none!important}
+  body{font-size:10.5pt;line-height:1.5}
+  .sec{padding:1.1rem 0;border-bottom:1px solid var(--line)}
+  .band{padding:1.6rem 0 1.4rem}
+  .band::after{display:none}
+  h1{font-size:23pt}
+  h2{font-size:15pt}
+  .pack,.row,.term,.steps li,.flow__box,.math,.note,.faq details{break-inside:avoid;box-shadow:none}
+  .faq details{border-color:var(--line)!important;break-inside:avoid}
+  .faq summary::after{display:none}
+  .packs{grid-template-columns:repeat(3,1fr)}
+  .pack{padding:1.1rem}
+  .pack__price b{font-size:1.7rem}
+  .sec__head{break-after:avoid}
+  a{text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bar noprint">
+  <div class="wrap bar__in">
+    <a class="logo" href="../index.html"><i></i>IDEA<span>NET</span></a>
+    <div class="bar__act">
+      <span class="mini">Ponuka pre menšie firmy a živnostníkov</span>
+      <button class="btn btn--sm" type="button" onclick="window.print()">Uložiť ako PDF</button>
+    </div>
+  </div>
+</div>
+
+<header class="band">
+  <div class="wrap">
+    <p class="eyebrow">Ponuka pre menšie firmy a živnostníkov</p>
+    <h1>Raz mesačne prídem.<br>Vy máte obsah na celý mesiac.</h1>
+    <p class="lead">
+      Nemusíte hľadať kameramana, vymýšľať nápady ani riešiť strih. Poviete mi, čo chcete
+      komunikovať — ja prídem, natočím a pošlem hotové vertikálne videá pripravené na
+      Instagram, TikTok aj Facebook.
+    </p>
+    <ul class="chips">
+      <li>Natáčanie u vás</li>
+      <li>Dodanie do 3 pracovných dní</li>
+      <li>Bratislava v cene dopravy</li>
+      <li>Ceny bez DPH</li>
+    </ul>
+    <div class="band__cta noprint">
+      <a class="btn btn--primary" href="#balicky">Pozrieť balíky</a>
+      <a class="btn btn--ghostlight" href="#dalsi-krok">Chcem sa spýtať</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── PRE KOHO ── -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">01 — Pre koho</p>
+      <h2>Kde to funguje najlepšie</h2>
+      <p>Tam, kde máte čo ukázať a zákazník sa rozhoduje očami.</p>
+    </div>
+    <ul class="tags">
+      <li>Kaviarne a reštaurácie</li>
+      <li>Fitness centrá a tréneri</li>
+      <li>Barber, kaderníctvo, beauty</li>
+      <li>Zubné a estetické kliniky</li>
+      <li>Realitní makléri</li>
+      <li>Hotely a apartmány</li>
+      <li>Lokálne e-shopy a značky</li>
+      <li>Remeslá a služby</li>
+      <li>Nové prevádzky pred otvorením</li>
+    </ul>
+    <p style="margin:1.2rem 0 0;color:var(--muted);font-size:.93rem;max-width:66ch">
+      Ak nemáte marketingové oddelenie a video ste zatiaľ odkladali, lebo „na to nie je čas“,
+      táto ponuka je presne pre vás. Celú produkčnú časť beriem na seba.
+    </p>
+  </div>
+</section>
+
+<!-- ── AKO TO PREBIEHA ── -->
+<section class="sec sec--soft">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">02 — Priebeh</p>
+      <h2>Štyri kroky, nič viac</h2>
+      <p>Od prvého hovoru po hotové videá zvyčajne prejde týždeň až desať dní.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Krátky hovor</h3>
+        <p>Pätnásť minút o tom, čo predávate, komu a čo vás odlišuje od konkurencie.</p>
+      </li>
+      <li>
+        <h3>Návrh tém</h3>
+        <p>Pošlem konkrétne nápady na videá. Vyberiete si, čo sa vám páči — zvyšok zahodíme.</p>
+      </li>
+      <li>
+        <h3>Natáčanie u vás</h3>
+        <p>Prídem s technikou na dve až tri hodiny. Poviem, kam sa postaviť a čo robiť. Nič si nemusíte pripravovať.</p>
+      </li>
+      <li>
+        <h3>Hotové videá</h3>
+        <p>Do troch pracovných dní ich nájdete v cloude. Stiahnete a publikujete.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ── BALÍKY ── -->
+<section class="sec" id="balicky">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">03 — Hlavná ponuka</p>
+      <h2>Mesačné balíky</h2>
+      <p>Jedno natáčanie, obsah na celý mesiac. Toto je jadro spolupráce — sociálne siete
+         odmeňujú pravidelnosť, nie jedno pekné video raz za pol roka.</p>
+    </div>
+
+    <div class="packs">
+      <article class="pack">
+        <h3 class="pack__name">START</h3>
+        <p class="pack__for">Keď chcete začať pravidelne publikovať.</p>
+        <p class="pack__price"><b>390 €</b><span>/ mesiac</span></p>
+        <ul>
+          <li><span class="tick"></span>1× natáčanie do 2 hodín</li>
+          <li><span class="tick"></span>3 hotové Reels</li>
+          <li><span class="tick"></span>Návrh tém pred natáčaním</li>
+          <li><span class="tick"></span>Strih, color, titulky, hudba</li>
+          <li><span class="tick"></span>1 kolo pripomienok</li>
+          <li><span class="tick"></span>Dodanie do 5 pracovných dní</li>
+        </ul>
+        <p class="pack__note">Približne jedno video do týždňa.</p>
+      </article>
+
+      <article class="pack pack--best">
+        <span class="pack__badge">Najčastejšia voľba</span>
+        <h3 class="pack__name">GROW</h3>
+        <p class="pack__for">Obsah na každý týždeň z jedného natáčania.</p>
+        <p class="pack__price"><b>690 €</b><span>/ mesiac</span></p>
+        <ul>
+          <li><span class="tick"></span>1× natáčanie do 3 hodín</li>
+          <li><span class="tick"></span>6 hotových Reels</li>
+          <li><span class="tick"></span>Návrh tém pred natáčaním</li>
+          <li><span class="tick"></span>Strih, color, titulky, hudba</li>
+          <li><span class="tick"></span>1 kolo pripomienok</li>
+          <li><span class="tick"></span>Dodanie do 3 – 5 pracovných dní</li>
+        </ul>
+        <p class="pack__note">Šesť videí mesačne je tempo, pri ktorom profil naozaj rastie —
+           a stojí vás to jedno dopoludnie.</p>
+      </article>
+
+      <article class="pack">
+        <h3 class="pack__name">PRO</h3>
+        <p class="pack__for">Pre značky, ktoré publikujú často.</p>
+        <p class="pack__price"><b>990 €</b><span>/ mesiac</span></p>
+        <ul>
+          <li><span class="tick"></span>2× natáčanie do 3 hodín</li>
+          <li><span class="tick"></span>10 hotových Reels</li>
+          <li><span class="tick"></span>Návrh tém pred natáčaním</li>
+          <li><span class="tick"></span>Strih, color, titulky, hudba</li>
+          <li><span class="tick"></span>2 kolá pripomienok</li>
+          <li><span class="tick"></span>Dodanie do 3 pracovných dní</li>
+          <li><span class="tick"></span>Prioritné termíny</li>
+        </ul>
+        <p class="pack__note">Dve natáčania mesačne znamenajú aj aktuálny obsah — akcie,
+           novinky, sezóna.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── ČO JE V CENE ── -->
+<section class="sec sec--soft">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">04 — Štandard</p>
+      <h2>Čo je v cene pri každom balíku</h2>
+      <p>Nič z tohto nie je príplatok.</p>
+    </div>
+    <ul class="checks">
+      <li><span class="tick"></span>Návrh konkrétnych tém a formátov</li>
+      <li><span class="tick"></span>Natáčanie u vás, s vlastnou technikou</li>
+      <li><span class="tick"></span>Réžia na mieste — poviem, čo robiť</li>
+      <li><span class="tick"></span>Vertikálny formát 9:16</li>
+      <li><span class="tick"></span>Výber najlepších záberov</li>
+      <li><span class="tick"></span>Strih na rytmus</li>
+      <li><span class="tick"></span>Základný color grading</li>
+      <li><span class="tick"></span>Hudba</li>
+      <li><span class="tick"></span>Titulky a jednoduché texty</li>
+      <li><span class="tick"></span>Export 1080 × 1920</li>
+      <li><span class="tick"></span>1 kolo pripomienok</li>
+      <li><span class="tick"></span>Dodanie cez cloud</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── JEDNORAZOVO ── -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">05 — Bez záväzku</p>
+      <h2>Chcete si to najprv vyskúšať?</h2>
+      <p>Jednorazová produkcia bez mesačnej spolupráce. Návrh tém, plánovanie obsahu
+         a jednotný vizuál naprieč celým profilom sú súčasťou mesačných balíkov.</p>
+    </div>
+    <ul class="rows">
+      <li class="row">
+        <div class="row__t"><b>1 Reel</b><span>Natáčanie do 1 hodiny + strih</span></div>
+        <span class="row__p">160 €</span>
+      </li>
+      <li class="row">
+        <div class="row__t"><b>3 Reels</b><span>Natáčanie do 2 hodín</span></div>
+        <span class="row__p">350 €</span>
+      </li>
+      <li class="row">
+        <div class="row__t"><b>5 Reels</b><span>Natáčanie do 3 hodín</span></div>
+        <span class="row__p">520 €</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── EVENTY ── -->
+<section class="sec sec--soft">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">06 — Eventy</p>
+      <h2>Otvárate prevádzku alebo máte akciu?</h2>
+      <p>Pri evente si kupujete môj čas v konkrétny deň — a pri same-day aj rýchlosť.</p>
+    </div>
+    <ul class="rows">
+      <li class="row">
+        <div class="row__t"><b>Event Mini</b><span>Natáčanie do 2 hodín · 1 Reel · dodanie do 3 dní</span></div>
+        <span class="row__p">290 €</span>
+      </li>
+      <li class="row">
+        <div class="row__t"><b>Event</b><span>Natáčanie do 4 hodín · 2 Reels · dodanie do 3 dní</span></div>
+        <span class="row__p">450 €</span>
+      </li>
+      <li class="row row--hl">
+        <div class="row__t"><b>Event Same-Day</b><span>Natáčanie do 4 hodín · hlavný Reel ešte v deň eventu · 2 následné Reels</span></div>
+        <span class="row__p">590 €</span>
+      </li>
+    </ul>
+    <p style="margin:1rem 0 0;color:var(--muted);font-size:.9rem">
+      Každá ďalšia hodina na mieste 70 €. Účtuje sa po začatých polhodinách.
+    </p>
+  </div>
+</section>
+
+<!-- ── DOPLNOK ── -->
+<section class="sec">
+  <div class="wrap">
+    <div class="note note--split">
+      <div>
+        <h3>Doplnok — správa sociálnych sietí</h3>
+        <p>
+          Videá sú jedna vec, publikovanie druhá. Ak nemáte, kto by ich nasadzoval, písal
+          texty a odpovedal v komentároch, viem to prevziať. Držím to oddelene od produkcie,
+          aby bolo jasné, čo je v ktorej cene.
+        </p>
+      </div>
+      <p class="note__p">+ 300 – 500 €<small>mesačne k balíku</small></p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="sec sec--soft">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">07 — Otázky</p>
+      <h2>Čo sa ma pýtajú najčastejšie</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Musíme stáť pred kamerou?</summary>
+        <p>Nie. Väčšina videí sa dá natočiť bez toho, aby niekto hovoril do kamery —
+           priestor, produkt, proces, ruky pri práci, detaily. Ak chcete hovoriť, poviem vám
+           presne, čo povedať a ako stáť, aby to nepôsobilo kŕčovito.</p>
+      </details>
+      <details>
+        <summary>Čo ak nemáme nápady, čo natočiť?</summary>
+        <p>To je moja práca. Pred natáčaním dostanete konkrétne témy — nie „natočíme niečo
+           z prevádzky“, ale zoznam videí aj s tým, čo má každé ukázať.</p>
+      </details>
+      <details>
+        <summary>Čo ak nemáme pekný priestor alebo svetlo?</summary>
+        <p>Natáčam u vás, ale miesto a svetlo si viem vybrať. Často stačí jeden kút prevádzky.
+           Ak by to naozaj nešlo, poviem to hneď na začiatku, nie až po natáčaní.</p>
+      </details>
+      <details>
+        <summary>Koľko nás to bude stáť času?</summary>
+        <p>Dve až tri hodiny raz mesačne. Plus pätnásť minút na začiatku pri výbere tém.
+           Prevádzku kvôli natáčaniu zatvárať nemusíte.</p>
+      </details>
+      <details>
+        <summary>Čo ak sa nám video nebude páčiť?</summary>
+        <p>V cene je jedno kolo pripomienok — pošlete ich naraz a ja ich zapracujem. Ak spravím
+           chybu oproti zadaniu (zlé meno, nesprávny záber), opravím ju bezplatne a za revíziu
+           to nepovažujem.</p>
+      </details>
+      <details>
+        <summary>Kto videá publikuje?</summary>
+        <p>Štandardne vy — dostanete hotové súbory pripravené na nahratie. Ak chcete, aby som
+           publikovanie riešil ja, je to samostatná služba (+ 300 – 500 € mesačne).</p>
+      </details>
+      <details>
+        <summary>Potrebujeme vlastnú hudbu alebo logo?</summary>
+        <p>Hudbu zabezpečím. Ak máte logo, fonty alebo farby značky, použijem ich. Ak nie,
+           navrhnem jednoduchý štýl titulkov, ktorý bude rovnaký vo všetkých videách.</p>
+      </details>
+      <details>
+        <summary>Ako prebieha platba?</summary>
+        <p>Pri jednorazovej produkcii 50 % pri rezervácii termínu a 50 % po dodaní.
+           Pri mesačnej spolupráci faktúra so splatnosťou 14 dní.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ── PODMIENKY ── -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="num">08 — Podmienky</p>
+      <h2>Podmienky v skratke</h2>
+      <p>Radšej dopredu, aby sme to nemuseli riešiť v momente, keď na tom záleží.</p>
+    </div>
+    <div class="terms">
+      <div class="term">
+        <h4>Revízie</h4>
+        <p>Jedno kolo pripomienok v cene, pri balíku PRO dve. Ďalšie úpravy 40 € / hodina,
+           minimálne účtovanie 30 minút.</p>
+      </div>
+      <div class="term">
+        <h4>Dodanie</h4>
+        <p>Do 3 pracovných dní od natáčania, pri balíku START do 5 dní. Počíta sa od dodania
+           všetkých potrebných podkladov.</p>
+      </div>
+      <div class="term">
+        <h4>Expresné dodanie</h4>
+        <p>Do 24 hodín + 30 %, v deň natáčania + 50 %.</p>
+      </div>
+      <div class="term">
+        <h4>Doprava</h4>
+        <p>Bratislava je v cene. Mimo Bratislavy 0,40 € / km tam aj späť, parkovné a diaľničné
+           poplatky podľa reálnych nákladov.</p>
+      </div>
+      <div class="term">
+        <h4>Storno a presun termínu</h4>
+        <p>Viac ako 48 hodín vopred bez poplatku, 24 – 48 hodín 30 %, menej ako 24 hodín 50 %,
+           nedostavenie sa 100 %.</p>
+      </div>
+      <div class="term">
+        <h4>Surový materiál</h4>
+        <p>Zábery z natáčania nie sú súčasťou ceny. Na požiadanie od + 80 € podľa rozsahu.</p>
+      </div>
+      <div class="term">
+        <h4>Portfólio</h4>
+        <p>Publikované videá môžem použiť vo svojom portfóliu a na vlastných sociálnych
+           sieťach, pokiaľ sa nedohodneme inak.</p>
+      </div>
+      <div class="term">
+        <h4>Ceny</h4>
+        <p>Všetky ceny sú uvedené bez DPH. Väčšie alebo netypické zadania nacením
+           individuálne.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ZÁVER ── -->
+<section class="sec end" id="dalsi-krok">
+  <div class="wrap">
+    <p class="eyebrow">Ďalší krok</p>
+    <h2>Pošlite mi odkaz na váš profil</h2>
+    <p>
+      Pozriem si ho a do 24 hodín sa vám ozvem s dvomi či tromi konkrétnymi nápadmi na videá,
+      ktoré by sa u vás dali natočiť — aj s cenou. Nezáväzne, bez prezentácií a bez tlaku.
+    </p>
+    <ul class="end__links">
+      <li><a href="mailto:ahoj@ideanet.sk?subject=Dopyt%20z%20ponuky"><i>&#9993;</i> ahoj@ideanet.sk</a></li>
+      <li><a href="tel:+421900000000"><i>&#9742;</i> +421 900 000 000</a></li>
+      <li><a href="../index.html"><i>&#9673;</i> ideanet.sk</a></li>
+    </ul>
+  </div>
+</section>
+
+<footer class="wrap foot">
+  <span>IDEANET — videoprodukcia pre sociálne siete</span>
+  <span>Ponuka je orientačná, ceny bez DPH, platnosť 30 dní od odoslania.</span>
+</footer>
+
+
+<script>
+/* Pred tlačou otvoríme všetky otázky, aby sa odpovede dostali do PDF,
+   po tlači vrátime pôvodný stav. */
+(function () {
+  var open = [];
+  addEventListener('beforeprint', function () {
+    open = [];
+    document.querySelectorAll('details').forEach(function (d) {
+      open.push(d.open);
+      d.open = true;
+    });
+  });
+  addEventListener('afterprint', function () {
+    document.querySelectorAll('details').forEach(function (d, i) {
+      d.open = open[i];
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
