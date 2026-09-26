@@ -9,6 +9,11 @@ on:
     - cron: '53 4,9,15 * * *'   # leto (CEST)
     - cron: '53 5,10,16 * * *'  # zima (CET)
   workflow_dispatch:
+  # Zmena skriptu alebo workflowu spustí aktualizáciu hneď – funguje aj vo vetve pred zlúčením.
+  push:
+    paths:
+      - 'plugins/lacne-letenky/scripts/**'
+      - '.github/workflows/lacne-letenky.yml'
 
 permissions:
   contents: write
@@ -59,4 +64,6 @@ jobs:
             exit 0
           fi
           git commit -m "Lacné letenky: aktualizácia $(TZ=Europe/Vienna date '+%Y-%m-%d %H:%M')"
-          git push
+          # medzitým mohol do vetvy pribudnúť iný commit
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
