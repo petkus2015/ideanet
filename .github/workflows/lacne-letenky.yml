@@ -20,7 +20,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
       - name: Kontrola času
         id: gate
@@ -44,7 +44,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Stiahnuť ceny z momondo.co.uk
+      - name: Stiahnuť ceny (momondo, Ryanair, Wizz Air)
         if: steps.gate.outputs.run == 'true'
         run: python3 plugins/lacne-letenky/scripts/update_deals.py
 

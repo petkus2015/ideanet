@@ -64,6 +64,8 @@
     document.head.appendChild(l);
   }
 
+  var SOURCES = { momondo: 'momondo', ryanair: 'Ryanair', wizzair: 'Wizz Air' };
+  function sourceName(d) { return SOURCES[d.source] || 'momondo'; }
   var REFRESH = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 10a6.5 6.5 0 1 1-1.9-4.6M16.5 3.5v3.5H13"/></svg>';
   // Ponuky staršie ako toto sa už nezobrazia (aktualizácia zlyhala viackrát po sebe).
   var MAX_AGE_H = 36;
@@ -150,13 +152,14 @@
       var drop = d.prevPrice && d.prevPrice > d.price
         ? '<span class="ll-drop" title="Zlacnené od poslednej aktualizácie">▼ ' + money(d.prevPrice - d.price, d.currency) + '</span>' : '';
       return '<li><a class="ll-card" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
-          esc(d.city + ', ' + d.country + ', let z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na momondo') + '">' +
+          esc(d.city + ', ' + d.country + ', let z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
         '<div class="ll-card-top"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
           (stopsLabel(d.stops) ? '<span class="ll-chip">' + stopsLabel(d.stops) + '</span>' : '') + '</div>' +
         '<div><p class="ll-city">' + esc(d.city) + '</p><p class="ll-country">' + esc(d.country) + ' · z ' + esc(from) + '</p></div>' +
         '<p class="ll-dates">' + CAL + '<span>' + datesText(d) + '</span></p>' +
         '<div class="ll-card-bottom"><div class="ll-price"><span class="ll-price-label"><small>' + (d['return'] ? 'spiatočná od' : 'od') + '</small>' + drop + '</span>' +
-          '<strong>' + money(d.price, d.currency) + '</strong></div>' +
+          '<strong>' + money(d.price, d.currency) + '</strong>' +
+          '<span class="ll-source" data-src="' + esc(d.source || 'momondo') + '">cez ' + esc(sourceName(d)) + '</span></div>' +
           '<span class="ll-go" aria-hidden="true">' + ARROW + '</span></div>' +
       '</a></li>';
     }
@@ -171,7 +174,7 @@
       var drop = d.prevPrice && d.prevPrice > d.price
         ? '<span class="ll-drop">▼ ' + money(d.prevPrice - d.price, d.currency) + ' od posledného hľadania</span>' : '';
       return '<a class="ll-feature" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
-          esc(w.name + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na momondo') + '">' +
+          esc(w.name + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
         '<svg class="ll-feature-arc" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true"><path d="M10 190 C 120 20, 290 10, 390 70"/></svg>' +
         '<div class="ll-feature-main">' +
           '<p class="ll-feature-kicker">Najlacnejšia spiatočná do ' + esc(w.name === 'Bangkok' ? 'Bangkoku' : w.name) + '</p>' +
@@ -183,7 +186,7 @@
         '<div class="ll-feature-side">' +
           '<small>spiatočná od</small>' +
           '<strong>' + money(d.price, d.currency) + '</strong>' + drop +
-          '<span class="ll-feature-cta">Pozrieť let ' + ARROW + '</span>' +
+          '<span class="ll-feature-cta">Pozrieť na ' + esc(sourceName(d)) + ' ' + ARROW + '</span>' +
         '</div></a>';
     }
 
@@ -203,7 +206,7 @@
       (deals.length
         ? '<ul class="ll-grid">' + deals.map(cardHtml).join('') + '</ul>' +
           (missing.length ? '<p class="ll-foot">' + esc(missing.join(', ')) + ' – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</p>' : '') +
-          '<p class="ll-foot">Najnižšie ceny za osobu v eurách z momondo.co.uk' +
+          '<p class="ll-foot">Porovnávame momondo.co.uk, ryanair.com a wizzair.com a ukazujeme najnižšiu cenu za osobu v eurách' +
             (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
             '. Ceny sa menia, pred nákupom ich overte.</p>'
         : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>');
@@ -225,7 +228,7 @@
       loadData(opts, true).then(function (next) {
         var isNew = next.updatedAt && next.updatedAt !== data.updatedAt;
         var when = next.updatedAt ? relDay(next.updatedAt) + ' ' + time(next.updatedAt) : '';
-        var nextRun = next.nextUpdate ? ' Ďalšie hľadanie na momondo prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';
+        var nextRun = next.nextUpdate ? ' Ďalšie hľadanie prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';
         done(next, isNew ? 'Našli sme nové ponuky z hľadania ' + when + '.' : 'Máte najnovšie ponuky z hľadania ' + when + '.' + nextRun);
       }, function () {
         done(data, 'Nové ponuky sa teraz nepodarilo načítať, zobrazujeme posledné známe. Skúste to o chvíľu znova.');

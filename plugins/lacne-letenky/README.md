@@ -1,7 +1,8 @@
 # Lacné letenky – plugin (VIE · BTS → kamkoľvek)
 
 Widget s najlacnejšími letenkami z **Viedne (VIE)** a **Bratislavy (BTS)** do celého sveta.
-Ceny berie z **momondo.co.uk** (mapa „Explore / kamkoľvek“) a obnovuje ich
+Ceny porovnáva z **momondo.co.uk** (mapa „Explore / kamkoľvek“), **ryanair.com** a **wizzair.com**
+a z každej trasy ukáže najlacnejšiu a obnovuje ich
 **3× denne – ráno 7:00, na obed 12:00 a večer 18:00** (viedenský čas).
 
 Náhľad: otvorte `plugins/lacne-letenky/index.html` (funguje aj bez servera).
@@ -52,8 +53,15 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
 `.github/workflows/lacne-letenky.yml` spúšťa 3× denne
 `scripts/update_deals.py`, ktorý:
 
-1. pre VIE aj BTS zavolá momondo explore endpoint
-   (`/s/horizon/exploreapi/destinations?airport=VIE…`),
+1. pre VIE aj BTS stiahne ponuky z troch zdrojov:
+   - **momondo** – explore endpoint (`/s/horizon/exploreapi/destinations?airport=VIE…`),
+   - **Ryanair** – `farfnd/v4/roundTripFares`: najlacnejšie spiatočné lety kamkoľvek,
+     odlet do 3 mesiacov, pobyt 2–14 nocí,
+   - **Wizz Air** – z mapy liniek zistí destinácie z VIE/BTS a pre každú stiahne cenový
+     kalendár (`/Api/search/timetable`) po 30-dňových častiach; vyberie najlacnejšiu
+     kombináciu tam + späť s pobytom 2–14 nocí,
+   z každej trasy (letisko → letisko) sa ponechá najlacnejšia ponuka a karta vedie
+   na web zdroja (momondo, ryanair.com alebo wizzair.com),
 2. ceny uloží v **eurách**: od momondo si ich pýta v EUR (`currency=EUR`); ak by momondo
    vrátilo inú menu (momondo.co.uk má predvolene libry), prepočíta ich denným kurzom
    **ECB** a v bloku pribudne poznámka „prepočítané kurzom ECB“. Keď kurz nie je
@@ -70,11 +78,14 @@ Ručne: Actions → „Lacné letenky – aktualizácia“ → *Run workflow*.
 Lokálne:
 
 ```bash
-python3 plugins/lacne-letenky/scripts/update_deals.py
+python3 plugins/lacne-letenky/scripts/update_deals.py                 # všetky zdroje
+python3 plugins/lacne-letenky/scripts/update_deals.py --only ryanair  # jeden zdroj
 ```
 
 Kým neprebehne prvá úspešná aktualizácia, `deals.json` je prázdny a blok ukazuje len správu,
 že ponuky sa pripravujú.
 
-> Explore endpoint nie je oficiálne verejné API. Ak ho momondo zmení alebo zablokuje
-> požiadavky z GitHub Actions, parser (`parse_destinations`) je potrebné upraviť.
+> Ani jeden zo zdrojov nemá oficiálne verejné API – ide o endpointy, ktoré používajú ich weby.
+> Keď niektorý zdroj zlyhá alebo zmení formát, ostatné fungujú ďalej; chyby sú v zázname
+> behu v Actions a v `errors` v `deals.json`. Parsery: `parse_destinations`, `parse_ryanair`,
+> `fetch_wizz`.
