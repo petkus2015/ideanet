@@ -60,8 +60,6 @@
 .ll :focus-visible { outline: 2px solid var(--ll-accent); outline-offset: 3px; }
 .ll button { font: inherit; color: inherit; }
 
-/* ---------- hlavička ---------- */
-.ll-top { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; }
 .ll-heading { display: grid; gap: 8px; min-width: 0; max-width: 100%; }
 .ll-status { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 0; font-size: 13px; color: var(--ll-ink-2); }
 .ll-live { display: inline-flex; gap: 7px; align-items: center; font-weight: 600; color: var(--ll-ink); }
@@ -71,90 +69,10 @@
 }
 .ll-live[data-stale="true"]::before { background: var(--ll-warn); animation: none; }
 @keyframes ll-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ll-good) 55%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
-.ll-pill { font: 600 11px/1 var(--ll-mono); letter-spacing: .06em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; background: var(--ll-warn-bg); color: var(--ll-warn); }
 .ll .ll-title { margin: 0; font: 800 clamp(34px, 6vw, 56px)/.9 var(--ll-display); letter-spacing: .005em; text-transform: uppercase; text-wrap: balance; }
 .ll .ll-title span { display: block; font: 600 clamp(15px, 2vw, 18px)/1.3 var(--ll-body); text-transform: none; color: var(--ll-ink-2); margin-top: 8px; letter-spacing: 0; }
 
-.ll-seg { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--ll-sunk); max-width: 100%; }
-.ll-seg button {
-  border: 0; background: transparent; cursor: pointer; font-weight: 600; font-size: 14px;
-  padding: 10px 16px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; white-space: nowrap;
-  transition: background-color .2s ease, color .2s ease;
-}
-.ll-seg button code { font: 600 11px/1 var(--ll-mono); color: var(--ll-ink-2); }
-.ll-seg button[aria-pressed="true"] { background: var(--ll-surface); box-shadow: var(--ll-shadow); }
-.ll-seg button[aria-pressed="true"] code { color: var(--ll-accent); }
-
-.ll-note { margin: 0; padding: 12px 16px; border-radius: 14px; font-size: 13px; background: var(--ll-warn-bg); color: var(--ll-warn); }
-
-/* ---------- hero = palubný lístok s najlacnejším letom ---------- */
-.ll-hero {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; border-radius: 22px; overflow: hidden;
-  background: var(--ll-surface); box-shadow: var(--ll-shadow); text-decoration: none; color: inherit;
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-.ll-hero:hover { transform: translateY(-2px); box-shadow: var(--ll-shadow-hi); }
-.ll-hero-art {
-  position: relative; padding: clamp(20px, 3vw, 30px); color: #fff; min-height: 220px;
-  display: grid; align-content: space-between; gap: 18px; isolation: isolate; overflow: hidden;
-  background:
-    radial-gradient(120% 90% at 100% 0%, hsl(var(--h2) 90% 70% / .55), transparent 60%),
-    linear-gradient(135deg, hsl(var(--h1) 78% var(--ll-art-l1)), hsl(var(--h2) 72% var(--ll-art-l2)));
-}
-.ll-hero-art .ll-watermark { font-size: clamp(110px, 18vw, 190px); right: -8px; bottom: -34px; }
-.ll-hero-label { display: inline-flex; gap: 8px; align-items: center; justify-self: start; font: 700 12px/1 var(--ll-mono); letter-spacing: .1em; text-transform: uppercase; background: var(--ll-brand); color: var(--ll-brand-ink); padding: 7px 10px; border-radius: 999px; }
-.ll-hero-city { margin: 0; font: 800 clamp(44px, 8vw, 84px)/.85 var(--ll-display); text-transform: uppercase; text-wrap: balance; text-shadow: 0 2px 20px rgba(0, 0, 0, .15); }
-.ll-hero-sub { margin: 8px 0 0; font-size: 15px; opacity: .92; }
-.ll-hero-route { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font: 600 14px/1 var(--ll-mono); }
-.ll-hero-route span { background: rgba(255, 255, 255, .18); backdrop-filter: blur(6px); padding: 7px 10px; border-radius: 8px; }
-.ll-stub {
-  position: relative; display: grid; align-content: center; justify-items: start; gap: 10px;
-  padding: clamp(20px, 3vw, 30px) clamp(22px, 3vw, 34px); min-width: 230px;
-  border-left: 2px dashed var(--ll-line);
-}
-.ll-stub::before, .ll-stub::after {
-  content: ""; position: absolute; left: -13px; width: 24px; height: 24px; border-radius: 50%; background: var(--ll-ground);
-}
-.ll-stub::before { top: -12px; }
-.ll-stub::after { bottom: -12px; }
-.ll-stub-label { font: 600 11px/1 var(--ll-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ll-ink-2); }
-.ll-stub-price { font: 700 clamp(40px, 6vw, 56px)/.9 var(--ll-mono); letter-spacing: -.03em; }
-.ll-stub-dates { font-size: 14px; color: var(--ll-ink-2); }
-.ll-btn {
-  display: inline-flex; gap: 8px; align-items: center; border: 0; cursor: pointer;
-  background: var(--ll-accent); color: var(--ll-accent-ink); font-weight: 700; font-size: 15px;
-  padding: 13px 18px; border-radius: 12px; margin-top: 4px;
-}
-.ll-btn svg { width: 16px; height: 16px; transition: transform .2s ease; }
-.ll-hero:hover .ll-btn svg, .ll-card:hover .ll-go svg { transform: translate(2px, -2px); }
-
-/* ---------- filtre ---------- */
-.ll-bar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-.ll-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin-inline: -2px; padding-inline: 2px; }
-.ll-scroll::-webkit-scrollbar { display: none; }
-.ll-chip {
-  flex: none; border: 1px solid var(--ll-line); background: var(--ll-surface); cursor: pointer;
-  font-weight: 600; font-size: 14px; padding: 9px 14px; border-radius: 999px;
-  display: inline-flex; gap: 7px; align-items: center; transition: border-color .15s ease, background-color .15s ease;
-}
-.ll-chip:hover { border-color: var(--ll-ink-2); }
-.ll-chip i { font: 600 11px/1 var(--ll-mono); font-style: normal; color: var(--ll-ink-2); }
-.ll-chip[aria-pressed="true"] { background: var(--ll-ink); border-color: var(--ll-ink); color: var(--ll-ground); }
-.ll-chip[aria-pressed="true"] i { color: var(--ll-brand); }
-.ll-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
-.ll-tools > .ll-scroll { flex: 0 1 auto; min-width: 0; }
-.ll-sep { width: 1px; height: 24px; background: var(--ll-line); margin-inline: 4px; }
-.ll-search { position: relative; flex: 1 1 200px; max-width: 320px; margin-left: auto; }
-.ll-search svg { position: absolute; left: 13px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%); color: var(--ll-ink-2); pointer-events: none; }
-.ll-search input, .ll-sort {
-  width: 100%; font: 500 14px/1.2 var(--ll-body); color: var(--ll-ink);
-  background: var(--ll-surface); border: 1px solid var(--ll-line); border-radius: 999px; padding: 10px 14px 10px 36px;
-}
-.ll-sort { width: auto; padding-left: 14px; cursor: pointer; }
-
 /* ---------- mriežka kariet ---------- */
-.ll-count { margin: -4px 0 0; font-size: 13px; color: var(--ll-ink-2); }
-.ll-count b { color: var(--ll-ink); }
 .ll-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 232px), 1fr)); }
 .ll-card {
   display: grid; grid-template-rows: auto 1fr; height: 100%; border-radius: 18px; overflow: hidden;
@@ -181,8 +99,8 @@
 .ll-tag[data-kind="up"] { background: var(--ll-warn-bg); color: var(--ll-warn); }
 .ll-body { display: grid; align-content: start; gap: 12px; padding: 14px 16px 16px; }
 .ll-route { font: 600 12px/1 var(--ll-mono); color: var(--ll-ink-2); letter-spacing: .03em; }
-.ll-city { margin: 4px 0 0; font: 800 28px/.95 var(--ll-display); text-transform: uppercase; overflow-wrap: anywhere; }
-.ll-country { margin: 3px 0 0; font-size: 13px; color: var(--ll-ink-2); }
+.ll .ll-city { margin: 4px 0 0; font: 800 28px/.95 var(--ll-display); text-transform: uppercase; overflow-wrap: anywhere; }
+.ll .ll-country { margin: 3px 0 0; font-size: 13px; color: var(--ll-ink-2); }
 .ll-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid var(--ll-line); margin-top: auto; }
 .ll-dates { font-size: 13px; line-height: 1.35; }
 .ll-dates small { display: block; color: var(--ll-ink-2); font-size: 12px; }
@@ -191,9 +109,7 @@
 .ll-price strong { font: 700 24px/1 var(--ll-mono); letter-spacing: -.02em; }
 .ll-go { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; font-size: 13px; color: var(--ll-accent); }
 .ll-go svg { width: 14px; height: 14px; transition: transform .2s ease; }
-
-.ll-more { justify-self: center; border: 1px solid var(--ll-line); background: var(--ll-surface); cursor: pointer; font-weight: 700; font-size: 14px; padding: 12px 20px; border-radius: 999px; }
-.ll-more:hover { border-color: var(--ll-ink-2); }
+.ll-card:hover .ll-go svg { transform: translate(2px, -2px); }
 .ll-empty { padding: 36px 16px; text-align: center; color: var(--ll-ink-2); display: grid; gap: 12px; justify-items: center; background: var(--ll-surface); border-radius: 18px; }
 .ll-empty p { margin: 0; }
 .ll-foot { margin: 0; font-size: 12px; color: var(--ll-ink-2); }
@@ -202,21 +118,7 @@
 /* skeleton pri načítaní */
 .ll-skel { height: 240px; border-radius: 18px; background: linear-gradient(90deg, var(--ll-sunk), var(--ll-surface), var(--ll-sunk)); background-size: 200% 100%; animation: ll-shimmer 1.4s linear infinite; }
 @keyframes ll-shimmer { to { background-position: -200% 0; } }
-
-@media (max-width: 720px) {
-  .ll-hero { grid-template-columns: 1fr; }
-  .ll-stub { border-left: 0; border-top: 2px dashed var(--ll-line); grid-template-columns: 1fr auto; align-items: end; min-width: 0; }
-  .ll-stub::before, .ll-stub::after { top: -13px; left: auto; bottom: auto; }
-  .ll-stub::before { left: -12px; }
-  .ll-stub::after { right: -12px; }
-  .ll-stub .ll-btn { grid-column: 1 / -1; justify-content: center; }
-  .ll-seg { width: 100%; }
-  .ll-seg button { flex: 1 1 0; justify-content: center; padding-inline: 8px; }
-  .ll-seg button code { display: none; }
-  .ll-search { max-width: none; margin-left: 0; flex-basis: 100%; }
-  .ll-sep { display: none; }
-}
 @media (prefers-reduced-motion: reduce) {
   .ll *, .ll *::before { animation: none !important; transition: none !important; }
-  .ll-card:hover, .ll-hero:hover { transform: none; }
+  .ll-card:hover { transform: none; }
 }

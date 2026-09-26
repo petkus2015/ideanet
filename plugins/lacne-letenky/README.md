@@ -17,23 +17,24 @@ Náhľad: otvorte `plugins/lacne-letenky/index.html` (funguje aj bez servera).
 | Atribút | Význam |
 |---|---|
 | `data-src` | cesta k `deals.json` |
-| `data-limit` | max. počet zobrazených letov (0 = všetky) |
+| `data-limit` | počet kariet (predvolene 12) |
 | `data-title` | vlastný nadpis |
 | `data-fonts="false"` | nenačítavať Google Fonts |
 | `data-theme="dark"` / `"light"` | vynútiť tému (inak podľa systému) |
 
 Alebo z JavaScriptu: `LacneLetenky.mount(element, { src, limit, title })`.
 
-## Čo plugin vie
+## Čo blok zobrazuje
 
-- prepínač letiska: obe / Viedeň / Bratislava
-- filtre regiónov (Európa, Ázia, Afrika, Amerika, Oceánia) s počtami
-- hľadanie podľa mesta, krajiny aj IATA kódu (bez ohľadu na diakritiku)
-- posuvník maximálnej ceny, len priame lety
-- zoradenie: najlacnejšie, najskorší odlet, najdlhší pobyt, najviac zlacnené
-- ▼/▲ zmena ceny oproti predchádzajúcej aktualizácii
-- stav aktualizácie (ráno / obed / večer), upozornenie na neaktuálne dáta
-- každý riadok vedie priamo na vyhľadávanie danej trasy a termínu na momondo.co.uk
+Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filtrov a bez vymyslených cien:
+
+- karty zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena)
+- štítok „Priamy“ a ▼ o koľko ponuka zlacnela od predchádzajúcej aktualizácie
+- čas poslednej aktualizácie
+- klik na kartu otvorí vyhľadávanie danej trasy a termínu na momondo.co.uk
+- lety s odletom dnes alebo skôr sa nezobrazia
+- ak sú dáta staršie ako 36 hodín (aktualizácia viackrát zlyhala) alebo ešte žiadne nie sú,
+  blok ukáže správu „Práve nemáme aktuálne ponuky“ namiesto starých cien
 - svetlá aj tmavá téma, mobilné rozloženie
 
 ## Aktualizácia cien
@@ -53,12 +54,11 @@ Ručne: Actions → „Lacné letenky – aktualizácia“ → *Run workflow*.
 Lokálne:
 
 ```bash
-python3 plugins/lacne-letenky/scripts/update_deals.py            # živé ceny
-python3 plugins/lacne-letenky/scripts/update_deals.py --sample   # ukážkové dáta
+python3 plugins/lacne-letenky/scripts/update_deals.py
 ```
 
-Kým neprebehne prvá úspešná aktualizácia, plugin zobrazuje **ukážkové ceny**
-a jasne ich tak označuje.
+Kým neprebehne prvá úspešná aktualizácia, `deals.json` je prázdny a blok ukazuje len správu,
+že ponuky sa pripravujú.
 
 > Explore endpoint nie je oficiálne verejné API. Ak ho momondo zmení alebo zablokuje
 > požiadavky z GitHub Actions, parser (`parse_destinations`) je potrebné upraviť.

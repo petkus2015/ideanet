@@ -10,7 +10,6 @@ https://www.momondo.co.uk/explore. Výsledok zapíše do:
 
 Použitie:
     python3 update_deals.py              # stiahne čerstvé ceny z momondo
-    python3 update_deals.py --sample     # vygeneruje ukážkové dáta (offline)
     python3 update_deals.py --from-file odpoved.json --origin VIE
                                          # spracuje uloženú odpoveď API
 
@@ -22,7 +21,6 @@ import argparse
 import datetime as dt
 import gzip
 import json
-import random
 import sys
 import time
 import urllib.error
@@ -229,46 +227,6 @@ def parse_destinations(payload: dict, origin: str) -> list[dict]:
     return deals
 
 
-# ----------------------------------------------------------- ukážkové dáta ---
-
-SAMPLE_ROUTES = [
-    # origin, dest, city, country code, base price (GBP), stops
-    ("VIE", "BCN", "Barcelona", "ES", 38, 0), ("VIE", "LTN", "Londýn", "GB", 29, 0),
-    ("VIE", "FCO", "Rím", "IT", 34, 0), ("VIE", "ATH", "Atény", "GR", 57, 0),
-    ("VIE", "LIS", "Lisabon", "PT", 86, 0), ("VIE", "DXB", "Dubaj", "AE", 214, 0),
-    ("VIE", "BKK", "Bangkok", "TH", 412, 1), ("VIE", "JFK", "New York", "US", 338, 0),
-    ("VIE", "NRT", "Tokio", "JP", 598, 1), ("VIE", "HRG", "Hurghada", "EG", 139, 0),
-    ("VIE", "KEF", "Reykjavík", "IS", 118, 1), ("VIE", "CPT", "Kapské Mesto", "ZA", 521, 1),
-    ("VIE", "SYD", "Sydney", "AU", 889, 1), ("VIE", "CUN", "Cancún", "MX", 544, 1),
-    ("VIE", "MLE", "Malé", "MV", 463, 1), ("VIE", "TBS", "Tbilisi", "GE", 96, 0),
-    ("BTS", "STN", "Londýn", "GB", 22, 0), ("BTS", "BGY", "Miláno", "IT", 19, 0),
-    ("BTS", "DUB", "Dublin", "IE", 41, 0), ("BTS", "PMI", "Mallorca", "ES", 64, 0),
-    ("BTS", "AGP", "Málaga", "ES", 72, 0), ("BTS", "SAW", "Istanbul", "TR", 48, 0),
-    ("BTS", "RAK", "Marrákeš", "MA", 99, 1), ("BTS", "CRL", "Brusel", "BE", 27, 0),
-    ("BTS", "SKG", "Solún", "GR", 45, 0), ("BTS", "TFS", "Tenerife", "ES", 118, 0),
-]
-
-
-def sample_deals(now: dt.datetime) -> list[dict]:
-    rnd = random.Random(now.strftime("%Y%m%d%H"))
-    deals = []
-    for origin, dest, city, code, base, stops in SAMPLE_ROUTES:
-        depart = now.date() + dt.timedelta(days=rnd.randint(10, 95))
-        ret = depart + dt.timedelta(days=rnd.choice([3, 4, 5, 7, 7, 10, 14]))
-        price = max(9, round(base * rnd.uniform(0.85, 1.15)))
-        _, country, region = country_info(code, None)
-        deals.append({
-            "origin": origin, "dest": dest, "city": city, "country": country,
-            "countryCode": code, "region": region, "price": price, "currency": "GBP",
-            "depart": depart.isoformat(), "return": ret.isoformat(),
-            "nights": (ret - depart).days, "stops": stops,
-            "url": search_link(origin, dest, depart, ret),
-            # ukážka trendu: časť trás "zlacnela" od minulej aktualizácie
-            "prevPrice": price + rnd.randint(4, 30) if rnd.random() < 0.3 else None,
-        })
-    return deals
-
-
 # ------------------------------------------------------------------ výstup ---
 
 def load_previous() -> dict:
@@ -294,10 +252,12 @@ def next_update(now: dt.datetime) -> dt.datetime:
     return now + dt.timedelta(hours=8)
 
 
-def build(deals: list[dict], now: dt.datetime, sample: bool, errors: list[str]) -> dict:
+def build(deals: list[dict], now: dt.datetime, errors: list[str]) -> dict:
     prev = load_previous()
-    prev_prices = {(d["origin"], d["dest"]): d["price"] for d in prev.get("deals", [])
-                   if not prev.get("sample")}
+    prev_prices = {(d["origin"], d["dest"]): d["price"] for d in prev.get("deals", [])}
+    today = now.date().isoformat()
+    # do bloku idú len ponuky s odletom od zajtra – dnešné a staršie už nekúpite
+    deals = [d for d in deals if not d["depart"] or d["depart"] > today]
 
     # Na každú trasu necháme najlacnejšiu ponuku.
     best: dict[tuple[str, str], dict] = {}
@@ -307,11 +267,10 @@ def build(deals: list[dict], now: dt.datetime, sample: bool, errors: list[str]) 
             best[key] = d
     out = sorted(best.values(), key=lambda d: d["price"])
     for d in out:
-        d.setdefault("prevPrice", prev_prices.get((d["origin"], d["dest"])))
+        d["prevPrice"] = prev_prices.get((d["origin"], d["dest"]))
 
     return {
         "source": "momondo.co.uk",
-        "sample": sample,
         "updatedAt": now.isoformat(timespec="minutes"),
         "slot": slot_for(now),
         "nextUpdate": next_update(now).isoformat(timespec="minutes"),
@@ -334,18 +293,12 @@ def write(data: dict) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--sample", action="store_true", help="vygeneruje ukážkové dáta bez siete")
     ap.add_argument("--from-file", type=Path, help="spracuje uloženú odpoveď explore API")
     ap.add_argument("--origin", default="VIE", help="letisko pre --from-file (predvolene VIE)")
     args = ap.parse_args()
 
     now = dt.datetime.now(VIENNA)
     errors: list[str] = []
-
-    if args.sample:
-        write(build(sample_deals(now), now, True, errors))
-        print("Zapísané ukážkové dáta.")
-        return 0
 
     deals: list[dict] = []
     if args.from_file:
@@ -365,7 +318,7 @@ def main() -> int:
         print("Žiadne ponuky – dáta sa neprepisujú.", file=sys.stderr)
         return 1
 
-    write(build(deals, now, False, errors))
+    write(build(deals, now, errors))
     print(f"Zapísaných {len(deals)} ponúk ({now:%Y-%m-%d %H:%M} Europe/Vienna).")
     return 0
 
