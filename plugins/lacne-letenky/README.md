@@ -34,7 +34,8 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
 - hľadajú sa iba lety s **odletom najviac 3 mesiace dopredu** (`HORIZON_DAYS` v skripte)
 - **Bangkok je vždy prvý**: najlacnejšia **spiatočná** letenka z VIE alebo BTS na letisko
   BKK alebo DMK. Ak ju momondo pri aktualizácii nevráti, blok napíše, že ponuku nenašiel,
-  a ponúkne odkaz na vyhľadávanie. Ďalšie sledované mestá sa pridávajú do `WATCH`
+  a ponúkne odkaz na vyhľadávanie. **Dubaj** (DXB, DWC) a **Abu Dhabí** (AUH) sa hľadajú tiež vždy a v bloku sú
+  vždy medzi kartami „kamkoľvek“ (zoradené podľa ceny). Ďalšie sledované mestá sa pridávajú do `WATCH`
   v `scripts/update_deals.py`.
 
 - karty zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena v €)

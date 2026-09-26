@@ -120,13 +120,25 @@
     // Bangkok (a ďalšie sledované mestá): iba spiatočná letenka v najbližších 3 mesiacoch.
     var watch = (data.watch || []).map(function (w) {
       var d = w.deal;
-      return { name: w.name, searchUrl: w.searchUrl, deal: fresh && d && d['return'] && inWindow(d) ? d : null };
+      return {
+        name: w.name, searchUrl: w.searchUrl, featured: w.featured !== false,
+        deal: fresh && d && d['return'] && inWindow(d) ? d : null
+      };
     });
+    // featured (Bangkok) = veľká karta; ostatné sledované (Dubaj, Abu Dhabí) sa vždy pridajú medzi karty
+    var pinned = watch.filter(function (w) { return !w.featured; });
+    var pinnedDeals = pinned.filter(function (w) { return w.deal; })
+      .map(function (w) { var d = {}; for (var k in w.deal) d[k] = w.deal[k]; d.city = w.name; return d; });
+    var missing = fresh ? pinned.filter(function (w) { return !w.deal; }).map(function (w) { return w.name; }) : [];
+    watch = watch.filter(function (w) { return w.featured; });
     // sledované mesto (Bangkok) má vlastnú kartu, jeho letiská sa v mriežke neopakujú
     var watched = {};
     (data.watch || []).forEach(function (w) { (w.airports || []).forEach(function (a) { watched[a] = 1; }); });
-    var deals = freshDeals(data).filter(function (d) { return !watched[d.dest]; });
     var limit = opts.limit || 8;
+    var deals = freshDeals(data).filter(function (d) { return !watched[d.dest]; })
+      .slice(0, Math.max(0, limit - pinnedDeals.length))
+      .concat(pinnedDeals)
+      .sort(function (a, b) { return a.price - b.price; });
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });
 
@@ -189,7 +201,8 @@
       '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
       watch.map(watchHtml).join('') +
       (deals.length
-        ? '<ul class="ll-grid">' + deals.slice(0, limit).map(cardHtml).join('') + '</ul>' +
+        ? '<ul class="ll-grid">' + deals.map(cardHtml).join('') + '</ul>' +
+          (missing.length ? '<p class="ll-foot">' + esc(missing.join(', ')) + ' – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</p>' : '') +
           '<p class="ll-foot">Najnižšie ceny za osobu v eurách z momondo.co.uk' +
             (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
             '. Ceny sa menia, pred nákupom ich overte.</p>'

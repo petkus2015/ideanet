@@ -42,8 +42,28 @@ window.LACNE_LETENKY_DATA = {
     "BKK",
     "DMK"
    ],
+   "featured": true,
    "deal": null,
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-BKK"
+  },
+  {
+   "name": "Dubaj",
+   "airports": [
+    "DXB",
+    "DWC"
+   ],
+   "featured": false,
+   "deal": null,
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-DXB"
+  },
+  {
+   "name": "Abu Dhabí",
+   "airports": [
+    "AUH"
+   ],
+   "featured": false,
+   "deal": null,
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-AUH"
   }
  ],
  "deals": []

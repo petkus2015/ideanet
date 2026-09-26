@@ -51,8 +51,11 @@ ORIGINS = {
 HORIZON_DAYS = 92
 
 # Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
+# featured=True -> veľká karta na začiatku bloku; ostatné sa vždy pridajú medzi karty "kamkoľvek".
 WATCH = {
-    "Bangkok": {"countryCode": "TH", "airports": ["BKK", "DMK"]},  # Suvarnabhumi aj Don Mueang
+    "Bangkok": {"countryCode": "TH", "airports": ["BKK", "DMK"], "featured": True},  # Suvarnabhumi aj Don Mueang
+    "Dubaj": {"countryCode": "AE", "airports": ["DXB", "DWC"], "featured": False},   # Dubai Intl aj Al Maktoum
+    "Abu Dhabí": {"countryCode": "AE", "airports": ["AUH"], "featured": False},
 }
 
 # Časy aktualizácie (Europe/Vienna) – musia sedieť s .github/workflows/lacne-letenky.yml
@@ -326,6 +329,7 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         watch.append({
             "name": name,
             "airports": w["airports"],
+            "featured": w["featured"],
             "deal": deal,
             # keď momondo nič nevráti, blok ponúkne aspoň odkaz na vyhľadávanie
             "searchUrl": f"{SITE}/explore/VIE-{w['airports'][0]}",
