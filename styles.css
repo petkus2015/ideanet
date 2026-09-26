@@ -493,6 +493,31 @@ ul,ol,dl{margin:0;padding:0;list-style:none}
 .price__desc{font-size:15px;color:var(--ink-2)}
 .price .ticks{margin-bottom:auto}
 
+/* ── 11b. Školenia pre firmy ────────────────────────────── */
+.train{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,64px);align-items:start}
+.train__copy h3{font-size:17px;margin:0 0 12px}
+.train__copy h3 + p{color:var(--ink-2);font-size:15px}
+.train__copy h3:not(:first-child){margin-top:30px}
+.train__copy .ticks{margin-top:18px}
+
+.train__card{
+  padding:clamp(26px,2.4vw,36px);
+  background:var(--paper);border:1px solid var(--line-2);border-radius:var(--r-xl);
+  box-shadow:var(--sh-1);
+}
+.train__card h3{font-size:19px;color:var(--ink-3);font-weight:550;margin:0 0 18px}
+.train__opts{display:grid;gap:18px;margin-bottom:24px}
+.train__opts li{padding-top:18px;border-top:1px solid var(--line-2)}
+.train__opts li:first-child{padding-top:0;border-top:0}
+.train__opt-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.train__opt-name{font-size:16px;font-weight:600}
+.train__opt-price{font-size:16px;font-weight:600;color:var(--accent-2);white-space:nowrap}
+.train__opts li p{margin-top:6px;font-size:14px;color:var(--ink-2)}
+
+@media (max-width:980px){
+  .train{grid-template-columns:1fr}
+}
+
 /* ── 12. Referencie ─────────────────────────────────────── */
 .quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,28px)}
 .quote{margin:0;padding:clamp(24px,2.2vw,32px);border-radius:var(--r-xl);

@@ -138,6 +138,18 @@ Klip v hlavičke je `#heroVideo` v `index.html`. Nahraďte
 - E-mail `ahoj@ideanet.sk` a telefón sú zástupné — vymeňte ich v `index.html`
   (sekcia kontakt, pätička) aj v `app.js` (odosielanie formulára).
 
+## Školenia pre firmy
+
+Sekcia `#skolenia` ponúka firemné školenie natáčania a strihu pre marketingové
+tímy — oddelené od produkčných služieb vyššie na stránke, s vlastnou
+navigačnou položkou. Formáty a ceny sú v `.train__opts` v `index.html`,
+štýl karty je v `styles.css` (blok *Školenia pre firmy*).
+
+Tlačidlo „Mám záujem o školenie“ má atribút `data-preselect="Školenia pre tím"`.
+Kliknutím sa v kontaktnom formulári automaticky zaškrtne rovnomenný chip —
+mechanizmus (`app.js`) funguje pre ľubovoľný odkaz s `data-preselect`, stačí
+hodnotu zhodovať s `value` niektorého checkboxu `name="sluzba"`.
+
 ## Dostupnosť a výkon
 
 - Responzívne od 320 px po veľké monitory.

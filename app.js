@@ -540,6 +540,15 @@
     }
   }
 
+  /* odkazy s data-preselect zaškrtnú danú službu v kontaktnom formulári
+     (napr. CTA „Mám záujem o školenie“) predtým, než sa naň presunie fokus */
+  $$('[data-preselect]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const chip = $$('input[name="sluzba"]').find((i) => i.value === a.dataset.preselect);
+      if (chip) chip.checked = true;
+    });
+  });
+
   /* rok v pätičke */
   const year = $('#year');
   if (year) year.textContent = new Date().getFullYear();
