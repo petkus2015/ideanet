@@ -88,16 +88,26 @@
   // Ponuky staršie ako toto sa už nezobrazia (aktualizácia zlyhala viackrát po sebe).
   var MAX_AGE_H = 36;
 
-  function freshDeals(data) {
-    if (!data.updatedAt) return [];
-    if ((Date.now() - new Date(data.updatedAt).getTime()) / 36e5 > MAX_AGE_H) return [];
+  function isFresh(data) {
+    return !!data.updatedAt && (Date.now() - new Date(data.updatedAt).getTime()) / 36e5 <= MAX_AGE_H;
+  }
+  function upcoming(d) {
     var today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Vienna' });
-    return (data.deals || []).filter(function (d) { return !d.depart || d.depart > today; })
-      .sort(function (a, b) { return a.price - b.price; });
+    return !d.depart || d.depart > today;
+  }
+  function freshDeals(data) {
+    if (!isFresh(data)) return [];
+    return (data.deals || []).filter(upcoming).sort(function (a, b) { return a.price - b.price; });
   }
 
   function render(el, data, opts) {
-    var deals = freshDeals(data);
+    var watch = (data.watch || []).map(function (w) {
+      return { name: w.name, searchUrl: w.searchUrl, deal: isFresh(data) && w.deal && upcoming(w.deal) ? w.deal : null };
+    });
+    var featured = {};
+    watch.forEach(function (w) { if (w.deal) featured[w.deal.origin + w.deal.dest] = 1; });
+    // sledovaná ponuka má vlastnú kartu, v mriežke sa neopakuje
+    var deals = freshDeals(data).filter(function (d) { return !featured[d.origin + d.dest]; });
     var limit = opts.limit || 8;
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });
@@ -122,7 +132,33 @@
       '</a></li>';
     }
 
-    var updated = deals.length
+    function watchHtml(w) {
+      var d = w.deal;
+      if (!d) {
+        return '<div class="ll-watch-empty"><span><b>' + esc(w.name) + '</b> – pri poslednej aktualizácii sme nenašli ponuku.</span>' +
+          '<a class="ll-more" href="' + esc(w.searchUrl) + '" target="_blank" rel="noopener">Hľadať na momondo →</a></div>';
+      }
+      var from = cities[d.origin] || d.origin;
+      var drop = d.prevPrice && d.prevPrice > d.price
+        ? '<span class="ll-drop">▼ ' + money(d.prevPrice - d.price, d.currency) + ' od poslednej aktualizácie</span>' : '';
+      return '<a class="ll-feature" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
+          esc(w.name + ' z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na momondo') + '">' +
+        '<svg class="ll-feature-arc" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true"><path d="M10 190 C 120 20, 290 10, 390 70"/></svg>' +
+        '<div class="ll-feature-main">' +
+          '<p class="ll-feature-kicker">Sledujeme pre vás</p>' +
+          '<p class="ll-feature-city">' + esc(w.name) + '</p>' +
+          '<p class="ll-feature-meta"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
+            '<span>z ' + esc(from) + '</span>' + (stopsLabel(d.stops) ? '<span>' + stopsLabel(d.stops) + '</span>' : '') + '</p>' +
+          '<p class="ll-feature-meta">' + CAL + '<span>' + datesText(d) + '</span></p>' +
+        '</div>' +
+        '<div class="ll-feature-side">' +
+          '<small>' + (d['return'] ? 'spiatočná od' : 'od') + '</small>' +
+          '<strong>' + money(d.price, d.currency) + '</strong>' + drop +
+          '<span class="ll-feature-cta">Pozrieť let ' + ARROW + '</span>' +
+        '</div></a>';
+    }
+
+    var updated = isFresh(data)
       ? '<p class="ll-updated">Aktualizované <b>' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) + '</b></p>'
       : '<p class="ll-updated" data-stale="true">Ponuky sa aktualizujú</p>';
 
@@ -131,6 +167,7 @@
           '<p class="ll-eyebrow">Lacné letenky</p>' +
           '<h2 class="ll-title">' + esc(opts.title || 'Kam lacno z Viedne a Bratislavy') + '</h2>' +
         '</div>' + updated + '</div>' +
+      watch.map(watchHtml).join('') +
       (deals.length
         ? '<ul class="ll-grid">' + deals.slice(0, limit).map(cardHtml).join('') + '</ul>' +
           '<div class="ll-foot"><span>Najnižšie ceny za osobu v eurách z momondo.co.uk' +

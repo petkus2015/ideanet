@@ -34,5 +34,16 @@ window.LACNE_LETENKY_DATA = {
   }
  ],
  "errors": [],
+ "watch": [
+  {
+   "name": "Bangkok",
+   "airports": [
+    "BKK",
+    "DMK"
+   ],
+   "deal": null,
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-BKK"
+  }
+ ],
  "deals": []
 };

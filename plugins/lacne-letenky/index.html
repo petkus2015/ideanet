@@ -8,13 +8,13 @@
 <style>
   /* Ukážková stránka – iba rám okolo bloku, aby bolo vidno, ako zapadne do webu. */
   :root {
-    --pg-bg: #ffffff; --pg-band: #f6f8fb; --pg-ink: #0f172a; --pg-ink-2: #64748b; --pg-line: #e5e8ef; --pg-accent: #2563eb;
+    --pg-bg: #ffffff; --pg-band: #ffffff; --pg-ink: #0f172a; --pg-ink-2: #64748b; --pg-line: #e5e8ef; --pg-accent: #2563eb;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --pg-bg: #0b111c; --pg-band: #0f1623; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
+    :root:not([data-theme="light"]) { --pg-bg: #0b111c; --pg-band: #0b111c; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
   }
-  :root[data-theme="dark"] { --pg-bg: #0b111c; --pg-band: #0f1623; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
+  :root[data-theme="dark"] { --pg-bg: #0b111c; --pg-band: #0b111c; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
   body { margin: 0; background: var(--pg-bg); color: var(--pg-ink); font: 16px/1.55 "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; }
   .pg-wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
   .pg-nav { border-bottom: 1px solid var(--pg-line); }
@@ -27,7 +27,7 @@
   .pg-intro { padding-block: 56px 36px; display: grid; gap: 12px; max-width: 62ch; }
   .pg-intro h1 { margin: 0; font-size: clamp(32px, 5vw, 48px); line-height: 1.08; letter-spacing: -.03em; text-wrap: balance; }
   .pg-intro p { margin: 0; color: var(--pg-ink-2); font-size: 18px; }
-  .pg-band { background: var(--pg-band); border-block: 1px solid var(--pg-line); padding-block: 48px 56px; }
+  .pg-band { background: var(--pg-band); padding-block: 8px 64px; }
   .pg-foot { padding-block: 28px 40px; font-size: 13px; color: var(--pg-ink-2); }
   @media (max-width: 560px) { .pg-links a:not([aria-current]) { display: none; } .pg-intro { padding-block: 36px 24px; } }
 </style>
@@ -44,7 +44,7 @@
   <section class="pg-wrap">
     <div class="pg-intro">
       <h1>Letenky z Viedne a Bratislavy</h1>
-      <p>Najlacnejšie aktuálne ponuky do celého sveta, obnovované ráno, na obed a večer.</p>
+      <p>Najlacnejšie aktuálne ponuky do celého sveta aj do Bangkoku, obnovované ráno, na obed a večer.</p>
     </div>
   </section>
 

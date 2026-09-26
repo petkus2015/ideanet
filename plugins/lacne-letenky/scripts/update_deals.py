@@ -47,6 +47,11 @@ ORIGINS = {
     "BTS": {"city": "Bratislava", "name": "M. R. Štefánik"},
 }
 
+# Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
+WATCH = {
+    "Bangkok": {"countryCode": "TH", "airports": ["BKK", "DMK"]},  # Suvarnabhumi aj Don Mueang
+}
+
 # Časy aktualizácie (Europe/Vienna) – musia sedieť s .github/workflows/lacne-letenky.yml
 SCHEDULE = [("rano", "07:00"), ("obed", "12:00"), ("vecer", "18:00")]
 
@@ -120,12 +125,12 @@ HEADERS = {
 
 # ---------------------------------------------------------------- momondo ---
 
-def explore_url(origin: str) -> str:
+def explore_url(origin: str, selected: str = "") -> str:
     params = {
         "airport": origin, "budget": "", "depart": "", "return": "", "duration": "",
         "exactDates": "false", "flightMaxStops": "", "stopsFilterActive": "false",
         "topRightLat": "", "topRightLon": "", "bottomLeftLat": "", "bottomLeftLon": "",
-        "zoomLevel": "2", "selectedMarker": "", "themeCode": "", "selectedDestination": "",
+        "zoomLevel": "2", "selectedMarker": "", "themeCode": "", "selectedDestination": selected,
         "currency": CURRENCY,
     }
     return SITE + EXPLORE_PATH + "?" + urllib.parse.urlencode(params)
@@ -303,6 +308,24 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     for d in out:
         d["prevPrice"] = prev_prices.get((d["origin"], d["dest"]))
 
+    # Najlacnejšia ponuka do každej sledovanej destinácie (z VIE aj BTS, ľubovoľné letisko mesta).
+    prev_watch = {w["name"]: w["deal"]["price"] for w in prev.get("watch", [])
+                  if w.get("deal") and w["deal"].get("currency") == CURRENCY}
+    watch = []
+    for name, w in WATCH.items():
+        hits = [d for d in out if d["dest"] in w["airports"]]
+        deal = dict(min(hits, key=lambda d: d["price"])) if hits else None
+        if deal:
+            deal["city"] = name
+            deal["prevPrice"] = prev_watch.get(name)
+        watch.append({
+            "name": name,
+            "airports": w["airports"],
+            "deal": deal,
+            # keď momondo nič nevráti, blok ponúkne aspoň odkaz na vyhľadávanie
+            "searchUrl": f"{SITE}/explore/VIE-{w['airports'][0]}",
+        })
+
     return {
         "source": "momondo.co.uk",
         "currency": CURRENCY,
@@ -314,6 +337,7 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         "timezone": "Europe/Vienna",
         "origins": [{"code": k, **v} for k, v in ORIGINS.items()],
         "errors": errors,
+        "watch": watch,
         "deals": out,
     }
 
@@ -350,6 +374,17 @@ def main() -> int:
             except Exception as exc:  # jedno letisko nesmie zhodiť celú aktualizáciu
                 errors.append(f"{origin}: {exc}")
                 print(f"{origin}: CHYBA {exc}", file=sys.stderr)
+            # Sledované destinácie (Bangkok) sa pýtame aj samostatne, aby nechýbali,
+            # keď ich všeobecný prehľad "kamkoľvek" nevráti.
+            for name, w in WATCH.items():
+                for code in w["airports"]:
+                    try:
+                        extra = [d for d in parse_destinations(fetch_json(explore_url(origin, code)), origin)
+                                 if d["dest"] in w["airports"]]
+                        print(f"{origin} → {name} ({code}): {len(extra)} ponúk")
+                        deals += extra
+                    except Exception as exc:
+                        print(f"{origin} → {name} ({code}): CHYBA {exc}", file=sys.stderr)
 
     if not deals:
         # Staré dáta nechávame tak – plugin radšej ukáže posledné známe ceny.
