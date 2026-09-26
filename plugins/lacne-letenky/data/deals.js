@@ -14,7 +14,7 @@ window.LACNE_LETENKY_DATA = {
    "GBP": 0.86045
   }
  },
- "updatedAt": "2026-09-26T20:50+02:00",
+ "updatedAt": "2026-09-26T20:54+02:00",
  "slot": "vecer",
  "nextUpdate": "2026-09-27T07:00+02:00",
  "schedule": [
@@ -44,18 +44,7 @@ window.LACNE_LETENKY_DATA = {
    "name": "M. R. Štefánik"
   }
  ],
- "errors": [
-  "Wizz Air BTS-GYD: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-HRG: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-JMK: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-KSC: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-KUT: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-LCA: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-LTN: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-LON: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-RMO: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable",
-  "Wizz Air BTS-SJJ: Wizz Air neodpovedalo (https://be.wizzair.com/29.18.0/Api/search/timetable): HTTP Error 503: Service Temporarily Unavailable"
- ],
+ "errors": [],
  "horizonDays": 92,
  "watch": [
   {
@@ -109,6 +98,23 @@ window.LACNE_LETENKY_DATA = {
  "deals": [
   {
    "origin": "BTS",
+   "dest": "SJJ",
+   "city": "Sarajevo",
+   "country": "Bosna a Hercegovina",
+   "countryCode": "BA",
+   "region": "Európa",
+   "price": 20,
+   "currency": "EUR",
+   "depart": "2026-10-13",
+   "return": "2026-10-22",
+   "nights": 9,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SJJ/2026-10-13/2026-10-22/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
+   "origin": "BTS",
    "dest": "TZL",
    "city": "Tuzla",
    "country": "Bosna a Hercegovina",
@@ -122,7 +128,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TZL/2026-10-13/2026-10-22/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 23
+   "prevPrice": 20
   },
   {
    "origin": "VIE",
@@ -179,6 +185,40 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BTS",
+   "dest": "SKP",
+   "city": "Skopje",
+   "country": "Severné Macedónsko",
+   "countryCode": "MK",
+   "region": "Európa",
+   "price": 30,
+   "currency": "EUR",
+   "depart": "2026-11-01",
+   "return": "2026-11-06",
+   "nights": 5,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SKP/2026-11-01/2026-11-06/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
+   "origin": "BTS",
+   "dest": "TIA",
+   "city": "Tirana",
+   "country": "Albánsko",
+   "countryCode": "AL",
+   "region": "Európa",
+   "price": 30,
+   "currency": "EUR",
+   "depart": "2026-10-14",
+   "return": "2026-10-21",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TIA/2026-10-14/2026-10-21/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
+   "origin": "BTS",
    "dest": "PDV",
    "city": "Plovdiv",
    "country": "Bulharsko",
@@ -192,7 +232,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PDV/2026-10-17/2026-10-20/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 33
   },
   {
    "origin": "BTS",
@@ -300,7 +340,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ALC/2026-12-02/2026-12-09/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 55
+   "prevPrice": 38
   },
   {
    "origin": "BTS",
@@ -317,7 +357,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/NAP/2026-12-03/2026-12-10/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 38
   },
   {
    "origin": "BTS",
@@ -334,7 +374,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BSL/2026-11-04/2026-11-08/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 52
+   "prevPrice": 40
   },
   {
    "origin": "VIE",
@@ -368,7 +408,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OHD/2026-10-18/2026-10-22/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 40
   },
   {
    "origin": "BTS",
@@ -384,6 +424,40 @@ window.LACNE_LETENKY_DATA = {
    "nights": 11,
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PMO/2026-11-01/2026-11-12/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": 40
+  },
+  {
+   "origin": "BTS",
+   "dest": "RMO",
+   "city": "Chisinau",
+   "country": "Moldavsko",
+   "countryCode": "MD",
+   "region": "Európa",
+   "price": 40,
+   "currency": "EUR",
+   "depart": "2026-11-11",
+   "return": "2026-11-25",
+   "nights": 14,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/RMO/2026-11-11/2026-11-25/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
+   "origin": "BTS",
+   "dest": "TGD",
+   "city": "Podgorica",
+   "country": "Čierna Hora",
+   "countryCode": "ME",
+   "region": "Európa",
+   "price": 40,
+   "currency": "EUR",
+   "depart": "2026-10-06",
+   "return": "2026-10-13",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TGD/2026-10-06/2026-10-13/1/0/0/null",
    "source": "wizzair",
    "prevPrice": null
   },
@@ -402,7 +476,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2026-10-08/2026-10-13/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 40
   },
   {
    "origin": "VIE",
@@ -438,6 +512,23 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PRN/2026-10-20/2026-10-24/1/0/0/null",
    "source": "wizzair",
+   "prevPrice": 43
+  },
+  {
+   "origin": "BTS",
+   "dest": "SUF",
+   "city": "Lamezia Terme",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 43,
+   "currency": "EUR",
+   "depart": "2026-10-19",
+   "return": "2026-10-23",
+   "nights": 4,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SUF/2026-10-19/2026-10-23/1/0/0/null",
+   "source": "wizzair",
    "prevPrice": null
   },
   {
@@ -455,7 +546,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BER/2026-10-19/2026-10-27/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 45
   },
   {
    "origin": "BTS",
@@ -472,7 +563,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/FCO/2026-10-31/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 45
   },
   {
    "origin": "BTS",
@@ -489,7 +580,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ROM/2026-10-31/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 45
   },
   {
    "origin": "BTS",
@@ -525,7 +616,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WSW/2026-09-29/2026-10-01/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 46
   },
   {
    "origin": "BTS",
@@ -542,7 +633,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OSL/2026-12-16/2026-12-25/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 47
   },
   {
    "origin": "BTS",
@@ -559,7 +650,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OOS/2026-12-16/2026-12-25/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 47
   },
   {
    "origin": "BTS",
@@ -612,7 +703,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ATH/2026-11-02/2026-11-11/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 60
+   "prevPrice": 50
   },
   {
    "origin": "BTS",
@@ -629,7 +720,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/EVN/2026-11-10/2026-11-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 50
   },
   {
    "origin": "VIE",
@@ -650,6 +741,23 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BTS",
+   "dest": "LON",
+   "city": "London (All Airports)",
+   "country": "Spojené kráľovstvo",
+   "countryCode": "GB",
+   "region": "Európa",
+   "price": 52,
+   "currency": "EUR",
+   "depart": "2026-11-11",
+   "return": "2026-11-18",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LON/2026-11-11/2026-11-18/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": 76
+  },
+  {
+   "origin": "BTS",
    "dest": "EAP",
    "city": "Basel",
    "country": "Švajčiarsko",
@@ -666,6 +774,23 @@ window.LACNE_LETENKY_DATA = {
    "priceOriginal": 45,
    "currencyOriginal": "GBP",
    "prevPrice": 52
+  },
+  {
+   "origin": "BTS",
+   "dest": "LTN",
+   "city": "London Luton",
+   "country": "Spojené kráľovstvo",
+   "countryCode": "GB",
+   "region": "Európa",
+   "price": 52,
+   "currency": "EUR",
+   "depart": "2026-11-11",
+   "return": "2026-11-18",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LTN/2026-11-11/2026-11-18/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": 102
   },
   {
    "origin": "BTS",
@@ -699,7 +824,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/AGP/2026-11-16/2026-11-29/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 61
+   "prevPrice": 55
   },
   {
    "origin": "VIE",
@@ -733,7 +858,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/DTM/2026-10-10/2026-10-13/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 56
   },
   {
    "origin": "VIE",
@@ -769,7 +894,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/NCE/2026-10-03/2026-10-06/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null
+   "prevPrice": 57
   },
   {
    "origin": "VIE",
@@ -861,6 +986,23 @@ window.LACNE_LETENKY_DATA = {
    "prevPrice": 64
   },
   {
+   "origin": "BTS",
+   "dest": "JMK",
+   "city": "Mykonos",
+   "country": "Grécko",
+   "countryCode": "GR",
+   "region": "Európa",
+   "price": 64,
+   "currency": "EUR",
+   "depart": "2026-10-12",
+   "return": "2026-10-16",
+   "nights": 4,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/JMK/2026-10-12/2026-10-16/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
    "origin": "VIE",
    "dest": "BUH",
    "city": "Bukurešť",
@@ -881,7 +1023,24 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BTS",
-   "dest": "LON",
+   "dest": "LCA",
+   "city": "Larnaka",
+   "country": "Cyprus",
+   "countryCode": "CY",
+   "region": "Európa",
+   "price": 70,
+   "currency": "EUR",
+   "depart": "2026-11-21",
+   "return": "2026-11-24",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LCA/2026-11-21/2026-11-24/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
+   "origin": "BTS",
+   "dest": "STN",
    "city": "Londýn",
    "country": "Spojené kráľovstvo",
    "countryCode": "GB",
@@ -892,11 +1051,28 @@ window.LACNE_LETENKY_DATA = {
    "return": "2027-01-05",
    "nights": 14,
    "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/BTS-LON/2026-12-22/2027-01-05?sort=price_a",
+   "url": "https://www.momondo.co.uk/flight-search/BTS-STN/2026-12-22/2027-01-05?sort=price_a",
    "source": "momondo",
    "priceOriginal": 65,
    "currencyOriginal": "GBP",
-   "prevPrice": 76
+   "prevPrice": null
+  },
+  {
+   "origin": "BTS",
+   "dest": "GYD",
+   "city": "Baku",
+   "country": "Azerbajdžan",
+   "countryCode": "AZ",
+   "region": "Ázia",
+   "price": 76,
+   "currency": "EUR",
+   "depart": "2026-11-28",
+   "return": "2026-12-12",
+   "nights": 14,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/GYD/2026-11-28/2026-12-12/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
   },
   {
    "origin": "VIE",
@@ -994,6 +1170,23 @@ window.LACNE_LETENKY_DATA = {
    "prevPrice": 92
   },
   {
+   "origin": "BTS",
+   "dest": "KUT",
+   "city": "Kutaisi",
+   "country": "Gruzínsko",
+   "countryCode": "GE",
+   "region": "Ázia",
+   "price": 92,
+   "currency": "EUR",
+   "depart": "2026-11-05",
+   "return": "2026-11-12",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/KUT/2026-11-05/2026-11-12/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
    "origin": "VIE",
    "dest": "NTE",
    "city": "Nantes",
@@ -1045,25 +1238,6 @@ window.LACNE_LETENKY_DATA = {
    "nights": 6,
    "stops": 1,
    "url": "https://www.momondo.co.uk/flight-search/VIE-GDN/2026-11-01/2026-11-07?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 88,
-   "currencyOriginal": "GBP",
-   "prevPrice": 102
-  },
-  {
-   "origin": "BTS",
-   "dest": "LTN",
-   "city": "Londýn",
-   "country": "Spojené kráľovstvo",
-   "countryCode": "GB",
-   "region": "Európa",
-   "price": 102,
-   "currency": "EUR",
-   "depart": "2026-10-20",
-   "return": "2026-10-22",
-   "nights": 2,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/BTS-LTN/2026-10-20/2026-10-22?sort=price_a",
    "source": "momondo",
    "priceOriginal": 88,
    "currencyOriginal": "GBP",
@@ -1123,6 +1297,23 @@ window.LACNE_LETENKY_DATA = {
    "priceOriginal": 91,
    "currencyOriginal": "GBP",
    "prevPrice": 106
+  },
+  {
+   "origin": "BTS",
+   "dest": "HRG",
+   "city": "Hurghada",
+   "country": "Egypt",
+   "countryCode": "EG",
+   "region": "Afrika",
+   "price": 106,
+   "currency": "EUR",
+   "depart": "2026-12-14",
+   "return": "2026-12-21",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/HRG/2026-12-14/2026-12-21/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
   },
   {
    "origin": "BTS",
@@ -1218,6 +1409,23 @@ window.LACNE_LETENKY_DATA = {
    "prevPrice": 119
   },
   {
+   "origin": "BTS",
+   "dest": "TLV",
+   "city": "Tel-Aviv",
+   "country": "Izrael",
+   "countryCode": "IL",
+   "region": "Ázia",
+   "price": 120,
+   "currency": "EUR",
+   "depart": "2026-10-28",
+   "return": "2026-11-03",
+   "nights": 6,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TLV/2026-10-28/2026-11-03/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null
+  },
+  {
    "origin": "VIE",
    "dest": "MAN",
    "city": "Manchester",
@@ -1311,253 +1519,6 @@ window.LACNE_LETENKY_DATA = {
    "priceOriginal": 109,
    "currencyOriginal": "GBP",
    "prevPrice": 127
-  },
-  {
-   "origin": "VIE",
-   "dest": "LGW",
-   "city": "Londýn",
-   "country": "Spojené kráľovstvo",
-   "countryCode": "GB",
-   "region": "Európa",
-   "price": 128,
-   "currency": "EUR",
-   "depart": "2026-11-10",
-   "return": "2026-11-17",
-   "nights": 7,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-LGW/2026-11-10/2026-11-17?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 110,
-   "currencyOriginal": "GBP",
-   "prevPrice": 128
-  },
-  {
-   "origin": "VIE",
-   "dest": "CTA",
-   "city": "Catania",
-   "country": "Taliansko",
-   "countryCode": "IT",
-   "region": "Európa",
-   "price": 130,
-   "currency": "EUR",
-   "depart": "2026-10-22",
-   "return": "2026-10-29",
-   "nights": 7,
-   "stops": 2,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-CTA/2026-10-22/2026-10-29?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 112,
-   "currencyOriginal": "GBP",
-   "prevPrice": 130
-  },
-  {
-   "origin": "VIE",
-   "dest": "PMI",
-   "city": "Mallorca",
-   "country": "Španielsko",
-   "countryCode": "ES",
-   "region": "Európa",
-   "price": 131,
-   "currency": "EUR",
-   "depart": "2026-10-11",
-   "return": "2026-10-15",
-   "nights": 4,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-PMI/2026-10-11/2026-10-15?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 113,
-   "currencyOriginal": "GBP",
-   "prevPrice": 131
-  },
-  {
-   "origin": "VIE",
-   "dest": "VCE",
-   "city": "Benátky",
-   "country": "Taliansko",
-   "countryCode": "IT",
-   "region": "Európa",
-   "price": 131,
-   "currency": "EUR",
-   "depart": "2026-10-30",
-   "return": "2026-11-01",
-   "nights": 2,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-VCE/2026-10-30/2026-11-01?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 113,
-   "currencyOriginal": "GBP",
-   "prevPrice": 131
-  },
-  {
-   "origin": "VIE",
-   "dest": "BER",
-   "city": "Berlin",
-   "country": "Nemecko",
-   "countryCode": "DE",
-   "region": "Európa",
-   "price": 132,
-   "currency": "EUR",
-   "depart": "2026-11-10",
-   "return": "2026-11-17",
-   "nights": 7,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-BER/2026-11-10/2026-11-17?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 114,
-   "currencyOriginal": "GBP",
-   "prevPrice": 132
-  },
-  {
-   "origin": "VIE",
-   "dest": "BUD",
-   "city": "Budapest",
-   "country": "Maďarsko",
-   "countryCode": "HU",
-   "region": "Európa",
-   "price": 134,
-   "currency": "EUR",
-   "depart": "2026-11-08",
-   "return": "2026-11-15",
-   "nights": 7,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-BUD/2026-11-08/2026-11-15?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 115,
-   "currencyOriginal": "GBP",
-   "prevPrice": 134
-  },
-  {
-   "origin": "VIE",
-   "dest": "JTR",
-   "city": "Thera",
-   "country": "Grécko",
-   "countryCode": "GR",
-   "region": "Európa",
-   "price": 135,
-   "currency": "EUR",
-   "depart": "2026-10-17",
-   "return": "2026-10-23",
-   "nights": 6,
-   "stops": 2,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-JTR/2026-10-17/2026-10-23?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 116,
-   "currencyOriginal": "GBP",
-   "prevPrice": 135
-  },
-  {
-   "origin": "BTS",
-   "dest": "BRS",
-   "city": "Bristol",
-   "country": "Spojené kráľovstvo",
-   "countryCode": "GB",
-   "region": "Európa",
-   "price": 135,
-   "currency": "EUR",
-   "depart": "2026-11-28",
-   "return": "2026-11-29",
-   "nights": 1,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/BTS-BRS/2026-11-28/2026-11-29?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 116,
-   "currencyOriginal": "GBP",
-   "prevPrice": 135
-  },
-  {
-   "origin": "VIE",
-   "dest": "BFS",
-   "city": "Belfast",
-   "country": "Spojené kráľovstvo",
-   "countryCode": "GB",
-   "region": "Európa",
-   "price": 136,
-   "currency": "EUR",
-   "depart": "2026-11-09",
-   "return": "2026-11-16",
-   "nights": 7,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-BFS/2026-11-09/2026-11-16?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 117,
-   "currencyOriginal": "GBP",
-   "prevPrice": 136
-  },
-  {
-   "origin": "VIE",
-   "dest": "BOH",
-   "city": "Bournemouth",
-   "country": "Spojené kráľovstvo",
-   "countryCode": "GB",
-   "region": "Európa",
-   "price": 136,
-   "currency": "EUR",
-   "depart": "2026-10-08",
-   "return": "2026-10-10",
-   "nights": 2,
-   "stops": 2,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-BOH/2026-10-08/2026-10-10?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 117,
-   "currencyOriginal": "GBP",
-   "prevPrice": 136
-  },
-  {
-   "origin": "VIE",
-   "dest": "LHR",
-   "city": "Londýn",
-   "country": "Spojené kráľovstvo",
-   "countryCode": "GB",
-   "region": "Európa",
-   "price": 139,
-   "currency": "EUR",
-   "depart": "2026-11-10",
-   "return": "2026-11-17",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-LHR/2026-11-10/2026-11-17?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 120,
-   "currencyOriginal": "GBP",
-   "prevPrice": 139
-  },
-  {
-   "origin": "VIE",
-   "dest": "EAP",
-   "city": "Basel",
-   "country": "Švajčiarsko",
-   "countryCode": "CH",
-   "region": "Európa",
-   "price": 139,
-   "currency": "EUR",
-   "depart": "2026-11-09",
-   "return": "2026-11-16",
-   "nights": 7,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-EAP/2026-11-09/2026-11-16?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 120,
-   "currencyOriginal": "GBP",
-   "prevPrice": 139
-  },
-  {
-   "origin": "VIE",
-   "dest": "AYT",
-   "city": "Antalya",
-   "country": "Turecko",
-   "countryCode": "TR",
-   "region": "Európa",
-   "price": 149,
-   "currency": "EUR",
-   "depart": "2026-09-30",
-   "return": "2026-10-05",
-   "nights": 5,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-AYT/2026-09-30/2026-10-05?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 128,
-   "currencyOriginal": "GBP",
-   "prevPrice": 149
   }
  ]
 };
