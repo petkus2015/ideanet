@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lacné letenky VIE · BTS</title>
+<link rel="stylesheet" href="lacne-letenky.css">
+<style>
+  :root {
+    --pg-bg: #e4e9f1; --pg-ink: #0f1b2d; --pg-ink-2: #4a5872; --pg-code: #ffffff; --pg-line: #cfd6e3;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --pg-bg: #060b15; --pg-ink: #e6ecf5; --pg-ink-2: #9aa8c0; --pg-code: #0f1829; --pg-line: #22304a; color-scheme: dark; }
+  }
+  :root[data-theme="dark"] { --pg-bg: #060b15; --pg-ink: #e6ecf5; --pg-ink-2: #9aa8c0; --pg-code: #0f1829; --pg-line: #22304a; color-scheme: dark; }
+  body {
+    margin: 0; background: var(--pg-bg); color: var(--pg-ink);
+    font: 15px/1.5 "Figtree", system-ui, sans-serif;
+  }
+  .pg { max-width: 1120px; margin: 0 auto; padding: 28px 16px 48px; display: grid; gap: 28px; }
+  .pg-intro { display: grid; gap: 6px; max-width: 65ch; }
+  .pg-intro p { margin: 0; color: var(--pg-ink-2); }
+  .pg-kicker { font: 600 12px/1.2 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--pg-ink-2); }
+  .pg h1 { margin: 0; font: 800 clamp(30px, 5vw, 44px)/1 "Big Shoulders Display", "Arial Narrow", sans-serif; text-transform: uppercase; text-wrap: balance; }
+  .pg h2 { margin: 0; font: 700 18px/1.2 "Figtree", system-ui, sans-serif; }
+  .pg-embed { display: grid; gap: 10px; }
+  .pg-embed p { margin: 0; color: var(--pg-ink-2); max-width: 65ch; }
+  pre {
+    margin: 0; overflow-x: auto; background: var(--pg-code); border: 1px solid var(--pg-line);
+    border-radius: 10px; padding: 14px 16px; font: 13px/1.6 "JetBrains Mono", ui-monospace, monospace;
+  }
+</style>
+</head>
+<body>
+<main class="pg">
+  <header class="pg-intro">
+    <span class="pg-kicker">Náhľad pluginu</span>
+    <h1>Lacné letenky z Viedne a Bratislavy</h1>
+    <p>Najlacnejšie spiatočné letenky kamkoľvek podľa momondo.co.uk. Ceny sa obnovujú 3× denne o 7:00, 12:00 a 18:00 (viedenský čas).</p>
+  </header>
+
+  <!-- Samotný plugin -->
+  <div data-lacne-letenky data-src="data/deals.json"></div>
+
+  <section class="pg-embed">
+    <h2>Vloženie na web</h2>
+    <p>Skopírujte tieto tri riadky na ľubovoľnú stránku. Atribút <code>data-limit</code> obmedzí počet riadkov, <code>data-title</code> zmení nadpis.</p>
+<pre>&lt;link rel="stylesheet" href="/plugins/lacne-letenky/lacne-letenky.css"&gt;
+&lt;div data-lacne-letenky data-src="/plugins/lacne-letenky/data/deals.json" data-limit="12"&gt;&lt;/div&gt;
+&lt;script src="/plugins/lacne-letenky/lacne-letenky.js" defer&gt;&lt;/script&gt;</pre>
+  </section>
+</main>
+<!-- deals.js umožní otvoriť náhľad aj priamo zo súboru (file://), bez servera -->
+<script src="data/deals.js"></script>
+<script src="lacne-letenky.js"></script>
+</body>
+</html>

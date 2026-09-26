@@ -1,0 +1,62 @@
+name: Lacné letenky – aktualizácia
+
+# 3× denne podľa viedenského času: ráno 7:00, obed 12:00, večer 18:00.
+# GitHub cron beží v UTC, preto sú tu časy pre letný (UTC+2) aj zimný (UTC+1) čas
+# a krok "Kontrola času" pustí ďalej len tie, ktoré práve platia.
+# Spúšťame o 7 minút skôr, lebo plánované behy GitHubu často meškajú.
+on:
+  schedule:
+    - cron: '53 4,9,15 * * *'   # leto (CEST)
+    - cron: '53 5,10,16 * * *'  # zima (CET)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lacne-letenky
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Kontrola času
+        id: gate
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          offset=$(TZ=Europe/Vienna date +%z)
+          run=true
+          if [ -n "$SCHEDULE" ]; then
+            if [ "$offset" = "+0200" ] && [ "$SCHEDULE" != '53 4,9,15 * * *' ]; then run=false; fi
+            if [ "$offset" = "+0100" ] && [ "$SCHEDULE" != '53 5,10,16 * * *' ]; then run=false; fi
+          fi
+          echo "Viedeň $offset, plán '$SCHEDULE' -> spustiť: $run"
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.run == 'true'
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.run == 'true'
+        with:
+          python-version: '3.12'
+
+      - name: Stiahnuť ceny z momondo.co.uk
+        if: steps.gate.outputs.run == 'true'
+        run: python3 plugins/lacne-letenky/scripts/update_deals.py
+
+      - name: Uložiť nové ceny
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          git config user.name "lacne-letenky-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plugins/lacne-letenky/data
+          if git diff --cached --quiet; then
+            echo "Žiadna zmena v cenách."
+            exit 0
+          fi
+          git commit -m "Lacné letenky: aktualizácia $(TZ=Europe/Vienna date '+%Y-%m-%d %H:%M')"
+          git push

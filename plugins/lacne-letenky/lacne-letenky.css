@@ -1,0 +1,208 @@
+/* Lacné letenky – plugin. Všetko je pod triedou .ll, aby sa neklialo so stránkou. */
+.ll {
+  --ll-ground: #eef1f6;
+  --ll-surface: #ffffff;
+  --ll-surface-2: #f5f7fb;
+  --ll-ink: #0f1b2d;
+  --ll-ink-2: #4a5872;
+  --ll-line: #d6dce8;
+  --ll-sign: #f2b705;          /* žltá ako letiskové navigačné tabule */
+  --ll-sign-ink: #111827;
+  --ll-accent: #1d4ed8;
+  --ll-accent-ink: #ffffff;
+  --ll-good: #15803d;
+  --ll-good-bg: #dcfce7;
+  --ll-warn: #92400e;
+  --ll-warn-bg: #fef3c7;
+  --ll-focus: #2563eb;
+  --ll-radius: 10px;
+  --ll-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --ll-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ll-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  background: var(--ll-ground);
+  color: var(--ll-ink);
+  font-family: var(--ll-body);
+  font-size: 15px;
+  line-height: 1.45;
+  border-radius: 14px;
+  overflow: hidden;
+  display: grid;
+  gap: 0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ll:not([data-theme="light"]) {
+    --ll-ground: #0b1220; --ll-surface: #121b2d; --ll-surface-2: #172238;
+    --ll-ink: #e6ecf5; --ll-ink-2: #9aa8c0; --ll-line: #26324a;
+    --ll-accent: #7aa2ff; --ll-accent-ink: #0b1220;
+    --ll-good: #4ade80; --ll-good-bg: #12351f; --ll-warn: #fcd34d; --ll-warn-bg: #3a2c0b;
+    --ll-focus: #93b4ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] .ll, .ll[data-theme="dark"] {
+  --ll-ground: #0b1220; --ll-surface: #121b2d; --ll-surface-2: #172238;
+  --ll-ink: #e6ecf5; --ll-ink-2: #9aa8c0; --ll-line: #26324a;
+  --ll-accent: #7aa2ff; --ll-accent-ink: #0b1220;
+  --ll-good: #4ade80; --ll-good-bg: #12351f; --ll-warn: #fcd34d; --ll-warn-bg: #3a2c0b;
+  --ll-focus: #93b4ff;
+  color-scheme: dark;
+}
+.ll *, .ll *::before, .ll *::after { box-sizing: border-box; }
+.ll :focus-visible { outline: 2px solid var(--ll-focus); outline-offset: 2px; }
+
+/* ---------- hlavička = navigačná tabuľa ---------- */
+.ll-head {
+  background: var(--ll-sign);
+  color: var(--ll-sign-ink);
+  padding: 18px 20px 16px;
+  display: flex; flex-wrap: wrap; gap: 14px 24px;
+  align-items: flex-end; justify-content: space-between;
+}
+.ll-brand { display: flex; gap: 14px; align-items: center; min-width: 0; }
+.ll-glyph {
+  flex: none; width: 48px; height: 48px; border-radius: 8px;
+  background: var(--ll-sign-ink); color: var(--ll-sign);
+  display: grid; place-items: center;
+}
+.ll-glyph svg { width: 28px; height: 28px; }
+.ll-eyebrow {
+  margin: 0; font: 600 12px/1.2 var(--ll-mono);
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.ll-title {
+  margin: 2px 0 0; font: 800 clamp(28px, 5vw, 40px)/.95 var(--ll-display);
+  letter-spacing: .01em; text-transform: uppercase; text-wrap: balance;
+}
+.ll-status { display: grid; gap: 6px; justify-items: start; font-size: 13px; }
+.ll-status b { font-weight: 700; }
+.ll-slots { display: flex; gap: 6px; flex-wrap: wrap; }
+.ll-slot {
+  font: 600 12px/1 var(--ll-mono); padding: 6px 8px; border-radius: 6px;
+  border: 1.5px solid var(--ll-sign-ink); display: inline-flex; gap: 6px; align-items: center;
+}
+.ll-slot[data-state="last"] { background: var(--ll-sign-ink); color: var(--ll-sign); }
+.ll-slot[data-state="next"] { border-style: dashed; }
+.ll-slot small { font: inherit; opacity: .75; }
+
+/* ---------- oznamy ---------- */
+.ll-note {
+  margin: 0; padding: 10px 20px; font-size: 13px;
+  background: var(--ll-warn-bg); color: var(--ll-warn);
+  border-bottom: 1px solid var(--ll-line);
+}
+
+/* ---------- ovládanie ---------- */
+.ll-controls {
+  background: var(--ll-surface);
+  border-bottom: 1px solid var(--ll-line);
+  padding: 16px 20px;
+  display: grid; gap: 14px;
+}
+.ll-row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.ll-label {
+  font: 600 11px/1 var(--ll-mono); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ll-ink-2);
+}
+.ll-seg {
+  display: inline-flex; padding: 3px; gap: 3px; border-radius: 9px;
+  background: var(--ll-surface-2); border: 1px solid var(--ll-line); flex-wrap: wrap;
+}
+.ll-seg button, .ll-chip {
+  font: 600 14px/1 var(--ll-body); color: var(--ll-ink);
+  background: transparent; border: 0; cursor: pointer;
+  padding: 9px 12px; border-radius: 7px;
+  display: inline-flex; gap: 6px; align-items: center;
+}
+.ll-seg button code { font: 600 12px/1 var(--ll-mono); color: var(--ll-ink-2); }
+.ll-seg button[aria-pressed="true"] { background: var(--ll-ink); color: var(--ll-surface); }
+.ll-seg button[aria-pressed="true"] code { color: var(--ll-sign); }
+.ll-seg button:hover:not([aria-pressed="true"]) { background: var(--ll-line); }
+
+.ll-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ll-chip { border: 1px solid var(--ll-line); background: var(--ll-surface); font-size: 13px; padding: 7px 11px; border-radius: 999px; }
+.ll-chip span { font: 500 11px/1 var(--ll-mono); color: var(--ll-ink-2); }
+.ll-chip[aria-pressed="true"] { background: var(--ll-accent); color: var(--ll-accent-ink); border-color: var(--ll-accent); }
+.ll-chip[aria-pressed="true"] span { color: inherit; opacity: .8; }
+
+.ll-fields { display: grid; gap: 12px 16px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items: end; }
+.ll-field { display: grid; gap: 6px; min-width: 0; }
+.ll-field input[type="search"], .ll-field select {
+  width: 100%; font: 500 14px/1.2 var(--ll-body); color: var(--ll-ink);
+  background: var(--ll-surface-2); border: 1px solid var(--ll-line);
+  border-radius: 8px; padding: 10px 12px;
+}
+.ll-field input[type="range"] { width: 100%; accent-color: var(--ll-accent); }
+.ll-field output { font: 600 13px/1 var(--ll-mono); color: var(--ll-ink); }
+.ll-check { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; font-size: 14px; cursor: pointer; padding-block: 10px; }
+.ll-check input { width: 18px; height: 18px; accent-color: var(--ll-accent); }
+
+/* ---------- súhrn ---------- */
+.ll-summary {
+  padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 6px 18px;
+  font-size: 13px; color: var(--ll-ink-2); align-items: baseline;
+}
+.ll-summary strong { color: var(--ll-ink); font: 700 14px/1 var(--ll-mono); }
+
+/* ---------- tabuľa odletov ---------- */
+.ll-board { list-style: none; margin: 0; padding: 0 12px 12px; display: grid; gap: 8px; }
+.ll-deal {
+  background: var(--ll-surface); border: 1px solid var(--ll-line); border-radius: var(--ll-radius);
+  display: grid; align-items: center; gap: 6px 18px; padding: 14px 16px;
+  grid-template-columns: 128px minmax(0, 1.4fr) minmax(0, 1.2fr) 96px 120px auto;
+  grid-template-areas: "route place dates stops price cta";
+  font-variant-numeric: tabular-nums;
+}
+.ll-route { grid-area: route; display: grid; gap: 2px; }
+.ll-iata { font: 700 22px/1 var(--ll-mono); letter-spacing: .02em; display: flex; gap: 6px; align-items: baseline; }
+.ll-iata i { font-style: normal; font-size: 14px; color: var(--ll-ink-2); }
+.ll-from { font: 500 11px/1.2 var(--ll-mono); color: var(--ll-ink-2); text-transform: uppercase; letter-spacing: .06em; }
+.ll-place { grid-area: place; min-width: 0; }
+.ll-city { margin: 0; font: 800 22px/1.05 var(--ll-display); text-transform: uppercase; letter-spacing: .01em; overflow-wrap: anywhere; }
+.ll-country { margin: 2px 0 0; font-size: 13px; color: var(--ll-ink-2); }
+.ll-dates { grid-area: dates; font-size: 14px; }
+.ll-dates small { display: block; color: var(--ll-ink-2); font-size: 12px; }
+.ll-stops { grid-area: stops; font: 600 12px/1.2 var(--ll-mono); color: var(--ll-ink-2); }
+.ll-stops[data-direct="true"] { color: var(--ll-good); }
+.ll-price { grid-area: price; text-align: right; display: grid; gap: 4px; justify-items: end; }
+.ll-amount { font: 700 24px/1 var(--ll-mono); }
+.ll-amount small { font-size: 12px; font-weight: 500; color: var(--ll-ink-2); margin-right: 4px; }
+.ll-trend { font: 600 11px/1 var(--ll-mono); padding: 4px 6px; border-radius: 5px; background: var(--ll-good-bg); color: var(--ll-good); }
+.ll-trend[data-dir="up"] { background: var(--ll-warn-bg); color: var(--ll-warn); }
+.ll-cta {
+  grid-area: cta; justify-self: end;
+  font: 700 14px/1 var(--ll-body); text-decoration: none; white-space: nowrap;
+  background: var(--ll-ink); color: var(--ll-surface);
+  padding: 11px 14px; border-radius: 8px; display: inline-flex; gap: 6px; align-items: center;
+  transition: transform .15s ease, background-color .15s ease;
+}
+.ll-cta:hover { background: var(--ll-accent); color: var(--ll-accent-ink); transform: translateX(2px); }
+.ll-deal[data-top="true"] { border-color: var(--ll-sign); box-shadow: inset 4px 0 0 var(--ll-sign); }
+
+.ll-empty { padding: 28px 20px; text-align: center; color: var(--ll-ink-2); display: grid; gap: 10px; justify-items: center; }
+.ll-empty button { font: 600 14px/1 var(--ll-body); border: 1px solid var(--ll-line); background: var(--ll-surface); color: var(--ll-ink); padding: 10px 14px; border-radius: 8px; cursor: pointer; }
+
+.ll-foot { padding: 12px 20px 16px; font-size: 12px; color: var(--ll-ink-2); border-top: 1px solid var(--ll-line); }
+.ll-foot a { color: inherit; }
+
+@media (max-width: 880px) {
+  .ll-deal {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "place price" "route route" "dates stops" "cta cta";
+  }
+  .ll-route { grid-template-columns: auto 1fr; align-items: baseline; gap: 10px; }
+  .ll-stops { text-align: right; }
+  .ll-cta { justify-self: stretch; justify-content: center; }
+}
+@media (max-width: 480px) {
+  .ll-head, .ll-controls, .ll-summary, .ll-note, .ll-foot { padding-inline: 14px; }
+  .ll-board { padding-inline: 8px; }
+  .ll-seg { width: 100%; }
+  .ll-seg { flex-wrap: nowrap; }
+  .ll-seg button { flex: 1 1 0; justify-content: center; padding-inline: 6px; font-size: 13px; }
+  .ll-seg button code { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ll-cta { transition: none; }
+  .ll-cta:hover { transform: none; }
+}

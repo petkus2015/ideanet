@@ -72,3 +72,9 @@ z obrazovky sa prehrávanie zastaví.
 - Ovládanie klávesnicou, `aria` popisy, viditeľný focus, respektuje
   `prefers-reduced-motion`.
 - Videá sa načítavajú až pri prehratí (`preload="none"`), obrázky lazy-load.
+
+## Plugin: Lacné letenky
+
+V `plugins/lacne-letenky/` je samostatný widget s najlacnejšími letenkami z Viedne
+a Bratislavy kamkoľvek (zdroj momondo.co.uk, aktualizácia 3× denne).
+Náhľad: `plugins/lacne-letenky/index.html`, návod v jeho README.
