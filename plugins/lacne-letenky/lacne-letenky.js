@@ -17,6 +17,7 @@
   var FONTS = 'https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700' +
     '&family=JetBrains+Mono:wght@500;600&display=swap';
   var ARROW = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg>';
+  var CHEVRON = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l5 5 5-5"/></svg>';
   var PLANE = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M21.5 15.5v-2l-8-5V3.2c0-.9-.7-1.7-1.5-1.7s-1.5.8-1.5 1.7v5.3l-8 5v2l8-2.5v5.2l-2 1.5V21l3.5-1 3.5 1v-1.3l-2-1.5V13l8 2.5z" transform="rotate(90 12 12)"/></svg>';
   var CAL = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4.5" width="14" height="12.5" rx="2.5"/><path d="M3 8.5h14M7 2.5v4M13 2.5v4"/></svg>';
 
@@ -69,6 +70,8 @@
   var REFRESH = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 10a6.5 6.5 0 1 1-1.9-4.6M16.5 3.5v3.5H13"/></svg>';
   // Ponuky staršie ako toto sa už nezobrazia (aktualizácia zlyhala viackrát po sebe).
   var MAX_AGE_H = 36;
+  var LIST_PREVIEW = 3; // koľko riadkov zoznamu Ázia a SAE je vidno pred rozbalením
+  var listSeq = 0;
   // Hľadáme lety s odletom najviac 3 mesiace dopredu (rovnako ako scripts/update_deals.py).
   var HORIZON_DAYS = 92;
 
@@ -131,6 +134,8 @@
     // featured (Bangkok) = veľká karta; list (Ázia, SAE) = zoznam pod ňou;
     // ostatné sledované mestá sa vždy pridajú medzi karty
     var listed = watch.filter(function (w) { return !w.featured && w.list; });
+    var listId = el.getAttribute('data-ll-list') || 'll-list-' + (++listSeq);
+    el.setAttribute('data-ll-list', listId);
     var pinned = watch.filter(function (w) { return !w.featured && !w.list; });
     var pinnedDeals = pinned.filter(function (w) { return w.deal; })
       .map(function (w) { var d = {}; for (var k in w.deal) d[k] = w.deal[k]; d.city = w.name; return d; });
@@ -203,10 +208,12 @@
       if (!listed.length) return '';
       var rows = listed.slice().sort(function (a, b) {
         return (a.deal ? a.deal.price : 1e9) - (b.deal ? b.deal.price : 1e9);
-      }).map(function (w) {
+      }).map(function (w, i) {
         var d = w.deal;
+        // zoznam je zbalený – ďalšie riadky sa ukážu po kliknutí na „Zobraziť všetky“
+        var li = '<li' + (i >= LIST_PREVIEW && !opts.listOpen ? ' hidden' : '') + '>';
         if (!d) {
-          return '<li><div class="ll-row is-empty">' +
+          return li + '<div class="ll-row is-empty">' +
             '<span class="ll-row-main"><b class="ll-row-name">' + esc(w.name) + '</b>' +
               '<span class="ll-row-sub">' + esc(w.note || '') + '</span></span>' +
             '<span class="ll-row-dates">Bez spiatočnej ponuky do 3 mesiacov</span>' +
@@ -215,7 +222,7 @@
           '</div></li>';
         }
         var from = cities[d.origin] || d.origin;
-        return '<li><a class="ll-row" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
+        return li + '<a class="ll-row" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
             esc(w.name + ', ' + d.city + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
           '<span class="ll-row-main"><b class="ll-row-name">' + esc(w.name) + '</b>' +
             '<span class="ll-row-sub">' + esc(d.city) + ' · <span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
@@ -226,9 +233,15 @@
           '<span class="ll-row-go">Kúpiť ' + ARROW + '</span>' +
         '</a></li>';
       }).join('');
+      var more = listed.length - LIST_PREVIEW;
       return '<section class="ll-list-wrap" aria-label="Ázia a SAE">' +
         '<h3 class="ll-list-title">Ázia a SAE – najlacnejšie spiatočné letenky</h3>' +
-        '<ul class="ll-list">' + rows + '</ul></section>';
+        '<ul class="ll-list" id="' + listId + '">' + rows + '</ul>' +
+        (more > 0
+          ? '<button type="button" class="ll-list-toggle" data-list-toggle aria-controls="' + listId + '" aria-expanded="' + !!opts.listOpen + '">' +
+              '<span>' + (opts.listOpen ? 'Zobraziť menej' : 'Zobraziť všetky (' + listed.length + ')') + '</span>' + CHEVRON + '</button>'
+          : '') +
+        '</section>';
     }
 
     var regions = [['all', 'Všetky'], ['eu', 'Európa'], ['world', 'Mimo Európy']];
@@ -265,6 +278,19 @@
             (fresh ? '. Hľadané ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) : '') +
             '. Ceny sa menia, pred nákupom ich overte.</p>'
         : '');
+
+    // rozbalenie / zbalenie zoznamu Ázia a SAE
+    var toggle = el.querySelector('[data-list-toggle]');
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        opts.listOpen = !opts.listOpen;
+        Array.prototype.forEach.call(el.querySelectorAll('.ll-list > li'), function (li, i) {
+          li.hidden = i >= LIST_PREVIEW && !opts.listOpen;
+        });
+        toggle.setAttribute('aria-expanded', String(opts.listOpen));
+        toggle.firstChild.textContent = opts.listOpen ? 'Zobraziť menej' : 'Zobraziť všetky (' + listed.length + ')';
+      });
+    }
 
     // výber oblasti – prekreslí ponuky bez nového hľadania
     Array.prototype.forEach.call(el.querySelectorAll('[data-region]'), function (b) {

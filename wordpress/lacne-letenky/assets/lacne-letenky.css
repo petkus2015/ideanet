@@ -197,29 +197,39 @@
 .ll-row {
   display: grid; align-items: center; gap: 6px clamp(12px, 0.5rem + 1.5vw, 24px);
   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) auto auto;
-  padding: clamp(12px, 0.6rem + 0.5vw, 16px) clamp(14px, 0.8rem + 0.8vw, 22px);
+  padding: clamp(9px, 0.45rem + 0.3vw, 12px) clamp(14px, 0.8rem + 0.8vw, 22px);
   color: inherit; text-decoration: none; transition: background-color .15s ease;
 }
 a.ll-row:hover { background: var(--ll-surface); }
 .ll-row-main { display: grid; gap: 2px; min-width: 0; }
-.ll-row-name { font: 700 clamp(15px, 0.85rem + 0.35vw, 18px)/1.2 var(--ll-font); color: var(--ll-ink); }
-.ll-row-sub { font-size: 13px; color: var(--ll-ink-2); overflow-wrap: anywhere; }
+.ll-row-name { font: 700 clamp(14px, 0.8rem + 0.3vw, 16px)/1.2 var(--ll-font); color: var(--ll-ink); }
+.ll-row-sub { font-size: 12px; color: var(--ll-ink-2); overflow-wrap: anywhere; }
 .ll-row-sub .ll-route { font-size: 11px; vertical-align: 1px; }
 .ll-row-dates { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ll-ink-2); min-width: 0; }
 .ll-row-dates svg { flex: none; width: 15px; height: 15px; }
 .ll-row-price { display: grid; justify-items: end; gap: 1px; text-align: right; }
 .ll-row-price small { font-size: 11px; color: var(--ll-ink-2); }
-.ll-row-price strong { font: 700 clamp(18px, 1rem + 0.5vw, 22px)/1 var(--ll-font); letter-spacing: -.02em; color: var(--ll-ink); }
+.ll-row-price strong { font: 700 clamp(16px, 0.9rem + 0.4vw, 19px)/1 var(--ll-font); letter-spacing: -.02em; color: var(--ll-ink); }
 .ll-row-price em { font-style: normal; font-size: 11px; }
 .ll-row-go {
   display: inline-flex; gap: 6px; align-items: center; white-space: nowrap;
   font-weight: 700; font-size: 13px; color: var(--ll-accent); text-decoration: none;
-  padding: 9px 14px; border-radius: 999px; background: var(--ll-surface);
+  padding: 7px 12px; border-radius: 999px; background: var(--ll-surface);
 }
 .ll-row-go svg { width: 14px; height: 14px; transition: transform .2s ease; }
 a.ll-row:hover .ll-row-go svg, .ll-row-go:hover svg { transform: translateX(2px); }
 .ll-row.is-empty .ll-row-name { color: var(--ll-ink-2); }
 .ll-row.is-empty .ll-row-go { background: transparent; }
+.ll.ll .ll-list > li[hidden] { display: none; }
+.ll.ll .ll-list-toggle {
+  justify-self: center; display: inline-flex; gap: 6px; align-items: center;
+  font: 600 13px/1 var(--ll-font); color: var(--ll-accent); background: none; border: 0;
+  padding: 8px 12px; border-radius: 999px; cursor: pointer;
+}
+.ll.ll .ll-list-toggle:hover { background: var(--ll-surface); }
+.ll.ll .ll-list-toggle:focus-visible { outline: 2px solid var(--ll-accent); outline-offset: 2px; }
+.ll-list-toggle svg { width: 16px; height: 16px; transition: transform .2s ease; }
+.ll-list-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
 
 /* ---------- pätička a prázdny stav ---------- */
 .ll-foot { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ll-ink-2); }
@@ -234,11 +244,15 @@ a.ll-row:hover .ll-row-go svg, .ll-row-go:hover svg { transform: translateX(2px)
 
 /* mobil: karta Bangkoku, zoznam a tlačidlo */
 @media (max-width: 640px) {
-  .ll-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main price" "dates go"; }
+  .ll-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main price" "dates price"; row-gap: 3px; }
   .ll-row-main { grid-area: main; }
   .ll-row-price { grid-area: price; }
   .ll-row-dates { grid-area: dates; font-size: 12px; }
-  .ll-row-go { grid-area: go; justify-self: end; padding: 7px 12px; }
+  .ll-row-dates svg { width: 13px; height: 13px; }
+  a.ll-row .ll-row-go, .ll-row-price em { display: none; }
+  .ll-row.is-empty { grid-template-areas: "main go" "dates go"; }
+  .ll-row.is-empty .ll-row-price { display: none; }
+  .ll-row-go { grid-area: go; justify-self: end; padding: 6px 10px; }
   .ll-refresh { width: 100%; white-space: normal; line-height: 1.25; }
   .ll-filter { display: flex; width: 100%; }
   .ll-filter button { flex: 1 1 0; padding-inline: 8px; }
