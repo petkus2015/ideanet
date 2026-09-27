@@ -72,14 +72,15 @@
 .ll-rail { position: relative; }
 /* posuvný pás na všetkých šírkach: naraz vidno 1,5 karty (polovica ďalšej naznačuje posúvanie) */
 .ll.ll .ll-grid {
-  list-style: none; margin: 0; padding: 4px 0 8px; display: grid; gap: var(--ll-gap);
-  grid-auto-flow: column; grid-auto-columns: calc((100% - var(--ll-gap)) / 1.5);
+  /* vnútorný okraj: tieň a nadvihnutie karty pri hover sa zmestia do pásu (inak by ich orezal) */
+  list-style: none; margin: 0; padding: 10px 16px 28px; scroll-padding-inline: 16px; display: grid; gap: var(--ll-gap);
+  grid-auto-flow: column; grid-auto-columns: calc((100% + 16px - var(--ll-gap)) / 1.5); /* 1,5 karty vo viditeľnej šírke vrátane okraja */
   overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
 }
 .ll-grid::-webkit-scrollbar { display: none; }
 .ll-grid > li { scroll-snap-align: start; min-width: 0; }
 .ll-grid:focus-visible { outline-offset: 4px; }
-.ll-navbar { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.ll-navbar { display: flex; justify-content: flex-end; gap: 8px; margin-top: -12px; padding-inline: 16px; }
 .ll.ll .ll-nav {
   width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
   border: 1px solid var(--ll-line); background: var(--ll-surface); color: var(--ll-ink);
