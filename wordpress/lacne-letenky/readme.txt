@@ -3,7 +3,7 @@ Tags: letenky, lety, ryanair, wizzair, momondo
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.3.1
+Stable tag: 1.4.0
 License: GPL-2.0-or-later
 
 Blok s najlacnejšími letenkami z Viedne a Bratislavy: Bangkok, Dubaj, Abu Dhabí a ponuky kamkoľvek.
@@ -31,6 +31,9 @@ Nastavenia: Nastavenia → Lacné letenky (zdroj dát, cache, počet kariet, pí
 3. Vložte blok na stránku niektorým zo spôsobov vyššie.
 
 == Changelog ==
+
+= 1.4.0 =
+* Aktuálne ceny sa načítajú pri každom otvorení stránky: blok hneď ukáže uložené ceny a na pozadí spustí živé hľadanie (výsledok platí nastavený počet minút, po zlyhaní zdrojov 3 minúty pauza). Vypnúť sa dá v Nastavenia → Lacné letenky.
 
 = 1.3.1 =
 * Zoznam Ázia a SAE je kompaktnejší a zbalený na 3 najlacnejšie destinácie, ďalšie sa zobrazia tlačidlom „Zobraziť všetky“.

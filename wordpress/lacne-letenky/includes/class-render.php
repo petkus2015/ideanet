@@ -50,6 +50,10 @@ class Lacne_Letenky_Render {
 			'data-src'           => Lacne_Letenky_Data::rest_url(),
 			'data-limit'         => max( 1, min( 24, $limit ) ),
 		);
+		// pri každom otvorení stránky blok hneď ukáže uložené ceny a na pozadí načíta aktuálne
+		if ( Lacne_Letenky_Settings::get( 'live' ) && Lacne_Letenky_Settings::get( 'autoload' ) ) {
+			$attrs['data-autoload'] = '';
+		}
 		if ( $title ) {
 			$attrs['data-title'] = $title;
 		}

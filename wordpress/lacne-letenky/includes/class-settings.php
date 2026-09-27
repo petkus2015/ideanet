@@ -18,6 +18,7 @@ class Lacne_Letenky_Settings {
 			'font'          => 'theme', // theme = písmo témy Newspaper, figtree = písmo bloku
 			'live'          => 1,       // tlačidlo spustí živé hľadanie na momondo a Ryanair
 			'live_minutes'  => 10,      // výsledok živého hľadania platí X minút
+			'autoload'      => 1,       // aktuálne ceny sa načítajú pri každom otvorení stránky
 		);
 	}
 
@@ -57,6 +58,7 @@ class Lacne_Letenky_Settings {
 			'title'         => isset( $in['title'] ) ? sanitize_text_field( $in['title'] ) : '',
 			'font'          => isset( $in['font'] ) && 'figtree' === $in['font'] ? 'figtree' : 'theme',
 			'live'          => empty( $in['live'] ) ? 0 : 1,
+			'autoload'      => empty( $in['autoload'] ) ? 0 : 1,
 			'live_minutes'  => isset( $in['live_minutes'] ) ? max( 5, min( 120, (int) $in['live_minutes'] ) ) : $d['live_minutes'],
 		);
 		Lacne_Letenky_Data::flush();
@@ -159,6 +161,7 @@ class Lacne_Letenky_Settings {
 						<th scope="row">Živé hľadanie</th>
 						<td>
 							<label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[live]" value="1" <?php checked( ! empty( $o['live'] ) ); ?>> tlačidlo „Vyhľadaj aktuálne lacné letenky“ hľadá hneď na momondo a Ryanair</label>
+							<p><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[autoload]" value="1" <?php checked( ! empty( $o['autoload'] ) ); ?>> aktuálne ceny načítať pri každom otvorení stránky</label></p>
 							<p><label>Výsledok platí <input type="number" min="5" max="120" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[live_minutes]" value="<?php echo esc_attr( $o['live_minutes'] ); ?>"> minút</label></p>
 							<p class="description">Kliknutia v tomto čase dostanú výsledok spred chvíle, aby návštevníci nezahltili zdroje. Ceny Wizz Air sa berú z aktualizácie na GitHube.</p>
 						</td>

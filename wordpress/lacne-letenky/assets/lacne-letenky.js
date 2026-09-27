@@ -115,7 +115,11 @@
     el.setAttribute('aria-label', 'Lacné letenky z Viedne a Bratislavy');
 
     el.innerHTML = '<div class="ll-grid"><div class="ll-skel"></div><div class="ll-skel"></div><div class="ll-skel"></div><div class="ll-skel"></div></div>';
-    return loadData(opts, false).then(function (data) { render(el, data, opts, ''); }, function (err) {
+    return loadData(opts, false).then(function (data) {
+      render(el, data, opts, '');
+      // aktuálne ceny pri každom otvorení stránky (WordPress: živé hľadanie, výsledok platí pár minút)
+      if (opts.autoRefresh && opts.src) search(el, data, opts, true);
+    }, function (err) {
       el.innerHTML = '<div class="ll-empty"><p>Letenky sa nepodarilo načítať (' + esc(err.message) +
         '). Skontrolujte cestu k súboru deals.json v atribúte data-src.</p></div>';
     });
@@ -325,47 +329,62 @@
     }
 
     var btn = el.querySelector('[data-refresh]');
-    btn.addEventListener('click', function () {
-      if (btn.getAttribute('aria-busy') === 'true') return;
-      btn.setAttribute('aria-busy', 'true');
-      btn.querySelector('span').textContent = 'Hľadám najlacnejšie letenky…';
-      var started = Date.now();
-      var done = function (next, msg) {
-        // krátke čakanie, aby hľadanie nepôsobilo ako bliknutie
-        setTimeout(function () {
-          render(el, next, opts, msg);
-          var b = el.querySelector('[data-refresh]');
-          if (b) b.focus();
-        }, Math.max(0, 700 - (Date.now() - started)));
-      };
-      loadData(opts, true).then(function (next) {
-        if (!next || !next.updatedAt) {
-          done(next || data, 'Ponuky sa ešte pripravujú. Skúste to o chvíľu znova.');
+    btn.addEventListener('click', function () { search(el, data, opts, false); });
+  }
+
+  // Nové hľadanie: po kliknutí na tlačidlo, alebo automaticky hneď po načítaní stránky (auto = true).
+  // Pri automatickom hľadaní sa nič neruší – kým beží, blok ukazuje posledné známe ceny.
+  function search(el, data, opts, auto, retry) {
+    var btn = el.querySelector('[data-refresh]');
+    if (!btn || btn.getAttribute('aria-busy') === 'true') return;
+    btn.setAttribute('aria-busy', 'true');
+    btn.querySelector('span').textContent = auto ? 'Načítavam aktuálne ceny…' : 'Hľadám najlacnejšie letenky…';
+    var started = Date.now();
+    var done = function (next, msg) {
+      // krátke čakanie, aby hľadanie nepôsobilo ako bliknutie
+      setTimeout(function () {
+        var grid = el.querySelector('.ll-grid');
+        var left = grid ? grid.scrollLeft : 0;
+        render(el, next, opts, msg);
+        var g = el.querySelector('.ll-grid');
+        if (g && left) g.scrollLeft = left;
+        var b = el.querySelector('[data-refresh]');
+        if (b && !auto) b.focus();
+      }, auto ? 0 : Math.max(0, 700 - (Date.now() - started)));
+    };
+    loadData(opts, true).then(function (next) {
+      if (!next || !next.updatedAt) {
+        done(next && next.updatedAt ? next : data, auto ? '' : 'Ponuky sa ešte pripravujú. Skúste to o chvíľu znova.');
+        return;
+      }
+      // WordPress: výsledok živého hľadania
+      if (next.liveBusy) {
+        if (auto && !retry) {
+          // hľadanie práve spustil iný návštevník – o chvíľu si vezmem jeho výsledok
+          setTimeout(function () { btn.removeAttribute('aria-busy'); search(el, data, opts, true, true); }, 6000);
           return;
         }
-        // WordPress: výsledok živého hľadania
-        if (next.liveBusy) {
-          done(next, 'Hľadanie práve prebieha pre iného návštevníka. Skúste to o pár sekúnd.');
-          return;
-        }
-        if (next.liveError) {
-          done(next, 'Nové hľadanie sa teraz nepodarilo, zdroje neodpovedali. Zobrazujem ponuky z ' +
-            relDay(next.updatedAt) + ' ' + time(next.updatedAt) + '. Skúste to o chvíľu znova.');
-          return;
-        }
-        if (next.live) {
-          done(next, next.liveAgeMin > 0
-            ? 'Ponuky sú aktuálne – vyhľadal som ich pred ' + next.liveAgeMin + ' min (' + time(next.updatedAt) + ').'
-            : 'Hotovo – najlacnejšie letenky som vyhľadal práve teraz (' + time(next.updatedAt) + ').');
-          return;
-        }
-        var isNew = next.updatedAt && next.updatedAt !== data.updatedAt;
-        var when = next.updatedAt ? relDay(next.updatedAt) + ' ' + time(next.updatedAt) : '';
-        var nextRun = next.nextUpdate && new Date(next.nextUpdate) > new Date() ? ' Ďalšie hľadanie prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';
-        done(next, isNew ? 'Našiel som nové ponuky z hľadania ' + when + '.' : 'Máte najnovšie ponuky z hľadania ' + when + '.' + nextRun);
-      }, function () {
-        done(data, 'Nové ponuky sa teraz nepodarilo načítať, zobrazujem posledné známe. Skúste to o chvíľu znova.');
-      });
+        done(auto ? data : next, auto ? '' : 'Hľadanie práve prebieha pre iného návštevníka. Skúste to o pár sekúnd.');
+        return;
+      }
+      if (next.liveError) {
+        done(next, auto ? '' : 'Nové hľadanie sa teraz nepodarilo, zdroje neodpovedali. Zobrazujem ponuky z ' +
+          relDay(next.updatedAt) + ' ' + time(next.updatedAt) + '. Skúste to o chvíľu znova.');
+        return;
+      }
+      if (next.live) {
+        done(next, next.liveAgeMin > 0
+          ? 'Ponuky sú aktuálne – vyhľadal som ich pred ' + next.liveAgeMin + ' min (' + time(next.updatedAt) + ').'
+          : 'Hotovo – najlacnejšie letenky som vyhľadal práve teraz (' + time(next.updatedAt) + ').');
+        return;
+      }
+      if (auto) { done(next, ''); return; }
+      var isNew = next.updatedAt && next.updatedAt !== data.updatedAt;
+      var when = next.updatedAt ? relDay(next.updatedAt) + ' ' + time(next.updatedAt) : '';
+      var nextRun = next.nextUpdate && new Date(next.nextUpdate) > new Date() ? ' Ďalšie hľadanie prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';
+      done(next, isNew ? 'Našiel som nové ponuky z hľadania ' + when + '.' : 'Máte najnovšie ponuky z hľadania ' + when + '.' + nextRun);
+    }, function () {
+      done(data, auto ? '' : 'Nové ponuky sa teraz nepodarilo načítať, zobrazujem posledné známe. Skúste to o chvíľu znova.');
     });
   }
 
@@ -382,7 +401,8 @@
         src: el.getAttribute('data-src') || undefined,
         limit: +el.getAttribute('data-limit') || 0,
         title: el.getAttribute('data-title') || undefined,
-        fonts: el.getAttribute('data-fonts') !== 'false'
+        fonts: el.getAttribute('data-fonts') !== 'false',
+        autoRefresh: el.hasAttribute('data-autoload')
       });
     });
   }

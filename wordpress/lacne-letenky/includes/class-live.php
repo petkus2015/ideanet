@@ -17,6 +17,7 @@ class Lacne_Letenky_Live {
 	const THROTTLE_KEY = 'lacne_letenky_live';      // posledné živé hľadanie (platí X minút)
 	const LAST_KEY     = 'lacne_letenky_live_last'; // posledné úspešné živé hľadanie (trvalo)
 	const LOCK_KEY     = 'lacne_letenky_live_lock'; // prebieha hľadanie
+	const FAIL_KEY     = 'lacne_letenky_live_fail'; // hľadanie práve zlyhalo – chvíľu neskúšať znova
 	const RATE_KEY     = 'lacne_letenky_gbp_rate';  // kurz ECB EUR/GBP
 
 	const MOMONDO  = 'https://www.momondo.co.uk';
@@ -51,6 +52,11 @@ class Lacne_Letenky_Live {
 			$recent['liveAgeMin'] = (int) floor( ( time() - (int) $recent['liveAt'] ) / 60 );
 			return $recent;
 		}
+		// Blok hľadá pri každom otvorení stránky – po zlyhaní zdrojov 3 minúty neskúšame znova.
+		if ( get_transient( self::FAIL_KEY ) ) {
+			$shown = self::overlay( $base );
+			return array_merge( is_array( $shown ) ? $shown : array( 'deals' => array() ), array( 'liveError' => true ) );
+		}
 		if ( get_transient( self::LOCK_KEY ) ) {
 			$shown = self::overlay( $base );
 			return array_merge( is_array( $shown ) ? $shown : array( 'deals' => array() ), array( 'liveBusy' => true ) );
@@ -62,6 +68,7 @@ class Lacne_Letenky_Live {
 		delete_transient( self::LOCK_KEY );
 
 		if ( ! $deals ) {
+			set_transient( self::FAIL_KEY, 1, 3 * MINUTE_IN_SECONDS );
 			$shown = self::overlay( $base );
 			self::status( false, implode( '; ', $errors ) );
 			return array_merge( is_array( $shown ) ? $shown : array( 'deals' => array() ), array( 'liveError' => true ) );
