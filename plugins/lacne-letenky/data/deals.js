@@ -14,7 +14,7 @@ window.LACNE_LETENKY_DATA = {
    "GBP": 0.86045
   }
  },
- "updatedAt": "2026-09-27T10:53+02:00",
+ "updatedAt": "2026-09-27T11:11+02:00",
  "slot": "obed",
  "nextUpdate": "2026-09-27T12:00+02:00",
  "schedule": [
@@ -54,6 +54,8 @@ window.LACNE_LETENKY_DATA = {
     "DMK"
    ],
    "featured": true,
+   "list": false,
+   "note": null,
    "deal": {
     "origin": "VIE",
     "dest": "BKK",
@@ -71,28 +73,276 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 374,
     "currencyOriginal": "GBP",
-    "prevPrice": 214
+    "prevPrice": 435
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-BKK"
   },
   {
-   "name": "Dubaj",
+   "name": "Thajsko",
    "airports": [
-    "DXB",
-    "DWC"
+    "HKT",
+    "KBV",
+    "CNX",
+    "USM"
    ],
    "featured": false,
-   "deal": null,
-   "searchUrl": "https://www.momondo.co.uk/explore/VIE-DXB"
+   "list": true,
+   "note": "Phuket, Krabi, Chiang Mai, Ko Samui",
+   "deal": {
+    "origin": "VIE",
+    "dest": "CNX",
+    "city": "Chiang Mai",
+    "country": "Thajsko",
+    "countryCode": "TH",
+    "region": "Ázia",
+    "price": 496,
+    "currency": "EUR",
+    "depart": "2026-11-30",
+    "return": "2026-12-11",
+    "nights": 11,
+    "stops": 2,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-CNX/2026-11-30/2026-12-11?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 427,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-HKT"
   },
   {
-   "name": "Abu Dhabí",
+   "name": "Indonézia – Bali",
    "airports": [
-    "AUH"
+    "DPS",
+    "CGK"
    ],
    "featured": false,
+   "list": true,
+   "note": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "DPS",
+    "city": "Bali (Denpasar)",
+    "country": "Indonézia",
+    "countryCode": "ID",
+    "region": "Ázia",
+    "price": 593,
+    "currency": "EUR",
+    "depart": "2026-11-12",
+    "return": "2026-11-18",
+    "nights": 6,
+    "stops": 1,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-DPS/2026-11-12/2026-11-18?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 510,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-DPS"
+  },
+  {
+   "name": "Japonsko",
+   "airports": [
+    "NRT",
+    "HND",
+    "KIX"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "NRT",
+    "city": "Tokio",
+    "country": "Japonsko",
+    "countryCode": "JP",
+    "region": "Ázia",
+    "price": 801,
+    "currency": "EUR",
+    "depart": "2026-11-23",
+    "return": "2026-12-07",
+    "nights": 14,
+    "stops": 1,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-NRT/2026-11-23/2026-12-07?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 689,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-NRT"
+  },
+  {
+   "name": "Vietnam",
+   "airports": [
+    "SGN",
+    "HAN",
+    "DAD"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "HAN",
+    "city": "Hanoj",
+    "country": "Vietnam",
+    "countryCode": "VN",
+    "region": "Ázia",
+    "price": 556,
+    "currency": "EUR",
+    "depart": "2026-11-02",
+    "return": "2026-12-01",
+    "nights": 29,
+    "stops": 2,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-HAN/2026-11-02/2026-12-01?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 478,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-SGN"
+  },
+  {
+   "name": "Malajzia",
+   "airports": [
+    "KUL"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "KUL",
+    "city": "Kuala Lumpur",
+    "country": "Malajzia",
+    "countryCode": "MY",
+    "region": "Ázia",
+    "price": 496,
+    "currency": "EUR",
+    "depart": "2026-11-05",
+    "return": "2026-11-13",
+    "nights": 8,
+    "stops": 1,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-KUL/2026-11-05/2026-11-13?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 427,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-KUL"
+  },
+  {
+   "name": "India",
+   "airports": [
+    "DEL",
+    "BOM"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
    "deal": null,
-   "searchUrl": "https://www.momondo.co.uk/explore/VIE-AUH"
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-DEL"
+  },
+  {
+   "name": "Južná Kórea",
+   "airports": [
+    "ICN"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "ICN",
+    "city": "Incheon",
+    "country": "Južná Kórea",
+    "countryCode": "KR",
+    "region": "Ázia",
+    "price": 681,
+    "currency": "EUR",
+    "depart": "2026-09-30",
+    "return": "2026-10-13",
+    "nights": 13,
+    "stops": 2,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-ICN/2026-09-30/2026-10-13?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 586,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-ICN"
+  },
+  {
+   "name": "Singapur",
+   "airports": [
+    "SIN"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "SIN",
+    "city": "Singapore",
+    "country": "Singapur",
+    "countryCode": "SG",
+    "region": "Ázia",
+    "price": 504,
+    "currency": "EUR",
+    "depart": "2026-12-10",
+    "return": "2026-12-26",
+    "nights": 16,
+    "stops": 0,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-SIN/2026-12-10/2026-12-26?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 434,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-SIN"
+  },
+  {
+   "name": "Filipíny",
+   "airports": [
+    "MNL",
+    "CEB"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "MNL",
+    "city": "Manila",
+    "country": "Filipíny",
+    "countryCode": "PH",
+    "region": "Ázia",
+    "price": 582,
+    "currency": "EUR",
+    "depart": "2026-11-05",
+    "return": "2026-11-18",
+    "nights": 13,
+    "stops": 1,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-MNL/2026-11-05/2026-11-18?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 501,
+    "currencyOriginal": "GBP",
+    "prevPrice": null
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-MNL"
+  },
+  {
+   "name": "SAE / Dubaj",
+   "airports": [
+    "DXB",
+    "DWC",
+    "AUH",
+    "SHJ"
+   ],
+   "featured": false,
+   "list": true,
+   "note": null,
+   "deal": null,
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-DXB"
   }
  ],
  "deals": [
@@ -198,7 +448,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PDV/2026-10-17/2026-10-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 33
+   "prevPrice": 30
   },
   {
    "origin": "BTS",
@@ -249,7 +499,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-21&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BRI",
    "source": "ryanair",
-   "prevPrice": 34
+   "prevPrice": 32
   },
   {
    "origin": "BTS",
@@ -285,7 +535,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BCN",
    "source": "ryanair",
-   "prevPrice": 36
+   "prevPrice": 35
   },
   {
    "origin": "VIE",
@@ -304,7 +554,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 32,
    "currencyOriginal": "GBP",
-   "prevPrice": 35
+   "prevPrice": 37
   },
   {
    "origin": "BTS",
@@ -459,7 +709,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OHD/2026-10-18/2026-10-22/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40
+   "prevPrice": 43
   },
   {
    "origin": "BTS",
@@ -476,7 +726,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PMO/2026-11-01/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40
+   "prevPrice": 43
   },
   {
    "origin": "BTS",
@@ -529,7 +779,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 39,
    "currencyOriginal": "GBP",
-   "prevPrice": 46
+   "prevPrice": 45
   },
   {
    "origin": "BTS",
@@ -614,7 +864,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-11&dateIn=2026-10-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AHO",
    "source": "ryanair",
-   "prevPrice": 48
+   "prevPrice": 47
   },
   {
    "origin": "BTS",
@@ -788,7 +1038,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-02&dateIn=2026-12-16&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": 53
+   "prevPrice": 52
   },
   {
    "origin": "BTS",
@@ -822,7 +1072,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-26&dateIn=2026-12-04&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": 56
+   "prevPrice": 55
   },
   {
    "origin": "VIE",
@@ -839,7 +1089,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-06&dateIn=2026-12-18&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ALC",
    "source": "ryanair",
-   "prevPrice": 58
+   "prevPrice": 56
   },
   {
    "origin": "BTS",
@@ -890,7 +1140,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-06&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ATH",
    "source": "ryanair",
-   "prevPrice": 63
+   "prevPrice": 60
   },
   {
    "origin": "VIE",
@@ -907,7 +1157,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-11&dateIn=2026-12-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGP",
    "source": "ryanair",
-   "prevPrice": 62
+   "prevPrice": 63
   },
   {
    "origin": "VIE",
@@ -996,7 +1246,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/GYD/2026-11-28/2026-12-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 76
+   "prevPrice": 72
   },
   {
    "origin": "BTS",
@@ -1034,7 +1284,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 67,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 78
   },
   {
    "origin": "BTS",
@@ -1068,7 +1318,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/HRG/2026-12-07/2026-12-21/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 106
+   "prevPrice": 102
   },
   {
    "origin": "BTS",
@@ -1104,7 +1354,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 150,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 174
   },
   {
    "origin": "VIE",
@@ -1123,7 +1373,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 152,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 177
   },
   {
    "origin": "VIE",
@@ -1142,7 +1392,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 175,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 203
   },
   {
    "origin": "VIE",
@@ -1161,7 +1411,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 180,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 209
   },
   {
    "origin": "VIE",
@@ -1180,7 +1430,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 190,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 221
   },
   {
    "origin": "VIE",
@@ -1199,7 +1449,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 222,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 258
   },
   {
    "origin": "VIE",
@@ -1218,7 +1468,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 236,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 274
   },
   {
    "origin": "VIE",
@@ -1237,7 +1487,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 268,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 311
   },
   {
    "origin": "VIE",
@@ -1256,7 +1506,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 297,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 345
   },
   {
    "origin": "VIE",
@@ -1275,7 +1525,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 321,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 373
   },
   {
    "origin": "VIE",
@@ -1294,7 +1544,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 329,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 382
   },
   {
    "origin": "VIE",
@@ -1313,7 +1563,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 365,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 424
   },
   {
    "origin": "VIE",
@@ -1332,7 +1582,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 368,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 428
   },
   {
    "origin": "VIE",
@@ -1351,7 +1601,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 374,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 435
   },
   {
    "origin": "VIE",
@@ -1370,7 +1620,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 414,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 481
   },
   {
    "origin": "VIE",
@@ -1389,7 +1639,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 427,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 496
   },
   {
    "origin": "VIE",
@@ -1408,7 +1658,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 427,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 496
   },
   {
    "origin": "VIE",
@@ -1427,7 +1677,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 434,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 504
   },
   {
    "origin": "VIE",
@@ -1446,12 +1696,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 454,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 528
   },
   {
    "origin": "VIE",
    "dest": "HAN",
-   "city": "Hanoi",
+   "city": "Hanoj",
    "country": "Vietnam",
    "countryCode": "VN",
    "region": "Ázia",
@@ -1465,7 +1715,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 478,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 556
   },
   {
    "origin": "VIE",
@@ -1484,7 +1734,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 481,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 559
   },
   {
    "origin": "VIE",
@@ -1503,7 +1753,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 486,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 565
   },
   {
    "origin": "VIE",
@@ -1522,7 +1772,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 494,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 574
   },
   {
    "origin": "VIE",
@@ -1541,7 +1791,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 501,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 582
   },
   {
    "origin": "VIE",
@@ -1560,7 +1810,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 501,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 582
   },
   {
    "origin": "VIE",
@@ -1579,7 +1829,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 507,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 589
   },
   {
    "origin": "VIE",
@@ -1598,12 +1848,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 509,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 592
   },
   {
    "origin": "VIE",
    "dest": "DPS",
-   "city": "Denpasar",
+   "city": "Bali (Denpasar)",
    "country": "Indonézia",
    "countryCode": "ID",
    "region": "Ázia",
@@ -1617,7 +1867,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 510,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 593
   },
   {
    "origin": "VIE",
@@ -1636,7 +1886,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 511,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 594
   },
   {
    "origin": "VIE",
@@ -1655,7 +1905,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 524,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 609
   },
   {
    "origin": "VIE",
@@ -1674,7 +1924,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 541,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 629
   },
   {
    "origin": "VIE",
@@ -1693,7 +1943,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 551,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 640
   },
   {
    "origin": "VIE",
@@ -1712,7 +1962,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 562,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 653
   },
   {
    "origin": "VIE",
@@ -1731,7 +1981,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 572,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 665
   },
   {
    "origin": "VIE",
@@ -1750,12 +2000,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 575,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 668
   },
   {
    "origin": "VIE",
    "dest": "SEL",
-   "city": "Seoul",
+   "city": "Soul",
    "country": "Južná Kórea",
    "countryCode": "KR",
    "region": "Ázia",
@@ -1769,7 +2019,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 586,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 681
   },
   {
    "origin": "VIE",
@@ -1788,7 +2038,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 586,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 681
   },
   {
    "origin": "VIE",
@@ -1807,7 +2057,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 593,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 689
   },
   {
    "origin": "VIE",
@@ -1826,7 +2076,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 600,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 697
   },
   {
    "origin": "VIE",
@@ -1845,7 +2095,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 609,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 708
   },
   {
    "origin": "VIE",
@@ -1864,7 +2114,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 617,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 717
   },
   {
    "origin": "VIE",
@@ -1883,7 +2133,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 634,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 737
   },
   {
    "origin": "VIE",
@@ -1902,7 +2152,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 646,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 751
   }
  ]
 };
