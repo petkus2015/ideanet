@@ -14,7 +14,7 @@ window.LACNE_LETENKY_DATA = {
    "GBP": 0.86045
   }
  },
- "updatedAt": "2026-09-27T11:11+02:00",
+ "updatedAt": "2026-09-27T11:19+02:00",
  "slot": "obed",
  "nextUpdate": "2026-09-27T12:00+02:00",
  "schedule": [
@@ -105,7 +105,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 427,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 496
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-HKT"
   },
@@ -135,7 +135,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 510,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 593
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-DPS"
   },
@@ -166,7 +166,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 689,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 801
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-NRT"
   },
@@ -197,7 +197,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 478,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 556
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-SGN"
   },
@@ -226,7 +226,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 427,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 496
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-KUL"
   },
@@ -253,7 +253,7 @@ window.LACNE_LETENKY_DATA = {
    "deal": {
     "origin": "VIE",
     "dest": "ICN",
-    "city": "Incheon",
+    "city": "Soul (Incheon)",
     "country": "Južná Kórea",
     "countryCode": "KR",
     "region": "Ázia",
@@ -267,7 +267,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 586,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 681
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-ICN"
   },
@@ -282,7 +282,7 @@ window.LACNE_LETENKY_DATA = {
    "deal": {
     "origin": "VIE",
     "dest": "SIN",
-    "city": "Singapore",
+    "city": "Singapur",
     "country": "Singapur",
     "countryCode": "SG",
     "region": "Ázia",
@@ -296,7 +296,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 434,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 504
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-SIN"
   },
@@ -326,7 +326,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 501,
     "currencyOriginal": "GBP",
-    "prevPrice": null
+    "prevPrice": 582
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-MNL"
   },
@@ -668,10 +668,10 @@ window.LACNE_LETENKY_DATA = {
    "price": 40,
    "currency": "EUR",
    "depart": "2026-10-06",
-   "return": "2026-10-08",
-   "nights": 2,
+   "return": "2026-10-13",
+   "nights": 7,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2026-10-06/2026-10-08/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2026-10-06/2026-10-13/1/0/0/null",
    "source": "wizzair",
    "prevPrice": 40
   },
@@ -1663,7 +1663,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "VIE",
    "dest": "SIN",
-   "city": "Singapore",
+   "city": "Singapur",
    "country": "Singapur",
    "countryCode": "SG",
    "region": "Ázia",
@@ -2024,7 +2024,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "VIE",
    "dest": "ICN",
-   "city": "Incheon",
+   "city": "Soul (Incheon)",
    "country": "Južná Kórea",
    "countryCode": "KR",
    "region": "Ázia",
