@@ -14,7 +14,7 @@ window.LACNE_LETENKY_DATA = {
    "GBP": 0.86045
   }
  },
- "updatedAt": "2026-09-27T12:24+02:00",
+ "updatedAt": "2026-09-27T12:37+02:00",
  "slot": "obed",
  "nextUpdate": "2026-09-27T18:00+02:00",
  "schedule": [
@@ -980,10 +980,10 @@ window.LACNE_LETENKY_DATA = {
    "price": 52,
    "currency": "EUR",
    "depart": "2026-11-04",
-   "return": "2026-11-06",
-   "nights": 2,
+   "return": "2026-11-09",
+   "nights": 5,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LON/2026-11-04/2026-11-06/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LON/2026-11-04/2026-11-09/1/0/0/null",
    "source": "wizzair",
    "prevPrice": 52
   },
@@ -1016,10 +1016,10 @@ window.LACNE_LETENKY_DATA = {
    "price": 52,
    "currency": "EUR",
    "depart": "2026-11-04",
-   "return": "2026-11-06",
-   "nights": 2,
+   "return": "2026-11-09",
+   "nights": 5,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LTN/2026-11-04/2026-11-06/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LTN/2026-11-04/2026-11-09/1/0/0/null",
    "source": "wizzair",
    "prevPrice": 52
   },
