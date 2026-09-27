@@ -176,7 +176,7 @@
     function watchHtml(w) {
       var d = w.deal;
       if (!d) {
-        return '<div class="ll-watch-empty"><span><b>' + esc(w.name) + '</b> – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</span>' +
+        return '<div class="ll-watch-empty"><span><b>' + esc(w.name) + '</b> – v najbližších 3 mesiacoch som pri poslednom hľadaní nenašiel spiatočnú letenku.</span>' +
           '<a class="ll-more" href="' + esc(w.searchUrl) + '" target="_blank" rel="noopener">Pozrieť na momondo →</a></div>';
       }
       var from = cities[d.origin] || d.origin;
@@ -248,7 +248,7 @@
             '</div>' +
           '</div>'
         : hasAny
-          ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' sme teraz nenašli ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
+          ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' som teraz nenašiel ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
           : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
       (hasAny
         ? '<div class="ll-filter" role="group" aria-label="Oblasť">' + regions.map(function (r) {
@@ -260,7 +260,7 @@
         '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
       '</div>' +
       (hasAny
-        ? '<p class="ll-foot">Porovnávame momondo.co.uk, ryanair.com a wizzair.com a ukazujeme najnižšiu cenu za osobu v eurách' +
+        ? '<p class="ll-foot">Porovnávam momondo.co.uk, ryanair.com a wizzair.com a ukazujem najnižšiu cenu za osobu v eurách' +
             (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
             (fresh ? '. Hľadané ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) : '') +
             '. Ceny sa menia, pred nákupom ich overte.</p>'
@@ -323,22 +323,22 @@
           return;
         }
         if (next.liveError) {
-          done(next, 'Nové hľadanie sa teraz nepodarilo, zdroje neodpovedali. Zobrazujeme ponuky z ' +
+          done(next, 'Nové hľadanie sa teraz nepodarilo, zdroje neodpovedali. Zobrazujem ponuky z ' +
             relDay(next.updatedAt) + ' ' + time(next.updatedAt) + '. Skúste to o chvíľu znova.');
           return;
         }
         if (next.live) {
           done(next, next.liveAgeMin > 0
-            ? 'Ponuky sú aktuálne – vyhľadali sme ich pred ' + next.liveAgeMin + ' min (' + time(next.updatedAt) + ').'
-            : 'Hotovo – najlacnejšie letenky sme vyhľadali práve teraz (' + time(next.updatedAt) + ').');
+            ? 'Ponuky sú aktuálne – vyhľadal som ich pred ' + next.liveAgeMin + ' min (' + time(next.updatedAt) + ').'
+            : 'Hotovo – najlacnejšie letenky som vyhľadal práve teraz (' + time(next.updatedAt) + ').');
           return;
         }
         var isNew = next.updatedAt && next.updatedAt !== data.updatedAt;
         var when = next.updatedAt ? relDay(next.updatedAt) + ' ' + time(next.updatedAt) : '';
         var nextRun = next.nextUpdate && new Date(next.nextUpdate) > new Date() ? ' Ďalšie hľadanie prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';
-        done(next, isNew ? 'Našli sme nové ponuky z hľadania ' + when + '.' : 'Máte najnovšie ponuky z hľadania ' + when + '.' + nextRun);
+        done(next, isNew ? 'Našiel som nové ponuky z hľadania ' + when + '.' : 'Máte najnovšie ponuky z hľadania ' + when + '.' + nextRun);
       }, function () {
-        done(data, 'Nové ponuky sa teraz nepodarilo načítať, zobrazujeme posledné známe. Skúste to o chvíľu znova.');
+        done(data, 'Nové ponuky sa teraz nepodarilo načítať, zobrazujem posledné známe. Skúste to o chvíľu znova.');
       });
     });
   }
