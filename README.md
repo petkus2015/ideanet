@@ -89,3 +89,7 @@ wordpress/build.sh   # -> wordpress/dist/lacne-letenky.zip
 
 Pluginy → Pridať nový → Nahrať plugin. Blok sa vkladá ako prvok *Lacné letenky* v tagDiv
 Composer, blok v editore, shortcode `[lacne_letenky]` alebo widget. Nastavenia → Lacné letenky.
+
+Tlačidlo *Vyhľadaj aktuálne lacné letenky* hľadá naživo: WordPress server sa opýta momondo a Ryanair
+(`includes/class-live.php`), ceny Wizz Air berie z poslednej aktualizácie na GitHube. Výsledok platí
+10 minút (nastaviteľné), aby opakované kliknutia nezahltili zdroje.

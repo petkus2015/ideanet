@@ -13,8 +13,13 @@ class Lacne_Letenky_Data {
 	const STATUS_KEY = 'lacne_letenky_status';
 	const FAIL_KEY   = 'lacne_letenky_fail';
 
-	/** Aktuálne dáta: z cache, inak zo zdroja; keď zdroj zlyhá, posledné úspešne načítané. */
+	/** Dáta na zobrazenie: novšie z (a) aktualizácie na GitHube, (b) posledného živého hľadania. */
 	public static function get( $force = false ) {
+		return Lacne_Letenky_Live::overlay( self::get_base( $force ) );
+	}
+
+	/** Dáta z GitHubu: z cache, inak zo zdroja; keď zdroj zlyhá, posledné úspešne načítané. */
+	public static function get_base( $force = false ) {
 		if ( ! $force ) {
 			$cached = get_transient( self::CACHE_KEY );
 			if ( is_array( $cached ) ) {
@@ -86,8 +91,14 @@ class Lacne_Letenky_Data {
 			array(
 				'methods'             => 'GET',
 				'permission_callback' => '__return_true',
-				'callback'            => function () {
-					$data = self::get();
+				'args'                => array( 'refresh' => array( 'required' => false ) ),
+				'callback'            => function ( $request ) {
+					// Tlačidlo „Vyhľadaj aktuálne lacné letenky“ posiela refresh=1 → živé hľadanie.
+					if ( $request->get_param( 'refresh' ) && Lacne_Letenky_Settings::get( 'live' ) ) {
+						$data = Lacne_Letenky_Live::search( self::get_base() );
+					} else {
+						$data = self::get();
+					}
 					if ( ! is_array( $data ) ) {
 						// Zdroj zatiaľ nemá dáta (napr. súbor ešte neexistuje) – blok ukáže
 						// „Ponuky sa pripravujú“ namiesto chyby. Príčina je v Nastavenia → Lacné letenky.

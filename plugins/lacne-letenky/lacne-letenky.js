@@ -89,7 +89,8 @@
   // Načíta dáta. fresh=true obíde cache prehliadača, aby tlačidlo vždy dostalo najnovší deals.json.
   function loadData(opts, fresh) {
     if (fresh && opts.src) {
-      var url = opts.src + (opts.src.indexOf('?') > -1 ? '&' : '?') + 't=' + Date.now();
+      // refresh=1: WordPress plugin spustí živé hľadanie (momondo + Ryanair); statický deals.json ho ignoruje
+      var url = opts.src + (opts.src.indexOf('?') > -1 ? '&' : '?') + 'refresh=1&t=' + Date.now();
       return fetch(url, { cache: 'no-store' }).then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -213,7 +214,7 @@
     btn.addEventListener('click', function () {
       if (btn.getAttribute('aria-busy') === 'true') return;
       btn.setAttribute('aria-busy', 'true');
-      btn.querySelector('span').textContent = 'Hľadám ponuky…';
+      btn.querySelector('span').textContent = 'Hľadám najlacnejšie letenky…';
       var started = Date.now();
       var done = function (next, msg) {
         // krátke čakanie, aby hľadanie nepôsobilo ako bliknutie
@@ -226,6 +227,22 @@
       loadData(opts, true).then(function (next) {
         if (!next || !next.updatedAt) {
           done(next || data, 'Ponuky sa ešte pripravujú. Skúste to o chvíľu znova.');
+          return;
+        }
+        // WordPress: výsledok živého hľadania
+        if (next.liveBusy) {
+          done(next, 'Hľadanie práve prebieha pre iného návštevníka. Skúste to o pár sekúnd.');
+          return;
+        }
+        if (next.liveError) {
+          done(next, 'Nové hľadanie sa teraz nepodarilo, zdroje neodpovedali. Zobrazujeme ponuky z ' +
+            relDay(next.updatedAt) + ' ' + time(next.updatedAt) + '. Skúste to o chvíľu znova.');
+          return;
+        }
+        if (next.live) {
+          done(next, next.liveAgeMin > 0
+            ? 'Ponuky sú aktuálne – vyhľadali sme ich pred ' + next.liveAgeMin + ' min (' + time(next.updatedAt) + ').'
+            : 'Hotovo – najlacnejšie letenky sme vyhľadali práve teraz (' + time(next.updatedAt) + ').');
           return;
         }
         var isNew = next.updatedAt && next.updatedAt !== data.updatedAt;
