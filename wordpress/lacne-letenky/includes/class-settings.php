@@ -142,7 +142,8 @@ class Lacne_Letenky_Settings {
 					</tr>
 					<tr>
 						<th scope="row"><label for="ll-title">Nadpis</label></th>
-						<td><input id="ll-title" type="text" class="regular-text" placeholder="Najlacnejšie letenky kamkoľvek" name="<?php echo esc_attr( self::OPTION ); ?>[title]" value="<?php echo esc_attr( $o['title'] ); ?>"></td>
+						<td><input id="ll-title" type="text" class="regular-text" placeholder="bez nadpisu" name="<?php echo esc_attr( self::OPTION ); ?>[title]" value="<?php echo esc_attr( $o['title'] ); ?>">
+						<p class="description">Voliteľné. Prázdne = blok začne rovno ponukami.</p></td>
 					</tr>
 					<tr>
 						<th scope="row">Písmo</th>

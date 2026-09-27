@@ -190,26 +190,24 @@
         '</div></a>';
     }
 
-    var status = fresh
-      ? '<p class="ll-updated">Hľadané <b>' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) + '</b>' +
-          ' · odlety do 3 mesiacov</p>'
-      : '<p class="ll-updated" data-stale="true">Ponuky sa pripravujú</p>';
-
+    // Blok začína rovno ponukami; nadpis sa ukáže, len ak ho web zadá (data-title / Nadpis v nastaveniach).
     el.innerHTML =
-      '<div class="ll-head">' +
-        '<div><p class="ll-eyebrow">Lacné letenky z Viedne a Bratislavy</p>' +
-          '<h2 class="ll-title">' + esc(opts.title || 'Najlacnejšie letenky kamkoľvek') + '</h2>' + status + '</div>' +
-        '<button type="button" class="ll-refresh" data-refresh>' + REFRESH + '<span>Vyhľadať lacné letenky</span></button>' +
-      '</div>' +
-      '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
+      (opts.title ? '<h2 class="ll-title">' + esc(opts.title) + '</h2>' : '') +
       watch.map(watchHtml).join('') +
       (deals.length
         ? '<ul class="ll-grid">' + deals.map(cardHtml).join('') + '</ul>' +
-          (missing.length ? '<p class="ll-foot">' + esc(missing.join(', ')) + ' – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</p>' : '') +
-          '<p class="ll-foot">Porovnávame momondo.co.uk, ryanair.com a wizzair.com a ukazujeme najnižšiu cenu za osobu v eurách' +
+          (missing.length ? '<p class="ll-foot">' + esc(missing.join(', ')) + ' – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</p>' : '')
+        : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
+      '<div class="ll-actions">' +
+        '<button type="button" class="ll-refresh" data-refresh>' + REFRESH + '<span>Vyhľadaj aktuálne lacné letenky</span></button>' +
+        '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
+      '</div>' +
+      (deals.length
+        ? '<p class="ll-foot">Porovnávame momondo.co.uk, ryanair.com a wizzair.com a ukazujeme najnižšiu cenu za osobu v eurách' +
             (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
+            (fresh ? '. Hľadané ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) : '') +
             '. Ceny sa menia, pred nákupom ich overte.</p>'
-        : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>');
+        : '');
 
     var btn = el.querySelector('[data-refresh]');
     btn.addEventListener('click', function () {
@@ -232,7 +230,7 @@
         }
         var isNew = next.updatedAt && next.updatedAt !== data.updatedAt;
         var when = next.updatedAt ? relDay(next.updatedAt) + ' ' + time(next.updatedAt) : '';
-        var nextRun = next.nextUpdate ? ' Ďalšie hľadanie prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';
+        var nextRun = next.nextUpdate && new Date(next.nextUpdate) > new Date() ? ' Ďalšie hľadanie prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';
         done(next, isNew ? 'Našli sme nové ponuky z hľadania ' + when + '.' : 'Máte najnovšie ponuky z hľadania ' + when + '.' + nextRun);
       }, function () {
         done(data, 'Nové ponuky sa teraz nepodarilo načítať, zobrazujeme posledné známe. Skúste to o chvíľu znova.');

@@ -37,7 +37,7 @@ class Lacne_Letenky_TagDiv {
 						'type'        => 'textfield',
 						'value'       => '',
 						'heading'     => 'Nadpis bloku',
-						'description' => 'Prázdne = „Najlacnejšie letenky kamkoľvek“',
+						'description' => 'Prázdne = bez nadpisu, blok začne rovno ponukami',
 						'holder'      => 'div',
 						'class'       => 'tdc-textfield-extrabig',
 					),

@@ -1,7 +1,7 @@
 <?php
 /**
  * Načítanie cien: stiahne deals.json zo zdroja, uloží do cache a sprístupní cez REST API
- * (tlačidlo „Vyhľadať lacné letenky“ sa pýta na /wp-json/lacne-letenky/v1/deals).
+ * (tlačidlo „Vyhľadaj aktuálne lacné letenky“ sa pýta na /wp-json/lacne-letenky/v1/deals).
  */
 
 defined( 'ABSPATH' ) || exit;

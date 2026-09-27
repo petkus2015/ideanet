@@ -65,15 +65,7 @@
 .ll.ll svg { display: inline-block; }
 
 /* ---------- hlavička ---------- */
-.ll-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; }
-.ll-eyebrow { font-size: 13px; font-weight: 600; color: var(--ll-accent); }
 .ll.ll .ll-title { margin: 6px 0 0; font: 700 clamp(24px, 3.4vw, 34px)/1.12 var(--ll-font); letter-spacing: -.02em; text-wrap: balance; }
-.ll.ll .ll-updated {
-  display: flex; gap: 8px; align-items: center; margin-top: 10px; font-size: 14px; color: var(--ll-ink-2);
-}
-.ll-updated::before { flex: none; content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ll-good); }
-.ll-updated[data-stale="true"]::before { background: var(--ll-warn); }
-.ll-updated b { color: var(--ll-ink); font-weight: 600; }
 
 /* ---------- karty ---------- */
 .ll-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
@@ -114,7 +106,9 @@
 .ll-card:hover .ll-go { background: var(--ll-accent); color: var(--ll-surface); }
 .ll-card:hover .ll-go svg { transform: translateX(2px); }
 
-/* ---------- tlačidlo Vyhľadať lacné letenky ---------- */
+/* ---------- tlačidlo Vyhľadaj aktuálne lacné letenky (pod ponukami) ---------- */
+.ll-actions { display: grid; justify-items: center; gap: 12px; }
+.ll-actions .ll-msg { width: 100%; text-align: center; }
 .ll-refresh {
   display: inline-flex; gap: 10px; align-items: center; justify-content: center; white-space: nowrap;
   border: 0; cursor: pointer; padding: 15px 24px; border-radius: 999px;
@@ -175,8 +169,7 @@
 
 /* mobil: vodorovný posuvný pás kariet */
 @media (max-width: 640px) {
-  .ll-head > div { flex-basis: 100%; }
-  .ll-refresh { width: 100%; }
+  .ll-refresh { width: 100%; white-space: normal; line-height: 1.25; }
   .ll-feature { grid-template-columns: 1fr; align-items: start; }
   .ll-feature-side { justify-items: start; text-align: left; grid-template-columns: 1fr auto; align-items: end; }
   .ll-feature-side small { grid-column: 1 / -1; }

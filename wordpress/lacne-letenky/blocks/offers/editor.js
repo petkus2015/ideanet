@@ -17,7 +17,7 @@
 					el( PanelBody, { title: 'Nastavenia bloku', initialOpen: true },
 						el( TextControl, {
 							label: 'Nadpis',
-							placeholder: 'Najlacnejšie letenky kamkoľvek',
+							placeholder: 'bez nadpisu',
 							value: a.title,
 							onChange: function ( v ) { props.setAttributes( { title: v } ); }
 						} ),

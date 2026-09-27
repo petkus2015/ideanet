@@ -29,7 +29,7 @@ Alebo z JavaScriptu: `LacneLetenky.mount(element, { src, limit, title })`.
 
 Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filtrov a bez vymyslených cien:
 
-- **tlačidlo „Vyhľadať lacné letenky“** – jediné ovládanie, bez ručného zadávania. Načíta
+- **tlačidlo „Vyhľadaj aktuálne lacné letenky“** pod ponukami – jediné ovládanie, bez ručného zadávania. Načíta
   najnovšie ponuky z posledného hľadania na momondo (obíde cache prehliadača) a napíše,
   či pribudli nové, alebo kedy prebehne ďalšie hľadanie.
 - hľadajú sa iba lety s **odletom najviac 3 mesiace dopredu** (`HORIZON_DAYS` v skripte)
