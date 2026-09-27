@@ -15,6 +15,7 @@ import datetime as dt
 import io
 import json
 import urllib.parse
+import time
 import urllib.request
 from collections import Counter
 from pathlib import Path
@@ -25,7 +26,7 @@ AIRPORTS_CSV = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 FORECAST_DAYS = 16  # Open-Meteo dáva predpoveď na 16 dní (dnes + 15)
 SPREAD = 3          # odhad z minulých rokov: ±3 dni okolo dátumu
 YEARS = 2
-CHUNK = 25          # letísk v jednej požiadavke
+CHUNK = 10          # letísk v jednej požiadavke (archív je pomalší, menšie dávky)
 
 HEADERS = {"User-Agent": "lacne-letenky/1.0 (+https://github.com/petkus2015/ideanet)"}
 
@@ -52,10 +53,17 @@ def kind_of(code) -> str | None:
     return "cloud"
 
 
-def _get(url: str, params: dict) -> object:
+def _get(url: str, params: dict, attempts: int = 4) -> object:
     req = urllib.request.Request(url + "?" + urllib.parse.urlencode(params), headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    for attempt in range(attempts):
+        try:
+            with urllib.request.urlopen(req, timeout=90) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception:  # noqa: BLE001 – archív Open-Meteo občas nestihne odpovedať
+            if attempt == attempts - 1:
+                raise
+            time.sleep(5 * (attempt + 1))
+    return None
 
 
 def _multi(url: str, coords: list[tuple[float, float]], params: dict) -> list[dict]:
@@ -75,7 +83,7 @@ def _series(block: dict) -> dict[str, tuple]:
 
 
 def load_airports(path: Path, needed: set[str], log=print) -> dict[str, list[float]]:
-    cache: dict[str, list[float]] = {}
+    cache: dict[str, list[float] | None] = {}
     if path.exists():
         try:
             cache = json.loads(path.read_text("utf-8"))
@@ -100,14 +108,17 @@ def load_airports(path: Path, needed: set[str], log=print) -> dict[str, list[flo
         for city, main in CITY_CODES.items():
             if city in missing and main in cache:
                 cache[city] = cache[main]
+        for code in missing:
+            cache.setdefault(code, None)  # neznámy kód – nabudúce už CSV kvôli nemu nesťahujeme
         log(f"Počasie: súradnice {found} nových letísk z OurAirports")
         path.write_text(json.dumps(dict(sorted(cache.items())), separators=(",", ":")) + "\n", "utf-8")
-    return cache
+    return {k: v for k, v in cache.items() if v}
 
 
 CITY_CODES = {"LON": "LHR", "MIL": "MXP", "ROM": "FCO", "STO": "ARN", "PAR": "CDG", "OSL": "OSL",
               "BER": "BER", "MOW": "SVO", "TYO": "NRT", "SEL": "ICN", "BKK": "BKK", "NYC": "JFK",
-              "BUH": "OTP", "REK": "KEF", "WAS": "IAD", "JKT": "CGK", "OSA": "KIX"}
+              "BUH": "OTP", "REK": "KEF", "WAS": "IAD", "JKT": "CGK", "OSA": "KIX", "BJS": "PEK",
+              "EAP": "BSL", "SHA": "PVG", "RIO": "GIG", "SAO": "GRU", "CHI": "ORD", "YTO": "YYZ", "YMQ": "YUL"}
 
 
 def forecast(coords: list[tuple[float, float]]) -> list[dict[str, tuple]]:
@@ -120,19 +131,30 @@ def forecast(coords: list[tuple[float, float]]) -> list[dict[str, tuple]]:
     return out
 
 
-def climate(coords: list[tuple[float, float]], start: dt.date, end: dt.date) -> list[dict[str, tuple]]:
-    """Denné dáta za rovnaké obdobie v minulých rokoch (kľúč = dátum v minulom roku)."""
+def climate(coords: list[tuple[float, float]], start: dt.date, end: dt.date, log=print) -> list[dict[str, tuple]]:
+    """Denné dáta za rovnaké obdobie v minulých rokoch (kľúč = dátum v minulom roku).
+
+    Zlyhanie jednej dávky neruší ostatné – tie letiská budú len bez odhadu.
+    """
     out = [dict() for _ in coords]
+    failed = 0
     for back in range(1, YEARS + 1):
         s = _shift(start - dt.timedelta(days=SPREAD), -back)
         e = _shift(end + dt.timedelta(days=SPREAD), -back)
         for i in range(0, len(coords), CHUNK):
             part = coords[i:i + CHUNK]
-            res = _multi(ARCHIVE_API, part, {"daily": "weather_code,temperature_2m_max",
-                                             "start_date": s.isoformat(), "end_date": e.isoformat(),
-                                             "timezone": "auto"})
+            try:
+                res = _multi(ARCHIVE_API, part, {"daily": "weather_code,temperature_2m_max",
+                                                 "start_date": s.isoformat(), "end_date": e.isoformat(),
+                                                 "timezone": "auto"})
+            except Exception as exc:  # noqa: BLE001
+                failed += 1
+                log(f"Počasie: archív {s.year}, letiská {i + 1}–{i + len(part)} zlyhal ({exc})")
+                continue
             for j, b in enumerate(res):
                 out[i + j].update(_series(b))
+    if failed:
+        log(f"Počasie: {failed} dávok archívu zlyhalo")
     return out
 
 
@@ -185,7 +207,7 @@ def add_weather(data: dict, today: dt.date, airports_path: Path, log=print) -> N
     cl = {}
     if far_days:
         try:
-            cl = dict(zip(dests, climate([tuple(coords[c]) for c in dests], min(far_days), max(far_days))))
+            cl = {k: v for k, v in zip(dests, climate([tuple(coords[c]) for c in dests], min(far_days), max(far_days), log)) if v}
         except Exception as exc:  # noqa: BLE001
             log(f"Počasie: odhad z minulých rokov zlyhal ({exc})")
 
