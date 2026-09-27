@@ -11,6 +11,7 @@ class Lacne_Letenky_Data {
 	const CACHE_KEY  = 'lacne_letenky_data';
 	const BACKUP_KEY = 'lacne_letenky_last_good';
 	const STATUS_KEY = 'lacne_letenky_status';
+	const FAIL_KEY   = 'lacne_letenky_fail';
 
 	/** Aktuálne dáta: z cache, inak zo zdroja; keď zdroj zlyhá, posledné úspešne načítané. */
 	public static function get( $force = false ) {
@@ -18,6 +19,10 @@ class Lacne_Letenky_Data {
 			$cached = get_transient( self::CACHE_KEY );
 			if ( is_array( $cached ) ) {
 				return $cached;
+			}
+			// Zdroj pred chvíľou zlyhal – nečakáme na neho pri každom zobrazení stránky.
+			if ( get_transient( self::FAIL_KEY ) ) {
+				return null;
 			}
 		}
 
@@ -36,6 +41,7 @@ class Lacne_Letenky_Data {
 			set_transient( self::CACHE_KEY, $backup, 5 * MINUTE_IN_SECONDS );
 			return $backup;
 		}
+		set_transient( self::FAIL_KEY, 1, 5 * MINUTE_IN_SECONDS );
 		return null;
 	}
 
@@ -70,6 +76,7 @@ class Lacne_Letenky_Data {
 
 	public static function flush() {
 		delete_transient( self::CACHE_KEY );
+		delete_transient( self::FAIL_KEY );
 	}
 
 	public static function register_rest() {
@@ -82,7 +89,9 @@ class Lacne_Letenky_Data {
 				'callback'            => function () {
 					$data = self::get();
 					if ( ! is_array( $data ) ) {
-						return new WP_Error( 'lacne_letenky_unavailable', 'Ponuky nie sú k dispozícii.', array( 'status' => 503 ) );
+						// Zdroj zatiaľ nemá dáta (napr. súbor ešte neexistuje) – blok ukáže
+						// „Ponuky sa pripravujú“ namiesto chyby. Príčina je v Nastavenia → Lacné letenky.
+						$data = array( 'updatedAt' => null, 'deals' => array(), 'watch' => array(), 'unavailable' => true );
 					}
 					$res = rest_ensure_response( $data );
 					$res->header( 'Cache-Control', 'no-cache, max-age=0' );

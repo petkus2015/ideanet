@@ -226,6 +226,10 @@
         }, Math.max(0, 700 - (Date.now() - started)));
       };
       loadData(opts, true).then(function (next) {
+        if (!next || !next.updatedAt) {
+          done(next || data, 'Ponuky sa ešte pripravujú. Skúste to o chvíľu znova.');
+          return;
+        }
         var isNew = next.updatedAt && next.updatedAt !== data.updatedAt;
         var when = next.updatedAt ? relDay(next.updatedAt) + ' ' + time(next.updatedAt) : '';
         var nextRun = next.nextUpdate ? ' Ďalšie hľadanie prebehne ' + relDay(next.nextUpdate) + ' o ' + time(next.nextUpdate) + '.' : '';

@@ -64,6 +64,7 @@ class Lacne_Letenky_Settings {
 			wp_die( esc_html__( 'Nemáte oprávnenie.', 'lacne-letenky' ) );
 		}
 		check_admin_referer( 'lacne_letenky_refresh' );
+		Lacne_Letenky_Data::flush();
 		Lacne_Letenky_Data::get( true );
 		wp_safe_redirect( admin_url( 'options-general.php?page=lacne-letenky&refreshed=1' ) );
 		exit;
@@ -91,6 +92,13 @@ class Lacne_Letenky_Settings {
 				<li><strong>Shortcode kdekoľvek:</strong> <code>[lacne_letenky]</code>, prípadne <code>[lacne_letenky limit="12" title="Kam lacno z Viedne"]</code></li>
 				<li><strong>Bočný panel:</strong> Vzhľad → Widgety → <em>Lacné letenky</em>.</li>
 			</ul>
+
+			<?php if ( is_array( $status ) && ! $status['ok'] ) : ?>
+				<div class="notice notice-error"><p><strong>Ceny sa nepodarilo načítať zo zdroja</strong> (<?php echo esc_html( $status['message'] ); ?>).
+				<?php if ( false !== strpos( $status['message'], '404' ) ) : ?>
+					Súbor s cenami na tejto adrese neexistuje. Ak používate predvolenú adresu, ceny sa na GitHube objavia až po zlúčení zmien do predvolenej vetvy repozitára – dovtedy môžete nižšie zadať adresu súboru z inej vetvy.
+				<?php endif; ?></p></div>
+			<?php endif; ?>
 
 			<h2>Stav cien</h2>
 			<table class="widefat striped" style="max-width:760px">
