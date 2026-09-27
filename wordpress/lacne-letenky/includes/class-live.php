@@ -348,6 +348,49 @@ class Lacne_Letenky_Live {
 		return $out;
 	}
 
+	/**
+	 * Počasie v destinácii (Open-Meteo) sa počíta pri aktualizácii na GitHube. Živé hľadanie
+	 * ho prevezme: rovnaký deň príletu = rovnaké počasie, iný deň do 7 dní = odhad (k = "c").
+	 */
+	private static function with_weather( $deals, $prev ) {
+		$known = array();
+		$list  = is_array( $prev ) && isset( $prev['deals'] ) ? $prev['deals'] : array();
+		foreach ( is_array( $prev ) && isset( $prev['watch'] ) ? $prev['watch'] : array() as $w ) {
+			if ( ! empty( $w['deal'] ) ) {
+				$list[] = $w['deal'];
+			}
+		}
+		foreach ( $list as $d ) {
+			if ( ! empty( $d['weather'] ) && ! empty( $d['depart'] ) && ! empty( $d['dest'] ) ) {
+				$known[ $d['dest'] ][ $d['depart'] ] = $d['weather'];
+			}
+		}
+		foreach ( $deals as $i => $d ) {
+			unset( $deals[ $i ]['weather'] );
+			if ( empty( $known[ $d['dest'] ] ) || empty( $d['depart'] ) ) {
+				continue;
+			}
+			if ( isset( $known[ $d['dest'] ][ $d['depart'] ] ) ) {
+				$deals[ $i ]['weather'] = $known[ $d['dest'] ][ $d['depart'] ];
+				continue;
+			}
+			$best = null;
+			$gap  = 8;
+			foreach ( $known[ $d['dest'] ] as $day => $wx ) {
+				$diff = abs( ( strtotime( $day ) - strtotime( $d['depart'] ) ) / DAY_IN_SECONDS );
+				if ( $diff < $gap ) {
+					$gap  = $diff;
+					$best = $wx;
+				}
+			}
+			if ( $best ) {
+				$best['k']              = 'c';
+				$deals[ $i ]['weather'] = $best;
+			}
+		}
+		return $deals;
+	}
+
 	private static function build( $deals, $prev, $errors ) {
 		$geo  = self::geo();
 		$tz   = new DateTimeZone( 'Europe/Vienna' );
@@ -402,6 +445,8 @@ class Lacne_Letenky_Live {
 				$unique[]   = $d;
 			}
 		}
+
+		$unique = self::with_weather( $unique, $prev );
 
 		// Bangkok, Dubaj, Abu Dhabí – iba spiatočné letenky
 		$prev_watch = array();

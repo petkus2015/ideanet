@@ -34,6 +34,9 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from weather import add_weather  # noqa: E402
+
 try:
     from zoneinfo import ZoneInfo
     VIENNA = ZoneInfo("Europe/Vienna")
@@ -696,6 +699,7 @@ def main() -> int:
                     help="stiahne iba jeden zdroj (na testovanie)")
     ap.add_argument("--rate", action="append", default=[], metavar="MENA=KURZ",
                     help="kurz 1 EUR voči mene namiesto ECB, napr. --rate GBP=0.84 (na testovanie)")
+    ap.add_argument("--no-weather", action="store_true", help="bez počasia v destináciách (Open-Meteo)")
     args = ap.parse_args()
 
     now = dt.datetime.now(VIENNA)
@@ -753,7 +757,13 @@ def main() -> int:
         fx = {"source": "ECB", "date": day, "rates": {c: rates[c] for c in used}}
         print(f"Prepočítané na EUR kurzom ECB ({day}): {fx['rates']}")
 
-    write(build(deals, now, errors, fx))
+    data = build(deals, now, errors, fx)
+    if not args.no_weather:
+        try:
+            add_weather(data, now.date(), DATA_DIR / "airports.json")
+        except Exception as exc:  # noqa: BLE001 – ponuky zapíšeme aj bez počasia
+            print(f"Počasie: CHYBA {exc}", file=sys.stderr)
+    write(data)
     print(f"Zapísaných {len(deals)} ponúk ({now:%Y-%m-%d %H:%M} Europe/Vienna).")
     return 0
 

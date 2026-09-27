@@ -189,6 +189,20 @@
 .ll-watch-empty { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; padding: 16px 20px; border-radius: 16px; background: var(--ll-card); font-size: 14px; color: var(--ll-ink-2); }
 .ll-watch-empty b { color: var(--ll-ink); }
 
+/* ---------- počasie v destinácii v deň príletu ---------- */
+.ll.ll .ll-wx {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px 2px 5px; border-radius: 999px;
+  background: var(--ll-surface); color: var(--ll-ink); font-weight: 600; font-size: 12px; line-height: 1.4;
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.ll.ll .ll-wx svg { flex: none; width: 18px; height: 18px; margin: 0; }
+.ll-city-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ll-city-row .ll-city { min-width: 0; }
+.ll-row-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.ll.ll .ll-row-head .ll-wx { font-size: 11px; padding: 1px 7px 1px 4px; }
+.ll.ll .ll-row-head .ll-wx svg { width: 16px; height: 16px; }
+.ll.ll .ll-feature .ll-wx { background: rgba(255, 255, 255, .14); color: inherit; font-size: 13px; }
+
 /* ---------- zoznam Ázia a SAE pod Bangkokom ---------- */
 .ll-list-wrap { display: grid; gap: 10px; }
 .ll.ll .ll-list-title { font: 700 clamp(15px, 0.85rem + 0.3vw, 17px)/1.3 var(--ll-font); color: var(--ll-ink); letter-spacing: -.01em; }
@@ -232,7 +246,8 @@ a.ll-row:hover .ll-row-go svg, .ll-row-go:hover svg { transform: translateX(2px)
 .ll-list-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
 
 /* ---------- pätička a prázdny stav ---------- */
-.ll-foot { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ll-ink-2); }
+.ll-foot { font-size: 13px; line-height: 1.5; color: var(--ll-ink-2); }
+.ll.ll .ll-foot a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .ll-more { color: var(--ll-accent); font-weight: 600; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
 .ll-more:hover { text-decoration: underline; text-underline-offset: 3px; }
 .ll-empty { padding: 40px 20px; border: 1px dashed var(--ll-line); border-radius: 16px; text-align: center; color: var(--ll-ink-2); display: grid; gap: 6px; justify-items: center; }
