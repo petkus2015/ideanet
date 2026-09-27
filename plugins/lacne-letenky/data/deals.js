@@ -14,7 +14,7 @@ window.LACNE_LETENKY_DATA = {
    "GBP": 0.86045
   }
  },
- "updatedAt": "2026-09-27T19:00+02:00",
+ "updatedAt": "2026-09-27T19:09+02:00",
  "slot": "vecer",
  "nextUpdate": "2026-09-28T07:00+02:00",
  "schedule": [
@@ -73,7 +73,12 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 377,
     "currencyOriginal": "GBP",
-    "prevPrice": 435
+    "prevPrice": 438,
+    "weather": {
+     "t": 32,
+     "c": "rain",
+     "k": "c"
+    }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-BKK"
   },
@@ -105,7 +110,12 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 427,
     "currencyOriginal": "GBP",
-    "prevPrice": 496
+    "prevPrice": 496,
+    "weather": {
+     "t": 27,
+     "c": "sun",
+     "k": "c"
+    }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-HKT"
   },
@@ -135,7 +145,12 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 688,
     "currencyOriginal": "GBP",
-    "prevPrice": 593
+    "prevPrice": 800,
+    "weather": {
+     "t": 31,
+     "c": "rain",
+     "k": "c"
+    }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-DPS"
   },
@@ -166,7 +181,12 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 689,
     "currencyOriginal": "GBP",
-    "prevPrice": 801
+    "prevPrice": 801,
+    "weather": {
+     "t": 15,
+     "c": "rain",
+     "k": "c"
+    }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-NRT"
   },
@@ -197,7 +217,12 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 478,
     "currencyOriginal": "GBP",
-    "prevPrice": 556
+    "prevPrice": 556,
+    "weather": {
+     "t": 26,
+     "c": "cloud",
+     "k": "c"
+    }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-SGN"
   },
@@ -226,7 +251,12 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 427,
     "currencyOriginal": "GBP",
-    "prevPrice": 496
+    "prevPrice": 496,
+    "weather": {
+     "t": 31,
+     "c": "rain",
+     "k": "c"
+    }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-KUL"
   },
@@ -301,7 +331,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 464,
     "currencyOriginal": "GBP",
-    "prevPrice": 504,
+    "prevPrice": 539,
     "weather": {
      "t": 29,
      "c": "rain",
@@ -336,7 +366,12 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 501,
     "currencyOriginal": "GBP",
-    "prevPrice": 582
+    "prevPrice": 582,
+    "weather": {
+     "t": 31,
+     "c": "rain",
+     "k": "c"
+    }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-MNL"
   },
@@ -417,7 +452,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-13&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BGY",
    "source": "ryanair",
-   "prevPrice": 30
+   "prevPrice": 30,
+   "weather": {
+    "t": 18,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -436,7 +476,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 26,
    "currencyOriginal": "GBP",
-   "prevPrice": 30
+   "prevPrice": 30,
+   "weather": {
+    "t": 13,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -453,7 +498,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-13&dateIn=2026-10-21&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BLQ",
    "source": "ryanair",
-   "prevPrice": 30
+   "prevPrice": 30,
+   "weather": {
+    "t": 21,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -470,7 +520,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SKP/2026-11-03/2026-11-06/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 30
+   "prevPrice": 30,
+   "weather": {
+    "t": 17,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -531,7 +586,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PDV/2026-10-17/2026-10-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 30
+   "prevPrice": 33,
+   "weather": {
+    "t": 19,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -550,7 +610,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 29,
    "currencyOriginal": "GBP",
-   "prevPrice": 34
+   "prevPrice": 34,
+   "weather": {
+    "t": 11,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -567,7 +632,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BCN",
    "source": "ryanair",
-   "prevPrice": 35,
+   "prevPrice": 36,
    "weather": {
     "t": 19,
     "c": "rain",
@@ -591,7 +656,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 32,
    "currencyOriginal": "GBP",
-   "prevPrice": 37
+   "prevPrice": 37,
+   "weather": {
+    "t": 13,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -608,7 +678,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ALC/2026-12-02/2026-12-09/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 38
+   "prevPrice": 38,
+   "weather": {
+    "t": 20,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -625,7 +700,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/NAP/2026-12-03/2026-12-10/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 38
+   "prevPrice": 38,
+   "weather": {
+    "t": 15,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -642,7 +722,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BSL/2026-11-04/2026-11-08/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40
+   "prevPrice": 40,
+   "weather": {
+    "t": 13,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -681,7 +766,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/RMO/2026-11-11/2026-11-25/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40
+   "prevPrice": 40,
+   "weather": {
+    "t": 10,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -698,7 +788,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2026-10-20/2026-10-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40
+   "prevPrice": 40,
+   "weather": {
+    "t": 16,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -717,7 +812,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 36,
    "currencyOriginal": "GBP",
-   "prevPrice": 42
+   "prevPrice": 42,
+   "weather": {
+    "t": 19,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -734,7 +834,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OHD/2026-10-18/2026-10-22/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43
+   "prevPrice": 43,
+   "weather": {
+    "t": 17,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -751,7 +856,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PMO/2026-11-01/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43
+   "prevPrice": 43,
+   "weather": {
+    "t": 22,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -768,7 +878,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PRN/2026-10-17/2026-10-20/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43
+   "prevPrice": 43,
+   "weather": {
+    "t": 17,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -785,7 +900,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SUF/2026-10-19/2026-10-23/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43
+   "prevPrice": 43,
+   "weather": {
+    "t": 24,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -802,7 +922,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-14&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ARN",
    "source": "ryanair",
-   "prevPrice": 40
+   "prevPrice": 44,
+   "weather": {
+    "t": 10,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -821,7 +946,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 39,
    "currencyOriginal": "GBP",
-   "prevPrice": 45
+   "prevPrice": 45,
+   "weather": {
+    "t": 11,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -838,7 +968,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BER/2026-10-19/2026-10-27/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 45
+   "prevPrice": 45,
+   "weather": {
+    "t": 15,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -855,7 +990,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/FCO/2026-10-31/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 45
+   "prevPrice": 45,
+   "weather": {
+    "t": 21,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -872,7 +1012,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ROM/2026-10-31/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 45
+   "prevPrice": 45,
+   "weather": {
+    "t": 21,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -891,7 +1036,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 40,
    "currencyOriginal": "GBP",
-   "prevPrice": 52
+   "prevPrice": 46,
+   "weather": {
+    "t": 12,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -908,7 +1058,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-11&dateIn=2026-10-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AHO",
    "source": "ryanair",
-   "prevPrice": 47,
+   "prevPrice": 46,
    "weather": {
     "t": 26,
     "c": "rain",
@@ -947,7 +1097,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OSL/2026-12-16/2026-12-25/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 47
+   "prevPrice": 47,
+   "weather": {
+    "t": 5,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -983,7 +1138,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 42,
    "currencyOriginal": "GBP",
-   "prevPrice": 49
+   "prevPrice": 49,
+   "weather": {
+    "t": 20,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1000,7 +1160,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ATH/2026-11-02/2026-11-11/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 50
+   "prevPrice": 50,
+   "weather": {
+    "t": 21,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1017,7 +1182,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/EVN/2026-11-05/2026-11-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 50
+   "prevPrice": 50,
+   "weather": {
+    "t": 15,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1058,7 +1228,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 45,
    "currencyOriginal": "GBP",
-   "prevPrice": 52
+   "prevPrice": 52,
+   "weather": {
+    "t": 7,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1075,7 +1250,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LTN/2026-11-04/2026-11-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 52
+   "prevPrice": 52,
+   "weather": {
+    "t": 13,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1092,7 +1272,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-02&dateIn=2026-12-16&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": 52
+   "prevPrice": 52,
+   "weather": {
+    "t": 26,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1109,7 +1294,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/AGP/2026-11-22/2026-12-06/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 55
+   "prevPrice": 55,
+   "weather": {
+    "t": 19,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1126,7 +1316,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-26&dateIn=2026-12-04&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": 55
+   "prevPrice": 55,
+   "weather": {
+    "t": 29,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1145,7 +1340,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 48,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 56,
    "weather": {
     "t": 22,
     "c": "storm",
@@ -1189,7 +1384,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-06&dateIn=2026-12-18&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ALC",
    "source": "ryanair",
-   "prevPrice": 56
+   "prevPrice": 57,
+   "weather": {
+    "t": 20,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1230,7 +1430,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 51,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 59,
+   "weather": {
+    "t": 13,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1247,7 +1452,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-11&dateIn=2026-12-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGP",
    "source": "ryanair",
-   "prevPrice": 63
+   "prevPrice": 63,
+   "weather": {
+    "t": 16,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1264,7 +1474,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-06&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ATH",
    "source": "ryanair",
-   "prevPrice": 60,
+   "prevPrice": 64,
    "weather": {
     "t": 20,
     "c": "cloud",
@@ -1288,7 +1498,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 55,
    "currencyOriginal": "GBP",
-   "prevPrice": 64
+   "prevPrice": 64,
+   "weather": {
+    "t": 16,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1329,7 +1544,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 60,
    "currencyOriginal": "GBP",
-   "prevPrice": 70
+   "prevPrice": 70,
+   "weather": {
+    "t": 9,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1346,7 +1566,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LCA/2026-11-21/2026-11-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 70
+   "prevPrice": 70,
+   "weather": {
+    "t": 24,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1363,7 +1588,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/GYD/2026-11-28/2026-12-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 72
+   "prevPrice": 76,
+   "weather": {
+    "t": 13,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1380,7 +1610,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/KUT/2026-11-03/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 92
+   "prevPrice": 92,
+   "weather": {
+    "t": 17,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1397,7 +1632,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/HRG/2026-12-14/2026-12-21/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 102
+   "prevPrice": 106,
+   "weather": {
+    "t": 23,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1414,7 +1654,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TLV/2026-10-19/2026-10-21/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 120
+   "prevPrice": 120,
+   "weather": {
+    "t": 29,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1433,7 +1678,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 150,
    "currencyOriginal": "GBP",
-   "prevPrice": 174
+   "prevPrice": 174,
+   "weather": {
+    "t": 28,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1452,7 +1702,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 152,
    "currencyOriginal": "GBP",
-   "prevPrice": 177
+   "prevPrice": 177,
+   "weather": {
+    "t": 30,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1471,7 +1726,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 165,
    "currencyOriginal": "GBP",
-   "prevPrice": 373,
+   "prevPrice": 192,
    "weather": {
     "t": 35,
     "c": "partly",
@@ -1495,7 +1750,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 175,
    "currencyOriginal": "GBP",
-   "prevPrice": 203
+   "prevPrice": 203,
+   "weather": {
+    "t": 28,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1514,7 +1774,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 180,
    "currencyOriginal": "GBP",
-   "prevPrice": 209
+   "prevPrice": 209,
+   "weather": {
+    "t": 17,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1533,7 +1798,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 190,
    "currencyOriginal": "GBP",
-   "prevPrice": 221
+   "prevPrice": 221,
+   "weather": {
+    "t": 26,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1552,7 +1822,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 222,
    "currencyOriginal": "GBP",
-   "prevPrice": 258
+   "prevPrice": 258,
+   "weather": {
+    "t": 26,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1595,7 +1870,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 244,
    "currencyOriginal": "GBP",
-   "prevPrice": 382
+   "prevPrice": 284,
+   "weather": {
+    "t": 5,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1614,7 +1894,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 268,
    "currencyOriginal": "GBP",
-   "prevPrice": 311
+   "prevPrice": 311,
+   "weather": {
+    "t": 31,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1633,7 +1918,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 299,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 347,
+   "weather": {
+    "t": 4,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1652,7 +1942,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 312,
    "currencyOriginal": "GBP",
-   "prevPrice": 345
+   "prevPrice": 363,
+   "weather": {
+    "t": 2,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1671,7 +1966,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 313,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 364,
+   "weather": {
+    "t": 28,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "BTS",
@@ -1690,7 +1990,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 354,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 411,
+   "weather": {
+    "t": 3,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1709,7 +2014,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 377,
    "currencyOriginal": "GBP",
-   "prevPrice": 435
+   "prevPrice": 438,
+   "weather": {
+    "t": 32,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1728,7 +2038,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 384,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 446,
+   "weather": {
+    "t": 24,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1747,7 +2062,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 414,
    "currencyOriginal": "GBP",
-   "prevPrice": 481
+   "prevPrice": 481,
+   "weather": {
+    "t": 16,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1766,7 +2086,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 427,
    "currencyOriginal": "GBP",
-   "prevPrice": 496
+   "prevPrice": 496,
+   "weather": {
+    "t": 31,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1785,7 +2110,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 427,
    "currencyOriginal": "GBP",
-   "prevPrice": 496
+   "prevPrice": 496,
+   "weather": {
+    "t": 27,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1804,7 +2134,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 442,
    "currencyOriginal": "GBP",
-   "prevPrice": 559
+   "prevPrice": 514,
+   "weather": {
+    "t": 17,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1823,7 +2158,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 442,
    "currencyOriginal": "GBP",
-   "prevPrice": 592
+   "prevPrice": 514,
+   "weather": {
+    "t": 17,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1842,7 +2182,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 445,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 517,
+   "weather": {
+    "t": 29,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1861,7 +2206,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 448,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 521,
+   "weather": {
+    "t": 17,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1904,7 +2254,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 464,
    "currencyOriginal": "GBP",
-   "prevPrice": 504,
+   "prevPrice": 539,
    "weather": {
     "t": 29,
     "c": "rain",
@@ -1928,7 +2278,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 478,
    "currencyOriginal": "GBP",
-   "prevPrice": 556
+   "prevPrice": 556,
+   "weather": {
+    "t": 26,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1947,7 +2302,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 482,
    "currencyOriginal": "GBP",
-   "prevPrice": 594
+   "prevPrice": 560,
+   "weather": {
+    "t": 22,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -1966,7 +2326,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 486,
    "currencyOriginal": "GBP",
-   "prevPrice": 565
+   "prevPrice": 565,
+   "weather": {
+    "t": 31,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2009,7 +2374,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 501,
    "currencyOriginal": "GBP",
-   "prevPrice": 582
+   "prevPrice": 582,
+   "weather": {
+    "t": 31,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2028,7 +2398,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 501,
    "currencyOriginal": "GBP",
-   "prevPrice": 582
+   "prevPrice": 582,
+   "weather": {
+    "t": 27,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2047,7 +2422,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 507,
    "currencyOriginal": "GBP",
-   "prevPrice": 589
+   "prevPrice": 589,
+   "weather": {
+    "t": 30,
+    "c": "sun",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2066,7 +2446,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 524,
    "currencyOriginal": "GBP",
-   "prevPrice": 609
+   "prevPrice": 609,
+   "weather": {
+    "t": 32,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2109,7 +2494,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 551,
    "currencyOriginal": "GBP",
-   "prevPrice": 640
+   "prevPrice": 640,
+   "weather": {
+    "t": 16,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2128,7 +2518,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 556,
    "currencyOriginal": "GBP",
-   "prevPrice": null
+   "prevPrice": 646,
+   "weather": {
+    "t": 26,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2147,7 +2542,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 561,
    "currencyOriginal": "GBP",
-   "prevPrice": 653
+   "prevPrice": 652,
+   "weather": {
+    "t": 32,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2166,7 +2566,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 572,
    "currencyOriginal": "GBP",
-   "prevPrice": 665
+   "prevPrice": 665,
+   "weather": {
+    "t": 14,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2185,7 +2590,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 575,
    "currencyOriginal": "GBP",
-   "prevPrice": 668
+   "prevPrice": 668,
+   "weather": {
+    "t": 31,
+    "c": "rain",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2252,7 +2662,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 593,
    "currencyOriginal": "GBP",
-   "prevPrice": 689
+   "prevPrice": 689,
+   "weather": {
+    "t": 16,
+    "c": "cloud",
+    "k": "c"
+   }
   },
   {
    "origin": "VIE",
@@ -2271,7 +2686,12 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 600,
    "currencyOriginal": "GBP",
-   "prevPrice": 697
+   "prevPrice": 697,
+   "weather": {
+    "t": 25,
+    "c": "rain",
+    "k": "c"
+   }
   }
  ]
 };
