@@ -21,13 +21,14 @@
   --ll-font: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ll-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
+  --ll-gap: clamp(10px, 0.5rem + 0.8vw, 16px);
   color: var(--ll-ink);
   font-family: var(--ll-font);
   font-size: 15px;
   line-height: 1.45;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
+  gap: clamp(16px, 0.75rem + 1.2vw, 24px);
   font-variant-numeric: tabular-nums;
 }
 @media (prefers-color-scheme: dark) {
@@ -68,10 +69,10 @@
 .ll.ll .ll-title { margin: 6px 0 0; font: 700 clamp(24px, 3.4vw, 34px)/1.12 var(--ll-font); letter-spacing: -.02em; text-wrap: balance; }
 
 /* ---------- karty ---------- */
-.ll-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.ll-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--ll-gap); grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
 .ll-card {
   height: 100%; display: grid; grid-template-rows: auto auto 1fr auto; gap: 14px;
-  padding: 20px; border-radius: 20px; background: var(--ll-card); border: 1px solid transparent;
+  padding: clamp(14px, 1.2rem + 0.4vw, 20px); border-radius: clamp(14px, 1rem + 0.5vw, 20px); background: var(--ll-card); border: 1px solid transparent;
   color: inherit; text-decoration: none;
   transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
 }
@@ -81,14 +82,14 @@
 .ll-route svg { width: 13px; height: 13px; color: var(--ll-accent); }
 .ll-chip { font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--ll-surface); color: var(--ll-ink-2); white-space: nowrap; }
 .ll-card:hover .ll-chip { background: var(--ll-soft); }
-.ll.ll .ll-city { font: 700 21px/1.15 var(--ll-font); letter-spacing: -.015em; overflow-wrap: anywhere; }
+.ll.ll .ll-city { font: 700 clamp(18px, 1rem + 0.45vw, 22px)/1.15 var(--ll-font); letter-spacing: -.015em; overflow-wrap: anywhere; }
 .ll.ll .ll-country { margin-top: 2px; font-size: 14px; color: var(--ll-ink-2); }
 .ll.ll .ll-dates { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--ll-ink-2); line-height: 1.4; }
 .ll-dates svg { flex: none; width: 15px; height: 15px; margin-top: 1px; }
 .ll-card-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid var(--ll-line); }
 .ll-price { display: grid; gap: 4px; }
 .ll-price small { font-size: 12px; color: var(--ll-ink-2); }
-.ll-price strong { font: 700 26px/1 var(--ll-font); letter-spacing: -.02em; }
+.ll-price strong { font: 700 clamp(22px, 1.2rem + 0.6vw, 28px)/1 var(--ll-font); letter-spacing: -.02em; }
 .ll-price-label { display: flex; gap: 8px; align-items: center; min-height: 20px; }
 .ll-source { font-size: 12px; font-weight: 600; color: var(--ll-ink-2); }
 .ll-source[data-src="ryanair"]::before, .ll-source[data-src="wizzair"]::before, .ll-source[data-src="momondo"]::before {
@@ -167,7 +168,7 @@
 .ll-skel { height: 230px; border-radius: 16px; background: linear-gradient(90deg, var(--ll-soft), var(--ll-surface), var(--ll-soft)); background-size: 200% 100%; animation: ll-shimmer 1.4s linear infinite; }
 @keyframes ll-shimmer { to { background-position: -200% 0; } }
 
-/* mobil: vodorovný posuvný pás kariet */
+/* mobil: karta Bangkoku a tlačidlo */
 @media (max-width: 640px) {
   .ll-refresh { width: 100%; white-space: normal; line-height: 1.25; }
   .ll-feature { grid-template-columns: 1fr; align-items: start; }
@@ -176,13 +177,18 @@
   .ll-feature-side .ll-drop { grid-column: 1 / -1; justify-self: start; }
   .ll-feature-cta { margin-top: 8px; grid-column: 1 / -1; justify-content: center; }
   .ll-feature-arc { width: 100%; }
+}
+
+/* mobil aj tablet: posuvný pás, naraz vidno 1,5 karty (polovica ďalšej naznačuje posúvanie) */
+@media (max-width: 1024px) {
   .ll-grid {
-    grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 82%;
-    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-    padding: 4px 16px 8px; margin-inline: -16px; scroll-padding-inline: 16px;
+    grid-template-columns: none; grid-auto-flow: column;
+    grid-auto-columns: calc((100% - var(--ll-gap)) / 1.5);
+    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding-block: 4px 8px;
   }
   .ll-grid::-webkit-scrollbar { display: none; }
-  .ll-grid > li { scroll-snap-align: start; }
+  .ll-grid > li { scroll-snap-align: start; min-width: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ll *, .ll *::before { animation: none !important; transition: none !important; }
