@@ -332,6 +332,15 @@ class Lacne_Letenky_Live {
 
 	// ------------------------------------------------------------------ výsledok ---
 
+	/** Najviac $n najlacnejších v Európe a $n mimo Európy (zoradené podľa ceny). */
+	private static function per_group( $deals, $n ) {
+		$eu = array_values( array_filter( $deals, function ( $d ) { return 'Európa' === $d['region']; } ) );
+		$wo = array_values( array_filter( $deals, function ( $d ) { return 'Európa' !== $d['region']; } ) );
+		$out = array_merge( array_slice( $eu, 0, $n ), array_slice( $wo, 0, $n ) );
+		usort( $out, function ( $a, $b ) { return $a['price'] - $b['price']; } );
+		return $out;
+	}
+
 	private static function build( $deals, $prev, $errors ) {
 		$geo  = self::geo();
 		$tz   = new DateTimeZone( 'Europe/Vienna' );
@@ -426,7 +435,7 @@ class Lacne_Letenky_Live {
 			'origins'     => $origins,
 			'errors'      => array_slice( $errors, 0, 10 ),
 			'watch'       => $watch,
-			'deals'       => array_slice( $unique, 0, $geo['max_deals'] ),
+			'deals'       => self::per_group( $unique, $geo['max_per_group'] ),
 			'live'        => true,
 			'liveAt'      => time(),
 			'liveSources' => $sources,

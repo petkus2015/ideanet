@@ -138,10 +138,18 @@
     var watched = {};
     (data.watch || []).forEach(function (w) { (w.airports || []).forEach(function (a) { watched[a] = 1; }); });
     var limit = opts.limit || 8;
-    var deals = freshDeals(data).filter(function (d) { return !watched[d.dest]; })
-      .slice(0, Math.max(0, limit - pinnedDeals.length))
-      .concat(pinnedDeals)
+    // výber pod ponukami: všetky / Európa / mimo Európy
+    var region = opts.region || 'all';
+    var inRegion = function (d) {
+      return region === 'all' || (region === 'eu' ? d.region === 'Európa' : d.region !== 'Európa');
+    };
+    var pinnedIn = pinnedDeals.filter(inRegion);
+    var allDeals = freshDeals(data);
+    var deals = allDeals.filter(function (d) { return !watched[d.dest] && inRegion(d); })
+      .slice(0, Math.max(0, limit - pinnedIn.length))
+      .concat(pinnedIn)
       .sort(function (a, b) { return a.price - b.price; });
+    if (region === 'eu') missing = [];
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });
 
@@ -191,24 +199,72 @@
         '</div></a>';
     }
 
+    var regions = [['all', 'Všetky'], ['eu', 'Európa'], ['world', 'Mimo Európy']];
+    var hasAny = allDeals.length > 0;
+
     // Blok začína rovno ponukami; nadpis sa ukáže, len ak ho web zadá (data-title / Nadpis v nastaveniach).
     el.innerHTML =
       (opts.title ? '<h2 class="ll-title">' + esc(opts.title) + '</h2>' : '') +
       watch.map(watchHtml).join('') +
       (deals.length
-        ? '<ul class="ll-grid">' + deals.map(cardHtml).join('') + '</ul>' +
-          (missing.length ? '<p class="ll-foot">' + esc(missing.join(', ')) + ' – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</p>' : '')
-        : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
+        ? '<div class="ll-rail">' +
+            '<ul class="ll-grid" tabindex="0" aria-label="Lacné letenky">' + deals.map(cardHtml).join('') + '</ul>' +
+            '<div class="ll-navbar">' +
+              '<button type="button" class="ll-nav" data-nav="-1" aria-label="Predchádzajúce ponuky" disabled>' + ARROW + '</button>' +
+              '<button type="button" class="ll-nav" data-nav="1" aria-label="Ďalšie ponuky">' + ARROW + '</button>' +
+            '</div>' +
+          '</div>'
+        : hasAny
+          ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' sme teraz nenašli ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
+          : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
+      (missing.length && deals.length ? '<p class="ll-foot">' + esc(missing.join(', ')) + ' – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</p>' : '') +
+      (hasAny
+        ? '<div class="ll-filter" role="group" aria-label="Oblasť">' + regions.map(function (r) {
+            return '<button type="button" data-region="' + r[0] + '" aria-pressed="' + (region === r[0]) + '">' + r[1] + '</button>';
+          }).join('') + '</div>'
+        : '') +
       '<div class="ll-actions">' +
         '<button type="button" class="ll-refresh" data-refresh>' + REFRESH + '<span>Vyhľadaj aktuálne lacné letenky</span></button>' +
         '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
       '</div>' +
-      (deals.length
+      (hasAny
         ? '<p class="ll-foot">Porovnávame momondo.co.uk, ryanair.com a wizzair.com a ukazujeme najnižšiu cenu za osobu v eurách' +
             (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
             (fresh ? '. Hľadané ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) : '') +
             '. Ceny sa menia, pred nákupom ich overte.</p>'
         : '');
+
+    // výber oblasti – prekreslí ponuky bez nového hľadania
+    Array.prototype.forEach.call(el.querySelectorAll('[data-region]'), function (b) {
+      b.addEventListener('click', function () {
+        opts.region = b.getAttribute('data-region');
+        render(el, data, opts, '');
+        var again = el.querySelector('[data-region="' + opts.region + '"]');
+        if (again) again.focus();
+      });
+    });
+
+    // šípky posúvača (myš na počítači); prstom sa posúva priamo
+    var grid = el.querySelector('.ll-grid');
+    if (grid) {
+      var navs = el.querySelectorAll('[data-nav]');
+      var navbar = el.querySelector('.ll-navbar');
+      var syncNav = function () {
+        var max = grid.scrollWidth - grid.clientWidth - 2;
+        navs[0].disabled = grid.scrollLeft <= 2;
+        navs[1].disabled = grid.scrollLeft >= max;
+        navbar.hidden = max <= 0; // všetko sa zmestí – šípky netreba
+      };
+      Array.prototype.forEach.call(navs, function (b) {
+        b.addEventListener('click', function () {
+          var card = grid.querySelector('li');
+          var step = card ? card.getBoundingClientRect().width + parseFloat(getComputedStyle(grid).columnGap || 0) : grid.clientWidth / 1.5;
+          grid.scrollBy({ left: step * +b.getAttribute('data-nav'), behavior: 'smooth' });
+        });
+      });
+      grid.addEventListener('scroll', syncNav, { passive: true });
+      syncNav();
+    }
 
     var btn = el.querySelector('[data-refresh]');
     btn.addEventListener('click', function () {

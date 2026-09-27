@@ -69,7 +69,38 @@
 .ll.ll .ll-title { margin: 6px 0 0; font: 700 clamp(24px, 3.4vw, 34px)/1.12 var(--ll-font); letter-spacing: -.02em; text-wrap: balance; }
 
 /* ---------- karty ---------- */
-.ll-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--ll-gap); grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.ll-rail { position: relative; }
+/* posuvný pás na všetkých šírkach: naraz vidno 1,5 karty (polovica ďalšej naznačuje posúvanie) */
+.ll.ll .ll-grid {
+  list-style: none; margin: 0; padding: 4px 0 8px; display: grid; gap: var(--ll-gap);
+  grid-auto-flow: column; grid-auto-columns: calc((100% - var(--ll-gap)) / 1.5);
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
+}
+.ll-grid::-webkit-scrollbar { display: none; }
+.ll-grid > li { scroll-snap-align: start; min-width: 0; }
+.ll-grid:focus-visible { outline-offset: 4px; }
+.ll-navbar { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.ll.ll .ll-nav {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--ll-line); background: var(--ll-surface); color: var(--ll-ink);
+  transition: background-color .15s ease, opacity .15s ease;
+}
+.ll-nav svg { width: 18px; height: 18px; }
+.ll-nav[data-nav="-1"] svg { transform: rotate(180deg); }
+.ll-nav:hover:not(:disabled) { background: var(--ll-card); }
+.ll-nav:disabled { opacity: .35; cursor: default; }
+/* na dotykových zariadeniach sa posúva prstom – šípky netreba */
+@media (hover: none) { .ll-navbar { display: none; } }
+
+/* výber oblasti pod ponukami */
+.ll-filter { justify-self: center; display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--ll-card); max-width: 100%; }
+.ll-filter button {
+  border: 0; background: transparent; cursor: pointer; white-space: nowrap;
+  padding: 10px clamp(12px, 0.6rem + 1vw, 20px); border-radius: 999px;
+  font: 600 14px/1 var(--ll-font); color: var(--ll-ink-2); transition: background-color .15s ease, color .15s ease;
+}
+.ll-filter button:hover { color: var(--ll-ink); }
+.ll-filter button[aria-pressed="true"] { background: var(--ll-ink); color: var(--ll-surface); }
 .ll-card {
   height: 100%; display: grid; grid-template-rows: auto auto 1fr auto; gap: 14px;
   padding: clamp(14px, 1.2rem + 0.4vw, 20px); border-radius: clamp(14px, 1rem + 0.5vw, 20px); background: var(--ll-card); border: 1px solid transparent;
@@ -171,6 +202,8 @@
 /* mobil: karta Bangkoku a tlačidlo */
 @media (max-width: 640px) {
   .ll-refresh { width: 100%; white-space: normal; line-height: 1.25; }
+  .ll-filter { display: flex; width: 100%; }
+  .ll-filter button { flex: 1 1 0; padding-inline: 8px; }
   .ll-feature { grid-template-columns: 1fr; align-items: start; }
   .ll-feature-side { justify-items: start; text-align: left; grid-template-columns: 1fr auto; align-items: end; }
   .ll-feature-side small { grid-column: 1 / -1; }
@@ -179,17 +212,6 @@
   .ll-feature-arc { width: 100%; }
 }
 
-/* mobil aj tablet: posuvný pás, naraz vidno 1,5 karty (polovica ďalšej naznačuje posúvanie) */
-@media (max-width: 1024px) {
-  .ll-grid {
-    grid-template-columns: none; grid-auto-flow: column;
-    grid-auto-columns: calc((100% - var(--ll-gap)) / 1.5);
-    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
-    padding-block: 4px 8px;
-  }
-  .ll-grid::-webkit-scrollbar { display: none; }
-  .ll-grid > li { scroll-snap-align: start; min-width: 0; }
-}
 @media (prefers-reduced-motion: reduce) {
   .ll *, .ll *::before { animation: none !important; transition: none !important; }
   .ll-card:hover, .ll-feature:hover { transform: none; }

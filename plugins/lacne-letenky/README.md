@@ -39,7 +39,8 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
   vždy medzi kartami „kamkoľvek“ (zoradené podľa ceny). Ďalšie sledované mestá sa pridávajú do `WATCH`
   v `scripts/update_deals.py`.
 
-- karty zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena v €)
+- výber **Všetky / Európa / Mimo Európy** pod ponukami; ukladá sa až 50 najlacnejších v Európe a 50 mimo nej
+- karty v posuvnom páse (naraz 1,5 karty, na počítači so šípkami), zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena v €)
 - štítok „Priamy“ a ▼ o koľko ponuka zlacnela od predchádzajúcej aktualizácie
 - čas poslednej aktualizácie
 - klik na kartu otvorí vyhľadávanie danej trasy a termínu na momondo.co.uk

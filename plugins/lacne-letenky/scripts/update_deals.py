@@ -55,8 +55,9 @@ ORIGINS = {
 # Hľadáme iba lety s odletom najviac 3 mesiace dopredu (blok používa rovnakú hranicu).
 HORIZON_DAYS = 92
 
-# Koľko najlacnejších ponúk uložiť do deals.json (sledované mestá sa ukladajú zvlášť).
-MAX_DEALS = 80
+# Koľko najlacnejších ponúk uložiť do deals.json – zvlášť v Európe a mimo Európy,
+# aby výber „Mimo Európy“ v bloku nebol prázdny (sledované mestá sa ukladajú zvlášť).
+MAX_PER_GROUP = 50
 
 # Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
 # featured=True -> veľká karta na začiatku bloku; ostatné sa vždy pridajú medzi karty "kamkoľvek".
@@ -145,7 +146,9 @@ CITY_SK = {
     "Eindhoven": "Eindhoven", "Amsterdam": "Amsterdam", "Dublin": "Dublin", "Edinburgh": "Edinburgh",
     "Manchester": "Manchester", "Liverpool": "Liverpool", "Bristol": "Bristol", "Barcelona": "Barcelona",
     "Madrid": "Madrid", "Valencia": "Valencia", "Malaga": "Málaga", "Alicante": "Alicante",
-    "Porto": "Porto", "Faro": "Faro", "Bologna": "Bologna", "Bari": "Bari", "Catania": "Catania",
+    "Porto": "Porto", "Yerevan": "Jerevan", "Tel-Aviv": "Tel Aviv", "Baku": "Baku",
+    "Agadir": "Agadir", "Amman": "Ammán", "Muscat": "Maskat", "Doha": "Dauha", "Riyadh": "Rijád",
+    "Jeddah": "Džidda", "Cairo": "Káhira", "Tashkent": "Taškent", "Almaty": "Almaty", "Faro": "Faro", "Bologna": "Bologna", "Bari": "Bari", "Catania": "Catania",
     "Palermo": "Palermo", "Cagliari": "Cagliari", "Pisa": "Pisa", "Bergamo": "Bergamo",
 }
 BY_EN_NAME.update({"usa": "US", "uk": "GB", "czechia": "CZ", "türkiye": "TR",
@@ -620,8 +623,10 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
             "searchUrl": f"{SITE}/explore/VIE-{w['airports'][0]}",
         })
 
-    # Blok ukazuje najviac 24 kariet; menší súbor = rýchlejšie načítanie aj vo WordPresse.
-    out = out[:MAX_DEALS]
+    # Menší súbor = rýchlejšie načítanie aj vo WordPresse.
+    europe = [d for d in out if d["region"] == "Európa"][:MAX_PER_GROUP]
+    world = [d for d in out if d["region"] != "Európa"][:MAX_PER_GROUP]
+    out = sorted(europe + world, key=lambda d: d["price"])
 
     return {
         "source": "momondo.co.uk",
