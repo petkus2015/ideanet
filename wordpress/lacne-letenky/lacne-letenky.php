@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Lacné letenky VIE · BTS
  * Description:       Blok s najlacnejšími letenkami z Viedne a Bratislavy kamkoľvek (momondo, Ryanair, Wizz Air). Vloženie cez shortcode [lacne_letenky], blok v editore, widget alebo prvok v tagDiv Composer (téma Newspaper).
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LACNE_LETENKY_VERSION', '1.0.2' );
+define( 'LACNE_LETENKY_VERSION', '1.0.3' );
 define( 'LACNE_LETENKY_FILE', __FILE__ );
 define( 'LACNE_LETENKY_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LACNE_LETENKY_URL', plugin_dir_url( __FILE__ ) );

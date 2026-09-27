@@ -186,7 +186,7 @@
         '<div class="ll-feature-side">' +
           '<small>spiatočná od</small>' +
           '<strong>' + money(d.price, d.currency) + '</strong>' + drop +
-          '<span class="ll-feature-cta">Pozrieť na ' + esc(sourceName(d)) + ' ' + ARROW + '</span>' +
+          '<span class="ll-feature-cta">Kúpiť ' + ARROW + '</span>' +
         '</div></a>';
     }
 
