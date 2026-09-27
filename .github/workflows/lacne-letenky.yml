@@ -58,12 +58,26 @@ jobs:
         run: |
           git config user.name "lacne-letenky-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add plugins/lacne-letenky/data
-          if git diff --cached --quiet; then
-            echo "Žiadna zmena v cenách."
-            exit 0
-          fi
-          git commit -m "Lacné letenky: aktualizácia $(TZ=Europe/Vienna date '+%Y-%m-%d %H:%M')"
-          # medzitým mohol do vetvy pribudnúť iný commit
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          data=plugins/lacne-letenky/data
+          # Dáta sa vždy generujú celé znova, takže novší beh má prednosť. Keď medzitým
+          # do vetvy pribudol iný commit (napr. dáta z predošlého behu), postavíme sa
+          # na neho a nahráme naše súbory navrch – bez rebasu, ktorý by skončil konfliktom.
+          tmp=$(mktemp -d)
+          cp -r "$data/." "$tmp/"
+          for attempt in 1 2 3; do
+            git fetch -q origin "${GITHUB_REF_NAME}"
+            git reset -q --hard FETCH_HEAD
+            cp -r "$tmp/." "$data/"
+            git add "$data"
+            if git diff --cached --quiet; then
+              echo "Žiadna zmena v cenách."
+              exit 0
+            fi
+            git commit -q -m "Lacné letenky: aktualizácia $(TZ=Europe/Vienna date '+%Y-%m-%d %H:%M')"
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            echo "Push zlyhal (pokus $attempt), skúšam znova…"
+            sleep $((attempt * 5))
+          done
+          exit 1
