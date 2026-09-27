@@ -66,24 +66,45 @@ def report(label: str, url: str, codes: list[str]) -> None:
     print(f"[{label}] HTTP {code}, destinácií {len(items)}, zhoda: {shown}")
 
 
-def main() -> None:
-    for origin in ("VIE", "BTS"):
-        for name, codes in TARGETS.items():
-            box = BOXES[name]
-            print(f"\n=== {origin} → {name} ({', '.join(codes)}) ===")
-            report("svet", explore(origin), codes)
-            for z in (4, 5, 6):
-                report(f"výrez zoom {z}", explore(origin, zoomLevel=z, **box), codes)
-            report("výrez + selectedDestination", explore(origin, zoomLevel=5, selectedDestination=codes[0], **box), codes)
-            for dep in ("202611", "20261101", "2026-11"):
-                report(f"výrez + depart={dep}", explore(origin, zoomLevel=5, depart=dep, **box), codes)
+def explore_on(site: str, origin: str) -> str:
+    return explore(origin).replace(u.SITE, site)
 
-    # stránka trasy (HTML) – hľadáme v nej ceny
-    for path in ("/flight-routes/vienna-vie/dubai-dxb", "/flight-routes/vienna-vie/abu-dhabi-auh",
-                 "/flight-routes/bratislava-bts/dubai-dxb"):
-        code, html = get(u.SITE + path, {**u.HEADERS, "Accept": "text/html"})
-        prices = re.findall(r"£\s?\d[\d,]*|€\s?\d[\d,]*|\"price\"\s*:\s*\"?\d+", html)[:8]
-        print(f"\n[trasa {path}] HTTP {code}, {len(html)} B, ceny: {prices or '—'}")
+
+def show_json(label: str, url: str, headers: dict | None = None, find=("DXB", "AUH", "DWC", "SHJ")) -> None:
+    code, body = get(url, headers)
+    snippet = body[:300].replace("\n", " ")
+    hits = [c for c in find if c in body]
+    print(f"[{label}] HTTP {code}, {len(body)} B, obsahuje {hits or '—'}: {snippet}")
+
+
+def main() -> None:
+    routes = [("VIE", "DXB"), ("VIE", "AUH"), ("BTS", "DXB")]
+
+    # 1) ten istý systém v iných krajinách – mapa „kamkoľvek“ pre iný trh
+    for site in ("https://www.momondo.at", "https://www.momondo.de", "https://www.kayak.ae",
+                 "https://www.kayak.com", "https://www.kayak.co.uk"):
+        for origin in ("VIE", "BTS"):
+            report(f"{site} {origin} kamkoľvek", explore_on(site, origin), ["DXB", "DWC", "AUH", "SHJ"])
+
+    # 2) Aviasales – cenový kalendár konkrétnej trasy
+    for o, d in routes:
+        show_json(f"aviasales calendar {o}-{d}",
+                  f"https://min-prices.aviasales.ru/calendar_preload?origin={o}&destination={d}&one_way=false",
+                  {"User-Agent": u.HEADERS["User-Agent"], "Accept": "application/json"})
+        show_json(f"aviasales matrix {o}-{d}",
+                  "https://min-prices.aviasales.ru/price_matrix?" + urllib.parse.urlencode({
+                      "origin_iata": o, "destination_iata": d, "depart_start": "2026-11-01",
+                      "return_start": "2026-11-08", "depart_range": 6, "return_range": 6,
+                      "affiliate": "false", "market": "sk"}),
+                  {"User-Agent": u.HEADERS["User-Agent"], "Accept": "application/json"})
+
+    # 3) momondo – vyhľadávanie konkrétnej trasy (HTML)
+    for o, d in routes:
+        code, html = get(f"{u.SITE}/flight-search/{o}-{d}/2026-11-10/2026-11-17?sort=price_a",
+                         {**u.HEADERS, "Accept": "text/html"})
+        prices = re.findall(r"£\s?\d[\d,]*|€\s?\d[\d,]*|\"price\"\s*:\s*\{?[^,]{0,40}", html)[:6]
+        print(f"[momondo trasa {o}-{d}] HTTP {code}, {len(html)} B, ceny: {prices or '—'}, "
+              f"captcha/bot: {'áno' if re.search('captcha|bot', html, re.I) else 'nie'}")
 
 
 if __name__ == "__main__":
