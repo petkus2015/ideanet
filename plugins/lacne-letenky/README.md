@@ -33,6 +33,9 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
   najnovšie ponuky z posledného hľadania na momondo (obíde cache prehliadača) a napíše,
   či pribudli nové, alebo kedy prebehne ďalšie hľadanie.
 - hľadajú sa iba lety s **odletom najviac 3 mesiace dopredu** (`HORIZON_DAYS` v skripte)
+- **zoznam Ázia a SAE** pod Bangkokom: Thajsko, Indonézia – Bali, Japonsko, Vietnam, Malajzia,
+  India, Južná Kórea, Singapur, Filipíny, SAE / Dubaj – najlacnejšia spiatočná letenka pre každú
+  (`WATCH` s `list=True` v skripte)
 - **Bangkok je vždy prvý**: najlacnejšia **spiatočná** letenka z VIE alebo BTS na letisko
   BKK alebo DMK. Ak ju momondo pri aktualizácii nevráti, blok napíše, že ponuku nenašiel,
   a ponúkne odkaz na vyhľadávanie. **Dubaj** (DXB, DWC) a **Abu Dhabí** (AUH) sa hľadajú tiež vždy a v bloku sú

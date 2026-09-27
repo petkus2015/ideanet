@@ -60,11 +60,21 @@ HORIZON_DAYS = 92
 MAX_PER_GROUP = 50
 
 # Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
-# featured=True -> veľká karta na začiatku bloku; ostatné sa vždy pridajú medzi karty "kamkoľvek".
+# featured=True -> veľká karta na začiatku bloku (Bangkok).
+# list=True     -> riadok v zozname pod Bangkokom (Ázia a SAE); ich letiská sa v páse kariet neopakujú.
 WATCH = {
-    "Bangkok": {"countryCode": "TH", "airports": ["BKK", "DMK"], "featured": True},  # Suvarnabhumi aj Don Mueang
-    "Dubaj": {"countryCode": "AE", "airports": ["DXB", "DWC"], "featured": False},   # Dubai Intl aj Al Maktoum
-    "Abu Dhabí": {"countryCode": "AE", "airports": ["AUH"], "featured": False},
+    "Bangkok": {"countryCode": "TH", "airports": ["BKK", "DMK"], "featured": True, "list": False},
+    "Thajsko": {"countryCode": "TH", "airports": ["HKT", "KBV", "CNX", "USM"], "featured": False, "list": True,
+                "note": "Phuket, Krabi, Chiang Mai, Ko Samui"},
+    "Indonézia – Bali": {"countryCode": "ID", "airports": ["DPS", "CGK"], "featured": False, "list": True},
+    "Japonsko": {"countryCode": "JP", "airports": ["NRT", "HND", "KIX"], "featured": False, "list": True},
+    "Vietnam": {"countryCode": "VN", "airports": ["SGN", "HAN", "DAD"], "featured": False, "list": True},
+    "Malajzia": {"countryCode": "MY", "airports": ["KUL"], "featured": False, "list": True},
+    "India": {"countryCode": "IN", "airports": ["DEL", "BOM"], "featured": False, "list": True},
+    "Južná Kórea": {"countryCode": "KR", "airports": ["ICN"], "featured": False, "list": True},
+    "Singapur": {"countryCode": "SG", "airports": ["SIN"], "featured": False, "list": True},
+    "Filipíny": {"countryCode": "PH", "airports": ["MNL", "CEB"], "featured": False, "list": True},
+    "SAE / Dubaj": {"countryCode": "AE", "airports": ["DXB", "DWC", "AUH", "SHJ"], "featured": False, "list": True},
 }
 
 # Časy aktualizácie (Europe/Vienna) – musia sedieť s .github/workflows/lacne-letenky.yml
@@ -146,6 +156,11 @@ CITY_SK = {
     "Eindhoven": "Eindhoven", "Amsterdam": "Amsterdam", "Dublin": "Dublin", "Edinburgh": "Edinburgh",
     "Manchester": "Manchester", "Liverpool": "Liverpool", "Bristol": "Bristol", "Barcelona": "Barcelona",
     "Madrid": "Madrid", "Valencia": "Valencia", "Malaga": "Málaga", "Alicante": "Alicante",
+    "Phuket": "Phuket", "Krabi": "Krabi", "Chiang Mai": "Chiang Mai", "Ko Samui": "Ko Samui",
+    "Denpasar": "Bali (Denpasar)", "Bali": "Bali", "Jakarta": "Jakarta", "Osaka": "Osaka",
+    "Ho Chi Minh City": "Ho Či Minovo Mesto", "Hanoi": "Hanoj", "Da Nang": "Da Nang",
+    "Kuala Lumpur": "Kuala Lumpur", "Delhi": "Dillí", "New Delhi": "Dillí", "Mumbai": "Bombaj",
+    "Seoul": "Soul", "Manila": "Manila", "Cebu": "Cebu", "Sharjah": "Šardžá",
     "Porto": "Porto", "Yerevan": "Jerevan", "Tel-Aviv": "Tel Aviv", "Baku": "Baku",
     "Agadir": "Agadir", "Amman": "Ammán", "Muscat": "Maskat", "Doha": "Dauha", "Riyadh": "Rijád",
     "Jeddah": "Džidda", "Cairo": "Káhira", "Tashkent": "Taškent", "Almaty": "Almaty", "Faro": "Faro", "Bologna": "Bologna", "Bari": "Bari", "Catania": "Catania",
@@ -413,6 +428,8 @@ def fetch_ryanair(origin: str, today: dt.date) -> list[dict]:
 WIZZ_SITE = "https://wizzair.com"
 WIZZ_HEADERS = {**HEADERS, "Referer": WIZZ_SITE + "/", "Origin": WIZZ_SITE}
 WIZZ_CHUNK_DAYS = 30  # cenový kalendár Wizz berie kratšie obdobia, 3 mesiace delíme na časti
+# Letiská, na ktoré sa Wizz Air pýtame z VIE aj BTS vždy, aj keď ich mapa liniek (ešte) neuvádza.
+WIZZ_ALWAYS = {"AUH": ("Abu Dhabi", "AE"), "DXB": ("Dubai", "AE"), "DWC": ("Dubai", "AE")}
 
 
 def wizz_api_base() -> str:
@@ -494,7 +511,13 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5) -> tuple[list[dict],
     deals, errors = [], []
     horizon = today + dt.timedelta(days=HORIZON_DAYS)
     for origin, dests in routes.items():
-        print(f"Wizz Air {origin}: {len(dests)} liniek")
+        print(f"Wizz Air {origin}: {len(dests)} liniek: {', '.join(d['iata'] for d in dests) or '-'}")
+        # Nové linky (napr. návrat Wizz Air do Abu Dhabí a Dubaja) predáva skôr, než ich ukáže mapa –
+        # tieto letiská sa pýtame vždy; ak linka neexistuje, ticho ju preskočíme.
+        known = {d["iata"] for d in dests}
+        for iata, (city, cc) in WIZZ_ALWAYS.items():
+            if iata not in known:
+                dests = dests + [{"iata": iata, "city": city, "countryCode": cc, "probe": True}]
         for dst in dests:
             outs, rets = {}, {}
             start = today + dt.timedelta(days=1)
@@ -519,9 +542,15 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5) -> tuple[list[dict],
                     start = end + dt.timedelta(days=1)
                     time.sleep(pause)
             except Exception as exc:
-                errors.append(f"Wizz Air {origin}-{dst['iata']}: {exc}")
+                if not dst.get("probe"):
+                    errors.append(f"Wizz Air {origin}-{dst['iata']}: {exc}")
+                else:
+                    print(f"Wizz Air {origin}-{dst['iata']}: linka nie je v predaji ({str(exc)[-40:]})")
                 continue
             best = cheapest_round_trip(outs, rets)
+            if dst.get("probe"):
+                print(f"Wizz Air {origin}-{dst['iata']}: {len(outs)} dní tam, {len(rets)} dní späť"
+                      + (f", najlacnejšie {round(best[0])} {best[1]}" if best else ", bez spiatočnej kombinácie"))
             if not best:
                 continue
             price, cur, d_out, d_ret = best
@@ -612,12 +641,15 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         hits = [d for d in out if d["dest"] in w["airports"] and d["return"]]
         deal = dict(min(hits, key=lambda d: d["price"])) if hits else None
         if deal:
-            deal["city"] = name
+            if w["featured"]:
+                deal["city"] = name  # pri zozname ostane skutočné mesto (napr. Tokio, Phuket)
             deal["prevPrice"] = prev_watch.get(name)
         watch.append({
             "name": name,
             "airports": w["airports"],
             "featured": w["featured"],
+            "list": w.get("list", False),
+            "note": w.get("note"),
             "deal": deal,
             # keď momondo nič nevráti, blok ponúkne aspoň odkaz na vyhľadávanie
             "searchUrl": f"{SITE}/explore/VIE-{w['airports'][0]}",

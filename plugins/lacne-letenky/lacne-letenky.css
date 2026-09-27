@@ -61,7 +61,7 @@
 .ll.ll li::before { content: none; }
 .ll.ll a, .ll.ll a:hover, .ll.ll a:focus { text-decoration: none; }
 .ll.ll p { margin: 0; padding: 0; line-height: inherit; }
-.ll.ll h2 { margin: 0; padding: 0; border: 0; text-transform: none; }
+.ll.ll h2, .ll.ll h3 { margin: 0; padding: 0; border: 0; text-transform: none; background: none; }
 .ll.ll button { margin: 0; line-height: 1; text-transform: none; letter-spacing: 0; min-height: 0; height: auto; }
 .ll.ll svg { display: inline-block; }
 
@@ -189,6 +189,38 @@
 .ll-watch-empty { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; padding: 16px 20px; border-radius: 16px; background: var(--ll-card); font-size: 14px; color: var(--ll-ink-2); }
 .ll-watch-empty b { color: var(--ll-ink); }
 
+/* ---------- zoznam Ázia a SAE pod Bangkokom ---------- */
+.ll-list-wrap { display: grid; gap: 10px; }
+.ll.ll .ll-list-title { font: 700 clamp(15px, 0.85rem + 0.3vw, 17px)/1.3 var(--ll-font); color: var(--ll-ink); letter-spacing: -.01em; }
+.ll.ll .ll-list { border-radius: clamp(14px, 1rem + 0.5vw, 20px); background: var(--ll-card); overflow: hidden; }
+.ll.ll .ll-list > li + li { border-top: 1px solid var(--ll-line); }
+.ll-row {
+  display: grid; align-items: center; gap: 6px clamp(12px, 0.5rem + 1.5vw, 24px);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) auto auto;
+  padding: clamp(12px, 0.6rem + 0.5vw, 16px) clamp(14px, 0.8rem + 0.8vw, 22px);
+  color: inherit; text-decoration: none; transition: background-color .15s ease;
+}
+a.ll-row:hover { background: var(--ll-surface); }
+.ll-row-main { display: grid; gap: 2px; min-width: 0; }
+.ll-row-name { font: 700 clamp(15px, 0.85rem + 0.35vw, 18px)/1.2 var(--ll-font); color: var(--ll-ink); }
+.ll-row-sub { font-size: 13px; color: var(--ll-ink-2); overflow-wrap: anywhere; }
+.ll-row-sub .ll-route { font-size: 11px; vertical-align: 1px; }
+.ll-row-dates { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ll-ink-2); min-width: 0; }
+.ll-row-dates svg { flex: none; width: 15px; height: 15px; }
+.ll-row-price { display: grid; justify-items: end; gap: 1px; text-align: right; }
+.ll-row-price small { font-size: 11px; color: var(--ll-ink-2); }
+.ll-row-price strong { font: 700 clamp(18px, 1rem + 0.5vw, 22px)/1 var(--ll-font); letter-spacing: -.02em; color: var(--ll-ink); }
+.ll-row-price em { font-style: normal; font-size: 11px; }
+.ll-row-go {
+  display: inline-flex; gap: 6px; align-items: center; white-space: nowrap;
+  font-weight: 700; font-size: 13px; color: var(--ll-accent); text-decoration: none;
+  padding: 9px 14px; border-radius: 999px; background: var(--ll-surface);
+}
+.ll-row-go svg { width: 14px; height: 14px; transition: transform .2s ease; }
+a.ll-row:hover .ll-row-go svg, .ll-row-go:hover svg { transform: translateX(2px); }
+.ll-row.is-empty .ll-row-name { color: var(--ll-ink-2); }
+.ll-row.is-empty .ll-row-go { background: transparent; }
+
 /* ---------- pätička a prázdny stav ---------- */
 .ll-foot { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ll-ink-2); }
 .ll-more { color: var(--ll-accent); font-weight: 600; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
@@ -200,8 +232,13 @@
 .ll-skel { height: 230px; border-radius: 16px; background: linear-gradient(90deg, var(--ll-soft), var(--ll-surface), var(--ll-soft)); background-size: 200% 100%; animation: ll-shimmer 1.4s linear infinite; }
 @keyframes ll-shimmer { to { background-position: -200% 0; } }
 
-/* mobil: karta Bangkoku a tlačidlo */
+/* mobil: karta Bangkoku, zoznam a tlačidlo */
 @media (max-width: 640px) {
+  .ll-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main price" "dates go"; }
+  .ll-row-main { grid-area: main; }
+  .ll-row-price { grid-area: price; }
+  .ll-row-dates { grid-area: dates; font-size: 12px; }
+  .ll-row-go { grid-area: go; justify-self: end; padding: 7px 12px; }
   .ll-refresh { width: 100%; white-space: normal; line-height: 1.25; }
   .ll-filter { display: flex; width: 100%; }
   .ll-filter button { flex: 1 1 0; padding-inline: 8px; }

@@ -124,15 +124,16 @@
     var watch = (data.watch || []).map(function (w) {
       var d = w.deal;
       return {
-        name: w.name, searchUrl: w.searchUrl, featured: w.featured !== false,
+        name: w.name, searchUrl: w.searchUrl, featured: w.featured !== false, list: !!w.list, note: w.note,
         deal: fresh && d && d['return'] && inWindow(d) ? d : null
       };
     });
-    // featured (Bangkok) = veľká karta; ostatné sledované (Dubaj, Abu Dhabí) sa vždy pridajú medzi karty
-    var pinned = watch.filter(function (w) { return !w.featured; });
+    // featured (Bangkok) = veľká karta; list (Ázia, SAE) = zoznam pod ňou;
+    // ostatné sledované mestá sa vždy pridajú medzi karty
+    var listed = watch.filter(function (w) { return !w.featured && w.list; });
+    var pinned = watch.filter(function (w) { return !w.featured && !w.list; });
     var pinnedDeals = pinned.filter(function (w) { return w.deal; })
       .map(function (w) { var d = {}; for (var k in w.deal) d[k] = w.deal[k]; d.city = w.name; return d; });
-    var missing = fresh ? pinned.filter(function (w) { return !w.deal; }).map(function (w) { return w.name; }) : [];
     watch = watch.filter(function (w) { return w.featured; });
     // sledované mesto (Bangkok) má vlastnú kartu, jeho letiská sa v mriežke neopakujú
     var watched = {};
@@ -149,7 +150,6 @@
       .slice(0, Math.max(0, limit - pinnedIn.length))
       .concat(pinnedIn)
       .sort(function (a, b) { return a.price - b.price; });
-    if (region === 'eu') missing = [];
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });
 
@@ -199,6 +199,38 @@
         '</div></a>';
     }
 
+    function listHtml() {
+      if (!listed.length) return '';
+      var rows = listed.slice().sort(function (a, b) {
+        return (a.deal ? a.deal.price : 1e9) - (b.deal ? b.deal.price : 1e9);
+      }).map(function (w) {
+        var d = w.deal;
+        if (!d) {
+          return '<li><div class="ll-row is-empty">' +
+            '<span class="ll-row-main"><b class="ll-row-name">' + esc(w.name) + '</b>' +
+              '<span class="ll-row-sub">' + esc(w.note || '') + '</span></span>' +
+            '<span class="ll-row-dates">Bez spiatočnej ponuky do 3 mesiacov</span>' +
+            '<span class="ll-row-price"></span>' +
+            '<a class="ll-row-go" href="' + esc(w.searchUrl) + '" target="_blank" rel="noopener">Hľadať ' + ARROW + '</a>' +
+          '</div></li>';
+        }
+        var from = cities[d.origin] || d.origin;
+        return '<li><a class="ll-row" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
+            esc(w.name + ', ' + d.city + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
+          '<span class="ll-row-main"><b class="ll-row-name">' + esc(w.name) + '</b>' +
+            '<span class="ll-row-sub">' + esc(d.city) + ' · <span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
+            (stopsLabel(d.stops) ? ' · ' + stopsLabel(d.stops) : '') + '</span></span>' +
+          '<span class="ll-row-dates">' + CAL + '<span>' + datesText(d) + '</span></span>' +
+          '<span class="ll-row-price"><small>od</small><strong>' + money(d.price, d.currency) + '</strong>' +
+            '<em class="ll-source" data-src="' + esc(d.source || 'momondo') + '">cez ' + esc(sourceName(d)) + '</em></span>' +
+          '<span class="ll-row-go">Kúpiť ' + ARROW + '</span>' +
+        '</a></li>';
+      }).join('');
+      return '<section class="ll-list-wrap" aria-label="Ázia a SAE">' +
+        '<h3 class="ll-list-title">Ázia a SAE – najlacnejšie spiatočné letenky</h3>' +
+        '<ul class="ll-list">' + rows + '</ul></section>';
+    }
+
     var regions = [['all', 'Všetky'], ['eu', 'Európa'], ['world', 'Mimo Európy']];
     var hasAny = allDeals.length > 0;
 
@@ -206,6 +238,7 @@
     el.innerHTML =
       (opts.title ? '<h2 class="ll-title">' + esc(opts.title) + '</h2>' : '') +
       watch.map(watchHtml).join('') +
+      (fresh ? listHtml() : '') +
       (deals.length
         ? '<div class="ll-rail">' +
             '<ul class="ll-grid" tabindex="0" aria-label="Lacné letenky">' + deals.map(cardHtml).join('') + '</ul>' +
@@ -217,7 +250,6 @@
         : hasAny
           ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' sme teraz nenašli ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
           : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
-      (missing.length && deals.length ? '<p class="ll-foot">' + esc(missing.join(', ')) + ' – v najbližších 3 mesiacoch sme pri poslednom hľadaní nenašli spiatočnú letenku.</p>' : '') +
       (hasAny
         ? '<div class="ll-filter" role="group" aria-label="Oblasť">' + regions.map(function (r) {
             return '<button type="button" data-region="' + r[0] + '" aria-pressed="' + (region === r[0]) + '">' + r[1] + '</button>';

@@ -143,7 +143,7 @@ class Lacne_Letenky_Live {
 		foreach ( array_keys( $geo['origins'] ) as $o ) {
 			$reqs[ "momondo|$o|" ] = array( 'url' => self::momondo_url( $o, '' ), 'headers' => self::headers( self::MOMONDO . '/explore' ) );
 			foreach ( $geo['watch'] as $w ) {
-				if ( $w['featured'] ) {
+				if ( $w['featured'] || ! empty( $w['list'] ) ) {
 					foreach ( $w['airports'] as $a ) {
 						$reqs[ "momondo|$o|$a" ] = array( 'url' => self::momondo_url( $o, $a ), 'headers' => self::headers( self::MOMONDO . '/explore' ) );
 					}
@@ -412,11 +412,14 @@ class Lacne_Letenky_Live {
 				}
 			}
 			if ( $deal ) {
-				$deal['city']      = $name;
+				if ( $w['featured'] ) {
+					$deal['city'] = $name; // pri zozname ostane skutočné mesto (Tokio, Phuket…)
+				}
 				$deal['prevPrice'] = isset( $prev_watch[ $name ] ) ? $prev_watch[ $name ] : null;
 			}
 			$watch[] = array(
-				'name' => $name, 'airports' => $w['airports'], 'featured' => $w['featured'], 'deal' => $deal,
+				'name' => $name, 'airports' => $w['airports'], 'featured' => $w['featured'],
+				'list' => ! empty( $w['list'] ), 'note' => isset( $w['note'] ) ? $w['note'] : null, 'deal' => $deal,
 				'searchUrl' => self::MOMONDO . '/explore/VIE-' . $w['airports'][0],
 			);
 		}
