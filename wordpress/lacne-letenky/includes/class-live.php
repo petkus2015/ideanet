@@ -450,9 +450,15 @@ class Lacne_Letenky_Live {
 
 		// Bangkok, Dubaj, Abu Dhabí – iba spiatočné letenky
 		$prev_watch = array();
+		$prev_alt   = array(); // ponuky z náhradného letiska (SAE z Budapešti) – naživo sa nehľadajú
 		foreach ( is_array( $prev ) && isset( $prev['watch'] ) ? $prev['watch'] : array() as $w ) {
 			if ( ! empty( $w['deal'] ) ) {
 				$prev_watch[ $w['name'] ] = $w['deal']['price'];
+				$d = $w['deal'];
+				if ( ! isset( $geo['origins'][ $d['origin'] ] ) && ! empty( $d['return'] ) && ! empty( $d['depart'] ) &&
+					$d['depart'] > $from && $d['depart'] <= $to ) {
+					$prev_alt[ $w['name'] ] = $d;
+				}
 			}
 		}
 		$watch = array();
@@ -462,6 +468,9 @@ class Lacne_Letenky_Live {
 				if ( in_array( $d['dest'], $w['airports'], true ) && $d['return'] && ( ! $deal || $d['price'] < $deal['price'] ) ) {
 					$deal = $d;
 				}
+			}
+			if ( ! $deal && isset( $prev_alt[ $name ] ) ) {
+				$deal = $prev_alt[ $name ];
 			}
 			if ( $deal ) {
 				if ( $w['featured'] ) {

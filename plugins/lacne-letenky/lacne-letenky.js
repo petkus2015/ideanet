@@ -250,12 +250,13 @@
             '<a class="ll-row-go" href="' + esc(w.searchUrl) + '" target="_blank" rel="noopener">Hľadať ' + ARROW + '</a>' +
           '</div></li>';
         }
-        var from = cities[d.origin] || d.origin;
+        var from = cities[d.origin] || d.originCity || d.origin;
         return li + '<a class="ll-row" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
             esc(w.name + ', ' + d.city + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
           '<span class="ll-row-main"><span class="ll-row-head"><b class="ll-row-name">' + esc(w.name) + '</b>' + wxHtml(d) + '</span>' +
             '<span class="ll-row-sub">' + esc(d.city) + ' · <span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
-            (stopsLabel(d.stops) ? ' · ' + stopsLabel(d.stops) : '') + '</span></span>' +
+            (stopsLabel(d.stops) ? ' · ' + stopsLabel(d.stops) : '') +
+            (d.originNote ? ' · <b class="ll-alt-origin">' + esc(d.originNote) + '</b>' : '') + '</span></span>' +
           '<span class="ll-row-dates">' + CAL + '<span>' + datesText(d) + '</span></span>' +
           '<span class="ll-row-price"><small>od</small><strong>' + money(d.price, d.currency) + '</strong>' +
             '<em class="ll-source" data-src="' + esc(d.source || 'momondo') + '">cez ' + esc(sourceName(d)) + '</em></span>' +

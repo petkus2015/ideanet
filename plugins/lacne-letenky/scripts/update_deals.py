@@ -55,6 +55,12 @@ ORIGINS = {
     "BTS": {"city": "Bratislava", "name": "M. R. Štefánik"},
 }
 
+# Náhradné letisko: keď do SAE z Viedne ani Bratislavy nič nenájdeme, hľadáme odlet z Budapešti.
+# Takéto ponuky idú len do riadku sledovanej destinácie, nie medzi karty „kamkoľvek“.
+FALLBACK_ORIGINS = {"BUD": "Budapešť"}
+FALLBACK_NOTE = {"BUD": "odlet z Budapešti"}
+FALLBACK_WATCH = {"SAE / Dubaj": ["BUD"]}
+
 # Hľadáme iba lety s odletom najviac 3 mesiace dopredu (blok používa rovnakú hranicu).
 HORIZON_DAYS = 92
 
@@ -509,9 +515,11 @@ def wizz_timetable(base: str, body: dict, attempts: int = 4) -> dict:
     raise RuntimeError("Wizz Air: vyčerpané pokusy")
 
 
-def fetch_wizz(origins, today: dt.date, pause: float = 1.5) -> tuple[list[dict], list[str]]:
+def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
+               only: dict | None = None) -> tuple[list[dict], list[str]]:
+    """only = {IATA: (mesto, krajina)} – pýta sa iba na tieto letiská (náhradný odlet z Budapešti)."""
     base = wizz_api_base()
-    routes = wizz_routes(base, origins)
+    routes = {o: [] for o in origins} if only else wizz_routes(base, origins)
     deals, errors = [], []
     horizon = today + dt.timedelta(days=HORIZON_DAYS)
     for origin, dests in routes.items():
@@ -519,7 +527,7 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5) -> tuple[list[dict],
         # Nové linky (napr. návrat Wizz Air do Abu Dhabí a Dubaja) predáva skôr, než ich ukáže mapa –
         # tieto letiská sa pýtame vždy; ak linka neexistuje, ticho ju preskočíme.
         known = {d["iata"] for d in dests}
-        for iata, (city, cc) in WIZZ_ALWAYS.items():
+        for iata, (city, cc) in (only or WIZZ_ALWAYS).items():
             if iata not in known:
                 dests = dests + [{"iata": iata, "city": city, "countryCode": cc, "probe": True}]
         for dst in dests:
@@ -571,6 +579,47 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5) -> tuple[list[dict],
     return deals, errors
 
 
+# ------------------------------------------------------- náhradné letisko ---
+
+def has_watch_deal(deals: list[dict], airports: list[str], today: dt.date) -> bool:
+    horizon = (today + dt.timedelta(days=HORIZON_DAYS)).isoformat()
+    return any(d["dest"] in airports and d["origin"] in ORIGINS and d["return"] and d["depart"]
+               and today.isoformat() < d["depart"] <= horizon for d in deals)
+
+
+def fetch_fallback(deals: list[dict], today: dt.date, errors: list[str], use: list[str]) -> list[dict]:
+    """Sledované destinácie bez ponuky z VIE/BTS hľadá z náhradného letiska (SAE -> Budapešť)."""
+    found: list[dict] = []
+    for name, origins in FALLBACK_WATCH.items():
+        airports = WATCH[name]["airports"]
+        if has_watch_deal(deals, airports, today):
+            print(f"{name}: ponuka z Viedne/Bratislavy existuje, Budapešť netreba")
+            continue
+        for origin in origins:
+            got: list[dict] = []
+            if "momondo" in use:
+                for code in airports:
+                    try:
+                        got += [d for d in parse_destinations(fetch_json(explore_url(origin, code)), origin)
+                                if d["dest"] in airports]
+                    except Exception as exc:
+                        print(f"momondo {origin} → {code}: CHYBA {exc}", file=sys.stderr)
+            if "wizzair" in use:
+                try:
+                    wz, _ = fetch_wizz([origin], today, only={a: v for a, v in WIZZ_ALWAYS.items() if a in airports})
+                    got += wz
+                except Exception as exc:
+                    print(f"Wizz Air {origin}: CHYBA {exc}", file=sys.stderr)
+            for d in got:
+                d["originCity"] = FALLBACK_ORIGINS.get(origin, origin)
+                d["originNote"] = FALLBACK_NOTE.get(origin, "odlet z " + d["originCity"])
+            ok = [d for d in got if d["return"]]
+            print(f"{name} z {origin}: {len(got)} ponúk, {len(ok)} spiatočných"
+                  + (f", najlacnejšia {min(d['price'] for d in ok)} {ok[0]['currency']}" if ok else ""))
+            found += got
+    return found
+
+
 # ------------------------------------------------------------------ výstup ---
 
 def load_previous() -> dict:
@@ -605,6 +654,9 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     # do bloku idú len ponuky s odletom od zajtra do 3 mesiacov – bez dátumu ich nevieme overiť
     all_deals = deals
     deals = [d for d in deals if d["depart"] and today < d["depart"] <= horizon]
+    # odlety z náhradného letiska (Budapešť) nepatria medzi karty „kamkoľvek“
+    fallback = [d for d in deals if d["origin"] not in ORIGINS]
+    deals = [d for d in deals if d["origin"] in ORIGINS]
 
     # Diagnostika sledovaných miest: čo zdroje vrátili a prečo to prípadne vypadlo.
     for name, w in WATCH.items():
@@ -643,6 +695,11 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     for name, w in WATCH.items():
         # iba spiatočné letenky (s dátumom návratu)
         hits = [d for d in out if d["dest"] in w["airports"] and d["return"]]
+        if not hits and name in FALLBACK_WATCH:
+            hits = [d for d in fallback if d["dest"] in w["airports"] and d["return"]
+                    and d["origin"] in FALLBACK_WATCH[name]]
+            for d in hits:
+                d["city"] = CITY_SK.get(d["city"], d["city"])
         deal = dict(min(hits, key=lambda d: d["price"])) if hits else None
         if deal:
             if w["featured"]:
@@ -732,6 +789,7 @@ def main() -> int:
                 print(f"Wizz Air: CHYBA {exc}", file=sys.stderr)
         for src in use:
             print(f"  {src}: {sum(1 for d in deals if d.get('source') == src)} ponúk")
+        deals += fetch_fallback(deals, now.date(), errors, use)
 
     if not deals:
         # Staré dáta nechávame tak – plugin radšej ukáže posledné známe ceny.

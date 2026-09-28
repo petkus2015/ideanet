@@ -36,6 +36,9 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
 - **zoznam Ázia a SAE** pod Bangkokom: Thajsko, Indonézia – Bali, Japonsko, Vietnam, Malajzia,
   India, Južná Kórea, Singapur, Filipíny, SAE / Dubaj – najlacnejšia spiatočná letenka pre každú
   (`WATCH` s `list=True` v skripte)
+  - **SAE / Dubaj**: keď z VIE ani BTS nie je spiatočná letenka do DXB, DWC, AUH alebo SHJ, skript
+    ju hľadá s odletom z **Budapešti** (momondo + Wizz Air, `FALLBACK_WATCH`); v riadku je potom
+    označenie „odlet z Budapešti“. Medzi karty „kamkoľvek“ sa lety z Budapešti nepridávajú.
 - **Bangkok je vždy prvý**: najlacnejšia **spiatočná** letenka z VIE alebo BTS na letisko
   BKK alebo DMK. Ak ju momondo pri aktualizácii nevráti, blok napíše, že ponuku nenašiel,
   a ponúkne odkaz na vyhľadávanie. **Dubaj** (DXB, DWC) a **Abu Dhabí** (AUH) sa hľadajú tiež vždy a v bloku sú
