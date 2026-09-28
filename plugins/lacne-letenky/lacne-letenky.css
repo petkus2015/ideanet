@@ -210,7 +210,7 @@
   white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 .ll.ll .ll-wx svg { flex: none; width: 18px; height: 18px; margin: 0; }
-.ll-city-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ll-city-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 .ll-city-row .ll-city { min-width: 0; }
 .ll-row-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
 .ll.ll .ll-row-head .ll-wx { font-size: 11px; padding: 1px 7px 1px 4px; }
