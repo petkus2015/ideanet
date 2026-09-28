@@ -47,7 +47,7 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
 
 - výber **Všetky / Európa / Mimo Európy** pod ponukami; ukladá sa až 50 najlacnejších v Európe a 50 mimo nej
 - karty v posuvnom páse (naraz 1,5 karty, na počítači so šípkami), zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena v €)
-- štítok „Priamy“ a ▼ o koľko ponuka zlacnela od predchádzajúcej aktualizácie
+- štítok „Priamy“ a zmena ceny oproti predchádzajúcemu hľadaniu (▼ o X € lacnejšie / ▲ drahšie) – iba pri tom istom lete (letiská aj dátumy tam a späť)
 - **počasie v cieli v deň príletu**: ikona a teplota cez deň z [Open-Meteo](https://open-meteo.com/)
   (CC BY 4.0, bez kľúča) – do 15 dní predpoveď, ďalej odhad z rovnakého obdobia za posledné 2 roky
   (označený „~“). Počíta ho `scripts/weather.py` pri aktualizácii, súradnice letísk z OurAirports

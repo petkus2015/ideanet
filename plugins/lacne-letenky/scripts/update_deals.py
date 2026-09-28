@@ -657,9 +657,16 @@ def next_update(now: dt.datetime) -> dt.datetime:
     return now + dt.timedelta(hours=8)
 
 
+def flight_key(d: dict) -> tuple:
+    return (d.get("origin"), d.get("dest"), d.get("depart"), d.get("return"))
+
+
 def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | None = None) -> dict:
     prev = load_previous()
-    prev_prices = {(d["origin"], d["dest"]): d["price"] for d in prev.get("deals", [])
+    # Zmena ceny sa ukazuje iba pri tom istom lete z predchádzajúceho hľadania
+    # (rovnaké letiská aj dátumy tam a späť).
+    prev_prices = {flight_key(d): d["price"]
+                   for d in prev.get("deals", []) + [w["deal"] for w in prev.get("watch", []) if w.get("deal")]
                    if d.get("currency") == CURRENCY}
     today = now.date().isoformat()
     horizon = (now.date() + dt.timedelta(days=HORIZON_DAYS)).isoformat()
@@ -697,12 +704,10 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
             unique.append(d)
     out = unique
     for d in out:
-        d["prevPrice"] = prev_prices.get((d["origin"], d["dest"]))
+        d["prevPrice"] = prev_prices.get(flight_key(d))
         d["city"] = CITY_SK.get(d["city"], d["city"])
 
     # Najlacnejšia ponuka do každej sledovanej destinácie (z VIE aj BTS, ľubovoľné letisko mesta).
-    prev_watch = {w["name"]: w["deal"]["price"] for w in prev.get("watch", [])
-                  if w.get("deal") and w["deal"].get("currency") == CURRENCY}
     watch = []
     for name, w in WATCH.items():
         # iba spiatočné letenky (s dátumom návratu)
@@ -716,7 +721,7 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         if deal:
             if w["featured"]:
                 deal["city"] = name  # pri zozname ostane skutočné mesto (napr. Tokio, Phuket)
-            deal["prevPrice"] = prev_watch.get(name)
+            deal["prevPrice"] = prev_prices.get(flight_key(deal))
         watch.append({
             "name": name,
             "airports": w["airports"],
@@ -739,6 +744,7 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         "currency": CURRENCY,
         "fx": fx,  # None = momondo vrátilo ceny priamo v EUR
         "updatedAt": now.isoformat(timespec="minutes"),
+        "prevUpdatedAt": prev.get("updatedAt"),  # s ktorým hľadaním sa porovnávajú ceny
         "slot": slot_for(now),
         "nextUpdate": next_update(now).isoformat(timespec="minutes"),
         "schedule": [{"id": s, "time": t} for s, t in SCHEDULE],

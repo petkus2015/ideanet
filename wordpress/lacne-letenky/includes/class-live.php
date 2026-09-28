@@ -74,7 +74,7 @@ class Lacne_Letenky_Live {
 			return array_merge( is_array( $shown ) ? $shown : array( 'deals' => array() ), array( 'liveError' => true ) );
 		}
 
-		$data = self::build( $deals, self::overlay( $base ), $errors );
+		$data = self::build( $deals, self::overlay( $base ), $errors, $base );
 		$min  = max( 5, (int) Lacne_Letenky_Settings::get( 'live_minutes' ) );
 		set_transient( self::THROTTLE_KEY, $data, $min * MINUTE_IN_SECONDS );
 		update_option( self::LAST_KEY, $data, false );
@@ -348,18 +348,28 @@ class Lacne_Letenky_Live {
 		return $out;
 	}
 
-	/**
-	 * Počasie v destinácii (Open-Meteo) sa počíta pri aktualizácii na GitHube. Živé hľadanie
-	 * ho prevezme: rovnaký deň príletu = rovnaké počasie, iný deň do 7 dní = odhad (k = "c").
-	 */
-	private static function with_weather( $deals, $prev ) {
-		$known = array();
-		$list  = is_array( $prev ) && isset( $prev['deals'] ) ? $prev['deals'] : array();
-		foreach ( is_array( $prev ) && isset( $prev['watch'] ) ? $prev['watch'] : array() as $w ) {
+	private static function flight_key( $d ) {
+		return $d['origin'] . '|' . $d['dest'] . '|' . ( isset( $d['depart'] ) ? $d['depart'] : '' ) . '|' . ( isset( $d['return'] ) ? $d['return'] : '' );
+	}
+
+	/** Ponuky z dát vrátane sledovaných destinácií (Bangkok, zoznam Ázia a SAE). */
+	private static function all_deals( $data ) {
+		$list = is_array( $data ) && isset( $data['deals'] ) ? $data['deals'] : array();
+		foreach ( is_array( $data ) && isset( $data['watch'] ) ? $data['watch'] : array() as $w ) {
 			if ( ! empty( $w['deal'] ) ) {
 				$list[] = $w['deal'];
 			}
 		}
+		return $list;
+	}
+
+	/**
+	 * Počasie v destinácii (Open-Meteo) sa počíta pri aktualizácii na GitHube. Živé hľadanie
+	 * ho prevezme: rovnaký deň príletu = rovnaké počasie, iný deň do 7 dní = odhad (k = "c").
+	 */
+	private static function with_weather( $deals, $base, $prev = null ) {
+		$known = array();
+		$list  = array_merge( self::all_deals( $prev ), self::all_deals( $base ) ); // GitHub dáta majú prednosť
 		foreach ( $list as $d ) {
 			if ( ! empty( $d['weather'] ) && ! empty( $d['depart'] ) && ! empty( $d['dest'] ) ) {
 				$known[ $d['dest'] ][ $d['depart'] ] = $d['weather'];
@@ -391,7 +401,7 @@ class Lacne_Letenky_Live {
 		return $deals;
 	}
 
-	private static function build( $deals, $prev, $errors ) {
+	private static function build( $deals, $prev, $errors, $base = null ) {
 		$geo  = self::geo();
 		$tz   = new DateTimeZone( 'Europe/Vienna' );
 		$now  = new DateTimeImmutable( 'now', $tz );
@@ -430,15 +440,16 @@ class Lacne_Letenky_Live {
 		$out = array_values( $best );
 		usort( $out, function ( $a, $b ) { return $a['price'] - $b['price']; } );
 
+		// zmena ceny iba pri tom istom lete z predchádzajúceho hľadania (letiská aj dátumy)
 		$prev_price = array();
-		foreach ( $prev_deals as $d ) {
-			$prev_price[ $d['origin'] . '-' . $d['dest'] ] = $d['price'];
+		foreach ( self::all_deals( $prev ) as $d ) {
+			$prev_price[ self::flight_key( $d ) ] = $d['price'];
 		}
 		$seen   = array();
 		$unique = array();
 		foreach ( $out as $d ) {
 			$d['city']      = isset( $geo['city_sk'][ $d['city'] ] ) ? $geo['city_sk'][ $d['city'] ] : $d['city'];
-			$d['prevPrice'] = isset( $prev_price[ $d['origin'] . '-' . $d['dest'] ] ) ? $prev_price[ $d['origin'] . '-' . $d['dest'] ] : null;
+			$d['prevPrice'] = isset( $prev_price[ self::flight_key( $d ) ] ) ? $prev_price[ self::flight_key( $d ) ] : null;
 			$k              = $d['origin'] . '|' . $d['city'] . '|' . $d['price'] . '|' . $d['depart'] . '|' . $d['return'];
 			if ( ! isset( $seen[ $k ] ) ) {
 				$seen[ $k ] = 1;
@@ -446,14 +457,13 @@ class Lacne_Letenky_Live {
 			}
 		}
 
-		$unique = self::with_weather( $unique, $prev );
+		// počasie z dát z GitHubu (predošlé živé hľadanie ho nemusí mať – napr. z verzie bez počasia)
+		$unique = self::with_weather( $unique, is_array( $base ) ? $base : $prev, $prev );
 
 		// Bangkok, Dubaj, Abu Dhabí – iba spiatočné letenky
-		$prev_watch = array();
 		$prev_alt   = array(); // ponuky z náhradného letiska (SAE z Budapešti) – naživo sa nehľadajú
 		foreach ( is_array( $prev ) && isset( $prev['watch'] ) ? $prev['watch'] : array() as $w ) {
 			if ( ! empty( $w['deal'] ) ) {
-				$prev_watch[ $w['name'] ] = $w['deal']['price'];
 				$d = $w['deal'];
 				if ( ! isset( $geo['origins'][ $d['origin'] ] ) && ! empty( $d['return'] ) && ! empty( $d['depart'] ) &&
 					$d['depart'] > $from && $d['depart'] <= $to ) {
@@ -470,13 +480,12 @@ class Lacne_Letenky_Live {
 				}
 			}
 			if ( ! $deal && isset( $prev_alt[ $name ] ) ) {
-				$deal = $prev_alt[ $name ];
-			}
-			if ( $deal ) {
+				$deal = $prev_alt[ $name ]; // prevPrice ostáva z aktualizácie na GitHube
+			} elseif ( $deal ) {
 				if ( $w['featured'] ) {
 					$deal['city'] = $name; // pri zozname ostane skutočné mesto (Tokio, Phuket…)
 				}
-				$deal['prevPrice'] = isset( $prev_watch[ $name ] ) ? $prev_watch[ $name ] : null;
+				$deal['prevPrice'] = isset( $prev_price[ self::flight_key( $deal ) ] ) ? $prev_price[ self::flight_key( $deal ) ] : null;
 			}
 			$watch[] = array(
 				'name' => $name, 'airports' => $w['airports'], 'featured' => $w['featured'],
@@ -495,6 +504,7 @@ class Lacne_Letenky_Live {
 			'currency'    => self::CURRENCY,
 			'fx'          => self::$used_rate ? array( 'source' => 'ECB', 'date' => '', 'rates' => array( 'GBP' => self::$used_rate ) ) : null,
 			'updatedAt'   => $now->format( 'Y-m-d\TH:iP' ),
+			'prevUpdatedAt' => is_array( $prev ) && isset( $prev['updatedAt'] ) ? $prev['updatedAt'] : null,
 			'nextUpdate'  => null,
 			'origins'     => $origins,
 			'errors'      => array_slice( $errors, 0, 10 ),

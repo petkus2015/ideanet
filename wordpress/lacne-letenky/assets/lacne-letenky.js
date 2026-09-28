@@ -190,10 +190,20 @@
         '<span>' + (w.k === 'f' ? '' : '~') + w.t + ' °C</span></span>';
     }
 
+    // Zmena ceny oproti predchádzajúcemu hľadaniu – iba pri tom istom lete (letiská aj dátumy).
+    function changeHtml(d, long) {
+      if (!d.prevPrice || d.prevPrice === d.price) return '';
+      var diff = Math.abs(d.prevPrice - d.price), down = d.prevPrice > d.price;
+      var when = data.prevUpdatedAt ? ' (' + relDay(data.prevUpdatedAt) + ' ' + time(data.prevUpdatedAt) + ')' : '';
+      var tip = 'Pri predchádzajúcom hľadaní' + when + ' stál tento let ' + money(d.prevPrice, d.currency) + '.';
+      return '<span class="ll-change ' + (down ? 'is-down' : 'is-up') + '" title="' + esc(tip) + '">' +
+        (down ? '▼ o ' : '▲ o ') + money(diff, d.currency) + (down ? ' lacnejšie' : ' drahšie') +
+        (long ? ' od posledného hľadania' : '') + '</span>';
+    }
+
     function cardHtml(d) {
       var from = cities[d.origin] || d.origin;
-      var drop = d.prevPrice && d.prevPrice > d.price
-        ? '<span class="ll-drop" title="Zlacnené od poslednej aktualizácie">▼ ' + money(d.prevPrice - d.price, d.currency) + '</span>' : '';
+      var drop = changeHtml(d, false);
       return '<li><a class="ll-card" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
           esc(d.city + ', ' + d.country + ', let z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
         '<div class="ll-card-top"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
@@ -214,8 +224,7 @@
           '<a class="ll-more" href="' + esc(w.searchUrl) + '" target="_blank" rel="noopener">Pozrieť na momondo →</a></div>';
       }
       var from = cities[d.origin] || d.origin;
-      var drop = d.prevPrice && d.prevPrice > d.price
-        ? '<span class="ll-drop">▼ ' + money(d.prevPrice - d.price, d.currency) + ' od posledného hľadania</span>' : '';
+      var drop = changeHtml(d, true);
       return '<a class="ll-feature" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
           esc(w.name + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
         '<svg class="ll-feature-arc" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true"><path d="M10 190 C 120 20, 290 10, 390 70"/></svg>' +
@@ -258,7 +267,7 @@
             (stopsLabel(d.stops) ? ' · ' + stopsLabel(d.stops) : '') +
             (d.originNote ? ' · <b class="ll-alt-origin">' + esc(d.originNote) + '</b>' : '') + '</span></span>' +
           '<span class="ll-row-dates">' + CAL + '<span>' + datesText(d) + '</span></span>' +
-          '<span class="ll-row-price"><small>od</small><strong>' + money(d.price, d.currency) + '</strong>' +
+          '<span class="ll-row-price"><small>od</small><strong>' + money(d.price, d.currency) + '</strong>' + changeHtml(d, false) +
             '<em class="ll-source" data-src="' + esc(d.source || 'momondo') + '">cez ' + esc(sourceName(d)) + '</em></span>' +
           '<span class="ll-row-go">Kúpiť ' + ARROW + '</span>' +
         '</a></li>';

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Lacné letenky VIE · BTS
  * Description:       Blok s najlacnejšími letenkami z Viedne a Bratislavy kamkoľvek (momondo, Ryanair, Wizz Air). Vloženie cez shortcode [lacne_letenky], blok v editore, widget alebo prvok v tagDiv Composer (téma Newspaper).
- * Version:           1.6.0
+ * Version:           1.7.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LACNE_LETENKY_VERSION', '1.6.0' );
+define( 'LACNE_LETENKY_VERSION', '1.7.0' );
 define( 'LACNE_LETENKY_FILE', __FILE__ );
 define( 'LACNE_LETENKY_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LACNE_LETENKY_URL', plugin_dir_url( __FILE__ ) );
@@ -28,6 +28,16 @@ require_once LACNE_LETENKY_DIR . 'includes/class-settings.php';
 require_once LACNE_LETENKY_DIR . 'includes/class-widget.php';
 require_once LACNE_LETENKY_DIR . 'tagdiv/integration.php';
 
+// Po aktualizácii pluginu zahodíme uložený výsledok živého hľadania – nová verzia môže
+// pridávať údaje (napr. počasie), ktoré starý výsledok nemá.
+add_action( 'init', function () {
+	if ( get_option( 'lacne_letenky_version' ) !== LACNE_LETENKY_VERSION ) {
+		delete_transient( 'lacne_letenky_live' );
+		delete_transient( 'lacne_letenky_data' );
+		delete_option( 'lacne_letenky_live_last' );
+		update_option( 'lacne_letenky_version', LACNE_LETENKY_VERSION, false );
+	}
+}, 5 );
 add_action( 'init', array( 'Lacne_Letenky_Render', 'init' ) );
 add_action( 'rest_api_init', array( 'Lacne_Letenky_Data', 'register_rest' ) );
 add_action( 'widgets_init', function () {
