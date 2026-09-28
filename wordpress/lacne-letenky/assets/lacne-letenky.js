@@ -150,13 +150,14 @@
     });
     // featured (Bangkok) = veľká karta; list (Ázia, SAE) = zoznam pod ňou;
     // ostatné sledované mestá sa vždy pridajú medzi karty
-    var listed = watch.filter(function (w) { return !w.featured && w.list; });
+    // v zozname iba destinácie, do ktorých som našiel spiatočnú letenku
+    var listed = watch.filter(function (w) { return !w.featured && w.list && w.deal; });
     var listId = el.getAttribute('data-ll-list') || 'll-list-' + (++listSeq);
     el.setAttribute('data-ll-list', listId);
     var pinned = watch.filter(function (w) { return !w.featured && !w.list; });
     var pinnedDeals = pinned.filter(function (w) { return w.deal; })
       .map(function (w) { var d = {}; for (var k in w.deal) d[k] = w.deal[k]; d.city = w.name; return d; });
-    watch = watch.filter(function (w) { return w.featured; });
+    watch = watch.filter(function (w) { return w.featured && w.deal; });
     // sledované mesto (Bangkok) má vlastnú kartu, jeho letiská sa v mriežke neopakujú
     var watched = {};
     (data.watch || []).forEach(function (w) { (w.airports || []).forEach(function (a) { watched[a] = 1; }); });

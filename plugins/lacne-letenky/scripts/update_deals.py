@@ -55,11 +55,12 @@ ORIGINS = {
     "BTS": {"city": "Bratislava", "name": "M. R. Štefánik"},
 }
 
-# Náhradné letisko: keď do SAE z Viedne ani Bratislavy nič nenájdeme, hľadáme odlet z Budapešti.
-# Takéto ponuky idú len do riadku sledovanej destinácie, nie medzi karty „kamkoľvek“.
+# Ďalšie letiská odletu pre vybrané destinácie: do SAE hľadáme vždy aj z Budapešti a ukážeme
+# najlacnejšiu z Viedne, Bratislavy alebo Budapešti. Tieto lety idú len do riadku destinácie,
+# nie medzi karty „kamkoľvek“.
 FALLBACK_ORIGINS = {"BUD": "Budapešť"}
 FALLBACK_NOTE = {"BUD": "odlet z Budapešti"}
-FALLBACK_WATCH = {"SAE / Dubaj": ["BUD"]}
+FALLBACK_WATCH = {"SAE – Dubaj": ["BUD"], "SAE – Abu Dhabí": ["BUD"]}
 
 # Hľadáme iba lety s odletom najviac 3 mesiace dopredu (blok používa rovnakú hranicu).
 HORIZON_DAYS = 92
@@ -83,7 +84,9 @@ WATCH = {
     "Južná Kórea": {"countryCode": "KR", "airports": ["ICN"], "featured": False, "list": True},
     "Singapur": {"countryCode": "SG", "airports": ["SIN"], "featured": False, "list": True},
     "Filipíny": {"countryCode": "PH", "airports": ["MNL", "CEB"], "featured": False, "list": True},
-    "SAE / Dubaj": {"countryCode": "AE", "airports": ["DXB", "DWC", "AUH", "SHJ"], "featured": False, "list": True},
+    "SAE – Dubaj": {"countryCode": "AE", "airports": ["DXB", "DWC", "SHJ"], "featured": False, "list": True,
+                    "note": "Dubaj, Šardžá"},
+    "SAE – Abu Dhabí": {"countryCode": "AE", "airports": ["AUH"], "featured": False, "list": True},
 }
 
 # Časy aktualizácie (Europe/Vienna) – musia sedieť s .github/workflows/lacne-letenky.yml
@@ -593,42 +596,35 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
 
 # ------------------------------------------------------- náhradné letisko ---
 
-def has_watch_deal(deals: list[dict], airports: list[str], today: dt.date) -> bool:
-    horizon = (today + dt.timedelta(days=HORIZON_DAYS)).isoformat()
-    return any(d["dest"] in airports and d["origin"] in ORIGINS and d["return"] and d["depart"]
-               and today.isoformat() < d["depart"] <= horizon for d in deals)
-
-
 def fetch_fallback(deals: list[dict], today: dt.date, errors: list[str], use: list[str]) -> list[dict]:
-    """Sledované destinácie bez ponuky z VIE/BTS hľadá z náhradného letiska (SAE -> Budapešť)."""
+    """Destinácie z FALLBACK_WATCH hľadá aj z ďalších letísk (SAE -> aj z Budapešti)."""
     found: list[dict] = []
+    by_origin: dict[str, set[str]] = {}
     for name, origins in FALLBACK_WATCH.items():
-        airports = WATCH[name]["airports"]
-        if has_watch_deal(deals, airports, today):
-            print(f"{name}: ponuka z Viedne/Bratislavy existuje, Budapešť netreba")
-            continue
         for origin in origins:
-            got: list[dict] = []
-            if "momondo" in use:
-                for code in airports:
-                    try:
-                        got += [d for d in parse_destinations(fetch_json(explore_url(origin, code)), origin)
-                                if d["dest"] in airports]
-                    except Exception as exc:
-                        print(f"momondo {origin} → {code}: CHYBA {exc}", file=sys.stderr)
-            if "wizzair" in use:
+            by_origin.setdefault(origin, set()).update(WATCH[name]["airports"])
+    for origin, airports in by_origin.items():
+        got: list[dict] = []
+        if "momondo" in use:
+            for code in sorted(airports):
                 try:
-                    wz, _ = fetch_wizz([origin], today, only={a: v for a, v in WIZZ_ALWAYS.items() if a in airports})
-                    got += wz
+                    got += [d for d in parse_destinations(fetch_json(explore_url(origin, code)), origin)
+                            if d["dest"] in airports]
                 except Exception as exc:
-                    print(f"Wizz Air {origin}: CHYBA {exc}", file=sys.stderr)
-            for d in got:
-                d["originCity"] = FALLBACK_ORIGINS.get(origin, origin)
-                d["originNote"] = FALLBACK_NOTE.get(origin, "odlet z " + d["originCity"])
-            ok = [d for d in got if d["return"]]
-            print(f"{name} z {origin}: {len(got)} ponúk, {len(ok)} spiatočných"
-                  + (f", najlacnejšia {min(d['price'] for d in ok)} {ok[0]['currency']}" if ok else ""))
-            found += got
+                    print(f"momondo {origin} → {code}: CHYBA {exc}", file=sys.stderr)
+        if "wizzair" in use:
+            try:
+                wz, _ = fetch_wizz([origin], today, only={a: v for a, v in WIZZ_ALWAYS.items() if a in airports})
+                got += wz
+            except Exception as exc:
+                print(f"Wizz Air {origin}: CHYBA {exc}", file=sys.stderr)
+        for d in got:
+            d["originCity"] = FALLBACK_ORIGINS.get(origin, origin)
+            d["originNote"] = FALLBACK_NOTE.get(origin, "odlet z " + d["originCity"])
+        ok = [d for d in got if d["return"]]
+        print(f"Z {origin} do {', '.join(sorted(airports))}: {len(got)} ponúk, {len(ok)} spiatočných"
+              + (f", najlacnejšia {min(d['price'] for d in ok)} {ok[0]['currency']}" if ok else ""))
+        found += got
     return found
 
 
@@ -712,11 +708,13 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     for name, w in WATCH.items():
         # iba spiatočné letenky (s dátumom návratu)
         hits = [d for d in out if d["dest"] in w["airports"] and d["return"]]
-        if not hits and name in FALLBACK_WATCH:
-            hits = [d for d in fallback if d["dest"] in w["airports"] and d["return"]
-                    and d["origin"] in FALLBACK_WATCH[name]]
-            for d in hits:
+        if name in FALLBACK_WATCH:
+            # najlacnejšia z Viedne, Bratislavy aj ďalších letísk (Budapešť)
+            extra = [dict(d) for d in fallback if d["dest"] in w["airports"] and d["return"]
+                     and d["origin"] in FALLBACK_WATCH[name]]
+            for d in extra:
                 d["city"] = CITY_SK.get(d["city"], d["city"])
+            hits += extra
         deal = dict(min(hits, key=lambda d: d["price"])) if hits else None
         if deal:
             if w["featured"]:

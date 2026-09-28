@@ -461,7 +461,7 @@ class Lacne_Letenky_Live {
 		$unique = self::with_weather( $unique, is_array( $base ) ? $base : $prev, $prev );
 
 		// Bangkok, Dubaj, Abu Dhabí – iba spiatočné letenky
-		$prev_alt   = array(); // ponuky z náhradného letiska (SAE z Budapešti) – naživo sa nehľadajú
+		$prev_alt   = array(); // ponuky z ďalšieho letiska (SAE z Budapešti) – naživo sa nehľadajú, berú sa z GitHubu
 		foreach ( is_array( $prev ) && isset( $prev['watch'] ) ? $prev['watch'] : array() as $w ) {
 			if ( ! empty( $w['deal'] ) ) {
 				$d = $w['deal'];
@@ -479,7 +479,7 @@ class Lacne_Letenky_Live {
 					$deal = $d;
 				}
 			}
-			if ( ! $deal && isset( $prev_alt[ $name ] ) ) {
+			if ( isset( $prev_alt[ $name ] ) && ( ! $deal || $prev_alt[ $name ]['price'] < $deal['price'] ) ) {
 				$deal = $prev_alt[ $name ]; // prevPrice ostáva z aktualizácie na GitHube
 			} elseif ( $deal ) {
 				if ( $w['featured'] ) {
