@@ -15,10 +15,10 @@ window.LACNE_LETENKY_DATA = {
    "HUF": 367.1
   }
  },
- "updatedAt": "2026-09-28T16:11+02:00",
- "prevUpdatedAt": "2026-09-28T09:08+02:00",
+ "updatedAt": "2026-09-28T22:06+02:00",
+ "prevUpdatedAt": "2026-09-28T16:11+02:00",
  "slot": "vecer",
- "nextUpdate": "2026-09-28T18:00+02:00",
+ "nextUpdate": "2026-09-29T07:00+02:00",
  "schedule": [
   {
    "id": "rano",
@@ -75,7 +75,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 563,
     "currencyOriginal": "GBP",
-    "prevPrice": 671,
+    "prevPrice": 656,
     "weather": {
      "t": 31,
      "c": "cloud",
@@ -105,14 +105,14 @@ window.LACNE_LETENKY_DATA = {
     "price": 498,
     "currency": "EUR",
     "depart": "2026-11-30",
-    "return": "2026-12-09",
-    "nights": 9,
+    "return": "2026-12-11",
+    "nights": 11,
     "stops": 2,
-    "url": "https://www.momondo.co.uk/flight-search/VIE-CNX/2026-11-30/2026-12-09?sort=price_a",
+    "url": "https://www.momondo.co.uk/flight-search/VIE-CNX/2026-11-30/2026-12-11?sort=price_a",
     "source": "momondo",
     "priceOriginal": 427,
     "currencyOriginal": "GBP",
-    "prevPrice": 496,
+    "prevPrice": null,
     "weather": {
      "t": 27,
      "c": "sun",
@@ -130,7 +130,30 @@ window.LACNE_LETENKY_DATA = {
    "featured": false,
    "list": true,
    "note": null,
-   "deal": null,
+   "deal": {
+    "origin": "VIE",
+    "dest": "DPS",
+    "city": "Bali (Denpasar)",
+    "country": "Indonézia",
+    "countryCode": "ID",
+    "region": "Ázia",
+    "price": 544,
+    "currency": "EUR",
+    "depart": "2026-12-08",
+    "return": "2026-12-26",
+    "nights": 18,
+    "stops": 1,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-DPS/2026-12-08/2026-12-26?sort=price_a",
+    "source": "momondo",
+    "priceOriginal": 467,
+    "currencyOriginal": "GBP",
+    "prevPrice": null,
+    "weather": {
+     "t": 30,
+     "c": "rain",
+     "k": "c"
+    }
+   },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-DPS"
   },
   {
@@ -160,7 +183,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 747,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 871,
     "weather": {
      "t": 23,
      "c": "rain",
@@ -179,30 +202,7 @@ window.LACNE_LETENKY_DATA = {
    "featured": false,
    "list": true,
    "note": null,
-   "deal": {
-    "origin": "VIE",
-    "dest": "HAN",
-    "city": "Hanoj",
-    "country": "Vietnam",
-    "countryCode": "VN",
-    "region": "Ázia",
-    "price": 557,
-    "currency": "EUR",
-    "depart": "2026-11-02",
-    "return": "2026-12-01",
-    "nights": 29,
-    "stops": 2,
-    "url": "https://www.momondo.co.uk/flight-search/VIE-HAN/2026-11-02/2026-12-01?sort=price_a",
-    "source": "momondo",
-    "priceOriginal": 478,
-    "currencyOriginal": "GBP",
-    "prevPrice": null,
-    "weather": {
-     "t": 26,
-     "c": "rain",
-     "k": "c"
-    }
-   },
+   "deal": null,
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-SGN"
   },
   {
@@ -230,7 +230,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 400,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 466,
     "weather": {
      "t": 31,
      "c": "rain",
@@ -277,21 +277,21 @@ window.LACNE_LETENKY_DATA = {
     "country": "Singapur",
     "countryCode": "SG",
     "region": "Ázia",
-    "price": 541,
+    "price": 483,
     "currency": "EUR",
-    "depart": "2026-10-01",
-    "return": "2026-10-07",
-    "nights": 6,
-    "stops": 1,
-    "url": "https://www.momondo.co.uk/flight-search/VIE-SIN/2026-10-01/2026-10-07?sort=price_a",
+    "depart": "2026-12-08",
+    "return": "2026-12-26",
+    "nights": 18,
+    "stops": 0,
+    "url": "https://www.momondo.co.uk/flight-search/VIE-SIN/2026-12-08/2026-12-26?sort=price_a",
     "source": "momondo",
-    "priceOriginal": 464,
+    "priceOriginal": 414,
     "currencyOriginal": "GBP",
-    "prevPrice": 539,
+    "prevPrice": null,
     "weather": {
-     "t": 30,
+     "t": 31,
      "c": "rain",
-     "k": "f"
+     "k": "c"
     }
    },
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-SIN"
@@ -322,7 +322,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 451,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 526,
     "weather": {
      "t": 32,
      "c": "rain",
@@ -332,12 +332,47 @@ window.LACNE_LETENKY_DATA = {
    "searchUrl": "https://www.momondo.co.uk/explore/VIE-MNL"
   },
   {
-   "name": "SAE / Dubaj",
+   "name": "SAE – Dubaj",
    "airports": [
     "DXB",
     "DWC",
-    "AUH",
     "SHJ"
+   ],
+   "featured": false,
+   "list": true,
+   "note": "Dubaj, Šardžá",
+   "deal": {
+    "origin": "BUD",
+    "dest": "DXB",
+    "city": "Dubaj",
+    "country": "Spojené arabské emiráty",
+    "countryCode": "AE",
+    "region": "Ázia",
+    "price": 362,
+    "currency": "EUR",
+    "depart": "2026-11-08",
+    "return": "2026-11-11",
+    "nights": 3,
+    "stops": 0,
+    "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/DXB/2026-11-08/2026-11-11/1/0/0/null",
+    "source": "wizzair",
+    "originCity": "Budapešť",
+    "originNote": "odlet z Budapešti",
+    "priceOriginal": 132980,
+    "currencyOriginal": "HUF",
+    "prevPrice": null,
+    "weather": {
+     "t": 32,
+     "c": "sun",
+     "k": "c"
+    }
+   },
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-DXB"
+  },
+  {
+   "name": "SAE – Abu Dhabí",
+   "airports": [
+    "AUH"
    ],
    "featured": false,
    "list": true,
@@ -361,14 +396,14 @@ window.LACNE_LETENKY_DATA = {
     "originNote": "odlet z Budapešti",
     "priceOriginal": 132980,
     "currencyOriginal": "HUF",
-    "prevPrice": null,
+    "prevPrice": 362,
     "weather": {
      "t": 34,
      "c": "sun",
      "k": "c"
     }
    },
-   "searchUrl": "https://www.momondo.co.uk/explore/VIE-DXB"
+   "searchUrl": "https://www.momondo.co.uk/explore/VIE-AUH"
   }
  ],
  "deals": [
@@ -389,10 +424,10 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 14,
    "currencyOriginal": "GBP",
-   "prevPrice": 20,
+   "prevPrice": 16,
    "weather": {
-    "t": 22,
-    "c": "cloud",
+    "t": 21,
+    "c": "sun",
     "k": "f"
    }
   },
@@ -457,7 +492,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "wizzair",
    "prevPrice": 28,
    "weather": {
-    "t": 26,
+    "t": 27,
     "c": "cloud",
     "k": "f"
    }
@@ -479,7 +514,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "ryanair",
    "prevPrice": 30,
    "weather": {
-    "t": 13,
+    "t": 19,
     "c": "rain",
     "k": "f"
    }
@@ -493,38 +528,16 @@ window.LACNE_LETENKY_DATA = {
    "region": "Európa",
    "price": 30,
    "currency": "EUR",
-   "depart": "2026-10-13",
-   "return": "2026-10-21",
-   "nights": 8,
+   "depart": "2026-10-07",
+   "return": "2026-10-14",
+   "nights": 7,
    "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-13&dateIn=2026-10-21&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BLQ",
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-07&dateIn=2026-10-14&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BLQ",
    "source": "ryanair",
-   "prevPrice": 30,
+   "prevPrice": null,
    "weather": {
-    "t": 14,
-    "c": "rain",
-    "k": "f"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "BCN",
-   "city": "Barcelona",
-   "country": "Španielsko",
-   "countryCode": "ES",
-   "region": "Európa",
-   "price": 33,
-   "currency": "EUR",
-   "depart": "2026-10-10",
-   "return": "2026-10-15",
-   "nights": 5,
-   "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BCN",
-   "source": "ryanair",
-   "prevPrice": 32,
-   "weather": {
-    "t": 21,
-    "c": "rain",
+    "t": 26,
+    "c": "sun",
     "k": "f"
    }
   },
@@ -535,17 +548,17 @@ window.LACNE_LETENKY_DATA = {
    "country": "Taliansko",
    "countryCode": "IT",
    "region": "Európa",
-   "price": 33,
+   "price": 30,
    "currency": "EUR",
-   "depart": "2026-10-10",
+   "depart": "2026-10-13",
    "return": "2026-10-21",
-   "nights": 11,
+   "nights": 8,
    "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-21&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BRI",
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-13&dateIn=2026-10-21&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BRI",
    "source": "ryanair",
-   "prevPrice": 33,
+   "prevPrice": null,
    "weather": {
-    "t": 22,
+    "t": 27,
     "c": "rain",
     "k": "f"
    }
@@ -593,6 +606,50 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 15,
     "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
+   "dest": "BCN",
+   "city": "Barcelona",
+   "country": "Španielsko",
+   "countryCode": "ES",
+   "region": "Európa",
+   "price": 36,
+   "currency": "EUR",
+   "depart": "2026-10-10",
+   "return": "2026-10-15",
+   "nights": 5,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BCN",
+   "source": "ryanair",
+   "prevPrice": 33,
+   "weather": {
+    "t": 22,
+    "c": "sun",
+    "k": "f"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "ARN",
+   "city": "Štokholm",
+   "country": "Švédsko",
+   "countryCode": "SE",
+   "region": "Európa",
+   "price": 37,
+   "currency": "EUR",
+   "depart": "2026-10-13",
+   "return": "2026-10-20",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-13&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ARN",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 11,
+    "c": "cloud",
     "k": "c"
    }
   },
@@ -710,6 +767,28 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BTS",
+   "dest": "OSL",
+   "city": "Oslo Gardermoen",
+   "country": "Nórsko",
+   "countryCode": "NO",
+   "region": "Európa",
+   "price": 37,
+   "currency": "EUR",
+   "depart": "2026-12-16",
+   "return": "2026-12-25",
+   "nights": 9,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OSL/2026-12-16/2026-12-25/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": 43,
+   "weather": {
+    "t": 5,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
    "dest": "PMO",
    "city": "Palermo (Sicily)\r\n",
    "country": "Taliansko",
@@ -769,7 +848,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "wizzair",
    "prevPrice": 37,
    "weather": {
-    "t": 20,
+    "t": 19,
     "c": "cloud",
     "k": "f"
    }
@@ -813,31 +892,9 @@ window.LACNE_LETENKY_DATA = {
    "source": "wizzair",
    "prevPrice": 39,
    "weather": {
-    "t": 18,
+    "t": 26,
     "c": "cloud",
     "k": "f"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "ARN",
-   "city": "Štokholm",
-   "country": "Švédsko",
-   "countryCode": "SE",
-   "region": "Európa",
-   "price": 40,
-   "currency": "EUR",
-   "depart": "2026-10-14",
-   "return": "2026-10-20",
-   "nights": 6,
-   "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-14&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ARN",
-   "source": "ryanair",
-   "prevPrice": 40,
-   "weather": {
-    "t": 10,
-    "c": "cloud",
-    "k": "c"
    }
   },
   {
@@ -857,7 +914,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 35,
    "currencyOriginal": "GBP",
-   "prevPrice": 45,
+   "prevPrice": 41,
    "weather": {
     "t": 11,
     "c": "cloud",
@@ -925,7 +982,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "wizzair",
    "prevPrice": 41,
    "weather": {
-    "t": 24,
+    "t": 25,
     "c": "cloud",
     "k": "f"
    }
@@ -949,7 +1006,7 @@ window.LACNE_LETENKY_DATA = {
    "currencyOriginal": "GBP",
    "prevPrice": 42,
    "weather": {
-    "t": 14,
+    "t": 17,
     "c": "rain",
     "k": "f"
    }
@@ -963,39 +1020,17 @@ window.LACNE_LETENKY_DATA = {
    "region": "Európa",
    "price": 42,
    "currency": "EUR",
-   "depart": "2026-10-01",
-   "return": "2026-10-04",
-   "nights": 3,
+   "depart": "2026-10-04",
+   "return": "2026-10-06",
+   "nights": 2,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WAW/2026-10-01/2026-10-04/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WAW/2026-10-04/2026-10-06/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 42,
+   "prevPrice": null,
    "weather": {
-    "t": 18,
-    "c": "cloud",
-    "k": "f"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "OSL",
-   "city": "Oslo Gardermoen",
-   "country": "Nórsko",
-   "countryCode": "NO",
-   "region": "Európa",
-   "price": 43,
-   "currency": "EUR",
-   "depart": "2026-12-16",
-   "return": "2026-12-25",
-   "nights": 9,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OSL/2026-12-16/2026-12-25/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 43,
-   "weather": {
-    "t": 5,
+    "t": 17,
     "c": "rain",
-    "k": "c"
+    "k": "f"
    }
   },
   {
@@ -1007,15 +1042,15 @@ window.LACNE_LETENKY_DATA = {
    "region": "Európa",
    "price": 45,
    "currency": "EUR",
-   "depart": "2026-11-02",
+   "depart": "2026-10-30",
    "return": "2026-11-11",
-   "nights": 9,
+   "nights": 12,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ATH/2026-11-02/2026-11-11/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ATH/2026-10-30/2026-11-11/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 45,
+   "prevPrice": null,
    "weather": {
-    "t": 21,
+    "t": 22,
     "c": "cloud",
     "k": "c"
    }
@@ -1043,6 +1078,28 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
+   "origin": "VIE",
+   "dest": "BCN",
+   "city": "Barcelona",
+   "country": "Španielsko",
+   "countryCode": "ES",
+   "region": "Európa",
+   "price": 46,
+   "currency": "EUR",
+   "depart": "2026-10-10",
+   "return": "2026-10-21",
+   "nights": 11,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-21&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BCN",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 22,
+    "c": "sun",
+    "k": "f"
+   }
+  },
+  {
    "origin": "BTS",
    "dest": "LTN",
    "city": "London Luton",
@@ -1066,24 +1123,26 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BTS",
-   "dest": "AHO",
-   "city": "Alghero",
-   "country": "Taliansko",
-   "countryCode": "IT",
+   "dest": "DUB",
+   "city": "Dublin",
+   "country": "Írsko",
+   "countryCode": "IE",
    "region": "Európa",
    "price": 48,
    "currency": "EUR",
-   "depart": "2026-10-11",
-   "return": "2026-10-22",
-   "nights": 11,
+   "depart": "2026-11-21",
+   "return": "2026-11-22",
+   "nights": 1,
    "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-11&dateIn=2026-10-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AHO",
-   "source": "ryanair",
-   "prevPrice": 46,
+   "url": "https://www.momondo.co.uk/flight-search/BTS-DUB/2026-11-21/2026-11-22?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 41,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
    "weather": {
-    "t": 21,
+    "t": 8,
     "c": "rain",
-    "k": "f"
+    "k": "c"
    }
   },
   {
@@ -1103,7 +1162,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 42,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 49,
    "weather": {
     "t": 20,
     "c": "cloud",
@@ -1127,33 +1186,11 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 42,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 49,
    "weather": {
     "t": 16,
     "c": "cloud",
     "k": "c"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "BCN",
-   "city": "Barcelona",
-   "country": "Španielsko",
-   "countryCode": "ES",
-   "region": "Európa",
-   "price": 50,
-   "currency": "EUR",
-   "depart": "2026-10-06",
-   "return": "2026-10-16",
-   "nights": 10,
-   "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-06&dateIn=2026-10-16&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BCN",
-   "source": "ryanair",
-   "prevPrice": null,
-   "weather": {
-    "t": 22,
-    "c": "rain",
-    "k": "f"
    }
   },
   {
@@ -1173,31 +1210,55 @@ window.LACNE_LETENKY_DATA = {
    "source": "wizzair",
    "prevPrice": 50,
    "weather": {
-    "t": 15,
+    "t": 13,
     "c": "cloud",
     "k": "f"
    }
   },
   {
+   "origin": "VIE",
+   "dest": "MAN",
+   "city": "Manchester",
+   "country": "Spojené kráľovstvo",
+   "countryCode": "GB",
+   "region": "Európa",
+   "price": 51,
+   "currency": "EUR",
+   "depart": "2026-11-13",
+   "return": "2026-11-14",
+   "nights": 1,
+   "stops": 0,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-MAN/2026-11-13/2026-11-14?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 44,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
+   "weather": {
+    "t": 11,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
    "origin": "BTS",
-   "dest": "AGA",
-   "city": "Agadir",
-   "country": "Maroko",
-   "countryCode": "MA",
-   "region": "Afrika",
+   "dest": "AHO",
+   "city": "Alghero",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
    "price": 52,
    "currency": "EUR",
-   "depart": "2026-12-02",
-   "return": "2026-12-16",
+   "depart": "2026-10-08",
+   "return": "2026-10-22",
    "nights": 14,
    "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-02&dateIn=2026-12-16&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AGA",
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-08&dateIn=2026-10-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AHO",
    "source": "ryanair",
-   "prevPrice": 52,
+   "prevPrice": null,
    "weather": {
     "t": 26,
-    "c": "cloud",
-    "k": "c"
+    "c": "rain",
+    "k": "f"
    }
   },
   {
@@ -1215,9 +1276,31 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-26&dateIn=2026-12-04&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": 55,
+   "prevPrice": 54,
    "weather": {
     "t": 29,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
+   "dest": "AGA",
+   "city": "Agadir",
+   "country": "Maroko",
+   "countryCode": "MA",
+   "region": "Afrika",
+   "price": 54,
+   "currency": "EUR",
+   "depart": "2026-12-02",
+   "return": "2026-12-16",
+   "nights": 14,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-02&dateIn=2026-12-16&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AGA",
+   "source": "ryanair",
+   "prevPrice": 52,
+   "weather": {
+    "t": 26,
     "c": "cloud",
     "k": "c"
    }
@@ -1262,7 +1345,7 @@ window.LACNE_LETENKY_DATA = {
    "prevPrice": 55,
    "weather": {
     "t": 25,
-    "c": "cloud",
+    "c": "sun",
     "k": "f"
    }
   },
@@ -1283,10 +1366,10 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 48,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 56,
    "weather": {
-    "t": 21,
-    "c": "rain",
+    "t": 18,
+    "c": "sun",
     "k": "f"
    }
   },
@@ -1307,10 +1390,10 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 49,
    "currencyOriginal": "GBP",
-   "prevPrice": 56,
+   "prevPrice": 57,
    "weather": {
-    "t": 22,
-    "c": "rain",
+    "t": 24,
+    "c": "cloud",
     "k": "f"
    }
   },
@@ -1331,8 +1414,8 @@ window.LACNE_LETENKY_DATA = {
    "source": "wizzair",
    "prevPrice": 57,
    "weather": {
-    "t": 22,
-    "c": "sun",
+    "t": 21,
+    "c": "rain",
     "k": "f"
    }
   },
@@ -1355,8 +1438,8 @@ window.LACNE_LETENKY_DATA = {
    "currencyOriginal": "GBP",
    "prevPrice": 59,
    "weather": {
-    "t": 10,
-    "c": "rain",
+    "t": 12,
+    "c": "cloud",
     "k": "f"
    }
   },
@@ -1375,7 +1458,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-11&dateIn=2026-12-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGP",
    "source": "ryanair",
-   "prevPrice": 63,
+   "prevPrice": 62,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -1397,7 +1480,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-13&dateIn=2026-12-24&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ALC",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 62,
    "weather": {
     "t": 16,
     "c": "cloud",
@@ -1435,16 +1518,16 @@ window.LACNE_LETENKY_DATA = {
    "region": "Ázia",
    "price": 64,
    "currency": "EUR",
-   "depart": "2026-11-28",
-   "return": "2026-12-12",
-   "nights": 14,
+   "depart": "2026-11-18",
+   "return": "2026-11-25",
+   "nights": 7,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/GYD/2026-11-28/2026-12-12/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/GYD/2026-11-18/2026-11-25/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 64,
+   "prevPrice": null,
    "weather": {
-    "t": 13,
-    "c": "rain",
+    "t": 16,
+    "c": "cloud",
     "k": "c"
    }
   },
@@ -1455,43 +1538,19 @@ window.LACNE_LETENKY_DATA = {
    "country": "Grécko",
    "countryCode": "GR",
    "region": "Európa",
-   "price": 67,
+   "price": 66,
    "currency": "EUR",
-   "depart": "2026-11-26",
-   "return": "2026-12-10",
+   "depart": "2026-10-07",
+   "return": "2026-10-21",
    "nights": 14,
    "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-26&dateIn=2026-12-10&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ATH",
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-07&dateIn=2026-10-21&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ATH",
    "source": "ryanair",
-   "prevPrice": 67,
-   "weather": {
-    "t": 17,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "LON",
-   "city": "Londýn",
-   "country": "Spojené kráľovstvo",
-   "countryCode": "GB",
-   "region": "Európa",
-   "price": 70,
-   "currency": "EUR",
-   "depart": "2026-11-06",
-   "return": "2026-11-11",
-   "nights": 5,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-LON/2026-11-06/2026-11-11?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 60,
-   "currencyOriginal": "GBP",
    "prevPrice": null,
    "weather": {
-    "t": 14,
-    "c": "rain",
-    "k": "c"
+    "t": 21,
+    "c": "cloud",
+    "k": "f"
    }
   },
   {
@@ -1535,7 +1594,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 65,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 76,
    "weather": {
     "t": 10,
     "c": "cloud",
@@ -1543,25 +1602,25 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
-   "origin": "VIE",
-   "dest": "MXP",
-   "city": "Miláno",
-   "country": "Taliansko",
-   "countryCode": "IT",
+   "origin": "BTS",
+   "dest": "PMI",
+   "city": "Mallorca",
+   "country": "Španielsko",
+   "countryCode": "ES",
    "region": "Európa",
-   "price": 78,
+   "price": 77,
    "currency": "EUR",
-   "depart": "2026-10-13",
-   "return": "2026-10-17",
-   "nights": 4,
+   "depart": "2026-10-07",
+   "return": "2026-10-14",
+   "nights": 7,
    "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-MXP/2026-10-13/2026-10-17?sort=price_a",
+   "url": "https://www.momondo.co.uk/flight-search/BTS-PMI/2026-10-07/2026-10-14?sort=price_a",
    "source": "momondo",
-   "priceOriginal": 67,
+   "priceOriginal": 66,
    "currencyOriginal": "GBP",
-   "prevPrice": 78,
+   "prevPrice": null,
    "weather": {
-    "t": 14,
+    "t": 24,
     "c": "rain",
     "k": "f"
    }
@@ -1585,30 +1644,6 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 17,
     "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "NTE",
-   "city": "Nantes",
-   "country": "Francúzsko",
-   "countryCode": "FR",
-   "region": "Európa",
-   "price": 93,
-   "currency": "EUR",
-   "depart": "2026-11-15",
-   "return": "2026-11-22",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-NTE/2026-11-15/2026-11-22?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 80,
-   "currencyOriginal": "GBP",
-   "prevPrice": null,
-   "weather": {
-    "t": 13,
-    "c": "rain",
     "k": "c"
    }
   },
@@ -1673,7 +1708,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 150,
    "currencyOriginal": "GBP",
-   "prevPrice": 174,
+   "prevPrice": 175,
    "weather": {
     "t": 28,
     "c": "sun",
@@ -1687,41 +1722,17 @@ window.LACNE_LETENKY_DATA = {
    "country": "Tunisko",
    "countryCode": "TN",
    "region": "Afrika",
-   "price": 242,
+   "price": 240,
    "currency": "EUR",
    "depart": "2026-10-22",
    "return": "2026-11-08",
    "nights": 17,
-   "stops": 2,
+   "stops": 1,
    "url": "https://www.momondo.co.uk/flight-search/VIE-TUN/2026-10-22/2026-11-08?sort=price_a",
    "source": "momondo",
-   "priceOriginal": 208,
+   "priceOriginal": 206,
    "currencyOriginal": "GBP",
-   "prevPrice": 232,
-   "weather": {
-    "t": 26,
-    "c": "rain",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "NBO",
-   "city": "Nairobi",
-   "country": "Keňa",
-   "countryCode": "KE",
-   "region": "Afrika",
-   "price": 259,
-   "currency": "EUR",
-   "depart": "2026-12-01",
-   "return": "2026-12-09",
-   "nights": 8,
-   "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-NBO/2026-12-01/2026-12-09?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 222,
-   "currencyOriginal": "GBP",
-   "prevPrice": 258,
+   "prevPrice": 242,
    "weather": {
     "t": 26,
     "c": "rain",
@@ -1745,10 +1756,10 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 230,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 268,
    "weather": {
-    "t": 31,
-    "c": "sun",
+    "t": 29,
+    "c": "partly",
     "k": "f"
    }
   },
@@ -1793,10 +1804,10 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 257,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 300,
    "weather": {
-    "t": 32,
-    "c": "sun",
+    "t": 29,
+    "c": "partly",
     "k": "f"
    }
   },
@@ -1809,17 +1820,17 @@ window.LACNE_LETENKY_DATA = {
    "region": "Svet",
    "price": 349,
    "currency": "EUR",
-   "depart": "2026-12-06",
+   "depart": "2026-12-04",
    "return": "2026-12-11",
-   "nights": 5,
+   "nights": 7,
    "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/BTS-BSZ/2026-12-06/2026-12-11?sort=price_a",
+   "url": "https://www.momondo.co.uk/flight-search/BTS-BSZ/2026-12-04/2026-12-11?sort=price_a",
    "source": "momondo",
    "priceOriginal": 299,
    "currencyOriginal": "GBP",
    "prevPrice": null,
    "weather": {
-    "t": 4,
+    "t": 6,
     "c": "cloud",
     "k": "c"
    }
@@ -1841,7 +1852,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 312,
    "currencyOriginal": "GBP",
-   "prevPrice": 363,
+   "prevPrice": 364,
    "weather": {
     "t": 2,
     "c": "cloud",
@@ -1865,7 +1876,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 313,
    "currencyOriginal": "GBP",
-   "prevPrice": 364,
+   "prevPrice": 365,
    "weather": {
     "t": 28,
     "c": "sun",
@@ -1889,7 +1900,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 324,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 378,
    "weather": {
     "t": 31,
     "c": "sun",
@@ -1913,7 +1924,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 354,
    "currencyOriginal": "GBP",
-   "prevPrice": 411,
+   "prevPrice": 413,
    "weather": {
     "t": 32,
     "c": "sun",
@@ -1937,7 +1948,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 354,
    "currencyOriginal": "GBP",
-   "prevPrice": 411,
+   "prevPrice": 413,
    "weather": {
     "t": 3,
     "c": "cloud",
@@ -1953,17 +1964,17 @@ window.LACNE_LETENKY_DATA = {
    "region": "Svet",
    "price": 448,
    "currency": "EUR",
-   "depart": "2026-11-05",
+   "depart": "2026-11-07",
    "return": "2026-12-02",
-   "nights": 27,
+   "nights": 25,
    "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-ISB/2026-11-05/2026-12-02?sort=price_a",
+   "url": "https://www.momondo.co.uk/flight-search/VIE-ISB/2026-11-07/2026-12-02?sort=price_a",
    "source": "momondo",
    "priceOriginal": 384,
    "currencyOriginal": "GBP",
    "prevPrice": null,
    "weather": {
-    "t": 25,
+    "t": 24,
     "c": "sun",
     "k": "c"
    }
@@ -1984,6 +1995,30 @@ window.LACNE_LETENKY_DATA = {
    "url": "https://www.momondo.co.uk/flight-search/VIE-KUL/2026-11-04/2026-11-13?sort=price_a",
    "source": "momondo",
    "priceOriginal": 400,
+   "currencyOriginal": "GBP",
+   "prevPrice": 466,
+   "weather": {
+    "t": 31,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "SIN",
+   "city": "Singapur",
+   "country": "Singapur",
+   "countryCode": "SG",
+   "region": "Ázia",
+   "price": 483,
+   "currency": "EUR",
+   "depart": "2026-12-08",
+   "return": "2026-12-26",
+   "nights": 18,
+   "stops": 0,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-SIN/2026-12-08/2026-12-26?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 414,
    "currencyOriginal": "GBP",
    "prevPrice": null,
    "weather": {
@@ -2009,7 +2044,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 414,
    "currencyOriginal": "GBP",
-   "prevPrice": 481,
+   "prevPrice": 483,
    "weather": {
     "t": 16,
     "c": "cloud",
@@ -2033,7 +2068,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 427,
    "currencyOriginal": "GBP",
-   "prevPrice": 496,
+   "prevPrice": 498,
    "weather": {
     "t": 29,
     "c": "cloud",
@@ -2050,14 +2085,14 @@ window.LACNE_LETENKY_DATA = {
    "price": 498,
    "currency": "EUR",
    "depart": "2026-11-30",
-   "return": "2026-12-09",
-   "nights": 9,
+   "return": "2026-12-11",
+   "nights": 11,
    "stops": 2,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-CNX/2026-11-30/2026-12-09?sort=price_a",
+   "url": "https://www.momondo.co.uk/flight-search/VIE-CNX/2026-11-30/2026-12-11?sort=price_a",
    "source": "momondo",
    "priceOriginal": 427,
    "currencyOriginal": "GBP",
-   "prevPrice": 496,
+   "prevPrice": null,
    "weather": {
     "t": 27,
     "c": "sun",
@@ -2081,7 +2116,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 430,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 501,
    "weather": {
     "t": 12,
     "c": "rain",
@@ -2105,7 +2140,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 451,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 526,
    "weather": {
     "t": 32,
     "c": "rain",
@@ -2129,7 +2164,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 459,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 535,
    "weather": {
     "t": 12,
     "c": "rain",
@@ -2138,48 +2173,24 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "VIE",
-   "dest": "SIN",
-   "city": "Singapur",
-   "country": "Singapur",
-   "countryCode": "SG",
+   "dest": "DPS",
+   "city": "Bali (Denpasar)",
+   "country": "Indonézia",
+   "countryCode": "ID",
    "region": "Ázia",
-   "price": 541,
+   "price": 544,
    "currency": "EUR",
-   "depart": "2026-10-01",
-   "return": "2026-10-07",
-   "nights": 6,
+   "depart": "2026-12-08",
+   "return": "2026-12-26",
+   "nights": 18,
    "stops": 1,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-SIN/2026-10-01/2026-10-07?sort=price_a",
+   "url": "https://www.momondo.co.uk/flight-search/VIE-DPS/2026-12-08/2026-12-26?sort=price_a",
    "source": "momondo",
-   "priceOriginal": 464,
-   "currencyOriginal": "GBP",
-   "prevPrice": 539,
-   "weather": {
-    "t": 30,
-    "c": "rain",
-    "k": "f"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "HAN",
-   "city": "Hanoj",
-   "country": "Vietnam",
-   "countryCode": "VN",
-   "region": "Ázia",
-   "price": 557,
-   "currency": "EUR",
-   "depart": "2026-11-02",
-   "return": "2026-12-01",
-   "nights": 29,
-   "stops": 2,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-HAN/2026-11-02/2026-12-01?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 478,
+   "priceOriginal": 467,
    "currencyOriginal": "GBP",
    "prevPrice": null,
    "weather": {
-    "t": 26,
+    "t": 30,
     "c": "rain",
     "k": "c"
    }
@@ -2201,7 +2212,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 482,
    "currencyOriginal": "GBP",
-   "prevPrice": 560,
+   "prevPrice": 562,
    "weather": {
     "t": 22,
     "c": "cloud",
@@ -2225,7 +2236,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 499,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 582,
    "weather": {
     "t": 30,
     "c": "rain",
@@ -2249,9 +2260,33 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 500,
    "currencyOriginal": "GBP",
-   "prevPrice": 581,
+   "prevPrice": 583,
    "weather": {
     "t": 31,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "NBO",
+   "city": "Nairobi",
+   "country": "Keňa",
+   "countryCode": "KE",
+   "region": "Afrika",
+   "price": 588,
+   "currency": "EUR",
+   "depart": "2026-12-06",
+   "return": "2026-12-14",
+   "nights": 8,
+   "stops": 1,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-NBO/2026-12-06/2026-12-14?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 504,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
+   "weather": {
+    "t": 26,
     "c": "rain",
     "k": "c"
    }
@@ -2273,7 +2308,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 506,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 590,
    "weather": {
     "t": 30,
     "c": "rain",
@@ -2297,7 +2332,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 524,
    "currencyOriginal": "GBP",
-   "prevPrice": 609,
+   "prevPrice": 611,
    "weather": {
     "t": 32,
     "c": "rain",
@@ -2321,10 +2356,10 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 528,
    "currencyOriginal": "GBP",
-   "prevPrice": 614,
+   "prevPrice": 615,
    "weather": {
-    "t": 29,
-    "c": "cloud",
+    "t": 28,
+    "c": "sun",
     "k": "f"
    }
   },
@@ -2345,7 +2380,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 556,
    "currencyOriginal": "GBP",
-   "prevPrice": 646,
+   "prevPrice": 648,
    "weather": {
     "t": 26,
     "c": "rain",
@@ -2369,7 +2404,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 557,
    "currencyOriginal": "GBP",
-   "prevPrice": 647,
+   "prevPrice": 649,
    "weather": {
     "t": 30,
     "c": "rain",
@@ -2393,7 +2428,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 563,
    "currencyOriginal": "GBP",
-   "prevPrice": 671,
+   "prevPrice": 656,
    "weather": {
     "t": 31,
     "c": "cloud",
@@ -2417,7 +2452,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 568,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 662,
    "weather": {
     "t": 12,
     "c": "rain",
@@ -2441,11 +2476,35 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 569,
    "currencyOriginal": "GBP",
+   "prevPrice": 663,
+   "weather": {
+    "t": 25,
+    "c": "rain",
+    "k": "f"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "JNB",
+   "city": "Johannesburg",
+   "country": "Južná Afrika",
+   "countryCode": "ZA",
+   "region": "Afrika",
+   "price": 669,
+   "currency": "EUR",
+   "depart": "2026-12-16",
+   "return": "2027-01-13",
+   "nights": 28,
+   "stops": 1,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-JNB/2026-12-16/2027-01-13?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 574,
+   "currencyOriginal": "GBP",
    "prevPrice": null,
    "weather": {
-    "t": 18,
-    "c": "cloud",
-    "k": "f"
+    "t": 26,
+    "c": "rain",
+    "k": "c"
    }
   },
   {
@@ -2465,35 +2524,11 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 600,
    "currencyOriginal": "GBP",
-   "prevPrice": 697,
+   "prevPrice": 699,
    "weather": {
     "t": 25,
     "c": "rain",
     "k": "c"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "IXZ",
-   "city": "Port Blair",
-   "country": "India",
-   "countryCode": "IN",
-   "region": "Ázia",
-   "price": 710,
-   "currency": "EUR",
-   "depart": "2026-10-12",
-   "return": "2026-10-16",
-   "nights": 4,
-   "stops": 3,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-IXZ/2026-10-12/2026-10-16?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 609,
-   "currencyOriginal": "GBP",
-   "prevPrice": 708,
-   "weather": {
-    "t": 31,
-    "c": "rain",
-    "k": "f"
    }
   },
   {
@@ -2513,35 +2548,11 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 617,
    "currencyOriginal": "GBP",
-   "prevPrice": 717,
+   "prevPrice": 719,
    "weather": {
     "t": 26,
     "c": "cloud",
     "k": "c"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "USM",
-   "city": "Ko Samui",
-   "country": "Thajsko",
-   "countryCode": "TH",
-   "region": "Ázia",
-   "price": 731,
-   "currency": "EUR",
-   "depart": "2026-10-08",
-   "return": "2026-10-21",
-   "nights": 13,
-   "stops": 2,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-USM/2026-10-08/2026-10-21?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 627,
-   "currencyOriginal": "GBP",
-   "prevPrice": null,
-   "weather": {
-    "t": 30,
-    "c": "rain",
-    "k": "f"
    }
   },
   {
@@ -2561,7 +2572,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 646,
    "currencyOriginal": "GBP",
-   "prevPrice": 751,
+   "prevPrice": 753,
    "weather": {
     "t": 26,
     "c": "rain",
@@ -2585,7 +2596,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 673,
    "currencyOriginal": "GBP",
-   "prevPrice": 782,
+   "prevPrice": 785,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -2609,9 +2620,33 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 698,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 814,
    "weather": {
     "t": 27,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "IXZ",
+   "city": "Port Blair",
+   "country": "India",
+   "countryCode": "IN",
+   "region": "Ázia",
+   "price": 829,
+   "currency": "EUR",
+   "depart": "2026-12-10",
+   "return": "2026-12-24",
+   "nights": 14,
+   "stops": 1,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-IXZ/2026-12-10/2026-12-24?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 711,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
+   "weather": {
+    "t": 30,
     "c": "rain",
     "k": "c"
    }
@@ -2633,7 +2668,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 724,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 844,
    "weather": {
     "t": 22,
     "c": "rain",
@@ -2657,7 +2692,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 731,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 852,
    "weather": {
     "t": 24,
     "c": "rain",
@@ -2681,7 +2716,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 739,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 861,
    "weather": {
     "t": 18,
     "c": "cloud",
