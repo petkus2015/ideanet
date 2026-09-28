@@ -475,11 +475,19 @@ def wizz_routes(base: str, origins) -> dict[str, list[dict]]:
     return routes
 
 
-def wizz_prices(flights) -> dict:
-    """Denné najnižšie ceny z odpovede cenového kalendára (iba dni s cenou na predaj)."""
+def wizz_prices(flights, dep: str | None = None, arr: str | None = None) -> dict:
+    """Denné najnižšie ceny z odpovede cenového kalendára (iba dni s cenou na predaj).
+
+    dep/arr: iba lety presne medzi týmito letiskami – Wizz pri mestách s viacerými letiskami
+    (Dubaj DXB/DWC) vie vrátiť aj lety na iné letisko.
+    """
     out: dict = {}
     for f in flights or []:
         if f.get("priceType") not in (None, "price"):
+            continue
+        if dep and f.get("departureStation") and f["departureStation"] != dep:
+            continue
+        if arr and f.get("arrivalStation") and f["arrivalStation"] != arr:
             continue
         amount = pick(f, "price.amount")
         day = parse_date(f.get("departureDate"))
@@ -547,8 +555,12 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
                         "priceType": "regular", "adultCount": 1, "childCount": 0, "infantCount": 0,
                     }
                     res = wizz_timetable(base, body)
-                    outs.update(wizz_prices(res.get("outboundFlights")))
-                    for k, v in wizz_prices(res.get("returnFlights")).items():
+                    if dst.get("probe"):
+                        seen = {(f.get("departureStation"), f.get("arrivalStation"))
+                                for f in (res.get("outboundFlights") or []) + (res.get("returnFlights") or [])}
+                        print(f"Wizz Air {origin}-{dst['iata']} {start}: trasy v odpovedi {sorted(map(str, seen))}")
+                    outs.update(wizz_prices(res.get("outboundFlights"), origin, dst["iata"]))
+                    for k, v in wizz_prices(res.get("returnFlights"), dst["iata"], origin).items():
                         if k not in rets or v[0] < rets[k][0]:
                             rets[k] = v
                     start = end + dt.timedelta(days=1)
