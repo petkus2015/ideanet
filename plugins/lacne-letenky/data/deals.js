@@ -15,7 +15,7 @@ window.LACNE_LETENKY_DATA = {
    "HUF": 365.28
   }
  },
- "updatedAt": "2026-09-28T08:57+02:00",
+ "updatedAt": "2026-09-28T09:08+02:00",
  "slot": "rano",
  "nextUpdate": "2026-09-28T12:00+02:00",
  "schedule": [
@@ -111,7 +111,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 414,
     "currencyOriginal": "GBP",
-    "prevPrice": 496,
+    "prevPrice": 481,
     "weather": {
      "t": 29,
      "c": "rain",
@@ -321,7 +321,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 482,
     "currencyOriginal": "GBP",
-    "prevPrice": 582,
+    "prevPrice": 560,
     "weather": {
      "t": 31,
      "c": "rain",
@@ -350,20 +350,20 @@ window.LACNE_LETENKY_DATA = {
     "region": "Ázia",
     "price": 364,
     "currency": "EUR",
-    "depart": "2026-11-05",
-    "return": "2026-11-11",
-    "nights": 6,
+    "depart": "2026-12-10",
+    "return": "2026-12-24",
+    "nights": 14,
     "stops": 0,
-    "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/AUH/2026-11-05/2026-11-11/1/0/0/null",
+    "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/AUH/2026-12-10/2026-12-24/1/0/0/null",
     "source": "wizzair",
     "originCity": "Budapešť",
     "originNote": "odlet z Budapešti",
     "priceOriginal": 132980,
     "currencyOriginal": "HUF",
-    "prevPrice": null,
+    "prevPrice": 364,
     "weather": {
-     "t": 34,
-     "c": "sun",
+     "t": 29,
+     "c": "cloud",
      "k": "c"
     }
    },
@@ -371,28 +371,6 @@ window.LACNE_LETENKY_DATA = {
   }
  ],
  "deals": [
-  {
-   "origin": "BTS",
-   "dest": "SJJ",
-   "city": "Sarajevo",
-   "country": "Bosna a Hercegovina",
-   "countryCode": "BA",
-   "region": "Európa",
-   "price": 20,
-   "currency": "EUR",
-   "depart": "2026-10-04",
-   "return": "2026-10-06",
-   "nights": 2,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SJJ/2026-10-04/2026-10-06/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 20,
-   "weather": {
-    "t": 22,
-    "c": "cloud",
-    "k": "f"
-   }
-  },
   {
    "origin": "BTS",
    "dest": "TZL",
@@ -432,7 +410,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PDV/2026-10-17/2026-10-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 33,
+   "prevPrice": 28,
    "weather": {
     "t": 19,
     "c": "cloud",
@@ -454,7 +432,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SKP/2026-11-03/2026-11-06/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 30,
+   "prevPrice": 28,
    "weather": {
     "t": 17,
     "c": "cloud",
@@ -476,7 +454,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TIA/2026-10-12/2026-10-21/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 30,
+   "prevPrice": 28,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -542,7 +520,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-10&dateIn=2026-10-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BCN",
    "source": "ryanair",
-   "prevPrice": 36,
+   "prevPrice": 32,
    "weather": {
     "t": 21,
     "c": "rain",
@@ -556,7 +534,7 @@ window.LACNE_LETENKY_DATA = {
    "country": "Taliansko",
    "countryCode": "IT",
    "region": "Európa",
-   "price": 32,
+   "price": 33,
    "currency": "EUR",
    "depart": "2026-10-10",
    "return": "2026-10-21",
@@ -610,7 +588,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/NAP/2026-12-03/2026-12-10/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 38,
+   "prevPrice": 35,
    "weather": {
     "t": 15,
     "c": "rain",
@@ -643,6 +621,28 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BTS",
+   "dest": "SJJ",
+   "city": "Sarajevo",
+   "country": "Bosna a Hercegovina",
+   "countryCode": "BA",
+   "region": "Európa",
+   "price": 37,
+   "currency": "EUR",
+   "depart": "2026-12-06",
+   "return": "2026-12-20",
+   "nights": 14,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SJJ/2026-12-06/2026-12-20/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": 20,
+   "weather": {
+    "t": 9,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
    "dest": "TGD",
    "city": "Podgorica",
    "country": "Čierna Hora",
@@ -656,7 +656,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TGD/2026-10-06/2026-10-08/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40,
+   "prevPrice": 37,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -678,7 +678,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BSL/2026-11-02/2026-11-04/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40,
+   "prevPrice": 37,
    "weather": {
     "t": 14,
     "c": "cloud",
@@ -700,7 +700,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OHD/2026-10-18/2026-10-22/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43,
+   "prevPrice": 37,
    "weather": {
     "t": 17,
     "c": "cloud",
@@ -722,7 +722,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PMO/2026-11-01/2026-11-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43,
+   "prevPrice": 37,
    "weather": {
     "t": 22,
     "c": "cloud",
@@ -744,7 +744,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/RMO/2026-11-11/2026-11-25/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40,
+   "prevPrice": 37,
    "weather": {
     "t": 10,
     "c": "cloud",
@@ -766,7 +766,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2026-10-08/2026-10-13/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 40,
+   "prevPrice": 37,
    "weather": {
     "t": 20,
     "c": "cloud",
@@ -810,7 +810,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PRN/2026-10-13/2026-10-15/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43,
+   "prevPrice": 39,
    "weather": {
     "t": 24,
     "c": "cloud",
@@ -832,7 +832,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-14&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ARN",
    "source": "ryanair",
-   "prevPrice": 44,
+   "prevPrice": 40,
    "weather": {
     "t": 10,
     "c": "cloud",
@@ -854,7 +854,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BER/2026-10-19/2026-10-27/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 45,
+   "prevPrice": 41,
    "weather": {
     "t": 15,
     "c": "cloud",
@@ -876,29 +876,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/FCO/2026-10-31/2026-11-05/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 45,
-   "weather": {
-    "t": 21,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "ROM",
-   "city": "Rome (All Airports)",
-   "country": "Taliansko",
-   "countryCode": "IT",
-   "region": "Európa",
-   "price": 41,
-   "currency": "EUR",
-   "depart": "2026-10-31",
-   "return": "2026-11-05",
-   "nights": 5,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ROM/2026-10-31/2026-11-05/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 45,
+   "prevPrice": 41,
    "weather": {
     "t": 21,
     "c": "cloud",
@@ -920,7 +898,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SUF/2026-10-05/2026-10-16/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 43,
+   "prevPrice": 41,
    "weather": {
     "t": 24,
     "c": "cloud",
@@ -961,34 +939,17 @@ window.LACNE_LETENKY_DATA = {
    "price": 42,
    "currency": "EUR",
    "depart": "2026-10-01",
-   "return": "2026-10-03",
-   "nights": 2,
+   "return": "2026-10-04",
+   "nights": 3,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WAW/2026-10-01/2026-10-03/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WAW/2026-10-01/2026-10-04/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 30,
+   "prevPrice": 42,
    "weather": {
     "t": 18,
     "c": "cloud",
     "k": "f"
    }
-  },
-  {
-   "origin": "BTS",
-   "dest": "WSW",
-   "city": "Warsaw Any",
-   "country": "Poľsko",
-   "countryCode": "PL",
-   "region": "Európa",
-   "price": 42,
-   "currency": "EUR",
-   "depart": "2026-10-01",
-   "return": "2026-10-03",
-   "nights": 2,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WSW/2026-10-01/2026-10-03/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 46
   },
   {
    "origin": "BTS",
@@ -1005,29 +966,12 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OSL/2026-12-16/2026-12-25/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 47,
+   "prevPrice": 43,
    "weather": {
     "t": 5,
     "c": "rain",
     "k": "c"
    }
-  },
-  {
-   "origin": "BTS",
-   "dest": "OOS",
-   "city": "Oslo (All Airports)",
-   "country": "Nórsko",
-   "countryCode": "NO",
-   "region": "Európa",
-   "price": 43,
-   "currency": "EUR",
-   "depart": "2026-12-16",
-   "return": "2026-12-25",
-   "nights": 9,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OOS/2026-12-16/2026-12-25/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 47
   },
   {
    "origin": "VIE",
@@ -1046,7 +990,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 39,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 12,
     "c": "rain",
@@ -1092,7 +1036,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ATH/2026-11-02/2026-11-11/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 50,
+   "prevPrice": 45,
    "weather": {
     "t": 21,
     "c": "cloud",
@@ -1114,7 +1058,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/EVN/2026-11-03/2026-11-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 50,
+   "prevPrice": 45,
    "weather": {
     "t": 16,
     "c": "sun",
@@ -1182,7 +1126,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LTN/2026-11-04/2026-11-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 52,
+   "prevPrice": 47,
    "weather": {
     "t": 13,
     "c": "rain",
@@ -1228,7 +1172,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-06&dateIn=2026-10-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BCN",
    "source": "ryanair",
-   "prevPrice": 51,
+   "prevPrice": 50,
    "weather": {
     "t": 22,
     "c": "rain",
@@ -1250,7 +1194,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/DTM/2026-10-10/2026-10-13/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 56,
+   "prevPrice": 50,
    "weather": {
     "t": 15,
     "c": "cloud",
@@ -1316,7 +1260,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/NCE/2026-10-06/2026-10-08/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 57,
+   "prevPrice": 55,
    "weather": {
     "t": 25,
     "c": "cloud",
@@ -1406,7 +1350,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/JMK/2026-10-12/2026-10-16/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 64,
+   "prevPrice": 57,
    "weather": {
     "t": 22,
     "c": "sun",
@@ -1452,7 +1396,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LCA/2026-11-21/2026-11-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 70,
+   "prevPrice": 62,
    "weather": {
     "t": 24,
     "c": "cloud",
@@ -1496,7 +1440,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/GYD/2026-11-28/2026-12-12/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 76,
+   "prevPrice": 64,
    "weather": {
     "t": 13,
     "c": "rain",
@@ -1510,19 +1454,19 @@ window.LACNE_LETENKY_DATA = {
    "country": "Grécko",
    "countryCode": "GR",
    "region": "Európa",
-   "price": 65,
+   "price": 67,
    "currency": "EUR",
-   "depart": "2026-10-06",
-   "return": "2026-10-20",
+   "depart": "2026-11-26",
+   "return": "2026-12-10",
    "nights": 14,
    "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-06&dateIn=2026-10-20&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ATH",
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-26&dateIn=2026-12-10&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ATH",
    "source": "ryanair",
-   "prevPrice": 64,
+   "prevPrice": 65,
    "weather": {
-    "t": 21,
+    "t": 17,
     "c": "cloud",
-    "k": "f"
+    "k": "c"
    }
   },
   {
@@ -1542,7 +1486,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 59,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 69,
    "weather": {
     "t": 13,
     "c": "rain",
@@ -1570,6 +1514,78 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 9,
     "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "STO",
+   "city": "Štokholm",
+   "country": "Švédsko",
+   "countryCode": "SE",
+   "region": "Európa",
+   "price": 78,
+   "currency": "EUR",
+   "depart": "2026-11-06",
+   "return": "2026-11-09",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-STO/2026-11-06/2026-11-09?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 67,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
+   "weather": {
+    "t": 9,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "MXP",
+   "city": "Miláno",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 78,
+   "currency": "EUR",
+   "depart": "2026-10-13",
+   "return": "2026-10-17",
+   "nights": 4,
+   "stops": 1,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-MXP/2026-10-13/2026-10-17?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 67,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
+   "weather": {
+    "t": 14,
+    "c": "rain",
+    "k": "f"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "BVA",
+   "city": "Paríž",
+   "country": "Francúzsko",
+   "countryCode": "FR",
+   "region": "Európa",
+   "price": 84,
+   "currency": "EUR",
+   "depart": "2026-11-08",
+   "return": "2026-11-12",
+   "nights": 4,
+   "stops": 0,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-BVA/2026-11-08/2026-11-12?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 72,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
+   "weather": {
+    "t": 13,
+    "c": "cloud",
     "k": "c"
    }
   },
@@ -1610,7 +1626,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/HRG/2026-12-07/2026-12-21/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": 106,
+   "prevPrice": 102,
    "weather": {
     "t": 25,
     "c": "cloud",
@@ -1680,7 +1696,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 153,
    "currencyOriginal": "GBP",
-   "prevPrice": 177,
+   "prevPrice": 178,
    "weather": {
     "t": 30,
     "c": "sun",
@@ -1728,7 +1744,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 200,
    "currencyOriginal": "GBP",
-   "prevPrice": 221,
+   "prevPrice": 232,
    "weather": {
     "t": 26,
     "c": "rain",
@@ -1872,7 +1888,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 354,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 411,
    "weather": {
     "t": 32,
     "c": "sun",
@@ -1968,7 +1984,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 414,
    "currencyOriginal": "GBP",
-   "prevPrice": 517,
+   "prevPrice": 481,
    "weather": {
     "t": 29,
     "c": "rain",
@@ -2040,7 +2056,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 427,
    "currencyOriginal": "GBP",
-   "prevPrice": 274,
+   "prevPrice": 496,
    "weather": {
     "t": 29,
     "c": "cloud",
@@ -2160,7 +2176,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 482,
    "currencyOriginal": "GBP",
-   "prevPrice": 582,
+   "prevPrice": 560,
    "weather": {
     "t": 31,
     "c": "rain",
@@ -2232,7 +2248,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 500,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 581,
    "weather": {
     "t": 31,
     "c": "rain",
@@ -2280,7 +2296,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 528,
    "currencyOriginal": "GBP",
-   "prevPrice": 582,
+   "prevPrice": 614,
    "weather": {
     "t": 29,
     "c": "cloud",
@@ -2328,7 +2344,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 547,
    "currencyOriginal": "GBP",
-   "prevPrice": 514,
+   "prevPrice": 636,
    "weather": {
     "t": 18,
     "c": "cloud",
@@ -2400,7 +2416,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 557,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 647,
    "weather": {
     "t": 30,
     "c": "rain",
@@ -2472,7 +2488,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 577,
    "currencyOriginal": "GBP",
-   "prevPrice": 652,
+   "prevPrice": 671,
    "weather": {
     "t": 31,
     "c": "cloud",
@@ -2544,7 +2560,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 609,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 708,
    "weather": {
     "t": 31,
     "c": "rain",
@@ -2568,7 +2584,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 617,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 717,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -2592,7 +2608,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 646,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 751,
    "weather": {
     "t": 26,
     "c": "rain",
@@ -2616,7 +2632,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 673,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 782,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -2640,7 +2656,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 689,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 801,
    "weather": {
     "t": 15,
     "c": "rain",
@@ -2664,7 +2680,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 713,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 829,
    "weather": {
     "t": 31,
     "c": "sun",
