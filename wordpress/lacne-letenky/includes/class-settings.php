@@ -117,6 +117,29 @@ class Lacne_Letenky_Settings {
 						echo is_array( $ls ) ? esc_html( wp_date( 'j. n. Y H:i', $ls['time'] ) . ' – ' . ( $ls['ok'] ? 'OK, ' : 'chyba: ' ) . $ls['message'] ) : '—';
 						?>
 					</td></tr>
+					<tr><th>Počasie v destináciách</th><td>
+						<?php
+						$ws = get_option( Lacne_Letenky_Weather::STATUS );
+						echo is_array( $ws ) ? esc_html( wp_date( 'j. n. Y H:i', $ws['time'] ) . ' – ' . ( $ws['ok'] ? 'OK, ' : 'chyba: ' ) . $ws['message'] ) : '—';
+						$shown = 0;
+						$all   = 0;
+						if ( is_array( $data ) ) {
+							$list = isset( $data['deals'] ) && is_array( $data['deals'] ) ? $data['deals'] : array();
+							foreach ( isset( $data['watch'] ) && is_array( $data['watch'] ) ? $data['watch'] : array() as $w ) {
+								if ( ! empty( $w['deal'] ) ) {
+									$list[] = $w['deal'];
+								}
+							}
+							$all = count( $list );
+							foreach ( $list as $d ) {
+								if ( ! empty( $d['weather'] ) ) {
+									$shown++;
+								}
+							}
+						}
+						echo $all ? esc_html( sprintf( ' · počasie má %d z %d aktuálnych ponúk', $shown, $all ) ) : '';
+						?>
+					</td></tr>
 					<tr><th>Posledné načítanie zdroja</th><td>
 						<?php
 						if ( is_array( $status ) ) {

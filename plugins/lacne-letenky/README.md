@@ -50,11 +50,13 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
 - výber **Všetky / Európa / Mimo Európy** pod ponukami; ukladá sa až 50 najlacnejších v Európe a 50 mimo nej
 - karty v posuvnom páse (naraz 1,5 karty, na počítači so šípkami), zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena v €)
 - štítok „Priamy“ a zmena ceny oproti predchádzajúcemu hľadaniu (▼ o X € lacnejšie / ▲ drahšie) – iba pri tom istom lete (letiská aj dátumy tam a späť)
-- **počasie v cieli v deň príletu**: ikona a teplota cez deň z [Open-Meteo](https://open-meteo.com/)
-  (CC BY 4.0, bez kľúča) – do 15 dní predpoveď, ďalej odhad z rovnakého obdobia za posledné 2 roky
-  (označený „~“). Počíta ho `scripts/weather.py` pri aktualizácii, súradnice letísk z OurAirports
-  sa ukladajú do `data/airports.json`. Vypnutie: `update_deals.py --no-weather`.
-- čas poslednej aktualizácie
+- **počasie v cieli v deň odletu**: ikona a teplota cez deň z [Open-Meteo](https://open-meteo.com/)
+  (CC BY 4.0, bez kľúča) – do 15 dní predpoveď, ďalej typické počasie v danom období z posledných
+  3 rokov (označené „~“). Počíta ho `scripts/weather.py` pri aktualizácii a ukladá do `data/`:
+  `weather.json` (pre každú destináciu predpoveď a tabuľka typického počasia po 10-dňových úsekoch roka),
+  `climate.json` (uložená klimatická tabuľka, dopĺňa sa o nové letiská, najviac 120 za beh) a
+  `airports.json` (súradnice letísk z OurAirports). WordPress plugin z `weather.json` dopočíta počasie
+  aj ponukám, ktoré našlo až živé hľadanie. Vypnutie: `update_deals.py --no-weather`.
 - klik na kartu otvorí vyhľadávanie danej trasy a termínu na momondo.co.uk
 - lety s odletom dnes alebo skôr sa nezobrazia
 - ak sú dáta staršie ako 36 hodín (aktualizácia viackrát zlyhala) alebo ešte žiadne nie sú,

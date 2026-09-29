@@ -459,6 +459,8 @@ class Lacne_Letenky_Live {
 
 		// počasie z dát z GitHubu (predošlé živé hľadanie ho nemusí mať – napr. z verzie bez počasia)
 		$unique = self::with_weather( $unique, is_array( $base ) ? $base : $prev, $prev );
+		// a z tabuliek počasia pre každú destináciu a dátum (weather.json) – tie majú prednosť
+		$unique = Lacne_Letenky_Weather::apply( $unique );
 
 		// Bangkok, Dubaj, Abu Dhabí – iba spiatočné letenky
 		$prev_alt   = array(); // ponuky z ďalšieho letiska (SAE z Budapešti) – naživo sa nehľadajú, berú sa z GitHubu
@@ -486,6 +488,10 @@ class Lacne_Letenky_Live {
 					$deal['city'] = $name; // pri zozname ostane skutočné mesto (Tokio, Phuket…)
 				}
 				$deal['prevPrice'] = isset( $prev_price[ self::flight_key( $deal ) ] ) ? $prev_price[ self::flight_key( $deal ) ] : null;
+			}
+			if ( $deal ) {
+				$w = Lacne_Letenky_Weather::apply( array( $deal ) );
+				$deal = $w[0];
 			}
 			$watch[] = array(
 				'name' => $name, 'airports' => $w['airports'], 'featured' => $w['featured'],

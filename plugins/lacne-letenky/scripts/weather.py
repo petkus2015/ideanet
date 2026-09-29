@@ -1,12 +1,18 @@
-"""Počasie v cieľovej destinácii v deň príletu (odletu tam) – k ponukám v deals.json.
+"""Počasie v cieľovej destinácii v deň odletu – k ponukám v deals.json a v tabuľkách pre plugin.
 
 Zdroj: Open-Meteo (zadarmo, bez kľúča).
-- do 15 dní od dnes: predpoveď (forecast API), k = "f"
-- ďalej: odhad z minulých rokov – priemer denných maxím v rovnakom období (±3 dni)
-  za posledné 2 roky (archive API), k = "c"
+- predpoveď na 16 dní pre každú destináciu (k = "f")
+- ďalej: typické počasie v danom období z posledných 3 rokov (archive API), po 10-dňových
+  úsekoch roka (36 úsekov): priemer denných maxím a najčastejšie počasie (k = "c")
 
-Súradnice letísk: OurAirports (verejná doména), uložené v data/airports.json, aby sa
-veľký CSV súbor sťahoval len pri novom letisku.
+Výstup (data/):
+- weather.json  – pre každú destináciu predpoveď (16 dní) a klimatická tabuľka (36 úsekov);
+                  plugin z nej dopočíta počasie ľubovoľnej ponuky, aj keď ju našlo až živé hľadanie
+- climate.json  – uložená klimatická tabuľka (počíta sa raz, potom sa len dopĺňa o nové letiská)
+- airports.json – súradnice letísk z OurAirports (verejná doména)
+
+Hodnota v tabuľkách je text „teplota + písmeno počasia“, napr. "32r": s slnečno, p polooblačno,
+c oblačno, f hmla, r dážď, n sneh, t búrky.
 """
 from __future__ import annotations
 
@@ -17,6 +23,7 @@ import json
 import urllib.parse
 import time
 import urllib.request
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -24,9 +31,14 @@ FORECAST_API = "https://api.open-meteo.com/v1/forecast"
 ARCHIVE_API = "https://archive-api.open-meteo.com/v1/archive"
 AIRPORTS_CSV = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 FORECAST_DAYS = 16  # Open-Meteo dáva predpoveď na 16 dní (dnes + 15)
-SPREAD = 3          # odhad z minulých rokov: ±3 dni okolo dátumu
-YEARS = 2
-CHUNK = 10          # letísk v jednej požiadavke (archív je pomalší, menšie dávky)
+YEARS = 3           # klimatická tabuľka: posledné 3 roky
+CHUNK = 20          # letísk v jednej požiadavke pre predpoveď
+CLIMATE_CHUNK = 8   # letísk v jednej požiadavke pre archív (je pomalší)
+MAX_NEW_CLIMATE = 120 # koľko nových letísk sa klimaticky dopočíta za jeden beh (zvyšok nabudúce)
+MAX_DESTS = 450     # koľko najlacnejších destinácií sa dostane do tabuliek
+
+KIND_CODE = {"sun": "s", "partly": "p", "cloud": "c", "fog": "f", "rain": "r", "snow": "n", "storm": "t"}
+CODE_KIND = {v: k for k, v in KIND_CODE.items()}
 
 HEADERS = {"User-Agent": "lacne-letenky/1.0 (+https://github.com/petkus2015/ideanet)"}
 
@@ -121,108 +133,145 @@ CITY_CODES = {"LON": "LHR", "MIL": "MXP", "ROM": "FCO", "STO": "ARN", "PAR": "CD
               "EAP": "BSL", "SHA": "PVG", "RIO": "GIG", "SAO": "GRU", "CHI": "ORD", "YTO": "YYZ", "YMQ": "YUL"}
 
 
-def forecast(coords: list[tuple[float, float]]) -> list[dict[str, tuple]]:
-    out = []
-    for i in range(0, len(coords), CHUNK):
-        part = coords[i:i + CHUNK]
-        res = _multi(FORECAST_API, part, {"daily": "weather_code,temperature_2m_max",
-                                          "forecast_days": FORECAST_DAYS, "timezone": "auto"})
-        out += [_series(b) for b in res]
+def pack(t, kind: str | None) -> str:
+    return f"{round(t)}{KIND_CODE.get(kind or 'cloud', 'c')}"
+
+
+def unpack(text: str | None) -> tuple[int, str] | None:
+    m = re.fullmatch(r"(-?\d+)([spcfrnt])", text or "")
+    return (int(m.group(1)), CODE_KIND[m.group(2)]) if m else None
+
+
+def bucket(day: dt.date) -> int:
+    """10-dňový úsek roka 0–35 (mesiac × 3 + tretina mesiaca)."""
+    return (day.month - 1) * 3 + min((day.day - 1) // 10, 2)
+
+
+def forecast_tables(dests: list[str], coords: dict, today: dt.date, log=print) -> dict[str, list[str]]:
+    """Predpoveď na FORECAST_DAYS dní od dnes; kľúč = letisko, hodnota = zoznam textov (prázdny = neznáme)."""
+    out: dict[str, list[str]] = {}
+    failed = 0
+    for i in range(0, len(dests), CHUNK):
+        part = dests[i:i + CHUNK]
+        try:
+            res = _multi(FORECAST_API, [tuple(coords[c]) for c in part],
+                         {"daily": "weather_code,temperature_2m_max", "forecast_days": FORECAST_DAYS,
+                          "timezone": "auto"})
+        except Exception as exc:  # noqa: BLE001 – počasie je doplnok, ponuky sa zapíšu aj bez neho
+            failed += 1
+            log(f"Počasie: predpoveď, letiská {i + 1}–{i + len(part)} zlyhala ({exc})")
+            continue
+        for code, block in zip(part, res):
+            ser = _series(block)
+            row = []
+            for n in range(FORECAST_DAYS):
+                t, c = ser.get((today + dt.timedelta(days=n)).isoformat(), (None, None))
+                row.append(pack(t, kind_of(c)) if t is not None else "")
+            if any(row):
+                out[code] = row
+    if failed:
+        log(f"Počasie: {failed} dávok predpovede zlyhalo")
     return out
 
 
-def climate(coords: list[tuple[float, float]], start: dt.date, end: dt.date, log=print) -> list[dict[str, tuple]]:
-    """Denné dáta za rovnaké obdobie v minulých rokoch (kľúč = dátum v minulom roku).
-
-    Zlyhanie jednej dávky neruší ostatné – tie letiská budú len bez odhadu.
-    """
-    out = [dict() for _ in coords]
+def climate_tables(dests: list[str], coords: dict, today: dt.date, log=print) -> dict[str, list[str]]:
+    """Typické počasie po 10-dňových úsekoch roka z posledných YEARS rokov (archív Open-Meteo)."""
+    start = today - dt.timedelta(days=365 * YEARS)
+    end = today - dt.timedelta(days=7)  # archív má oneskorenie pár dní
+    out: dict[str, list[str]] = {}
     failed = 0
-    for back in range(1, YEARS + 1):
-        s = _shift(start - dt.timedelta(days=SPREAD), -back)
-        e = _shift(end + dt.timedelta(days=SPREAD), -back)
-        for i in range(0, len(coords), CHUNK):
-            part = coords[i:i + CHUNK]
-            try:
-                res = _multi(ARCHIVE_API, part, {"daily": "weather_code,temperature_2m_max",
-                                                 "start_date": s.isoformat(), "end_date": e.isoformat(),
-                                                 "timezone": "auto"})
-            except Exception as exc:  # noqa: BLE001
-                failed += 1
-                log(f"Počasie: archív {s.year}, letiská {i + 1}–{i + len(part)} zlyhal ({exc})")
-                continue
-            for j, b in enumerate(res):
-                out[i + j].update(_series(b))
+    for i in range(0, len(dests), CLIMATE_CHUNK):
+        part = dests[i:i + CLIMATE_CHUNK]
+        try:
+            res = _multi(ARCHIVE_API, [tuple(coords[c]) for c in part],
+                         {"daily": "weather_code,temperature_2m_max", "start_date": start.isoformat(),
+                          "end_date": end.isoformat(), "timezone": "auto"})
+        except Exception as exc:  # noqa: BLE001
+            failed += 1
+            log(f"Počasie: archív, letiská {i + 1}–{i + len(part)} zlyhal ({exc})")
+            continue
+        for code, block in zip(part, res):
+            temps: list[list[float]] = [[] for _ in range(36)]
+            kinds: list[list[str]] = [[] for _ in range(36)]
+            for day, (t, c) in _series(block).items():
+                if t is None:
+                    continue
+                b = bucket(dt.date.fromisoformat(day))
+                temps[b].append(t)
+                k = kind_of(c)
+                if k:
+                    kinds[b].append(k)
+            row = [pack(sum(x) / len(x), Counter(k).most_common(1)[0][0] if k else "cloud") if x else ""
+                   for x, k in zip(temps, kinds)]
+            if sum(1 for r in row if r) >= 30:
+                out[code] = row
     if failed:
         log(f"Počasie: {failed} dávok archívu zlyhalo")
     return out
 
 
-def _shift(day: dt.date, years: int) -> dt.date:
+def lookup(dest: str, day: dt.date, today: dt.date, fc: dict, cl: dict) -> dict | None:
+    """Počasie destinácie v daný deň: predpoveď, inak typické počasie z klimatickej tabuľky."""
+    idx = (day - today).days
+    row = fc.get(dest)
+    if row and 0 <= idx < len(row) and unpack(row[idx]):
+        t, kind = unpack(row[idx])
+        return {"t": t, "c": kind, "k": "f"}
+    row = cl.get(dest)
+    if row and unpack(row[bucket(day)]):
+        t, kind = unpack(row[bucket(day)])
+        return {"t": t, "c": kind, "k": "c"}
+    return None
+
+
+def _read_json(path: Path) -> dict:
     try:
-        return day.replace(year=day.year + years)
-    except ValueError:  # 29. február
-        return day.replace(year=day.year + years, day=28)
+        return json.loads(path.read_text("utf-8"))
+    except (OSError, ValueError):
+        return {}
 
 
-def estimate(series: dict[str, tuple], day: dt.date) -> dict | None:
-    temps, kinds = [], []
-    for back in range(1, YEARS + 1):
-        center = _shift(day, -back)
-        for off in range(-SPREAD, SPREAD + 1):
-            t, c = series.get((center + dt.timedelta(days=off)).isoformat(), (None, None))
-            if t is not None:
-                temps.append(t)
-            k = kind_of(c)
-            if k:
-                kinds.append(k)
-    if len(temps) < 3:
-        return None
-    return {"t": round(sum(temps) / len(temps)), "c": Counter(kinds).most_common(1)[0][0] if kinds else None, "k": "c"}
-
-
-def add_weather(data: dict, today: dt.date, airports_path: Path, log=print) -> None:
-    """Doplní deal["weather"] = {"t": °C max, "c": ikona, "k": "f" predpoveď | "c" odhad}."""
+def add_weather(data: dict, today: dt.date, data_dir: Path, pool: list[str] | None = None, log=print) -> None:
+    """Doplní deal["weather"] = {"t": °C max, "c": ikona, "k": "f" predpoveď | "c" typické počasie}
+    a zapíše data/weather.json + data/climate.json pre plugin."""
     deals = list(data.get("deals") or []) + [w["deal"] for w in data.get("watch") or [] if w.get("deal")]
     deals = [d for d in deals if d.get("depart")]
-    if not deals:
+    shown = list(dict.fromkeys(d["dest"] for d in deals))  # najprv to, čo sa v bloku zobrazí
+    order = shown + [c for c in (pool or []) if c not in shown]
+    order = order[:MAX_DESTS]
+    if not order:
         return
-    coords = load_airports(airports_path, {d["dest"] for d in deals}, log)
-    dests = sorted({d["dest"] for d in deals if d["dest"] in coords})
-    unknown = sorted({d["dest"] for d in deals} - set(dests))
+    coords = load_airports(data_dir / "airports.json", set(order), log)
+    dests = [c for c in order if c in coords]
+    unknown = [c for c in order if c not in coords]
     if unknown:
-        log(f"Počasie: bez súradníc {', '.join(unknown)}")
-    last_fc = today + dt.timedelta(days=FORECAST_DAYS - 1)
+        log(f"Počasie: bez súradníc {len(unknown)} letísk ({', '.join(unknown[:12])}{'…' if len(unknown) > 12 else ''})")
 
-    near = sorted({d["dest"] for d in deals if d["dest"] in coords and
-                   dt.date.fromisoformat(d["depart"]) <= last_fc})
-    fc = {}
-    if near:
-        try:
-            fc = dict(zip(near, forecast([tuple(coords[c]) for c in near])))
-        except Exception as exc:  # noqa: BLE001 – počasie je doplnok, ponuky sa zapíšu aj bez neho
-            log(f"Počasie: predpoveď zlyhala ({exc})")
+    fc = forecast_tables(dests, coords, today, log)
 
-    far_days = [dt.date.fromisoformat(d["depart"]) for d in deals if d["dest"] in coords]
-    cl = {}
-    if far_days:
-        try:
-            cl = {k: v for k, v in zip(dests, climate([tuple(coords[c]) for c in dests], min(far_days), max(far_days), log)) if v}
-        except Exception as exc:  # noqa: BLE001
-            log(f"Počasie: odhad z minulých rokov zlyhal ({exc})")
+    stored = _read_json(data_dir / "climate.json")
+    cl: dict[str, list[str]] = dict(stored.get("d") or {})
+    todo = [c for c in dests if c not in cl][:MAX_NEW_CLIMATE]
+    if todo:
+        new = climate_tables(todo, coords, today, log)
+        cl.update(new)
+        log(f"Počasie: klimatická tabuľka pre {len(new)}/{len(todo)} nových letísk, spolu {len(cl)}")
+        (data_dir / "climate.json").write_text(json.dumps(
+            {"years": YEARS, "updatedAt": today.isoformat(), "d": dict(sorted(cl.items()))},
+            ensure_ascii=False, separators=(",", ":")) + "\n", "utf-8")
+
+    table = {c: {"f": fc.get(c, []), "c": cl.get(c, [])} for c in dests if c in fc or c in cl}
+    (data_dir / "weather.json").write_text(json.dumps(
+        {"from": today.isoformat(), "updatedAt": dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes"),
+         "days": FORECAST_DAYS, "d": table}, ensure_ascii=False, separators=(",", ":")) + "\n", "utf-8")
 
     done = 0
     for d in deals:
-        day = dt.date.fromisoformat(d["depart"])
-        w = None
-        t, c = fc.get(d["dest"], {}).get(d["depart"], (None, None))
-        if t is not None and day <= last_fc:
-            w = {"t": round(t), "c": kind_of(c), "k": "f"}
-        elif d["dest"] in cl:
-            w = estimate(cl[d["dest"]], day)
+        w = lookup(d["dest"], dt.date.fromisoformat(d["depart"]), today, fc, cl)
         if w:
             d["weather"] = w
             done += 1
         else:
             d.pop("weather", None)
-    log(f"Počasie: {done}/{len(deals)} ponúk ({len(fc)} letísk s predpoveďou, {len(cl)} s odhadom)")
+    log(f"Počasie: {done}/{len(deals)} ponúk, tabuľky pre {len(table)} letísk "
+        f"({len(fc)} s predpoveďou, {len(cl)} s klimatickou tabuľkou)")

@@ -14,3 +14,7 @@ delete_transient( 'lacne_letenky_live_lock' );
 delete_transient( 'lacne_letenky_gbp_rate' );
 delete_transient( 'lacne_letenky_live_fail' );
 delete_option( 'lacne_letenky_version' );
+delete_option( 'lacne_letenky_wx_last' );
+delete_option( 'lacne_letenky_wx_status' );
+delete_transient( 'lacne_letenky_wx' );
+delete_transient( 'lacne_letenky_wx_fail' );

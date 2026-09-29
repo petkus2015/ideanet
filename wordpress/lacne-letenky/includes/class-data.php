@@ -82,6 +82,7 @@ class Lacne_Letenky_Data {
 	public static function flush() {
 		delete_transient( self::CACHE_KEY );
 		delete_transient( self::FAIL_KEY );
+		Lacne_Letenky_Weather::flush();
 	}
 
 	public static function register_rest() {

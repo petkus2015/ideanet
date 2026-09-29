@@ -834,7 +834,9 @@ def main() -> int:
     data = build(deals, now, errors, fx)
     if not args.no_weather:
         try:
-            add_weather(data, now.date(), DATA_DIR / "airports.json")
+            pool = list(dict.fromkeys(d["dest"] for d in sorted(
+                deals, key=lambda x: x.get("price") or 1e12) if d.get("dest")))
+            add_weather(data, now.date(), DATA_DIR, pool)
         except Exception as exc:  # noqa: BLE001 – ponuky zapíšeme aj bez počasia
             print(f"Počasie: CHYBA {exc}", file=sys.stderr)
     write(data)
