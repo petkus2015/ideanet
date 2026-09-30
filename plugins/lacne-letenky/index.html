@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lacné letenky VIE · BTS</title>
+<link rel="stylesheet" href="lacne-letenky.css">
+<style>
+  /* Ukážková stránka – iba rám okolo bloku, aby bolo vidno, ako zapadne do webu. */
+  :root {
+    --pg-bg: #ffffff; --pg-band: #ffffff; --pg-ink: #0f172a; --pg-ink-2: #64748b; --pg-line: #e5e8ef; --pg-accent: #2563eb;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --pg-bg: #0b111c; --pg-band: #0b111c; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
+  }
+  :root[data-theme="dark"] { --pg-bg: #0b111c; --pg-band: #0b111c; --pg-ink: #e8edf5; --pg-ink-2: #94a0b4; --pg-line: #1f2837; --pg-accent: #7ea6ff; color-scheme: dark; }
+  body { margin: 0; background: var(--pg-bg); color: var(--pg-ink); font: 16px/1.55 "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .pg-wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
+  .pg-nav { border-bottom: 1px solid var(--pg-line); }
+  .pg-nav .pg-wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+  .pg-logo { display: inline-flex; gap: 10px; align-items: center; font-weight: 700; letter-spacing: -.01em; color: inherit; text-decoration: none; }
+  .pg-logo i { width: 26px; height: 26px; border-radius: 8px; background: var(--pg-accent); }
+  .pg-links { display: flex; gap: 22px; font-size: 14px; }
+  .pg-links a { color: var(--pg-ink-2); text-decoration: none; }
+  .pg-links a[aria-current] { color: var(--pg-ink); font-weight: 600; }
+  .pg-intro { padding-block: 56px 36px; display: grid; gap: 12px; max-width: 62ch; }
+  .pg-intro h1 { margin: 0; font-size: clamp(32px, 5vw, 48px); line-height: 1.08; letter-spacing: -.03em; text-wrap: balance; }
+  .pg-intro p { margin: 0; color: var(--pg-ink-2); font-size: 18px; }
+  .pg-band { background: var(--pg-band); padding-block: 8px 64px; }
+  .pg-foot { padding-block: 28px 40px; font-size: 13px; color: var(--pg-ink-2); }
+  @media (max-width: 560px) { .pg-links a:not([aria-current]) { display: none; } .pg-intro { padding-block: 36px 24px; } }
+</style>
+</head>
+<body>
+<header class="pg-nav">
+  <div class="pg-wrap">
+    <a class="pg-logo" href="#"><i></i>Váš web</a>
+    <nav class="pg-links"><a href="#">Domov</a><a href="#" aria-current="page">Letenky</a><a href="#">Kontakt</a></nav>
+  </div>
+</header>
+
+<main>
+  <section class="pg-wrap">
+    <div class="pg-intro">
+      <h1>Letenky z Viedne a Bratislavy</h1>
+      <p>Najlacnejšia spiatočná letenka do Bangkoku a ďalšie lacné ponuky kamkoľvek, vrátane Dubaja a Abu Dhabí, s odletom do 3 mesiacov.</p>
+    </div>
+  </section>
+
+  <section class="pg-band">
+    <div class="pg-wrap">
+      <!-- Blok Lacné letenky -->
+      <div data-lacne-letenky data-src="data/deals.json"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="pg-wrap pg-foot">© Váš web · Ceny letov poskytuje momondo.co.uk</footer>
+
+<!-- deals.js umožní otvoriť náhľad aj priamo zo súboru (file://), bez servera -->
+<script src="data/deals.js"></script>
+<script src="lacne-letenky.js"></script>
+</body>
+</html>

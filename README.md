@@ -72,3 +72,24 @@ z obrazovky sa prehrávanie zastaví.
 - Ovládanie klávesnicou, `aria` popisy, viditeľný focus, respektuje
   `prefers-reduced-motion`.
 - Videá sa načítavajú až pri prehratí (`preload="none"`), obrázky lazy-load.
+
+## Plugin: Lacné letenky
+
+V `plugins/lacne-letenky/` je samostatný widget s najlacnejšími letenkami z Viedne
+a Bratislavy kamkoľvek (zdroj momondo.co.uk, aktualizácia 3× denne).
+Náhľad: `plugins/lacne-letenky/index.html`, návod v jeho README.
+
+### WordPress (téma Newspaper od tagDiv)
+
+`wordpress/lacne-letenky/` je WordPress plugin s rovnakým blokom. Balík na nahratie:
+
+```bash
+wordpress/build.sh   # -> wordpress/dist/lacne-letenky.zip
+```
+
+Pluginy → Pridať nový → Nahrať plugin. Blok sa vkladá ako prvok *Lacné letenky* v tagDiv
+Composer, blok v editore, shortcode `[lacne_letenky]` alebo widget. Nastavenia → Lacné letenky.
+
+Tlačidlo *Vyhľadaj aktuálne lacné letenky* hľadá naživo: WordPress server sa opýta momondo a Ryanair
+(`includes/class-live.php`), ceny Wizz Air berie z poslednej aktualizácie na GitHube. Výsledok platí
+10 minút (nastaviteľné), aby opakované kliknutia nezahltili zdroje.

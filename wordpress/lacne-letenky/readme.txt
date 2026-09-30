@@ -1,0 +1,99 @@
+=== Lacné letenky VIE · BTS ===
+Tags: letenky, lety, ryanair, wizzair, momondo
+Requires at least: 5.8
+Tested up to: 6.8
+Requires PHP: 7.4
+Stable tag: 1.10.1
+License: GPL-2.0-or-later
+
+Blok s najlacnejšími letenkami z Viedne a Bratislavy: Bangkok, Dubaj, Abu Dhabí a ponuky kamkoľvek.
+
+== Popis ==
+
+Ceny 3× denne (7:00, 12:00, 18:00) porovnáva GitHub Actions z momondo.co.uk, ryanair.com
+a wizzair.com; z každej trasy sa ukáže najlacnejšia spiatočná letenka s odletom do 3 mesiacov.
+Plugin si výsledok (deals.json) načíta, uloží do cache a zobrazí v bloku s tlačidlom
+„Vyhľadaj aktuálne lacné letenky“.
+
+Vloženie na stránku:
+
+* tagDiv Composer (téma Newspaper) – prvok „Lacné letenky“, alebo shortcode v prvku „Column text“
+* editor blokov – blok „Lacné letenky“
+* shortcode – [lacne_letenky] alebo [lacne_letenky limit="12" title="Kam lacno z Viedne"]
+* Vzhľad → Widgety – widget „Lacné letenky“
+
+Nastavenia: Nastavenia → Lacné letenky (zdroj dát, cache, počet kariet, písmo, stav cien).
+
+== Inštalácia ==
+
+1. Pluginy → Pridať nový → Nahrať plugin → lacne-letenky.zip → Inštalovať → Aktivovať.
+2. Nastavenia → Lacné letenky → „Načítať ceny teraz“ a skontrolujte stav cien.
+3. Vložte blok na stránku niektorým zo spôsobov vyššie.
+
+== Changelog ==
+
+= 1.10.1 =
+* Oprava (chyba z verzie 1.9.0): po živom hľadaní sa sledované destinácie (Alicante, Catania, Palermo, Malta, zoznam Ázia a SAE) zobrazovali ako veľké karty namiesto kariet v posuvnom páse a zoznamu.
+
+= 1.10.0 =
+* Európa: Alicante, Catania, Palermo, Trapani, Comiso a Malta sa hľadajú vždy a majú v páse kariet vlastnú kartu (aj keď nie sú medzi najlacnejšími). Zobrazia sa pri filtri Všetky a Európa, len ak sa našla spiatočná letenka.
+* Oprava názvov miest z Wizz Air (napr. „Palermo (Sicily)“ je teraz „Palermo“).
+
+= 1.9.0 =
+* Počasie sa dopočíta každej ponuke (aj tej, ktorú našlo až živé hľadanie): nový súbor weather.json vedľa deals.json obsahuje pre každú destináciu predpoveď a typické počasie po 10-dňových úsekoch roka. Predtým sa počasie prenášalo len medzi ponukami z rovnakého dňa odletu a pri 25–40 % ponúk chýbalo.
+* Nastavenia → Lacné letenky: riadok „Počasie v destináciách“ ukazuje, či sa tabuľky načítali a koľko ponúk má počasie.
+
+= 1.8.1 =
+* Počasie na kartách je hneď vedľa názvu mesta (bolo úplne vpravo a pri posúvaní ho nebolo vidieť).
+
+= 1.8.0 =
+* Destinácie bez nájdenej letenky sa v bloku nezobrazujú.
+* SAE rozdelené na Dubaj (DXB, DWC, Šardžá) a Abu Dhabí; hľadá sa vždy z Viedne, Bratislavy aj Budapešti a zobrazí sa najlacnejšia nájdená.
+
+= 1.7.0 =
+* Oprava: počasie chýbalo, keď blok pri otvorení stránky zobrazil výsledok živého hľadania.
+* Pri ponukách je zmena ceny oproti predchádzajúcemu hľadaniu (▼ lacnejšie / ▲ drahšie) – iba pri tom istom lete (rovnaké letiská aj dátumy), aj v zozname Ázia a SAE.
+* Pulzujúca zelená bodka pri Bangkoku.
+
+= 1.6.0 =
+* SAE / Dubaj: keď z Viedne ani Bratislavy nie je spiatočná letenka do Dubaja alebo Abu Dhabí, zobrazí sa najlacnejšia s odletom z Budapešti (označená „odlet z Budapešti“).
+
+= 1.5.0 =
+* Počasie v destinácii v deň príletu pri každej ponuke: ikona a teplota cez deň (Open-Meteo). Do 15 dní predpoveď, ďalej odhad z minulých rokov (označený ~).
+
+= 1.4.0 =
+* Aktuálne ceny sa načítajú pri každom otvorení stránky: blok hneď ukáže uložené ceny a na pozadí spustí živé hľadanie (výsledok platí nastavený počet minút, po zlyhaní zdrojov 3 minúty pauza). Vypnúť sa dá v Nastavenia → Lacné letenky.
+
+= 1.3.1 =
+* Zoznam Ázia a SAE je kompaktnejší a zbalený na 3 najlacnejšie destinácie, ďalšie sa zobrazia tlačidlom „Zobraziť všetky“.
+
+= 1.3.0 =
+* Pod Bangkokom zoznam Ázia a SAE: Thajsko, Indonézia – Bali, Japonsko, Vietnam, Malajzia, India, Južná Kórea, Singapur, Filipíny, SAE / Dubaj – najlacnejšia spiatočná letenka pre každú.
+* Odstránené upozornenie o nenájdených destináciách.
+* Wizz Air sa vždy pýta aj na Abu Dhabí a Dubaj (nové linky ešte nemusia byť v mape liniek).
+
+= 1.2.1 =
+* Väčší vnútorný okraj posuvného pásu – tieň karty pri prejdení myšou sa už neorezáva.
+
+= 1.2.0 =
+* Ponuky sú posuvný pás s 1,5 kartami aj na počítači, so šípkami pod pásom.
+* Pod ponukami výber Všetky / Európa / Mimo Európy.
+* Ukladá sa až 50 najlacnejších ponúk v Európe a 50 mimo Európy.
+
+= 1.1.0 =
+* Tlačidlo „Vyhľadaj aktuálne lacné letenky“ hľadá naživo: WordPress sa hneď opýta momondo a Ryanair (Wizz Air z poslednej aktualizácie na GitHube). Výsledok platí 10 minút.
+
+= 1.0.4 =
+* Ponuky sú na mobile aj tablete (do 1024 px) posuvný pás s 1,5 kartami naraz; fluidné veľkosti písma, medzier a kariet.
+
+= 1.0.3 =
+* Tlačidlo v karte Bangkoku: „Kúpiť“.
+
+= 1.0.2 =
+* Blok začína rovno ponukami (bez hlavičky); tlačidlo „Vyhľadaj aktuálne lacné letenky“ je pod ponukami.
+
+= 1.0.1 =
+* Keď zdroj cien ešte nemá dáta, blok ukáže „Ponuky sa pripravujú“ namiesto chyby 503; nastavenia vysvetlia príčinu.
+
+= 1.0.0 =
+* Prvé vydanie.

@@ -1,0 +1,25 @@
+name: Lacné letenky – test zdrojov
+
+# Skúšobný beh: vyskúša spôsoby, ako dostať ceny do SAE/Indie z momondo. Nič neukladá,
+# výsledky sú len v zázname behu. Spustí sa pri zmene skúšobného skriptu alebo ručne.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'plugins/lacne-letenky/scripts/probe_sources.py'
+      - '.github/workflows/lacne-letenky-test.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test zdrojov (SAE, India)
+        run: python3 plugins/lacne-letenky/scripts/probe_sources.py
