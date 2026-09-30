@@ -116,6 +116,16 @@ sa dá v builderi preusporiadať ťahaním.
 
 ## Riešenie problémov
 
+**Hero karusel „Posledné realizácie" nezobrazuje na mobile 1,5 karty.**
+Vo verziách do 1.0.1 mal blok `.ib-carousel` v Hero elemente priamo
+nastavený inline štýl `style="--ib-per:…"`. Inline štýl má vždy
+prednosť pred pravidlom v `<style>` bloku — mobilná media query preto
+nikdy nemala šancu hodnotu prepnúť. Od verzie **1.0.2** je inline štýl
+odstránený, o počet kariet sa stará výhradne responzívny `<style>` blok
+(rovnaký mechanizmus ako v Portfólio karuseli, kde tento problém nikdy
+nebol). Overené meraním v prehliadači: 390 px → 1,5 karty, 1440 px →
+nastavený počet pre desktop.
+
 **Bloky sa zobrazujú úplne bez dizajnu / vyzerajú rozbité.**
 Vo verzii 1.0.0 sa CSS a JS vkladali až vnútri `render()` jednotlivých
 blokov — teda v momente, keď WordPress už dávno vytlačil `<head>` a

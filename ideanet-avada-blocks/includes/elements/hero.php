@@ -211,8 +211,7 @@ class Ideanet_Blocks_Hero {
 					</div>
 
 					<?php if ( $slides ) : ?>
-						<div class="ib-carousel ib-reveal" data-mode="video" data-autoplay="1"
-							style="--ib-per:<?php echo esc_attr( $args['cards_desktop'] ); ?>">
+						<div class="ib-carousel ib-reveal" data-mode="video" data-autoplay="1">
 							<?php if ( $args['reel_heading'] ) : ?>
 								<p class="ib-hero__reel-lab"><?php echo esc_html( $args['reel_heading'] ); ?></p>
 							<?php endif; ?>
