@@ -144,7 +144,7 @@
     var watch = (data.watch || []).map(function (w) {
       var d = w.deal;
       return {
-        name: w.name, airports: w.airports || [], searchUrl: w.searchUrl, featured: w.featured !== false, list: !!w.list, note: w.note,
+        name: w.name, airports: w.airports || [], searchUrl: w.searchUrl, featured: w.featured === true || (w.featured == null && w.name === 'Bangkok'), list: w.list === true, note: w.note,
         deal: fresh && d && d['return'] && inWindow(d) ? d : null
       };
     });

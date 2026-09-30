@@ -488,8 +488,8 @@ class Lacne_Letenky_Live {
 				$deal['prevPrice'] = isset( $prev_price[ self::flight_key( $deal ) ] ) ? $prev_price[ self::flight_key( $deal ) ] : null;
 			}
 			if ( $deal ) {
-				$w = Lacne_Letenky_Weather::apply( array( $deal ) );
-				$deal = $w[0];
+				$with = Lacne_Letenky_Weather::apply( array( $deal ) ); // pozor: $w je nastavenie destinácie
+				$deal = $with[0];
 			}
 			$watch[] = array(
 				'name' => $name, 'airports' => $w['airports'], 'featured' => $w['featured'],
