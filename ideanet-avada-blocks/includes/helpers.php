@@ -41,7 +41,14 @@ function ideanet_blocks_lines( $text ) {
 	}
 	$lines = preg_split( '/\r\n|\r|\n/', (string) $text );
 	$lines = array_map( 'trim', $lines );
-	return array_values( array_filter( $lines, static fn( $l ) => '' !== $l ) );
+	return array_values(
+		array_filter(
+			$lines,
+			function ( $l ) {
+				return '' !== $l;
+			}
+		)
+	);
 }
 
 /**

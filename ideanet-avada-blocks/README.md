@@ -114,6 +114,34 @@ sa dá v builderi preusporiadať ťahaním.
   (`includes/helpers.php` → `ideanet_blocks_icon_set()`) plus možnosť
   vložiť vlastné SVG cez voľbu „Vlastné SVG“.
 
+## Riešenie problémov
+
+**Bloky sa zobrazujú úplne bez dizajnu / vyzerajú rozbité.**
+Vo verzii 1.0.0 sa CSS a JS vkladali až vnútri `render()` jednotlivých
+blokov — teda v momente, keď WordPress už dávno vytlačil `<head>` a
+štýly sa tak na stránku nikdy nedostali. Od verzie **1.0.1** sa vkladajú
+cez `wp_enqueue_scripts` (main súbor pluginu), čo je správne miesto a
+beží ešte pred `wp_head`. Ak vidíte tento problém, aktualizujte na
+najnovšiu verziu pluginu.
+
+**Na stránke je vidno text `[ideanet_hero ...]` namiesto bloku.**
+Znamená to, že shortcode sa nevykonal — buď je plugin neaktívny
+(Pluginy → skontrolujte, či je „IDEANET — bloky pre Avada Builder“
+aktivovaný), alebo bol vložený ako obyčajný text/kód mimo Avada
+Builder prvku. Riešenie: v Avada Builderi pridajte prvok zo zoznamu
+(kategória **IDEANET**), nie surový shortcode do textového poľa.
+
+**Po nahratí zipu sa plugin nedá aktivovať / hlási nekompatibilitu.**
+Plugin vyžaduje PHP 7.4+ a WordPress 5.9+ (deklarované v hlavičke
+`ideanet-avada-blocks.php`). Skontrolujte verziu PHP u hostingu
+(WordPress admin → Nástroje → Stav lokality → Server).
+
+**Biela/prázdna stránka po aktivácii.**
+Zapnite v `wp-config.php` dočasne `WP_DEBUG` a `WP_DEBUG_LOG`
+a pozrite `wp-content/debug.log` — presná hláška ukáže, v ktorom
+súbore a na ktorom riadku PHP padá. Ak sa problém nedá nájsť, pošlite
+túto hlášku — je to najrýchlejšia cesta k diagnóze.
+
 ## Požiadavky
 
 - WordPress 5.9+
