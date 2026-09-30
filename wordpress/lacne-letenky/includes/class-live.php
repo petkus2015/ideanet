@@ -150,10 +150,8 @@ class Lacne_Letenky_Live {
 		foreach ( array_keys( $geo['origins'] ) as $o ) {
 			$reqs[ "momondo|$o|" ] = array( 'url' => self::momondo_url( $o, '' ), 'headers' => self::headers( self::MOMONDO . '/explore' ) );
 			foreach ( $geo['watch'] as $w ) {
-				if ( $w['featured'] || ! empty( $w['list'] ) ) {
-					foreach ( $w['airports'] as $a ) {
-						$reqs[ "momondo|$o|$a" ] = array( 'url' => self::momondo_url( $o, $a ), 'headers' => self::headers( self::MOMONDO . '/explore' ) );
-					}
+				foreach ( $w['airports'] as $a ) {
+					$reqs[ "momondo|$o|$a" ] = array( 'url' => self::momondo_url( $o, $a ), 'headers' => self::headers( self::MOMONDO . '/explore' ) );
 				}
 			}
 			$reqs[ "ryanair|$o|" ] = array( 'url' => self::ryanair_url( $o, $today ), 'headers' => self::headers( 'https://www.ryanair.com/' ) );

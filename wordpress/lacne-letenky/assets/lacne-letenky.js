@@ -144,7 +144,7 @@
     var watch = (data.watch || []).map(function (w) {
       var d = w.deal;
       return {
-        name: w.name, searchUrl: w.searchUrl, featured: w.featured !== false, list: !!w.list, note: w.note,
+        name: w.name, airports: w.airports || [], searchUrl: w.searchUrl, featured: w.featured !== false, list: !!w.list, note: w.note,
         deal: fresh && d && d['return'] && inWindow(d) ? d : null
       };
     });
@@ -156,7 +156,11 @@
     el.setAttribute('data-ll-list', listId);
     var pinned = watch.filter(function (w) { return !w.featured && !w.list; });
     var pinnedDeals = pinned.filter(function (w) { return w.deal; })
-      .map(function (w) { var d = {}; for (var k in w.deal) d[k] = w.deal[k]; d.city = w.name; return d; });
+      .map(function (w) {
+        var d = {}; for (var k in w.deal) d[k] = w.deal[k];
+        d.city = w.name; // jedno letisko = názov destinácie (Malta, Alicante, Catania)
+        return d;
+      });
     watch = watch.filter(function (w) { return w.featured && w.deal; });
     // sledované mesto (Bangkok) má vlastnú kartu, jeho letiská sa v mriežke neopakujú
     var watched = {};
@@ -170,8 +174,8 @@
     var pinnedIn = pinnedDeals.filter(inRegion);
     var allDeals = freshDeals(data);
     var deals = allDeals.filter(function (d) { return !watched[d.dest] && inRegion(d); })
-      .slice(0, Math.max(0, limit - pinnedIn.length))
-      .concat(pinnedIn)
+      .slice(0, limit)           // najlacnejšie ponuky…
+      .concat(pinnedIn)          // …a k nim vždy sledované letiská (Alicante, Sicília, Malta)
       .sort(function (a, b) { return a.price - b.price; });
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });

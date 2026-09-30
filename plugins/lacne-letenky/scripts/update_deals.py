@@ -87,6 +87,14 @@ WATCH = {
     "SAE – Dubaj": {"countryCode": "AE", "airports": ["DXB", "DWC", "SHJ"], "featured": False, "list": True,
                     "note": "Dubaj, Šardžá"},
     "SAE – Abu Dhabí": {"countryCode": "AE", "airports": ["AUH"], "featured": False, "list": True},
+    # Európa: tieto letiská sa hľadajú vždy a v páse kariet sú aj vtedy, keď nie sú medzi najlacnejšími
+    # (featured=False, list=False -> vlastná karta medzi ostatnými, ukáže sa pri filtri Všetky a Európa).
+    "Alicante": {"countryCode": "ES", "airports": ["ALC"], "featured": False, "list": False},
+    "Catania": {"countryCode": "IT", "airports": ["CTA"], "featured": False, "list": False},
+    "Palermo": {"countryCode": "IT", "airports": ["PMO"], "featured": False, "list": False},
+    "Trapani": {"countryCode": "IT", "airports": ["TPS"], "featured": False, "list": False},
+    "Comiso": {"countryCode": "IT", "airports": ["CIY"], "featured": False, "list": False},
+    "Malta": {"countryCode": "MT", "airports": ["MLA"], "featured": False, "list": False},
 }
 
 # Časy aktualizácie (Europe/Vienna) – musia sedieť s .github/workflows/lacne-letenky.yml
@@ -177,7 +185,7 @@ CITY_SK = {
     "Porto": "Porto", "Yerevan": "Jerevan", "Tel-Aviv": "Tel Aviv", "Baku": "Baku",
     "Agadir": "Agadir", "Amman": "Ammán", "Muscat": "Maskat", "Doha": "Dauha", "Riyadh": "Rijád",
     "Jeddah": "Džidda", "Cairo": "Káhira", "Tashkent": "Taškent", "Almaty": "Almaty", "Faro": "Faro", "Bologna": "Bologna", "Bari": "Bari", "Catania": "Catania",
-    "Palermo": "Palermo", "Cagliari": "Cagliari", "Pisa": "Pisa", "Bergamo": "Bergamo",
+    "Palermo": "Palermo", "Trapani": "Trapani", "Comiso": "Comiso", "Cagliari": "Cagliari", "Pisa": "Pisa", "Bergamo": "Bergamo",
 }
 BY_EN_NAME.update({"usa": "US", "uk": "GB", "czechia": "CZ", "türkiye": "TR",
                    "turkiye": "TR", "uae": "AE", "korea, south": "KR"})
@@ -442,7 +450,9 @@ WIZZ_SITE = "https://wizzair.com"
 WIZZ_HEADERS = {**HEADERS, "Referer": WIZZ_SITE + "/", "Origin": WIZZ_SITE}
 WIZZ_CHUNK_DAYS = 30  # cenový kalendár Wizz berie kratšie obdobia, 3 mesiace delíme na časti
 # Letiská, na ktoré sa Wizz Air pýtame z VIE aj BTS vždy, aj keď ich mapa liniek (ešte) neuvádza.
-WIZZ_ALWAYS = {"AUH": ("Abu Dhabi", "AE"), "DXB": ("Dubai", "AE"), "DWC": ("Dubai", "AE")}
+WIZZ_ALWAYS = {"AUH": ("Abu Dhabi", "AE"), "DXB": ("Dubai", "AE"), "DWC": ("Dubai", "AE"),
+               "ALC": ("Alicante", "ES"), "CTA": ("Catania", "IT"), "PMO": ("Palermo", "IT"),
+               "TPS": ("Trapani", "IT"), "CIY": ("Comiso", "IT"), "MLA": ("Malta", "MT")}
 
 
 def wizz_api_base() -> str:
@@ -476,6 +486,11 @@ def wizz_routes(base: str, origins) -> dict[str, list[dict]]:
                            "countryCode": (cities.get(c.get("iata")) or {}).get("countryCode")}
                           for c in conns if c.get("iata")]
     return routes
+
+
+def clean_city(name) -> str:
+    """„Palermo (Sicily)\r\n“ -> „Palermo“ (názvy z mapy liniek Wizz Air majú zátvorky a zalomenie)."""
+    return re.sub(r"\s*\(.*?\)", "", str(name or "")).strip()
 
 
 def wizz_prices(flights, dep: str | None = None, arr: str | None = None) -> dict:
@@ -583,7 +598,7 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
             price, cur, d_out, d_ret = best
             code, country, region = country_info(dst["countryCode"], None)
             deals.append({
-                "origin": origin, "dest": dst["iata"], "city": dst["city"],
+                "origin": origin, "dest": dst["iata"], "city": clean_city(dst["city"]),
                 "country": country, "countryCode": code, "region": region,
                 "price": round(price), "currency": cur,
                 "depart": d_out.isoformat(), "return": d_ret.isoformat(), "nights": (d_ret - d_out).days,
