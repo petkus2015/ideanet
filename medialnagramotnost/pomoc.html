@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stalo sa mi to</title>
+<meta name="description" content="Zadali ste údaje z karty, poslali peniaze alebo vás niekto vydiera? Postup krok za krokom a dôležité kontakty.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="pomoc">
+<div id="site-header"></div>
+<main id="obsah">
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="crumbs"><a href="index.html">Domov</a> / Stalo sa mi to</p>
+      <h1>Stalo sa vám to? Konajte hneď.</h1>
+      <p class="lead">Nehanbite sa. Obeťou podvodu sa môže stať každý. Rýchla reakcia často zachráni peniaze aj účty. Vyberte, čo sa stalo.</p>
+    </div>
+  </section>
+
+  <section class="section tight" id="tree">
+    <div class="wrap stack-l">
+      <div class="tree-opts" role="group" aria-label="Čo sa stalo">
+        <button type="button" data-target="a-karta" aria-pressed="false"><b>Zadal som údaje z karty alebo kód</b><span>na stránke z SMS, e-mailu či inzerátu</span></button>
+        <button type="button" data-target="a-peniaze" aria-pressed="false"><b>Poslal som peniaze</b><span>prevodom, v hotovosti, v kryptomenách</span></button>
+        <button type="button" data-target="a-pristup" aria-pressed="false"><b>Niekto mal prístup k počítaču</b><span>nainštaloval som program na jeho pokyn</span></button>
+        <button type="button" data-target="a-ucet" aria-pressed="false"><b>Ukradli mi účet</b><span>Facebook, Instagram, e-mail, hra</span></button>
+        <button type="button" data-target="a-vydieranie" aria-pressed="false"><b>Niekto ma vydiera</b><span>fotkami, videom, informáciami</span></button>
+        <button type="button" data-target="a-sprava" aria-pressed="false"><b>Len mi prišla podozrivá správa</b><span>nič som nezadal ani neposlal</span></button>
+      </div>
+
+      <div class="tree-answer stack" id="a-karta" hidden style="scroll-margin-top:90px">
+        <h2 style="font-size:var(--step-2)">Zadali ste údaje z karty alebo kód zo SMS</h2>
+        <ol class="steps red">
+          <li><div><b>Hneď volajte banke</b>Číslo je na zadnej strane karty a v aplikácii. Povedzte, že ide o podvod, a nechajte kartu zablokovať. Kartu môžete zablokovať aj sami v aplikácii.</div></li>
+          <li><div><b>Skontrolujte platby a Apple Pay / Google Pay</b>Požiadajte banku, aby odstránila neznáme zariadenia, do ktorých bola karta pridaná.</div></li>
+          <li><div><b>Zmeňte heslo do bankovníctva</b>Ak ste ho zadali, zmeňte ho cez oficiálnu aplikáciu.</div></li>
+          <li><div><b>Nahláste to polícii</b>Na čísle 158 alebo osobne. Uschovajte si SMS, e-maily a výpisy.</div></li>
+          <li><div><b>Nahláste stránku SK-CERT</b>Pomôžete, aby ju zablokovali aj pre iných.</div></li>
+        </ol>
+      </div>
+
+      <div class="tree-answer stack" id="a-peniaze" hidden style="scroll-margin-top:90px">
+        <h2 style="font-size:var(--step-2)">Poslali ste peniaze podvodníkovi</h2>
+        <ol class="steps red">
+          <li><div><b>Hneď volajte svojej banke</b>Požiadajte o zastavenie alebo vrátenie platby. Pri okamžitých platbách rozhodujú minúty.</div></li>
+          <li><div><b>Podajte trestné oznámenie</b>Na polícii (158). Prineste výpis, číslo účtu príjemcu, správy a čísla telefónov.</div></li>
+          <li><div><b>Už nič ďalšie neposielajte</b>Podvodníci často sľubujú „vrátenie“ za poplatok. Aj to je podvod.</div></li>
+          <li><div><b>Pozor na „pomocníkov“</b>Firmy, ktoré za poplatok sľubujú vrátiť stratené peniaze, sú často ďalší podvodníci.</div></li>
+        </ol>
+      </div>
+
+      <div class="tree-answer stack" id="a-pristup" hidden style="scroll-margin-top:90px">
+        <h2 style="font-size:var(--step-2)">Niekto sa pripojil k vášmu počítaču alebo mobilu</h2>
+        <ol class="steps red">
+          <li><div><b>Odpojte internet</b>Vypnite Wi-Fi alebo vytiahnite kábel.</div></li>
+          <li><div><b>Volajte banke</b>Zablokujte prístup do internetbankingu a karty.</div></li>
+          <li><div><b>Odinštalujte program</b>AnyDesk, TeamViewer alebo iný program, ktorý ste inštalovali na pokyn volajúceho.</div></li>
+          <li><div><b>Z iného zariadenia zmeňte heslá</b>E-mail, banka, sociálne siete.</div></li>
+          <li><div><b>Dajte zariadenie skontrolovať</b>Odborníkovi, ktorého poznáte, a nahláste podvod na 158.</div></li>
+        </ol>
+      </div>
+
+      <div class="tree-answer stack" id="a-ucet" hidden style="scroll-margin-top:90px">
+        <h2 style="font-size:var(--step-2)">Ukradli vám účet na sociálnej sieti alebo e-mail</h2>
+        <ol class="steps red">
+          <li><div><b>Skúste obnoviť prístup</b>Cez oficiálnu stránku obnovy (napr. facebook.com/hacked alebo „Zabudnuté heslo“).</div></li>
+          <li><div><b>Varujte priateľov</b>Inou cestou im dajte vedieť, aby neklikali na odkazy a neposielali peniaze.</div></li>
+          <li><div><b>Zmeňte heslá</b>Najmä ak ste rovnaké heslo používali aj inde.</div></li>
+          <li><div><b>Zapnite dvojstupňové overenie</b>Najlepšie cez aplikáciu, nie SMS.</div></li>
+        </ol>
+      </div>
+
+      <div class="tree-answer stack" id="a-vydieranie" hidden style="scroll-margin-top:90px">
+        <h2 style="font-size:var(--step-2)">Niekto vás vydiera</h2>
+        <ol class="steps red">
+          <li><div><b>Neplaťte</b>Platba vydieranie nezastaví. Vydierač si zvyčajne pýta ďalšie peniaze.</div></li>
+          <li><div><b>Prestaňte komunikovať</b>Neodpovedajte, ale účet ešte nemažte.</div></li>
+          <li><div><b>Uložte dôkazy</b>Snímky obrazovky správ, mena profilu a odkazov.</div></li>
+          <li><div><b>Povedzte to niekomu, komu veríte</b>Rodičovi, učiteľovi, kamarátovi. Mladí môžu volať na Linku detskej istoty 116 111.</div></li>
+          <li><div><b>Nahláste to</b>Polícii (158) a platforme. Pri fotkách maloletých je to vážny trestný čin.</div></li>
+        </ol>
+      </div>
+
+      <div class="tree-answer stack" id="a-sprava" hidden style="scroll-margin-top:90px">
+        <h2 style="font-size:var(--step-2)">Prišla vám podozrivá správa</h2>
+        <ol class="steps">
+          <li><div><b>Neklikajte a neodpovedajte</b>Ani „STOP“. Odpoveď potvrdí, že číslo je aktívne.</div></li>
+          <li><div><b>Overte inou cestou</b>Zavolajte na známe číslo alebo sa prihláste cez aplikáciu.</div></li>
+          <li><div><b>Nahláste a vymažte</b>E-mail označte ako spam alebo phishing. Odkaz môžete nahlásiť SK-CERT. Varujte blízkych.</div></li>
+        </ol>
+        <a class="btn ghost" href="overit.html#kontrola" style="justify-self:start">Skontrolovať správu</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap stack">
+      <h2 style="font-size:var(--step-3)">Dôležité kontakty</h2>
+      <div class="contacts">
+        <div class="contact"><span class="eyebrow">Vaša banka</span><span class="num small">Číslo na zadnej strane karty</span><p>Ako prvé, ak ide o peniaze alebo kartu. Nonstop.</p></div>
+        <div class="contact"><span class="eyebrow">Polícia SR</span><span class="num">158</span><p>Nahlásenie podvodu a trestné oznámenie.</p></div>
+        <div class="contact"><span class="eyebrow">Tiesňová linka</span><span class="num">112</span><p>Pri bezprostrednom ohrození.</p></div>
+        <div class="contact"><span class="eyebrow">Linka pomoci obetiam</span><span class="num small">0850 111 321</span><p>Podpora pre obete trestných činov, nonstop.</p></div>
+        <div class="contact"><span class="eyebrow">Linka detskej istoty</span><span class="num">116 111</span><p>Pre deti a mladých, nonstop a anonymne.</p></div>
+        <div class="contact"><span class="eyebrow">SK-CERT</span><span class="num small">incident@nbu.gov.sk</span><p>Nahlásenie phishingu a podvodných stránok. Pri phishingu pošlite celú adresu stránky. Formulár je na <a href="https://www.sk-cert.sk/sk/rady-a-navody/nahlasit-incident/index.html" target="_blank" rel="noopener">sk-cert.sk</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/site.js"></script>
+</body>
+</html>

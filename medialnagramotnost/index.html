@@ -4,756 +4,147 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mediálna gramotnosť</title>
-<meta name="description" content="Koncept redizajnu vzdelávacieho webu o mediálnej gramotnosti: overovanie zdrojov, kritické myslenie a porozumenie médiám.">
+<meta name="description" content="Naučte sa spoznať podvodné SMS, e-maily, falošné reklamy na Facebooku a dezinformácie. Pre mladých aj seniorov, podľa overených zdrojov EÚ.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;600&display=swap">
-<style>
-/* Layout: editoriálny stĺpec 1180px, overovateľský „zvýrazňovač“ ako jediný výrazný motív, verdikty ako pečiatky */
-:root {
-  --bg: #F3F5F9;
-  --surface: #FFFFFF;
-  --ink: #121A2E;
-  --muted: #586179;
-  --line: #D9DEE8;
-  --primary: #2443D6;
-  --primary-ink: #FFFFFF;
-  --marker: #FFE04A;
-  --marker-ink: #121A2E;
-  --soft: #E8ECF6;
-  --true: #17804F;
-  --false: #C8313A;
-  --mislead: #B86E00;
-  --unknown: #5F6680;
-
-  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --f-body: "Literata", Georgia, "Times New Roman", serif;
-  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Menlo, monospace;
-
-  --step--1: 0.875rem;
-  --step-0: 1.0625rem;
-  --step-1: 1.3rem;
-  --step-2: 1.7rem;
-  --step-3: clamp(1.9rem, 1.4rem + 2vw, 2.6rem);
-  --step-4: clamp(2.4rem, 1.6rem + 3.6vw, 4.2rem);
-
-  --radius: 14px;
-  --gutter: clamp(16px, 4vw, 40px);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0D1120; --surface: #151B2D; --ink: #E8ECF6; --muted: #9AA3BC; --line: #283049;
-    --primary: #8097FF; --primary-ink: #0D1120; --marker: #F2D33A; --marker-ink: #121A2E; --soft: #1C2440;
-    --true: #4CC48A; --false: #FF6B72; --mislead: #F0A63A; --unknown: #A3AAC2;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0D1120; --surface: #151B2D; --ink: #E8ECF6; --muted: #9AA3BC; --line: #283049;
-  --primary: #8097FF; --primary-ink: #0D1120; --marker: #F2D33A; --marker-ink: #121A2E; --soft: #1C2440;
-  --true: #4CC48A; --false: #FF6B72; --mislead: #F0A63A; --unknown: #A3AAC2;
-  color-scheme: dark;
-}
-
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
-body {
-  margin: 0; background: var(--bg); color: var(--ink);
-  font-family: var(--f-body); font-size: var(--step-0); line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-img { max-width: 100%; }
-a { color: var(--primary); text-underline-offset: 3px; }
-:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; border-radius: 4px; }
-h1, h2, h3, h4 { font-family: var(--f-display); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
-p { margin: 0; }
-.wrap { max-width: 1180px; margin-inline: auto; padding-inline: var(--gutter); }
-.eyebrow { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.mark { background: linear-gradient(transparent 12%, var(--marker) 12%, var(--marker) 88%, transparent 88%); color: var(--marker-ink); padding-inline: 0.12em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-.btn {
-  display: inline-flex; align-items: center; gap: 0.5em; font-family: var(--f-display); font-weight: 700; font-size: 1rem;
-  padding: 0.75em 1.25em; border-radius: 999px; border: 2px solid var(--primary); text-decoration: none; cursor: pointer;
-  background: var(--primary); color: var(--primary-ink); transition: transform .15s ease, background .15s ease;
-}
-.btn:hover { transform: translateY(-1px); }
-.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
-.btn.ghost:hover { border-color: var(--ink); }
-.section { padding-block: clamp(56px, 8vw, 104px); }
-.section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 36px; }
-.section-head h2 { font-size: var(--step-3); max-width: 22ch; }
-.section-head p { color: var(--muted); max-width: 46ch; }
-
-/* Concept ribbon */
-.concept { background: var(--ink); color: var(--bg); font-family: var(--f-mono); font-size: 0.78rem; text-align: center; padding: 8px 16px; }
-
-/* Header */
-.site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-.nav { display: flex; align-items: center; gap: 24px; min-height: 68px; }
-.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-family: var(--f-display); font-weight: 800; font-size: 1.1rem; line-height: 1; }
-.logo svg { flex: none; }
-.logo small { display: block; font-family: var(--f-mono); font-weight: 400; font-size: 0.68rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.04em; }
-.nav-links { display: flex; gap: 4px; list-style: none; margin: 0 0 0 auto; padding: 0; }
-.nav-links a { display: block; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--ink); font-family: var(--f-display); font-weight: 500; font-size: 0.98rem; }
-.nav-links a:hover { background: var(--soft); }
-.nav-tools { display: flex; align-items: center; gap: 8px; }
-.icon-btn { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
-.icon-btn:hover { border-color: var(--ink); }
-.menu-btn { display: none; }
-@media (max-width: 960px) {
-  .nav-links { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; background: var(--surface); border-bottom: 1px solid var(--line); padding: 8px var(--gutter) 16px; }
-  .nav-links.open { display: flex; }
-  .nav-links a { padding: 12px; font-size: 1.05rem; }
-  .menu-btn { display: grid; }
-  .nav-tools { margin-left: auto; }
-  .nav-tools .btn { display: none; }
-}
-
-/* Hero */
-.hero { padding-block: clamp(40px, 6vw, 80px) clamp(48px, 7vw, 96px); }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
-.hero h1 { font-size: var(--step-4); font-weight: 800; letter-spacing: -0.025em; }
-.hero-lead { font-size: var(--step-1); color: var(--muted); margin-top: 22px; max-width: 34ch; line-height: 1.5; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-.hero-stats { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); }
-.hero-stats div { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
-.hero-stats strong { display: block; font-family: var(--f-display); font-size: 1.6rem; color: var(--ink); font-variant-numeric: tabular-nums; }
-@media (max-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } }
-
-/* Interactive post */
-.lab { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: 0 24px 60px -30px color-mix(in srgb, var(--ink) 40%, transparent); }
-.lab-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
-.lab-top .eyebrow { color: var(--primary); }
-.counter { font-family: var(--f-mono); font-size: 0.8rem; background: var(--soft); padding: 4px 10px; border-radius: 999px; font-variant-numeric: tabular-nums; }
-.post { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; background: var(--bg); }
-.post-head { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
-.avatar { width: 40px; height: 40px; border-radius: 50%; background: repeating-linear-gradient(45deg, var(--soft) 0 6px, var(--line) 6px 12px); flex: none; }
-.post-head b { font-family: var(--f-display); display: block; font-size: 0.98rem; }
-.post-head span { font-family: var(--f-mono); font-size: 0.74rem; color: var(--muted); }
-.post-text { font-family: var(--f-display); font-size: 1.12rem; line-height: 1.45; font-weight: 500; }
-.flag { cursor: pointer; border-radius: 3px; border-bottom: 2px dashed color-mix(in srgb, var(--muted) 60%, transparent); transition: background .2s ease; }
-.flag:hover { background: var(--soft); }
-.flag.found { background: linear-gradient(transparent 10%, var(--marker) 10%, var(--marker) 90%, transparent 90%); color: var(--marker-ink); border-bottom-color: transparent; }
-.post-img { margin-top: 12px; aspect-ratio: 16 / 8; max-width: 100%; border-radius: 10px; background: linear-gradient(135deg, var(--soft), var(--line)); display: grid; place-items: center; font-family: var(--f-mono); font-size: 0.76rem; color: var(--muted); text-align: center; padding: 12px; }
-.post-meta { display: flex; gap: 18px; margin-top: 12px; font-family: var(--f-mono); font-size: 0.76rem; color: var(--muted); flex-wrap: wrap; }
-.clues { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; min-height: 2.5em; }
-.clues li { font-size: 0.92rem; padding: 10px 12px; border-radius: 10px; background: var(--soft); display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
-.clues li b { font-family: var(--f-mono); font-size: 0.74rem; color: var(--primary); padding-top: 3px; }
-.clues .hint { background: transparent; color: var(--muted); font-style: italic; padding: 0; display: block; }
-.verdicts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.verdicts button { font-family: var(--f-display); font-weight: 700; font-size: 0.9rem; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
-.verdicts button:hover { border-color: var(--ink); }
-.verdicts button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.feedback { margin-top: 12px; font-size: 0.95rem; min-height: 1.5em; }
-
-/* Verdict stamp */
-.stamp { display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; font-family: var(--f-mono); font-weight: 600; font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 10px; border: 2px solid currentColor; border-radius: 6px; transform: rotate(-3deg); }
-.stamp.false { color: var(--false); }
-.stamp.mislead { color: var(--mislead); }
-.stamp.true { color: var(--true); }
-.stamp.unknown { color: var(--unknown); }
-
-/* Audience */
-.audience { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-.aud { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: var(--ink); transition: border-color .15s ease, transform .15s ease; }
-.aud:hover { border-color: var(--ink); transform: translateY(-2px); }
-.aud h3 { font-size: var(--step-1); }
-.aud p { color: var(--muted); font-size: 0.95rem; }
-.aud .go { margin-top: auto; padding-top: 8px; font-family: var(--f-mono); font-size: 0.8rem; color: var(--primary); }
-.aud svg { color: var(--primary); }
-@media (max-width: 960px) { .audience { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 520px) { .audience { grid-template-columns: minmax(0, 1fr); } }
-
-/* Method */
-.method { background: var(--ink); color: var(--bg); }
-.method .eyebrow, .method .section-head p { color: color-mix(in srgb, var(--bg) 70%, var(--ink)); }
-.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: s; border-top: 1px solid color-mix(in srgb, var(--bg) 25%, var(--ink)); }
-.step { padding: 28px 24px 8px 0; position: relative; }
-.step + .step { padding-left: 24px; border-left: 1px solid color-mix(in srgb, var(--bg) 25%, var(--ink)); }
-.step .n { font-family: var(--f-mono); font-size: 0.8rem; color: var(--marker); }
-.step h3 { font-size: var(--step-2); margin: 10px 0 12px; }
-.step p { color: color-mix(in srgb, var(--bg) 78%, var(--ink)); font-size: 0.98rem; }
-.step ul { margin: 14px 0 0; padding-left: 1.1em; font-size: 0.92rem; color: color-mix(in srgb, var(--bg) 78%, var(--ink)); display: grid; gap: 4px; }
-@media (max-width: 960px) {
-  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .step:nth-child(3) { border-left: 0; padding-left: 0; }
-  .step:nth-child(n+3) { border-top: 1px solid color-mix(in srgb, var(--bg) 25%, var(--ink)); }
-}
-@media (max-width: 560px) {
-  .steps { grid-template-columns: minmax(0, 1fr); }
-  .step, .step + .step { padding-left: 0; border-left: 0; }
-  .step + .step { border-top: 1px solid color-mix(in srgb, var(--bg) 25%, var(--ink)); }
-}
-
-/* Topics */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-.chip { font-family: var(--f-display); font-weight: 500; font-size: 0.92rem; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
-.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.topic { display: flex; flex-direction: column; gap: 12px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; color: var(--ink); }
-.topic:hover { border-color: var(--ink); }
-.topic h3 { font-size: 1.25rem; }
-.topic p { color: var(--muted); font-size: 0.95rem; }
-.topic-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); font-family: var(--f-mono); font-size: 0.74rem; color: var(--muted); }
-.level { display: inline-flex; gap: 3px; align-items: center; }
-.level i { width: 7px; height: 7px; border-radius: 2px; background: var(--line); display: inline-block; }
-.level i.on { background: var(--primary); }
-@media (max-width: 960px) { .topics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .topics { grid-template-columns: minmax(0, 1fr); } }
-
-/* Case study */
-.case { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
-.case-claim { padding: clamp(24px, 4vw, 44px); background: var(--soft); display: flex; flex-direction: column; gap: 18px; }
-.case-claim blockquote { margin: 0; font-family: var(--f-display); font-size: var(--step-2); font-weight: 700; line-height: 1.2; }
-.case-claim .src { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); }
-.case-body { padding: clamp(24px, 4vw, 44px); display: grid; gap: 18px; }
-.case-body h3 { font-size: var(--step-1); }
-.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-.timeline li { display: grid; grid-template-columns: 92px 1fr; gap: 14px; font-size: 0.97rem; }
-.timeline li span { font-family: var(--f-mono); font-size: 0.76rem; color: var(--primary); padding-top: 3px; }
-.sources { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; overflow-wrap: anywhere; }
-@media (max-width: 860px) { .case { grid-template-columns: minmax(0, 1fr); } }
-
-/* Quiz */
-.quiz-wrap { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(24px, 5vw, 64px); align-items: start; }
-.quiz { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: clamp(20px, 3vw, 32px); }
-.progress { display: flex; gap: 6px; margin-bottom: 20px; }
-.progress span { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
-.progress span.done { background: var(--primary); }
-.q-title { font-family: var(--f-display); font-size: var(--step-1); font-weight: 700; line-height: 1.3; margin-bottom: 18px; }
-.answers { display: grid; gap: 10px; }
-.answers button { text-align: left; font-family: var(--f-body); font-size: 1rem; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); cursor: pointer; }
-.answers button:hover:not(:disabled) { border-color: var(--ink); }
-.answers button.right { border-color: var(--true); background: color-mix(in srgb, var(--true) 12%, var(--bg)); }
-.answers button.wrong { border-color: var(--false); background: color-mix(in srgb, var(--false) 10%, var(--bg)); }
-.answers button:disabled { cursor: default; }
-.explain { margin-top: 16px; font-size: 0.95rem; color: var(--muted); }
-.quiz-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
-@media (max-width: 860px) { .quiz-wrap { grid-template-columns: minmax(0, 1fr); } }
-
-/* Teachers */
-.teach { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(24px, 5vw, 64px); align-items: start; }
-.teach-intro p { color: var(--muted); margin-top: 16px; max-width: 42ch; }
-.teach-intro .btn { margin-top: 24px; }
-.files { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.files li { border-bottom: 1px solid var(--line); }
-.files a { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 4px; text-decoration: none; color: var(--ink); }
-.files a:hover { background: var(--surface); }
-.ftype { font-family: var(--f-mono); font-size: 0.72rem; font-weight: 600; text-align: center; padding: 10px 0; border-radius: 8px; background: var(--soft); color: var(--primary); }
-.files b { font-family: var(--f-display); font-size: 1.05rem; display: block; }
-.files small { font-family: var(--f-mono); font-size: 0.74rem; color: var(--muted); }
-.files .size { font-family: var(--f-mono); font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-@media (max-width: 860px) { .teach { grid-template-columns: minmax(0, 1fr); } }
-
-/* Glossary */
-.glossary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
-.glossary details { border-top: 1px solid var(--line); padding: 16px 0; }
-.glossary summary { cursor: pointer; font-family: var(--f-display); font-weight: 700; font-size: 1.15rem; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
-.glossary summary::-webkit-details-marker { display: none; }
-.glossary summary::after { content: "+"; font-family: var(--f-mono); color: var(--primary); }
-.glossary details[open] summary::after { content: "−"; }
-.glossary details p { margin-top: 10px; color: var(--muted); font-size: 0.97rem; }
-@media (max-width: 760px) { .glossary { grid-template-columns: minmax(0, 1fr); } }
-
-/* Newsletter + footer */
-.news { background: var(--primary); color: var(--primary-ink); border-radius: 24px; padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 48px; align-items: center; }
-.news h2 { font-size: var(--step-3); }
-.news p { margin-top: 12px; opacity: 0.85; }
-.news form { display: flex; gap: 10px; flex-wrap: wrap; }
-.news label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-.news input { flex: 1 1 220px; min-width: 0; font: inherit; padding: 14px 18px; border-radius: 999px; border: 2px solid transparent; background: var(--surface); color: var(--ink); }
-.news button { font-family: var(--f-display); font-weight: 700; font-size: 1rem; padding: 14px 22px; border-radius: 999px; border: 2px solid var(--primary-ink); background: transparent; color: var(--primary-ink); cursor: pointer; }
-.news .msg { flex-basis: 100%; font-family: var(--f-mono); font-size: 0.85rem; min-height: 1.4em; }
-@media (max-width: 760px) { .news { grid-template-columns: minmax(0, 1fr); } }
-
-.site-footer { padding-block: 56px 40px; border-top: 1px solid var(--line); margin-top: clamp(56px, 8vw, 104px); }
-.foot-grid { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
-.foot-grid h4 { font-size: 0.95rem; margin-bottom: 12px; }
-.foot-grid ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.foot-grid a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
-.foot-grid a:hover { color: var(--ink); text-decoration: underline; }
-.foot-grid > div:first-child p { color: var(--muted); font-size: 0.95rem; margin-top: 12px; max-width: 34ch; }
-.foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--f-mono); font-size: 0.76rem; color: var(--muted); }
-@media (max-width: 860px) { .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 480px) { .foot-grid { grid-template-columns: minmax(0, 1fr); } }
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
 </head>
-<body>
+<body data-page="index">
+<div id="site-header"></div>
+<main id="obsah">
 
-<div class="concept">Koncept redizajnu · ukážka UX/UI · obsah je ilustračný</div>
-
-<header class="site-header">
-  <nav class="wrap nav" aria-label="Hlavná navigácia">
-    <a class="logo" href="#top" aria-label="Mediálna gramotnosť, domov">
-      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
-        <circle cx="15" cy="15" r="10.5" fill="none" stroke="currentColor" stroke-width="3"/>
-        <path d="M23 23 L32 32" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
-        <rect x="8" y="12" width="14" height="6" rx="1" fill="var(--marker)"/>
-      </svg>
-      <span>Mediálna gramotnosť<small>over si to skôr, než zdieľaš</small></span>
-    </a>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="#temy">Témy</a></li>
-      <li><a href="#metoda">Overovač</a></li>
-      <li><a href="#rozbor">Rozbory</a></li>
-      <li><a href="#ucitelia">Pre učiteľov</a></li>
-      <li><a href="#slovnik">Slovník</a></li>
-    </ul>
-    <div class="nav-tools">
-      <button class="icon-btn" id="theme-btn" type="button" aria-label="Prepnúť svetlý a tmavý režim">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-      </button>
-      <a class="btn" href="#ucitelia">Materiály</a>
-      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Otvoriť menu" aria-expanded="false" aria-controls="nav-links">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      </button>
-    </div>
-  </nav>
-</header>
-
-<main id="top">
-
-  <!-- HERO -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <p class="eyebrow">Vzdelávací portál o médiách a informáciách</p>
-        <h1 style="margin-top:14px">Skôr než zdieľaš, <span class="mark">over si to.</span></h1>
-        <p class="hero-lead">Naučíme vás rozpoznať manipuláciu, overiť zdroj a pochopiť, prečo vám sociálne siete ukazujú práve to, čo vidíte.</p>
-        <div class="hero-actions">
-          <a class="btn" href="#metoda">Ako overiť správu</a>
-          <a class="btn ghost" href="#kviz">Otestuj sa za 2 minúty</a>
-        </div>
-        <div class="hero-stats">
-          <div><strong>48</strong>lekcií a tém</div>
-          <div><strong>120+</strong>materiálov pre školy</div>
-          <div><strong>5–10 min</strong>na jednu lekciu</div>
+        <p class="eyebrow">Podvody · dezinformácie · overovanie</p>
+        <h1 style="margin-top:14px">Neklikni hneď. <span class="mark">Over si to.</span></h1>
+        <p class="lead">Ukážeme vám na skutočných typoch správ, ako vyzerá podvodná SMS, e-mail, reklama na Facebooku či falošný telefonát. A čo robiť, keď sa to stane.</p>
+        <div class="btn-row" style="margin-top:28px">
+          <a class="btn" href="trenazer.html">Vyskúšať trenažér</a>
+          <a class="btn ghost" href="overit.html#kontrola">Prišla mi podozrivá správa</a>
         </div>
       </div>
 
-      <div class="lab" aria-labelledby="lab-title">
-        <div class="lab-top">
-          <span class="eyebrow" id="lab-title">Vyskúšaj: nájdi varovné signály</span>
-          <span class="counter" id="counter" aria-live="polite">0 / 4 nájdené</span>
+      <div class="example">
+        <div class="example-bar">
+          <span class="example-label">Ukážka podľa varovania SK-CERT</span>
+          <button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button>
         </div>
-        <article class="post">
-          <div class="post-head">
-            <div class="avatar" aria-hidden="true"></div>
-            <div><b>Pravda Bez Cenzúry 24</b><span>pred 3 hod. · zdieľané 12 480×</span></div>
+        <div class="m-phone">
+          <div class="m-phone-head"><div class="m-phone-av">+</div><div><b>+212 6 41 xx xx xx</b><span>SMS · Textová správa</span></div></div>
+          <div class="m-thread">
+            <div class="m-time">Dnes 09:41</div>
+            <div class="bubble">Slovenska posta: Vas balik bol vrateny do skladu pre <span class="flag">nespravnu adresu</span>. <span class="flag">Doplatte poplatok 1,20 EUR</span> do 24 hodin: <span class="flag lnk">sk-posta.balik-info.top/sk</span></div>
           </div>
-          <p class="post-text">
-            <span class="flag" tabindex="0" role="button" data-clue="0">ZDIEĽAJTE, KÝM TO ZMAŽÚ!</span>
-            Od 1. novembra sa na Slovensku ruší hotovosť.
-            <span class="flag" tabindex="0" role="button" data-clue="1">Potvrdil to istý bankový expert</span>,
-            médiá o tom mlčia.
-            <span class="flag" tabindex="0" role="button" data-clue="2">Vyberte si úspory, kým je čas!!!</span>
-          </p>
-          <div class="post-img"><span class="flag" tabindex="0" role="button" data-clue="3">[foto: rad ľudí pred bankomatom]</span></div>
-          <div class="post-meta"><span>2,1 tis. reakcií</span><span>846 komentárov</span><span>bez odkazu na zdroj</span></div>
-        </article>
-        <ul class="clues" id="clues" aria-live="polite">
-          <li class="hint">Klikni na časti príspevku, ktoré ti pripadajú podozrivé.</li>
+        </div>
+        <ul class="flag-list">
+          <li>Nečakaný balík a problém s adresou. Slovenská pošta takto poplatky nevyberá.</li>
+          <li>Drobná suma má znížiť ostražitosť. Podvodník chce číslo karty a SMS kód, ktorým si vašu kartu pridá do Apple Pay alebo Google Pay.</li>
+          <li>Stránka patrí doméne <b>balik-info.top</b>, nie pošte. Číslo odosielateľa je zahraničné.</li>
         </ul>
-        <div class="verdicts" role="group" aria-label="Tvoj verdikt">
-          <button type="button" data-v="true" aria-pressed="false">Pravdivé</button>
-          <button type="button" data-v="mislead" aria-pressed="false">Zavádzajúce</button>
-          <button type="button" data-v="false" aria-pressed="false">Nepravdivé</button>
-          <button type="button" data-v="unknown" aria-pressed="false">Neviem overiť</button>
-        </div>
-        <p class="feedback" id="feedback" aria-live="polite"></p>
       </div>
     </div>
   </section>
 
-  <!-- AUDIENCE -->
-  <section class="section" style="padding-top:0" aria-labelledby="aud-title">
+  <section class="section tight" aria-labelledby="paths-title">
+    <div class="wrap">
+      <div class="section-head"><h2 id="paths-title">S čím vám pomôžeme?</h2></div>
+      <div class="paths">
+        <a class="card" href="overit.html#kontrola">
+          <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M12 8v3M12 13.5v.5"/></svg></span>
+          <h3>Prišla mi podozrivá správa</h3><p>Odpovedzte na 7 otázok a zistíte, či ide o podvod.</p><span class="go">Skontrolovať správu →</span></a>
+        <a class="card" href="podvody.html">
+          <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h12l4 4v12H4z"/><path d="M8 10h8M8 14h8M8 18h5"/></svg></span>
+          <h3>Chcem spoznať podvody</h3><p>Atlas 12 najčastejších podvodov s ukážkami.</p><span class="go">Otvoriť atlas →</span></a>
+        <a class="card" href="dezinformacie.html">
+          <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg></span>
+          <h3>Nerozumiem, čomu veriť</h3><p>Dezinformácie, manipulácia, deepfakes a algoritmy.</p><span class="go">Dezinformácie a AI →</span></a>
+        <a class="card danger-card" href="pomoc.html">
+          <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 16.5v.5"/></svg></span>
+          <h3>Už sa mi to stalo</h3><p>Zadali ste kartu alebo poslali peniaze? Konajte hneď.</p><span class="go">Čo robiť teraz →</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark" aria-labelledby="rules-title">
     <div class="wrap">
       <div class="section-head">
-        <h2 id="aud-title">Začnite tam, kde ste vy</h2>
-        <p>Každá skupina má vlastnú cestu: iný jazyk, iné príklady a iné nástroje.</p>
+        <div><p class="eyebrow">Ak si zapamätáte len jedno</p><h2 id="rules-title" style="margin-top:10px">Tri pravidlá proti každému podvodu</h2></div>
+        <p>Fungujú pri SMS, e-maile, telefonáte aj na sociálnych sieťach. Podvodníci menia príbehy, ale tieto tri veci sa nemenia.</p>
       </div>
+      <div class="rules">
+        <div class="rule"><span class="n">Pravidlo 1</span><h3>Zastav sa</h3><p>Strach, nádej alebo súrnosť sú signál spomaliť. Žiadna skutočná banka ani úrad od vás nechce rozhodnutie do 10 minút.</p></div>
+        <div class="rule"><span class="n">Pravidlo 2</span><h3>Over inou cestou</h3><p>Nevolajte na číslo zo správy a neklikajte na odkaz. Zavolajte na číslo z karty, zmluvy alebo oficiálneho webu.</p></div>
+        <div class="rule"><span class="n">Pravidlo 3</span><h3>Kódy nikomu</h3><p>PIN, heslo, kód zo SMS ani údaje z karty nikomu nediktujte. Ani „banke“, ani „polícii“.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="warn-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="warn-title">Aktuálne časté podvody na Slovensku</h2>
+        <p>Vybrali sme ich z varovaní SK-CERT, Národnej banky Slovenska a Polície SR.</p>
+      </div>
+      <div class="warn-list">
+        <a class="warn-item" href="podvody.html#sms-balik"><span class="tag red">SMS</span><span><b>Falošná Slovenská pošta a kuriéri</b><p>SMS o balíku a doplatku. Cieľom je karta a SMS kód. Varovanie SK-CERT.</p></span><span class="go">Ukážka →</span></a>
+        <a class="warn-item" href="podvody.html#falosny-bankar"><span class="tag red">Telefonát</span><span><b>Falošný bankár alebo policajt</b><p>„Váš účet je napadnutý, presuňte peniaze na bezpečný účet.“ Varovanie Polície SR.</p></span><span class="go">Ukážka →</span></a>
+        <a class="warn-item" href="podvody.html#investicie-deepfake"><span class="tag red">Facebook</span><span><b>Investície s deepfake videom známych osobností</b><p>Vymyslené rozhovory a videá politikov a moderátorov. Varovanie NBS.</p></span><span class="go">Ukážka →</span></a>
+        <a class="warn-item" href="podvody.html#ahoj-mami"><span class="tag red">WhatsApp</span><span><b>„Ahoj mami, mám nové číslo“</b><p>Podvodník sa vydáva za vaše dieťa a pýta peniaze. Varovanie Polície SR.</p></span><span class="go">Ukážka →</span></a>
+        <a class="warn-item" href="podvody.html#bazar"><span class="tag red">Bazár</span><span><b>Falošný kupujúci na Bazoši a Marketplace</b><p>„Pošlem kuriéra, peniaze si prevezmite cez odkaz.“ Varovanie Polície SR.</p></span><span class="go">Ukážka →</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" aria-labelledby="num-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="num-title">Prečo na tom záleží</h2>
+        <p>Čísla z európskych inštitúcií. Odkazy na pôvodné správy nájdete v <a href="zdroje.html">Zdrojoch</a>.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>60 %</strong><p>kybernetických útokov v EÚ začína phishingom, teda podvodnou správou.</p><span class="cite">ENISA Threat Landscape 2025</span></div>
+        <div class="stat"><strong>36 %</strong><p>Európanov sa podľa vlastných slov s dezinformáciami stretlo „často“ alebo „veľmi často“ za posledný týždeň.</p><span class="cite">Eurobarometer, 2025</span></div>
+        <div class="stat"><strong>č. 1</strong><p>Podvody sú podľa Europolu najrýchlejšie rastúcou oblasťou organizovanej kriminality na internete. Pomáha im umelá inteligencia.</p><span class="cite">Europol IOCTA 2025 a 2026</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="aud-title">
+    <div class="wrap">
+      <div class="section-head"><h2 id="aud-title">Pripravené pre vás</h2><p>Rovnaké princípy, iné príklady. Písmo si zväčšíte tlačidlom A+ hore.</p></div>
       <div class="audience">
-        <a class="aud" href="#temy">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 18h4"/></svg>
-          <h3>Žiaci a študenti</h3>
-          <p>Krátke lekcie, kvízy a príklady z TikToku, Instagramu a YouTube.</p>
-          <span class="go">Lekcie pre žiakov →</span>
+        <a class="aud-card" href="seniori.html">
+          <p class="eyebrow">Pre seniorov a ich rodiny</p>
+          <h3>Jednoducho a bez ponáhľania</h3>
+          <ul><li>Telefonáty od „banky“, „polície“ a „vnúčat“</li><li>Čo povedať a kedy zložiť</li><li>Rodinné heslo a ďalšie jednoduché triky</li></ul>
+          <span class="go" style="font-family:var(--f-display);font-weight:700;color:var(--primary)">Sprievodca pre seniorov →</span>
         </a>
-        <a class="aud" href="#ucitelia">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 5h18v11H3z"/><path d="M8 20h8M12 16v4"/></svg>
-          <h3>Učitelia</h3>
-          <p>Hotové plány hodín, pracovné listy a prepojenie na ŠVP.</p>
-          <span class="go">Materiály na stiahnutie →</span>
-        </a>
-        <a class="aud" href="#temy">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c0-2.5 1.3-4.5 3-4.5s3 2 3 4.5"/></svg>
-          <h3>Rodičia</h3>
-          <p>Ako sa s deťmi rozprávať o algoritmoch, influenceroch a súkromí.</p>
-          <span class="go">Sprievodca pre rodičov →</span>
-        </a>
-        <a class="aud" href="#temy">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
-          <h3>Seniori</h3>
-          <p>Podvodné reklamy, reťazové správy a falošné telefonáty. Väčšie písmo a jednoduché kroky.</p>
-          <span class="go">Bezpečne online →</span>
+        <a class="aud-card" href="mladi.html">
+          <p class="eyebrow">Pre mladých</p>
+          <h3>Sociálne siete, hry a brigády</h3>
+          <ul><li>Vydieranie intímnymi fotkami a ako sa brániť</li><li>„Brigáda“, z ktorej je pranie peňazí</li><li>Influenceri, reklama a algoritmy</li></ul>
+          <span class="go" style="font-family:var(--f-display);font-weight:700;color:var(--primary)">Sprievodca pre mladých →</span>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- METHOD -->
-  <section class="section method" id="metoda" aria-labelledby="met-title">
+  <section class="section tight" aria-labelledby="tr-title">
     <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Overovač</p>
-          <h2 id="met-title" style="margin-top:10px">Štyri kroky, ktoré zvládnete za minútu</h2>
+      <div class="callout cta-band">
+        <div class="stack">
+          <h2 id="tr-title" style="font-size:var(--step-3)">Spoznáte podvod? Vyskúšajte si to.</h2>
+          <p class="muted" style="max-width:52ch">12 ukážok SMS, e-mailov, správ z WhatsAppu a Facebooku. Niektoré sú podvod, niektoré sú v poriadku. Po každej uvidíte vysvetlenie.</p>
         </div>
-        <p>Postup vychádza z metódy SIFT, ktorú používajú overovatelia faktov. Funguje na správy, fotky aj videá.</p>
-      </div>
-      <ol class="steps" style="list-style:none;margin:0;padding:0">
-        <li class="step">
-          <span class="n">Krok 1</span>
-          <h3>Zastav sa</h3>
-          <p>Silná emócia je signál spomaliť. Hnev a strach sa šíria najrýchlejšie.</p>
-          <ul><li>Viem, kto to napísal?</li><li>Chce odo mňa, aby som konal hneď?</li></ul>
-        </li>
-        <li class="step">
-          <span class="n">Krok 2</span>
-          <h3>Over zdroj</h3>
-          <p>Otvor novú kartu a zisti, kto stojí za webom alebo profilom.</p>
-          <ul><li>Má redakciu a impresum?</li><li>Ako dlho existuje?</li></ul>
-        </li>
-        <li class="step">
-          <span class="n">Krok 3</span>
-          <h3>Hľadaj inde</h3>
-          <p>Píšu o tom aj iné, nezávislé médiá? Ak nie, je to varovanie.</p>
-          <ul><li>Vyhľadaj kľúčové slová</li><li>Pozri weby overovateľov faktov</li></ul>
-        </li>
-        <li class="step">
-          <span class="n">Krok 4</span>
-          <h3>Skontroluj kontext</h3>
-          <p>Fotka môže byť skutočná, ale z iného roku alebo inej krajiny.</p>
-          <ul><li>Spätné vyhľadávanie obrázka</li><li>Dátum a miesto pôvodnej udalosti</li></ul>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- TOPICS -->
-  <section class="section" id="temy" aria-labelledby="topics-title">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="topics-title">Témy</h2>
-        <p>Každá téma začína príkladom zo života, potom vysvetlí princíp a skončí krátkym kvízom.</p>
-      </div>
-      <div class="filters" role="group" aria-label="Filtrovať témy">
-        <button class="chip" type="button" data-f="all" aria-pressed="true">Všetko</button>
-        <button class="chip" type="button" data-f="zaklady" aria-pressed="false">Základy</button>
-        <button class="chip" type="button" data-f="siete" aria-pressed="false">Sociálne siete</button>
-        <button class="chip" type="button" data-f="ai" aria-pressed="false">AI a technológie</button>
-      </div>
-      <div class="topics" id="topics">
-        <a class="topic" href="#" data-cat="zaklady">
-          <span class="eyebrow">Lekcia · Video</span>
-          <h3>Dezinformácie, misinformácie a hoaxy</h3>
-          <p>Aký je rozdiel medzi omylom a zámernou lžou a prečo na tom záleží.</p>
-          <div class="topic-meta"><span class="level" aria-label="Úroveň 1 z 3"><i class="on"></i><i></i><i></i></span><span>8 min</span><span>od 12 rokov</span></div>
-        </a>
-        <a class="topic" href="#" data-cat="zaklady">
-          <span class="eyebrow">Lekcia · Cvičenie</span>
-          <h3>Ako overiť zdroj</h3>
-          <p>Impresum, autor, doména a história webu. Praktické cvičenie na skutočných stránkach.</p>
-          <div class="topic-meta"><span class="level" aria-label="Úroveň 1 z 3"><i class="on"></i><i></i><i></i></span><span>10 min</span><span>od 12 rokov</span></div>
-        </a>
-        <a class="topic" href="#" data-cat="zaklady">
-          <span class="eyebrow">Lekcia · Kvíz</span>
-          <h3>Manipulačné techniky</h3>
-          <p>Clickbait, falošná autorita, vytrhnutie z kontextu a ďalšie triky, ktoré sa opakujú.</p>
-          <div class="topic-meta"><span class="level" aria-label="Úroveň 2 z 3"><i class="on"></i><i class="on"></i><i></i></span><span>12 min</span><span>od 14 rokov</span></div>
-        </a>
-        <a class="topic" href="#" data-cat="siete">
-          <span class="eyebrow">Lekcia · Interaktívne</span>
-          <h3>Algoritmy a informačné bubliny</h3>
-          <p>Prečo vidíte stále podobný obsah a ako si feed vedome nastaviť.</p>
-          <div class="topic-meta"><span class="level" aria-label="Úroveň 2 z 3"><i class="on"></i><i class="on"></i><i></i></span><span>9 min</span><span>od 13 rokov</span></div>
-        </a>
-        <a class="topic" href="#" data-cat="siete">
-          <span class="eyebrow">Lekcia · Video</span>
-          <h3>Influenceri a skrytá reklama</h3>
-          <p>Ako spoznať platenú spoluprácu a natívnu reklamu, aj keď nie je označená.</p>
-          <div class="topic-meta"><span class="level" aria-label="Úroveň 1 z 3"><i class="on"></i><i></i><i></i></span><span>7 min</span><span>od 12 rokov</span></div>
-        </a>
-        <a class="topic" href="#" data-cat="ai">
-          <span class="eyebrow">Lekcia · Cvičenie</span>
-          <h3>Umelá inteligencia a deepfakes</h3>
-          <p>Generované fotky, hlasy a videá. Na čo sa pozerať a kedy ani to nestačí.</p>
-          <div class="topic-meta"><span class="level" aria-label="Úroveň 3 z 3"><i class="on"></i><i class="on"></i><i class="on"></i></span><span>14 min</span><span>od 15 rokov</span></div>
-        </a>
+        <a class="btn" href="trenazer.html">Spustiť trenažér</a>
       </div>
     </div>
   </section>
 
-  <!-- CASE STUDY -->
-  <section class="section" id="rozbor" style="padding-top:0" aria-labelledby="case-title">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="case-title">Rozbor týždňa</h2>
-        <a class="btn ghost" href="#">Všetky rozbory</a>
-      </div>
-      <article class="case">
-        <div class="case-claim">
-          <span class="stamp mislead">Zavádzajúce</span>
-          <blockquote>„Fotka ukazuje záplavy na Slovensku z minulého týždňa.“</blockquote>
-          <p class="src">Ilustračný príklad · tvrdenie zo sociálnej siete · overené 28. 9. 2026</p>
-        </div>
-        <div class="case-body">
-          <h3>Fotka je skutočná, ale z inej krajiny a spred šiestich rokov</h3>
-          <ol class="timeline">
-            <li><span>Tvrdenie</span>Príspevok s fotkou zaplavenej ulice zdieľalo za dva dni vyše 9 000 ľudí.</li>
-            <li><span>Overenie</span>Spätné vyhľadávanie obrázka našlo pôvodnú fotku v spravodajstve z roku 2020 z inej krajiny.</li>
-            <li><span>Kontext</span>Záplavy na Slovensku sa minulý týždeň naozaj stali, preto príspevok pôsobil dôveryhodne.</li>
-            <li><span>Poučenie</span>Pravdivá udalosť a nepravdivá fotka spolu vytvárajú zavádzajúci obsah.</li>
-          </ol>
-          <p class="sources">Použité nástroje: spätné vyhľadávanie obrázkov, archív webu, metadáta fotky</p>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- QUIZ -->
-  <section class="section" id="kviz" style="background:var(--soft)" aria-labelledby="quiz-title">
-    <div class="wrap quiz-wrap">
-      <div>
-        <p class="eyebrow">Rýchly kvíz</p>
-        <h2 id="quiz-title" style="font-size:var(--step-3);margin-top:10px">Spoznáš manipuláciu?</h2>
-        <p style="color:var(--muted);margin-top:16px;max-width:38ch">Tri otázky, okamžitá spätná väzba. Na konci uvidíš, ktorej téme sa oplatí venovať.</p>
-      </div>
-      <div class="quiz" id="quiz">
-        <div class="progress" id="progress" aria-hidden="true"><span></span><span></span><span></span></div>
-        <p class="q-title" id="q-title"></p>
-        <div class="answers" id="answers"></div>
-        <p class="explain" id="explain" aria-live="polite"></p>
-        <div class="quiz-foot">
-          <span id="q-count"></span>
-          <button class="btn" id="q-next" type="button" hidden>Ďalšia otázka</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TEACHERS -->
-  <section class="section" id="ucitelia" aria-labelledby="teach-title">
-    <div class="wrap teach">
-      <div class="teach-intro">
-        <p class="eyebrow">Pre učiteľov</p>
-        <h2 id="teach-title" style="font-size:var(--step-3);margin-top:10px">Hodina pripravená za 5 minút</h2>
-        <p>Plány hodín s cieľmi, aktivitami a riešeniami. Filtrujte podľa ročníka, predmetu a dĺžky hodiny. Všetko zadarmo a na voľné použitie v škole.</p>
-        <a class="btn" href="#">Prehliadať materiály</a>
-      </div>
-      <ul class="files">
-        <li><a href="#"><span class="ftype">PDF</span><span><b>Ako spoznať clickbait</b><small>Pracovný list · 6.–9. ročník · 45 min</small></span><span class="size">1,2 MB</span></a></li>
-        <li><a href="#"><span class="ftype">PPTX</span><span><b>Algoritmy na sociálnych sieťach</b><small>Prezentácia · SŠ · Občianska náuka, Informatika</small></span><span class="size">8,4 MB</span></a></li>
-        <li><a href="#"><span class="ftype">PDF</span><span><b>Detektív deepfakov</b><small>Plán hodiny · SŠ · 2 × 45 min</small></span><span class="size">2,7 MB</span></a></li>
-        <li><a href="#"><span class="ftype">DOCX</span><span><b>Mediálny denník na týždeň</b><small>Projekt · 8. ročník – SŠ · domáca úloha</small></span><span class="size">0,4 MB</span></a></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- GLOSSARY -->
-  <section class="section" id="slovnik" style="padding-top:0" aria-labelledby="gl-title">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="gl-title">Slovník pojmov</h2>
-        <a class="btn ghost" href="#">Celý slovník A–Z</a>
-      </div>
-      <div class="glossary">
-        <details><summary>Dezinformácia</summary><p>Nepravdivá informácia šírená zámerne, aby oklamala alebo niekomu uškodila.</p></details>
-        <details><summary>Misinformácia</summary><p>Nepravdivá informácia, ktorú niekto šíri bez zlého úmyslu, lebo jej sám verí.</p></details>
-        <details><summary>Clickbait</summary><p>Titulok, ktorý sľubuje viac, než článok obsahuje, aby ste naň klikli.</p></details>
-        <details><summary>Informačná bublina</summary><p>Stav, keď vám algoritmy ukazujú najmä obsah, s ktorým už súhlasíte.</p></details>
-        <details><summary>Deepfake</summary><p>Video, fotka alebo zvuk vytvorený či upravený umelou inteligenciou tak, aby pôsobil ako skutočný.</p></details>
-        <details><summary>Natívna reklama</summary><p>Platený obsah, ktorý vyzerá ako bežný článok alebo príspevok.</p></details>
-      </div>
-    </div>
-  </section>
-
-  <!-- NEWSLETTER -->
-  <section class="wrap" aria-labelledby="news-title">
-    <div class="news">
-      <div>
-        <h2 id="news-title">Jeden rozbor týždenne do e-mailu</h2>
-        <p>Aktuálny hoax, ako sme ho overili a čo si z toho zobrať. Pre učiteľov aj nový materiál do hodiny.</p>
-      </div>
-      <form id="news-form" novalidate>
-        <label for="news-email">E-mailová adresa</label>
-        <input id="news-email" type="email" placeholder="vas@email.sk" autocomplete="email" required>
-        <button type="submit">Prihlásiť sa</button>
-        <p class="msg" id="news-msg" aria-live="polite"></p>
-      </form>
-    </div>
-  </section>
 </main>
-
-<footer class="site-footer">
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="logo" href="#top"><span>Mediálna gramotnosť</span></a>
-        <p>Vzdelávací portál o tom, ako kriticky hodnotiť informácie, overovať zdroje a rozumieť médiám.</p>
-      </div>
-      <div><h4>Učiť sa</h4><ul><li><a href="#temy">Témy</a></li><li><a href="#metoda">Overovač</a></li><li><a href="#kviz">Kvízy</a></li><li><a href="#slovnik">Slovník</a></li></ul></div>
-      <div><h4>Pre školy</h4><ul><li><a href="#ucitelia">Plány hodín</a></li><li><a href="#ucitelia">Pracovné listy</a></li><li><a href="#">Školenia</a></li><li><a href="#">Prepojenie na ŠVP</a></li></ul></div>
-      <div><h4>O projekte</h4><ul><li><a href="#">O nás</a></li><li><a href="#">Partneri</a></li><li><a href="#">Nahlásiť podozrivý obsah</a></li><li><a href="#">Vyhlásenie o prístupnosti</a></li></ul></div>
-    </div>
-    <div class="foot-bottom"><span>Koncept redizajnu · 2026</span><span>Obsah dostupný pod licenciou CC BY 4.0</span></div>
-  </div>
-</footer>
-
-<script>
-(function () {
-  // Theme toggle
-  var root = document.documentElement;
-  try { var saved = localStorage.getItem('mg-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
-  document.getElementById('theme-btn').addEventListener('click', function () {
-    var current = root.getAttribute('data-theme') ||
-      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    var next = current === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('mg-theme', next); } catch (e) {}
-  });
-
-  // Mobile menu
-  var menuBtn = document.getElementById('menu-btn'), links = document.getElementById('nav-links');
-  menuBtn.addEventListener('click', function () {
-    var open = links.classList.toggle('open');
-    menuBtn.setAttribute('aria-expanded', String(open));
-  });
-  links.addEventListener('click', function (e) { if (e.target.tagName === 'A') { links.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); } });
-
-  // Red-flag lab
-  var clues = [
-    ['Nátlak', 'Výzva „zdieľajte, kým to zmažú“ má vyvolať paniku a zabrániť tomu, aby ste si správu overili.'],
-    ['Anonymný expert', '„Istý expert“ nemá meno ani funkciu. Takéto tvrdenie sa nedá overiť.'],
-    ['Výzva konať hneď', 'Rada okamžite niečo urobiť s peniazmi je typická pre podvody a paniku.'],
-    ['Fotka bez kontextu', 'Rad pred bankomatom môže byť odkiaľkoľvek a z akéhokoľvek roku. Over ju spätným vyhľadávaním.']
-  ];
-  var found = new Set();
-  var list = document.getElementById('clues'), counter = document.getElementById('counter');
-  function reveal(el) {
-    var i = +el.dataset.clue;
-    if (found.has(i)) return;
-    found.add(i);
-    el.classList.add('found');
-    if (found.size === 1) list.innerHTML = '';
-    var li = document.createElement('li');
-    li.innerHTML = '<b>' + String(found.size).padStart(2, '0') + '</b><span><strong>' + clues[i][0] + '.</strong> ' + clues[i][1] + '</span>';
-    list.appendChild(li);
-    counter.textContent = found.size + ' / 4 nájdené';
-  }
-  document.querySelectorAll('.flag').forEach(function (el) {
-    el.addEventListener('click', function () { reveal(el); });
-    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); reveal(el); } });
-  });
-  var fb = document.getElementById('feedback');
-  var answersV = {
-    'true': 'Pozor. Príspevok nemá zdroj, meno experta ani odkaz. Nič z toho sa nedá potvrdiť.',
-    'mislead': 'Takmer. Je tu však priamo vymyslené tvrdenie, nielen vytrhnutý kontext.',
-    'false': 'Správne. Žiadny zákon o zrušení hotovosti neexistuje a príspevok kombinuje typické znaky hoaxu.',
-    'unknown': 'Rozumný začiatok. Krok 3 by však rýchlo ukázal, že o tom nepíše žiadne dôveryhodné médium.'
-  };
-  document.querySelectorAll('.verdicts button').forEach(function (b) {
-    b.addEventListener('click', function () {
-      document.querySelectorAll('.verdicts button').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
-      b.setAttribute('aria-pressed', 'true');
-      var v = b.dataset.v;
-      fb.innerHTML = '<span class="stamp ' + (v === 'false' ? 'false' : v === 'true' ? 'true' : v === 'mislead' ? 'mislead' : 'unknown') + '">' + b.textContent + '</span> ' + answersV[v] +
-        (found.size < 4 ? ' Skús nájsť aj zvyšné varovné signály.' : '');
-    });
-  });
-
-  // Topic filters
-  var chips = document.querySelectorAll('.chip');
-  chips.forEach(function (c) {
-    c.addEventListener('click', function () {
-      chips.forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
-      c.setAttribute('aria-pressed', 'true');
-      document.querySelectorAll('.topic').forEach(function (t) {
-        t.hidden = !(c.dataset.f === 'all' || t.dataset.cat === c.dataset.f);
-      });
-    });
-  });
-
-  // Quiz
-  var Q = [
-    { q: 'Na Instagrame vidíš príspevok influencera, ktorý nadšene chváli nový šampón. Čo by si mal skontrolovať ako prvé?',
-      a: ['Počet lajkov pod príspevkom', 'Či je príspevok označený ako platená spolupráca', 'Či má influencer veľa sledovateľov'], r: 1,
-      e: 'Platená spolupráca musí byť označená. Ak nie je, ide o skrytú reklamu, aj keď pôsobí ako osobný názor.' },
-    { q: 'Neznámy web uverejní šokujúcu správu. Aký je najrýchlejší spôsob, ako zistiť, či je pravdivá?',
-      a: ['Prečítať celý článok veľmi pozorne', 'Pozrieť komentáre pod článkom', 'Otvoriť novú kartu a hľadať, či o tom píšu iné médiá'], r: 2,
-      e: 'Overovatelia faktov tomu hovoria laterálne čítanie. Namiesto skúmania jedného webu zisťujú, čo o ňom a o téme hovoria iní.' },
-    { q: 'Video ukazuje známeho politika, ako hovorí niečo nečakané. Ústa sa mierne nehýbu v súlade so zvukom. Čo to môže znamenať?',
-      a: ['Ide pravdepodobne o deepfake alebo upravené video', 'Je to len zlé internetové pripojenie', 'Nič, také video je určite pravé'], r: 0,
-      e: 'Nesúlad pier a zvuku je jeden zo znakov deepfaku. Over si, či video zverejnil aj oficiálny zdroj.' }
-  ];
-  var qi = 0, score = 0;
-  var qTitle = document.getElementById('q-title'), ans = document.getElementById('answers'),
-      expl = document.getElementById('explain'), next = document.getElementById('q-next'),
-      qCount = document.getElementById('q-count'), bars = document.querySelectorAll('#progress span');
-  function render() {
-    var item = Q[qi];
-    qTitle.textContent = item.q;
-    expl.textContent = '';
-    next.hidden = true;
-    qCount.textContent = 'Otázka ' + (qi + 1) + ' z ' + Q.length;
-    ans.innerHTML = '';
-    item.a.forEach(function (t, i) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.textContent = t;
-      b.addEventListener('click', function () {
-        ans.querySelectorAll('button').forEach(function (x, j) {
-          x.disabled = true;
-          if (j === item.r) x.classList.add('right');
-        });
-        if (i === item.r) score++; else b.classList.add('wrong');
-        expl.textContent = (i === item.r ? 'Správne. ' : 'Nie celkom. ') + item.e;
-        bars[qi].classList.add('done');
-        next.textContent = qi < Q.length - 1 ? 'Ďalšia otázka' : 'Zobraziť výsledok';
-        next.hidden = false;
-        next.focus();
-      });
-      ans.appendChild(b);
-    });
-  }
-  var finished = false;
-  next.addEventListener('click', function () {
-    if (finished) {
-      finished = false; qi = 0; score = 0;
-      bars.forEach(function (b) { b.classList.remove('done'); });
-      render();
-      return;
-    }
-    if (qi < Q.length - 1) { qi++; render(); return; }
-    finished = true;
-    qTitle.textContent = 'Výsledok: ' + score + ' z ' + Q.length;
-    ans.innerHTML = '';
-    expl.textContent = score === Q.length
-      ? 'Výborne. Pokračuj témou Umelá inteligencia a deepfakes.'
-      : 'Dobrý začiatok. Odporúčame lekciu Ako overiť zdroj.';
-    qCount.textContent = 'Hotovo';
-    next.textContent = 'Skúsiť znova';
-  });
-  render();
-
-  // Newsletter
-  document.getElementById('news-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var input = document.getElementById('news-email'), msg = document.getElementById('news-msg');
-    if (!input.value || !input.checkValidity()) { msg.textContent = 'Zadajte e-mail v tvare meno@domena.sk.'; input.focus(); return; }
-    msg.textContent = 'Toto je ukážka, e-mail sa nikam neodoslal.';
-    input.value = '';
-  });
-})();
-</script>
+<div id="site-footer"></div>
+<script src="assets/site.js"></script>
 </body>
 </html>
