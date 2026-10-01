@@ -105,7 +105,7 @@ ul, ol { margin: 0; }
 .logo svg { flex: none; }
 .logo small { display: block; font-family: var(--f-mono); font-weight: 400; font-size: .62rem; color: var(--muted); margin-top: 4px; letter-spacing: .03em; }
 .nav-links { display: flex; gap: 2px; list-style: none; margin: 0 0 0 auto; padding: 0; }
-.nav-links a { display: block; padding: 8px 11px; border-radius: 8px; text-decoration: none; color: var(--ink); font-family: var(--f-display); font-weight: 500; font-size: .92rem; white-space: nowrap; }
+.nav-links a { display: block; padding: 8px 9px; border-radius: 8px; text-decoration: none; color: var(--ink); font-family: var(--f-display); font-weight: 500; font-size: .92rem; white-space: nowrap; }
 .nav-links a:hover { background: var(--soft); }
 .nav-links a[aria-current="page"] { background: var(--ink); color: var(--bg); }
 .nav-links a.help-link { color: var(--danger); font-weight: 700; }
@@ -114,7 +114,7 @@ ul, ol { margin: 0; }
 .icon-btn { min-width: 44px; height: 44px; padding: 0 10px; display: inline-grid; place-items: center; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; font-family: var(--f-display); font-weight: 700; font-size: .9rem; }
 .icon-btn:hover { border-color: var(--ink); }
 .menu-btn { display: none; }
-@media (max-width: 1180px) {
+@media (max-width: 1240px) {
   .nav-links { display: none; position: absolute; left: calc(-1 * var(--gutter)); right: calc(-1 * var(--gutter)); top: 100%; flex-direction: column; background: var(--surface); border-bottom: 1px solid var(--line); padding: 8px var(--gutter) 16px; box-shadow: var(--shadow); }
   .nav-links.open { display: flex; }
   .nav-links a { padding: 13px 12px; font-size: 1.05rem; }
@@ -428,4 +428,50 @@ a.card:hover { border-color: var(--ink); transform: translateY(-2px); }
   .nav .logo svg { width: 28px; height: 28px; }
   .tools { gap: 4px; }
   .icon-btn { min-width: 42px; height: 42px; padding: 0 8px; }
+}
+
+/* ===== Rýchle materiály (karty) ===== */
+.lessons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 820px) { .lessons { grid-template-columns: minmax(0, 1fr); } }
+.lesson { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: clamp(18px, 3vw, 26px); display: grid; gap: 14px; align-content: start; min-width: 0; scroll-margin-top: 90px; }
+.lesson-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+.lesson-no { font-family: var(--f-mono); font-size: .74rem; color: var(--muted); letter-spacing: .06em; }
+.lesson h2 { font-size: 1.45rem; }
+.lesson .looks { font-family: var(--f-ui); font-size: .93rem; background: var(--soft); border-radius: 12px; padding: 10px 12px; overflow-wrap: anywhere; }
+.lesson .looks::before { content: "Ako to vyzerá: "; font-family: var(--f-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); display: block; margin-bottom: 2px; }
+.lesson-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 520px) { .lesson-cols { grid-template-columns: minmax(0, 1fr); } }
+.lesson h3 { font-family: var(--f-display); font-size: .95rem; margin-bottom: 6px; }
+.lesson ul { padding-left: 1.1em; display: grid; gap: 4px; font-size: .95rem; }
+.lesson .bad h3 { color: var(--danger); }
+.lesson .good h3 { color: var(--ok); }
+.remember { background: var(--marker); color: var(--marker-ink); border-radius: 12px; padding: 12px 14px; font-family: var(--f-display); font-weight: 700; font-size: 1.08rem; line-height: 1.35; }
+.remember::before { content: "Zapamätaj si: "; font-family: var(--f-mono); font-weight: 700; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; display: block; margin-bottom: 2px; }
+.lesson details { border-top: 1px solid var(--line); padding-top: 12px; }
+.lesson summary { cursor: pointer; font-family: var(--f-display); font-weight: 700; color: var(--primary); }
+.lesson details p { margin-top: 8px; }
+.lesson .more { font-family: var(--f-display); font-weight: 700; font-size: .9rem; }
+
+.wallet { border: 3px dashed var(--ink); border-radius: 18px; padding: clamp(18px, 3vw, 28px); background: var(--surface); display: grid; gap: 14px; max-width: 560px; }
+.wallet h2 { font-size: 1.5rem; }
+.wallet ol { padding-left: 1.2em; display: grid; gap: 6px; font-size: 1.05rem; }
+.wallet .nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 480px) { .wallet .nums { grid-template-columns: minmax(0, 1fr); } }
+.wallet .nums div { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; }
+.wallet .nums b { font-family: var(--f-display); font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.wallet .nums span { font-size: .8rem; color: var(--muted); }
+.wallet .fill { border-bottom: 1.5px solid var(--ink); min-height: 1.6em; }
+
+@media print {
+  :root { --base: 13px; }
+  .lesson .more { display: none; }
+  .alert-bar, .site-header, .site-footer, .filters, .no-print, .skip { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .page-hero { padding: 0 0 12pt; }
+  .page-hero h1 { font-size: 22pt; }
+  .lessons { grid-template-columns: 1fr 1fr; gap: 10pt; }
+  .lesson { break-inside: avoid; border: 1pt solid #999; box-shadow: none; padding: 10pt; }
+  .lesson details { display: none; }
+  .remember { background: #FFE04A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wallet { break-inside: avoid; }
 }

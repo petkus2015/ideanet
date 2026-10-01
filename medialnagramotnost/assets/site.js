@@ -16,8 +16,9 @@
   var NAV = [
     ['podvody', 'podvody.html', 'Podvody'],
     ['trenazer', 'trenazer.html', 'Trenažér'],
-    ['overit', 'overit.html', 'Overiť správu'],
+    ['overit', 'overit.html', 'Overiť'],
     ['dezinformacie', 'dezinformacie.html', 'Dezinformácie'],
+    ['materialy', 'materialy.html', 'Materiály'],
     ['seniori', 'seniori.html', 'Seniori'],
     ['mladi', 'mladi.html', 'Mladí'],
     ['pomoc', 'pomoc.html', 'Stalo sa mi to']
@@ -44,7 +45,7 @@
     footer.outerHTML =
       '<footer class="site-footer"><div class="wrap"><div class="foot-grid">' +
       '<div class="stack"><a class="logo" href="index.html">' + LOGO + '<span>Mediálna gramotnosť</span></a><p class="muted" style="font-size:.93rem;max-width:34ch">Vzdelávací web o podvodoch, dezinformáciách a overovaní informácií. Pre mladých aj seniorov.</p></div>' +
-      '<div><h4>Naučiť sa</h4><ul><li><a href="podvody.html">Atlas podvodov</a></li><li><a href="dezinformacie.html">Dezinformácie a AI</a></li><li><a href="overit.html">Ako overiť správu</a></li><li><a href="slovnik.html">Slovník pojmov</a></li></ul></div>' +
+      '<div><h4>Naučiť sa</h4><ul><li><a href="podvody.html">Atlas podvodov</a></li><li><a href="dezinformacie.html">Dezinformácie a AI</a></li><li><a href="overit.html">Ako overiť správu</a></li><li><a href="slovnik.html">Slovník pojmov</a></li><li><a href="materialy.html">Rýchle materiály</a></li></ul></div>' +
       '<div><h4>Vyskúšať</h4><ul><li><a href="trenazer.html">Trenažér podvodov</a></li><li><a href="overit.html#kontrola">Kontrola správy</a></li><li><a href="overit.html#adresa">Kontrola webovej adresy</a></li><li><a href="dezinformacie.html#kviz">Kvíz manipulácie</a></li></ul></div>' +
       '<div><h4>Pomoc</h4><ul><li><a href="pomoc.html">Stalo sa mi to</a></li><li><a href="seniori.html">Pre seniorov</a></li><li><a href="mladi.html">Pre mladých</a></li><li><a href="zdroje.html">Zdroje a metodika</a></li></ul></div>' +
       '</div><div class="foot-bottom"><span>Obsah vychádza z overených zdrojov EÚ a slovenských inštitúcií. Pozri <a href="zdroje.html">Zdroje</a>.</span><span>Tiesňové volanie 112 · Polícia 158</span></div></div></footer>';
@@ -304,6 +305,13 @@
         if (t) t.scrollIntoView({ block: 'start' });
       });
     });
+  }
+
+  /* ---------- Tlač materiálov (len mimo vloženého rámca) ---------- */
+  var pb = $('#print-btn');
+  if (pb) {
+    var framed = true; try { framed = window.self !== window.top; } catch (e) { framed = true; }
+    if (!framed) { pb.hidden = false; pb.addEventListener('click', function () { $$('[data-tags]', $('#lessons')).forEach(function (x) { x.hidden = false; }); window.print(); }); }
   }
 
   /* ---------- Kvíz: manipulačné techniky ---------- */

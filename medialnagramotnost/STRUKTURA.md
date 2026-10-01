@@ -27,6 +27,7 @@ Nasadenie: obsah priečinka nahrajte na akýkoľvek statický hosting.
 | `seniori.html` | 6 zlatých pravidiel, čo povedať pri telefonátoch, rodinné heslo | — |
 | `mladi.html` | Vydieranie, falošné brigády, hry, influenceri, AI | — |
 | `pomoc.html` | „Stalo sa mi to“: postup podľa situácie a kontakty | rozhodovací strom so 6 situáciami |
+| `materialy.html` | 12 kariet „pochopte to za minútu“ a kartička do peňaženky pre seniorov | filter podľa skupiny, rýchla otázka s odpoveďou, tlač (2 karty vedľa seba na A4), PDF v `assets/pdf/` |
 | `slovnik.html` | 24 pojmov | vyhľadávanie |
 | `zdroje.html` | Zdroje a metodika | — |
 | `koncept-v1.html` | Prvý koncept domovskej stránky (archív) | — |
@@ -46,4 +47,5 @@ Hlavička a pätička sa vkladajú z `assets/site.js`, takže sa navigácia men�
 
 - Nový podvod: skopírujte jeden `<article class="scam-item">` v `podvody.html`. Varovné znaky označte `<span class="flag">` v poradí, v akom idú položky `<li>` v `.flag-list`. Číslovanie doplní skript.
 - Nová ukážka do trenažéra: pridajte objekt do poľa `T` v `assets/site.js` (makety `M.sms`, `M.wa`, `M.mail`, `M.fb`, `M.web`).
+- PDF s kartami sa generuje z `materialy.html` tlačou do PDF (formát A4, okraje 12 mm, s pozadím). Po úprave kariet ho vygenerujte znova.
 - Varovania SK-CERT, NBS a Polície SR odporúčame kontrolovať aspoň raz mesačne a dopĺňať ich do sekcie *Aktuálne časté podvody* na domovskej stránke.
