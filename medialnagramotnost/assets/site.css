@@ -103,6 +103,9 @@ ul, ol { margin: 0; }
 .nav { display: flex; align-items: center; gap: 12px; min-height: 70px; position: relative; }
 .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-family: var(--f-display); font-weight: 800; font-size: 1.05rem; line-height: 1.05; flex: 0 1 auto; min-width: 0; }
 .logo svg { flex: none; }
+.logo-img { display: block; height: 48px; width: auto; max-width: 220px; object-fit: contain; }
+.logo .logo-alt { display: none; align-items: center; gap: 10px; }
+.logo.logo-missing .logo-alt { display: flex; }
 .logo small { display: block; font-family: var(--f-mono); font-weight: 400; font-size: .62rem; color: var(--muted); margin-top: 4px; letter-spacing: .03em; }
 .nav-links { display: flex; gap: 2px; list-style: none; margin: 0 0 0 auto; padding: 0; }
 .nav-links a { display: block; padding: 8px 9px; border-radius: 8px; text-decoration: none; color: var(--ink); font-family: var(--f-display); font-weight: 500; font-size: .92rem; white-space: nowrap; }
@@ -426,6 +429,7 @@ a.card:hover { border-color: var(--ink); transform: translateY(-2px); }
   .nav .logo { font-size: .92rem; gap: 8px; }
   .nav .logo small { display: none; }
   .nav .logo svg { width: 28px; height: 28px; }
+  .nav .logo-img { height: 38px; max-width: 160px; }
   .tools { gap: 4px; }
   .icon-btn { min-width: 42px; height: 42px; padding: 0 8px; }
 }

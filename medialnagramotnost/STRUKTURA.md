@@ -45,6 +45,8 @@ Hlavička a pätička sa vkladajú z `assets/site.js`, takže sa navigácia men�
 
 ## Údržba obsahu
 
+- **Logo:** nahrajte oficiálne logo z medialnagramotnost.sk ako `assets/logo.png` (odporúčaná výška aspoň 96 px, priehľadné pozadie). Hlavička aj pätička ho použijú automaticky. Iný názov alebo formát (napr. SVG) nastavíte v `LOGO_FILE` na začiatku `assets/site.js`. Kým súbor chýba, zobrazí sa dočasná značka s názvom.
+
 - Nový podvod: skopírujte jeden `<article class="scam-item">` v `podvody.html`. Varovné znaky označte `<span class="flag">` v poradí, v akom idú položky `<li>` v `.flag-list`. Číslovanie doplní skript.
 - Nová ukážka do trenažéra: pridajte objekt do poľa `T` v `assets/site.js` (makety `M.sms`, `M.wa`, `M.mail`, `M.fb`, `M.web`).
 - PDF s kartami sa generuje z `materialy.html` tlačou do PDF (formát A4, okraje 12 mm, s pozadím). Po úprave kariet ho vygenerujte znova.

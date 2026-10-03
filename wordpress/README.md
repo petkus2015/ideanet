@@ -16,6 +16,8 @@ Hotový balík na nahratie: `medialna-gramotnost.zip`.
 4. V nastaveniach môžete zapnúť lištu „Prišli ste o peniaze?“ a plávajúce tlačidlo **A+** na celom webe,
    zmeniť farby alebo použiť písma témy.
 
+Logo sa v Avade nastavuje v téme, nie v plugine: **Avada → Options → Header → Logo** (nahrajte súčasné logo z medialnagramotnost.sk, ideálne aj verziu Retina a logo pre mobil). Ak web už beží na WordPresse, logo nájdete v Knižnici médií.
+
 Opakovaný import stránky prepíše (nevytvára duplikáty). Svoje úpravy preto robte až po importe.
 
 ## Prvky v Avada Builderi

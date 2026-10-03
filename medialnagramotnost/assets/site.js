@@ -23,6 +23,15 @@
     ['mladi', 'mladi.html', 'Mladí'],
     ['pomoc', 'pomoc.html', 'Stalo sa mi to']
   ];
+  // Logo webu: nahrajte oficiálne logo ako assets/logo.png (alebo zmeňte cestu nižšie).
+  // Kým súbor neexistuje, zobrazí sa dočasná značka s názvom.
+  var LOGO_FILE = 'assets/logo.png';
+  var LOGO_ALT = 'Mediálna gramotnosť';
+  function logoHtml(withTagline) {
+    return '<a class="logo" href="index.html" aria-label="' + LOGO_ALT + ', domov">' +
+      '<img class="logo-img" src="' + LOGO_FILE + '" alt="' + LOGO_ALT + '" onerror="this.parentNode.classList.add(\'logo-missing\');this.remove()">' +
+      '<span class="logo-alt">' + LOGO + '<span>Mediálna gramotnosť' + (withTagline ? '<small>zastav sa · over si to</small>' : '') + '</span></span></a>';
+  }
   var LOGO = '<svg width="34" height="34" viewBox="0 0 36 36" aria-hidden="true"><circle cx="15" cy="15" r="10.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M23 23 L32 32" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><rect x="8" y="12" width="14" height="6" rx="1" fill="#FFE04A"/></svg>';
   var header = $('#site-header');
   if (header) {
@@ -30,7 +39,7 @@
       '<a class="skip" href="#obsah">Preskočiť na obsah</a>' +
       '<div class="alert-bar"><div class="wrap"><span>Prišli ste o peniaze alebo údaje? <b>Hneď volajte svojej banke</b> a polícii na <b>158</b>.</span><a href="pomoc.html">Čo robiť krok za krokom →</a></div></div>' +
       '<header class="site-header"><nav class="wrap nav" aria-label="Hlavná navigácia">' +
-      '<a class="logo" href="index.html">' + LOGO + '<span>Mediálna gramotnosť<small>zastav sa · over si to</small></span></a>' +
+      logoHtml(true) +
       '<ul class="nav-links" id="nav-links">' + NAV.map(function (n) {
         return '<li><a href="' + n[1] + '"' + (n[0] === 'pomoc' ? ' class="help-link"' : '') + (n[0] === page ? ' aria-current="page"' : '') + '>' + n[2] + '</a></li>';
       }).join('') + '</ul>' +
@@ -44,7 +53,7 @@
   if (footer) {
     footer.outerHTML =
       '<footer class="site-footer"><div class="wrap"><div class="foot-grid">' +
-      '<div class="stack"><a class="logo" href="index.html">' + LOGO + '<span>Mediálna gramotnosť</span></a><p class="muted" style="font-size:.93rem;max-width:34ch">Vzdelávací web o podvodoch, dezinformáciách a overovaní informácií. Pre mladých aj seniorov.</p></div>' +
+      '<div class="stack">' + logoHtml(false) + '<p class="muted" style="font-size:.93rem;max-width:34ch">Vzdelávací web o podvodoch, dezinformáciách a overovaní informácií. Pre mladých aj seniorov.</p></div>' +
       '<div><h4>Naučiť sa</h4><ul><li><a href="podvody.html">Atlas podvodov</a></li><li><a href="dezinformacie.html">Dezinformácie a AI</a></li><li><a href="overit.html">Ako overiť správu</a></li><li><a href="slovnik.html">Slovník pojmov</a></li><li><a href="materialy.html">Rýchle materiály</a></li></ul></div>' +
       '<div><h4>Vyskúšať</h4><ul><li><a href="trenazer.html">Trenažér podvodov</a></li><li><a href="overit.html#kontrola">Kontrola správy</a></li><li><a href="overit.html#adresa">Kontrola webovej adresy</a></li><li><a href="dezinformacie.html#kviz">Kvíz manipulácie</a></li></ul></div>' +
       '<div><h4>Pomoc</h4><ul><li><a href="pomoc.html">Stalo sa mi to</a></li><li><a href="seniori.html">Pre seniorov</a></li><li><a href="mladi.html">Pre mladých</a></li><li><a href="zdroje.html">Zdroje a metodika</a></li></ul></div>' +
