@@ -152,6 +152,39 @@ vyššie) — tá okamžite ukáže, či je skutočný problém v registrácii
 vykresľovaní (shortcode existuje, ale samo-test hlási chybu). Scenáre
 nižšie sú pre prípad, že diagnostika sama problém nevysvetlí.
 
+**Nadpisy/text/tlačidlá majú inú farbu alebo font, než majú — dizajn „nesedí".**
+Reálna Avada stránka načítava vlastný „Dynamic CSS" súbor (generovaný
+z Theme Options) **až po** `blocks.css` tohto pluginu. Do verzie 1.0.3
+sa viaceré základné pravidlá (nadpisy, odkazy, tlačidlá, polia
+formulára) spoliehali na dedenie farby/fontu z rodiča namiesto
+explicitnej hodnoty — a dedená hodnota v CSS prehráva s akýmkoľvek
+explicitným pravidlom témy, aj nízkej špecifickosti. Od verzie **1.0.4**
+má každé takéto pravidlo explicitnú farbu/font s `!important` a
+dostatočnou špecifickosťou selektora, aby prežilo akékoľvek neskôr
+načítané CSS témy. Overené simuláciou nepriateľskej Avada-like
+stylesheet (vlastné farby na `h1-h4, p, a, button, input, textarea`)
+načítanej po `blocks.css` — výsledné farby, fonty aj rádiusy tlačidiel
+zostali presne podľa dizajnu pluginu.
+
+**Karusely / karty služieb / cenník sú na stránke prázdne (bez obsahu).**
+Skontrolujte, či ste v Avada Builderi do daného bloku naozaj pridali
+položky tlačidlom **„Add Item"** (realizácie v Hero, ukážky v Portfólio
+karuseli, karty v Službách, balíky v Cenníku, formáty v Školeniach,
+citáty v Referenciách) — bez nich blok nemá čo vykresliť, čo je
+očakávané správanie, nie chyba. Ak ste položky pridali a aj tak sa
+nezobrazujú, pošlite report z Nástroje → IDEANET bloky.
+
+**Zoznam bodov (napr. „Čo si tím odnesie" v Školeniach) sa zobrazí
+ako jedna dlhá veta namiesto samostatných bodiek.**
+Do verzie 1.0.3 sa tieto polia delili podľa znaku nového riadku, ale
+Avada Builder pri ukladaní shortcode atribútov niekedy znaky nového
+riadku v textarea poli zlúči do medzery — položky sa tak spojili do
+jednej. Od verzie **1.0.4** sa delia bodkočiarkou (`;`), ktorá tento
+prechod spoľahlivo prežije — v poliach „Zoznam bodov", „Zahrnuté" a
+„Čo si tím odnesie" teraz oddeľujte položky znakom `;`, nie novým
+riadkom. Ak ste tieto polia upravovali vo verzii pred 1.0.4, po
+aktualizácii ich prepíšte s bodkočiarkami.
+
 **Hero karusel „Posledné realizácie" nezobrazuje na mobile 1,5 karty.**
 Vo verziách do 1.0.1 mal blok `.ib-carousel` v Hero elemente priamo
 nastavený inline štýl `style="--ib-per:…"`. Inline štýl má vždy

@@ -72,9 +72,9 @@ class Ideanet_Blocks_Training {
 					),
 					array(
 						'type'       => 'textarea',
-						'heading'    => __( 'Zoznam — čo si odnesú (jeden na riadok)', 'ideanet-avada-blocks' ),
+						'heading'    => __( 'Zoznam — čo si odnesú (oddeľte bodkočiarkou ;)', 'ideanet-avada-blocks' ),
 						'param_name' => 'outcomes',
-						'value'      => "Ako natočiť kvalitné video mobilom aj bez veľkého vybavenia\nZáklady kompozície, svetla a zvuku\nRýchly strih pre reels, shorts a stories\nPracovný postup, ktorý tím používa aj bez ďalšej pomoci",
+						'value'      => "Ako natočiť kvalitné video mobilom aj bez veľkého vybavenia; Základy kompozície, svetla a zvuku; Rýchly strih pre reels, shorts a stories; Pracovný postup, ktorý tím používa aj bez ďalšej pomoci",
 					),
 					array(
 						'type'       => 'textfield',

@@ -85,7 +85,7 @@ class Ideanet_Blocks_Services {
 							),
 							array(
 								'type'       => 'textarea',
-								'heading'    => __( 'Zoznam bodov (jeden na riadok)', 'ideanet-avada-blocks' ),
+								'heading'    => __( 'Zoznam bodov (oddeľte bodkočiarkou ;)', 'ideanet-avada-blocks' ),
 								'param_name' => 'points',
 								'value'      => '',
 							),

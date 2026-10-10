@@ -29,17 +29,21 @@ function ideanet_blocks_multiple( $raw ) {
 }
 
 /**
- * Rozdelí textarea so zoznamom (jedna položka na riadok) na pole.
- * Používa sa pre zoznamy odrážok (ib-ticks), funkcie balíkov a pod.
+ * Rozdelí zoznam položiek na pole. Hlavný oddeľovač je bodkočiarka (;),
+ * pretože Avada Builder pri uložení shortcode atribútov spoľahlivo
+ * zachová bodkočiarky, ale skutočné znaky nového riadku v textarea poli
+ * sa pri prechode cez builder niekedy stratia/zlúčia do medzery — keby sme
+ * sa spoliehali len na \n, položky by sa na reálnej stránke spojili
+ * do jednej. Skutočný nový riadok (ak predsa len príde) funguje tiež.
  *
- * @param string $text Text s riadkami.
+ * @param string $text Text s položkami oddelenými ; alebo novým riadkom.
  * @return array<int, string>
  */
 function ideanet_blocks_lines( $text ) {
 	if ( '' === trim( (string) $text ) ) {
 		return array();
 	}
-	$lines = preg_split( '/\r\n|\r|\n/', (string) $text );
+	$lines = preg_split( '/;|\r\n|\r|\n/', (string) $text );
 	$lines = array_map( 'trim', $lines );
 	return array_values(
 		array_filter(

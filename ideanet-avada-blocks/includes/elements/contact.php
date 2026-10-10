@@ -91,9 +91,9 @@ class Ideanet_Blocks_Contact {
 					),
 					array(
 						'type'       => 'textarea',
-						'heading'    => __( 'Zoznam služieb do formulára (jedna na riadok)', 'ideanet-avada-blocks' ),
+						'heading'    => __( 'Zoznam služieb do formulára (oddeľte bodkočiarkou ;)', 'ideanet-avada-blocks' ),
 						'param_name' => 'services_list',
-						'value'      => "Videografia\nGrafika\nSociálne siete\nŠkolenia pre tím",
+						'value'      => "Videografia; Grafika; Sociálne siete; Školenia pre tím",
 					),
 					array(
 						'type'       => 'textfield',

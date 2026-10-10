@@ -83,7 +83,7 @@ class Ideanet_Blocks_Pricing {
 							),
 							array(
 								'type'       => 'textarea',
-								'heading'    => __( 'Zahrnuté (jedna položka na riadok)', 'ideanet-avada-blocks' ),
+								'heading'    => __( 'Zahrnuté (oddeľte bodkočiarkou ;)', 'ideanet-avada-blocks' ),
 								'param_name' => 'features',
 								'value'      => '',
 							),
