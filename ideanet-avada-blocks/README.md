@@ -11,6 +11,18 @@ a spol. v tomto repozitári) — tmavá paleta, akcent `#ff0056`, písma
 Inter + Instrument Serif, rovnaký karusel (desktop viac kariet vedľa
 seba, mobil 1,5 karty so swajpovaním).
 
+**Cieľová kompatibilita:** Avada **7.15.5**, Avada Builder (Fusion
+Builder) **3.15.5**. Registrácia blokov používa dlhodobo dokumentované,
+verejné Fusion Builder Element API (`fusion_builder_map()` +
+`add_shortcode()`) — rovnaké, aké Avada popisuje vo svojej oficiálnej
+dokumentácii pre vlastné/tretie-strany elementy. Keďže tento kód nebol
+spustený priamo proti živej inštancii Avady 7.15.5, **plugin obsahuje
+vstavanú diagnostickú stránku** (Nástroje → IDEANET bloky), ktorá po
+aktivácii priamo na vašom serveri overí, či sa všetko zaregistrovalo
+a vykresľuje správne — pozri sekciu *Diagnostika* nižšie. Ak by na danej
+verzii niečo nesedelo, táto stránka to ukáže okamžite a presne, bez
+ďalšieho hádania.
+
 ## Čo plugin obsahuje a čo nie
 
 Toto sú **obsahové bloky** — hero, karty, karusely, cenník atď. —
@@ -35,6 +47,24 @@ s nastaveniami témy.
 → pridať riadok → Full Width), nie do bežného orámovaného kontajnera —
 bloky majú vlastné plné pozadie a počítajú s tým, že siahajú od okraja
 po okraj obrazovky.
+
+## Diagnostika (Nástroje → IDEANET bloky)
+
+Hneď po aktivácii choďte do **WordPress admin → Nástroje → IDEANET bloky**.
+Táto stránka bez hádania ukáže:
+
+- je aktívna téma rozpoznaná ako Avada a akú má verziu,
+- existuje `fusion_builder_map()` a trieda `FusionBuilder` (teda beží
+  Fusion Builder),
+- koľkokrát sa odpálil hook `fusion_builder_before_init`,
+- či sa reálne zaregistroval každý z ôsmich shortcodov
+  (`add_shortcode()`),
+- **samo-test** — každý shortcode sa priamo na vašom serveri skutočne
+  vykreslí s testovacími dátami (`do_shortcode()`) a stránka nahlási
+  OK/zlyhanie aj s PHP chybovou hláškou, ak nejaká nastala,
+- dole je **kopírovateľný textový report** so všetkým vyššie — označte,
+  skopírujte, pošlite, keď niečo nesedí. Ušetrí to kolo manuálneho
+  hľadania v `debug.log`.
 
 ## Zoznam blokov
 
@@ -115,6 +145,12 @@ sa dá v builderi preusporiadať ťahaním.
   vložiť vlastné SVG cez voľbu „Vlastné SVG“.
 
 ## Riešenie problémov
+
+**Najprv choďte na Nástroje → IDEANET bloky** (pozri sekciu *Diagnostika*
+vyššie) — tá okamžite ukáže, či je skutočný problém v registrácii
+(Fusion Builder nedetegovaný, shortcode sa nezaregistroval) alebo vo
+vykresľovaní (shortcode existuje, ale samo-test hlási chybu). Scenáre
+nižšie sú pre prípad, že diagnostika sama problém nevysvetlí.
 
 **Hero karusel „Posledné realizácie" nezobrazuje na mobile 1,5 karty.**
 Vo verziách do 1.0.1 mal blok `.ib-carousel` v Hero elemente priamo

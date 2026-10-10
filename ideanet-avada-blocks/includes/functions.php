@@ -8,6 +8,27 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once IDEANET_BLOCKS_DIR . 'includes/helpers.php';
+require_once IDEANET_BLOCKS_DIR . 'includes/diagnostics.php';
+
+/**
+ * Centrálny zoznam blokov: názov súboru => shortcode, ktorý registruje.
+ * Používa ho loader nižšie aj diagnostická stránka (Nástroje → IDEANET bloky),
+ * aby vedela overiť, že každý shortcode sa naozaj zaregistroval.
+ *
+ * @return array<string, string>
+ */
+function ideanet_blocks_element_map() {
+	return array(
+		'hero'         => 'ideanet_hero',
+		'services'     => 'ideanet_services',
+		'carousel'     => 'ideanet_carousel',
+		'process'      => 'ideanet_process',
+		'pricing'      => 'ideanet_pricing',
+		'training'     => 'ideanet_training',
+		'testimonials' => 'ideanet_testimonials',
+		'contact'      => 'ideanet_contact',
+	);
+}
 
 /**
  * Zaregistruje všetky IDEANET bloky. Volané na 'plugins_loaded', teda
@@ -16,18 +37,7 @@ require_once IDEANET_BLOCKS_DIR . 'includes/helpers.php';
  * blok napojí sám (pozri jednotlivé súbory v includes/elements/).
  */
 function ideanet_blocks_load_elements() {
-	$elements = array(
-		'hero',
-		'services',
-		'carousel',
-		'process',
-		'pricing',
-		'training',
-		'testimonials',
-		'contact',
-	);
-
-	foreach ( $elements as $element ) {
+	foreach ( array_keys( ideanet_blocks_element_map() ) as $element ) {
 		$file = IDEANET_BLOCKS_DIR . 'includes/elements/' . $element . '.php';
 		if ( file_exists( $file ) ) {
 			require_once $file;
