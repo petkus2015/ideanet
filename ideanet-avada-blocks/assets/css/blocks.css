@@ -104,10 +104,15 @@ p.ib-sub{font-size:clamp(15px,1.1vw,17px);color:var(--ib-ink-2) !important;max-w
 .ib-hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(760px 560px at 92% -8%, rgba(var(--ib-accent-soft),.30), transparent 62%),
-    radial-gradient(620px 460px at 2% 108%, rgba(var(--ib-accent-soft),.16), transparent 66%);
+    radial-gradient(1200px 680px at 50% -16%, rgba(var(--ib-accent-soft),.26), transparent 68%),
+    radial-gradient(900px 640px at 100% 38%, rgba(var(--ib-accent-soft),.20), transparent 70%),
+    radial-gradient(820px 600px at 0% 96%, rgba(var(--ib-accent-soft),.16), transparent 68%);
 }
-.ib-hero__inner{display:grid;gap:clamp(30px,4vw,52px)}
+/* Obsah musí sedieť nad odleskom bez ohľadu na poradie v zdroji —
+   .ib-hero::before je position:absolute so z-index:0, čo by inak (podľa
+   CSS pravidiel vykresľovania stacking kontextu) maľovalo NAD statickým
+   (nepolohovaným) obsahom .ib-hero__inner, nie pod ním. */
+.ib-hero__inner{position:relative;z-index:1;display:grid;gap:clamp(30px,4vw,52px)}
 .ib-hero h1{font-size:clamp(34px,5vw,60px);margin-bottom:22px;max-width:16ch}
 p.ib-hero__lead{font-size:clamp(16px,1.3vw,18.5px);color:var(--ib-ink-2) !important;max-width:60ch;margin-bottom:28px}
 .ib-hero__cta{display:flex;flex-wrap:wrap;gap:12px}
