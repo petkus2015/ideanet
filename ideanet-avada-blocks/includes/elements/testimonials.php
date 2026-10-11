@@ -97,7 +97,7 @@ class Ideanet_Blocks_Testimonials {
 			'ideanet_testimonials'
 		);
 
-		$quotes = ideanet_blocks_multiple_or_default( $args['quotes'], ideanet_blocks_default_testimonials() );
+		$quotes = ideanet_blocks_resolve_items( 'testimonials', $args['quotes'], ideanet_blocks_default_testimonials() );
 
 		ob_start();
 		?>

@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       IDEANET — bloky pre Avada Builder
  * Plugin URI:        https://ideanet.sk
- * Description:       Editovateľné bloky (Fusion Builder elementy) pre web IDEANET — hero, služby, portfóliové karusely, proces, cenník, školenia, referencie a kontakt. Texty, obrázky, videá aj referencie sa dopĺňajú priamo v Avada Builderi. Kým nepridáte vlastný obsah, každý blok zobrazuje kompletný ukážkový (defaultný) obsah. Cielené na Avada 7.15.5 / Avada Builder (Fusion Builder) 3.15.5 — pozri Nástroje → IDEANET bloky pre overenie na vašom serveri.
- * Version:           1.1.2
+ * Description:       Editovateľné bloky (Fusion Builder elementy) pre web IDEANET — hero, služby, portfóliové karusely, proces, cenník, školenia, referencie a kontakt. Obsah sa dopĺňa v Avada Builderi, alebo spoľahlivo nezávisle od neho cez admin stránku Nástroje → IDEANET obsah. Kým nepridáte vlastný obsah, každý blok zobrazuje kompletný ukážkový (defaultný) obsah. Cielené na Avada 7.15.5 / Avada Builder (Fusion Builder) 3.15.5 — pozri Nástroje → IDEANET bloky pre overenie na vašom serveri.
+ * Version:           1.2.0
  * Requires at least: 5.9
  * Requires PHP:      7.4
  * Author:            Peter Miškus
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'IDEANET_BLOCKS_VERSION', '1.1.2' );
+define( 'IDEANET_BLOCKS_VERSION', '1.2.0' );
 define( 'IDEANET_BLOCKS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IDEANET_BLOCKS_URL', plugin_dir_url( __FILE__ ) );
 

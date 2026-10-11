@@ -172,7 +172,8 @@ class Ideanet_Blocks_Hero {
 			'ideanet_hero'
 		);
 
-		$slides = ideanet_blocks_multiple_or_default(
+		$slides = ideanet_blocks_resolve_items(
+			'hero_slides',
 			$args['slides'],
 			array_slice( ideanet_blocks_default_video_items(), 0, 3 )
 		);

@@ -9,6 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once IDEANET_BLOCKS_DIR . 'includes/helpers.php';
 require_once IDEANET_BLOCKS_DIR . 'includes/diagnostics.php';
+require_once IDEANET_BLOCKS_DIR . 'includes/admin-content.php';
 
 /**
  * Centrálny zoznam blokov: názov súboru => shortcode, ktorý registruje.

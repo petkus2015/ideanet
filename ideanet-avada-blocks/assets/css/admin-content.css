@@ -1,0 +1,33 @@
+/* IDEANET — admin obsahu (Nástroje → IDEANET obsah) */
+.ideanet-admin-content__nav{
+  display:flex;flex-wrap:wrap;gap:4px 16px;margin:16px 0 28px;
+  padding:14px 16px;background:#fff;border:1px solid #dcdcde;border-radius:4px;
+}
+.ideanet-admin-content__nav a{text-decoration:none;font-size:13px}
+
+.ideanet-admin-content__section{
+  background:#fff;border:1px solid #dcdcde;border-radius:4px;
+  padding:20px 24px 24px;margin-bottom:28px;
+}
+.ideanet-admin-content__section h2{margin-top:0}
+
+.ideanet-row{
+  position:relative;border:1px solid #dcdcde;border-radius:4px;
+  padding:16px 44px 4px 16px;margin-bottom:14px;background:#f9f9fa;
+}
+.ideanet-row__remove{
+  position:absolute;top:10px;right:10px;width:26px;height:26px;
+  border:none;border-radius:50%;background:#fff;box-shadow:0 0 0 1px #c3c4c7;
+  cursor:pointer;font-size:16px;line-height:1;color:#a00;
+}
+.ideanet-row__remove:hover{background:#a00;color:#fff}
+
+.ideanet-field{margin:0 0 10px}
+.ideanet-field label{display:block;font-weight:600;margin-bottom:3px;font-size:12.5px}
+.ideanet-field input[type="text"],.ideanet-field textarea{max-width:560px}
+
+.ideanet-media-field{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ideanet-media-field .ideanet-media-url{max-width:360px}
+.ideanet-media-preview img{height:40px;width:auto;border-radius:3px;vertical-align:middle;margin-left:4px}
+
+#ideanet-add-pricing-row{margin-top:4px}

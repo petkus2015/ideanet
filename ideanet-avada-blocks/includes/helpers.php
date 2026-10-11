@@ -49,6 +49,32 @@ function ideanet_blocks_multiple_or_default( $raw, $defaults ) {
 }
 
 /**
+ * Vráti riadky repeatera pre danú sekciu s touto prioritou:
+ * 1. obsah uložený cez Nástroje → IDEANET obsah (WP option, nezávisle
+ *    od Avada Builderu — pozri includes/admin-content.php),
+ * 2. hodnota z Avada Builderu (repeater 'multiple' v $raw),
+ * 3. vstavaný predvolený obsah.
+ *
+ * Krok 1 existuje preto, lebo repeater pole Fusion Builderu („Add Item“)
+ * zlyháva na niektorých inštaláciách Avady na úrovni JS buildera — mimo
+ * kontroly tohto pluginu. Admin stránka funguje nezávisle od toho.
+ *
+ * @param string $section_key Kľúč sekcie, pozri ideanet_blocks_content_sections().
+ * @param mixed  $raw         Surová hodnota z $args (repeater z buildera).
+ * @param array  $defaults    Predvolené riadky (fallback, ak sú prázdne aj 1. aj 2.).
+ * @return array<int, array<string, mixed>>
+ */
+function ideanet_blocks_resolve_items( $section_key, $raw, $defaults ) {
+	if ( function_exists( 'ideanet_blocks_content_option_name' ) ) {
+		$from_admin = get_option( ideanet_blocks_content_option_name( $section_key ), array() );
+		if ( is_array( $from_admin ) && $from_admin ) {
+			return $from_admin;
+		}
+	}
+	return ideanet_blocks_multiple_or_default( $raw, $defaults );
+}
+
+/**
  * Vygeneruje jemný farebný prechod ako SVG data URI — zástupný "obrázok"
  * pre ukážky, kým používateľ nenahrá vlastné. Bez závislosti na externých
  * súboroch, rovnaký vzhľad pri každom načítaní (seed = deterministický).

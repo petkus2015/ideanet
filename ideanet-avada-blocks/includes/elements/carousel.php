@@ -157,11 +157,20 @@ class Ideanet_Blocks_Carousel {
 			'ideanet_carousel'
 		);
 
-		$mode  = 'image' === $args['mode'] ? 'image' : 'video';
-		$items = ideanet_blocks_multiple_or_default(
-			$args['items'],
-			'image' === $mode ? ideanet_blocks_default_graphic_items() : ideanet_blocks_default_video_items()
+		$mode     = 'image' === $args['mode'] ? 'image' : 'video';
+		$defaults = 'image' === $mode ? ideanet_blocks_default_graphic_items() : ideanet_blocks_default_video_items();
+		// Kotva ('video'/'grafika'/'social', zavedená konvencia zdokumentovaná
+		// v README) rozlišuje, ktorú z troch inštancií tohto znovupoužiteľného
+		// bloku admin stránka (Nástroje → IDEANET obsah) spravuje. Pri inej/
+		// vlastnej kotve admin obsah nevie priradiť — použije sa len builder/default.
+		$content_section = array(
+			'video'   => 'carousel_video',
+			'grafika' => 'carousel_grafika',
+			'social'  => 'carousel_social',
 		);
+		$items = isset( $content_section[ $args['anchor'] ] )
+			? ideanet_blocks_resolve_items( $content_section[ $args['anchor'] ], $args['items'], $defaults )
+			: ideanet_blocks_multiple_or_default( $args['items'], $defaults );
 		$uid   = ideanet_blocks_uid( 'ib-car' );
 
 		ob_start();

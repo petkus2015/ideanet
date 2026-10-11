@@ -104,7 +104,7 @@ class Ideanet_Blocks_Process {
 			'ideanet_process'
 		);
 
-		$steps = ideanet_blocks_multiple_or_default( $args['steps'], ideanet_blocks_default_steps() );
+		$steps = ideanet_blocks_resolve_items( 'process_steps', $args['steps'], ideanet_blocks_default_steps() );
 
 		ob_start();
 		?>

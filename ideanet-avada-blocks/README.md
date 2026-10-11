@@ -101,33 +101,67 @@ kontaktnom formulári na stránke automaticky zaškrtne zodpovedajúca
 položka v poli „Zoznam služieb” — hodnoty sa musia zhodovať presne
 (napr. `Školenia pre tím` v oboch blokoch).
 
-## Ako pridať referencie, videá a obrázky — krok za krokom
+## Ako pridať referencie, videá a obrázky
+
+Existujú **dva spôsoby**, ako naplniť bloky vlastným obsahom (realizácie,
+portfólio, cenník, referencie...). Odporúčame prvý — je spoľahlivý
+nezávisle od Avada Builderu.
+
+### Spôsob 1 (odporúčaný): Nástroje → IDEANET obsah
+
+Niektoré inštalácie Avady majú problém so zobrazením tlačidla
+**„Add Item”** priamo v Avada Builderi (repeater pole sa ukáže, ale
+nedá sa doň nič pridať — ide o chybu v JS vrstve Fusion Builderu,
+mimo kontroly tohto pluginu). Táto admin stránka to rieši úplne —
+funguje nezávisle od Avada Builderu a jeho JS.
+
+1. V admine choďte na **IDEANET obsah** (vlastná položka v ľavom menu,
+   ikona mriežky).
+2. Stránka má sekciu pre každý blok (Hero, Služby, Portfólio ×3,
+   Proces, Cenník, Školenia, Referencie). Kliknutím na názov hore
+   na stránke sa na danú sekciu rýchlo preskočí.
+3. V sekcii kliknite **„+ Pridať položku”** — pridá sa nový riadok
+   s poľami pre daný blok.
+4. Vyplňte textové polia a pri obrázku/videu kliknite **„Vybrať”** —
+   otvorí sa Knižnica médií WordPressu.
+5. Kliknite **„Uložiť”** pod danou sekciou (každá sekcia sa ukladá
+   samostatne).
+
+Len čo takto uložíte aspoň jednu položku v niektorej sekcii, **táto
+položka sa zobrazí na webe namiesto obsahu z Avada Builderu aj
+namiesto vstavaného ukážkového obsahu** — má najvyššiu prioritu.
+Ak sekciu znova vyprázdnite (zmažete všetky riadky a uložíte), blok
+sa vráti k obsahu z Avada Builderu, alebo k defaultom, ak ani tam nič
+nie je.
+
+Portfólio karusel má na stránke tri samostatné sekcie (Videografia,
+Grafický dizajn, Sociálne siete) — každá spravuje len tú jednu
+z trojice karuselov, ktoré sú na stránke vložené s príslušnou kotvou
+(`video` / `grafika` / `social`).
+
+### Spôsob 2: priamo v Avada Builderi
+
+Ak vám v builderi tlačidlo „Add Item” funguje, môžete obsah pridávať
+aj priamo tam (a tento obsah sa použije, pokiaľ v danej sekcii nemáte
+nič uložené cez Spôsob 1 vyššie):
 
 1. Otvorte stránku v **Avada Builderi** (tlačidlo „Edit with Avada
    Builder” hore na stránke, alebo z editácie stránky).
-2. Nájdite na stránke blok, do ktorého chcete pridať obsah (napr.
-   „IDEANET — Hero” alebo „IDEANET — Portfólio karusel”), a kliknite
+2. Nájdite na stránke blok, do ktorého chcete pridať obsah, a kliknite
    naň — zobrazí sa ikona ozubeného kolieska/ceruzky, kliknite na ňu.
-3. V paneli nastavení prvku prejdite na záložku **Content/Obsah**
-   a nižšie nájdete repeater pole — podľa bloku sa volá napr.
-   „Realizácie v karuseli” (Hero), „Ukážky” (Portfólio karusel),
-   „Karty služieb”, „Referencie” atď.
+3. V paneli nastavení prvku nájdete repeater pole — podľa bloku sa
+   volá napr. „Realizácie v karuseli” (Hero), „Ukážky” (Portfólio
+   karusel), „Karty služieb”, „Referencie” atď.
 4. Kliknite na tlačidlo **„Add Item”** pod repeaterom — pridá sa
    prázdny riadok s vlastnými poľami.
-5. Vyplňte textové polia (Názov, Kategória…) a pri poliach „Náhľadový
-   obrázok” / „Video (MP4)” kliknite na tlačidlo pre nahratie —
-   otvorí sa **Knižnica médií WordPressu**, kde nahráte súbor z počítača
-   alebo vyberiete už nahraný.
-6. Potvrďte (**Save**) v paneli prvku a potom stránku **uložte/publikujte**
-   v Avada Builderi (tlačidlo Save vpravo hore).
-7. Poradie položiek sa dá v repeateri preusporiadať ťahaním za úchytku.
+5. Vyplňte polia, pri obrázku/videu nahrajte súbor cez Knižnicu médií.
+6. Potvrďte v paneli prvku a stránku uložte/publikujte v builderi.
 
 **Dôležité:** defaultné ukážkové položky (napr. „Ranná káva”, „Séria
 pre klub”…) **nie sú v builderi vidieť ako položky na úpravu** — sú to
-vstavané záložné hodnoty, ktoré sa použijú len vtedy, keď je repeater
-úplne prázdny. Keď chcete vlastný obsah, nemusíte nič mazať — stačí
-pridať vlastné položky cez „Add Item” a defaultné sa automaticky
-prestanú zobrazovať (nahradia sa, nepridajú sa k nim).
+vstavané záložné hodnoty. Keď chcete vlastný obsah, nemusíte nič
+mazať — stačí pridať vlastné položky (jedným z dvoch spôsobov vyššie)
+a defaultné sa automaticky prestanú zobrazovať.
 
 ## Predvolený (defaultný) obsah
 
@@ -194,6 +228,21 @@ vyššie) — tá okamžite ukáže, či je skutočný problém v registrácii
 (Fusion Builder nedetegovaný, shortcode sa nezaregistroval) alebo vo
 vykresľovaní (shortcode existuje, ale samo-test hlási chybu). Scenáre
 nižšie sú pre prípad, že diagnostika sama problém nevysvetlí.
+
+**V repeater poli (napr. „Realizácie v karuseli”, „Cenové balíky”, „Referencie”) sa nedá kliknúť na „Add Item” — nadpis poľa vidno, ale tlačidlo chýba.**
+Toto je potvrdený problém na strane **Avada Builderu** (JS vrstva,
+ktorá vykresľuje repeater „Add Item”/riadky), nie v PHP registrácii
+tohto pluginu — prejaví sa rovnako aj pri **vstavaných** Avada prvkoch
+s repeater poľom (napr. Testimonials), nielen pri IDEANET blokoch.
+Príčina môže byť zastaraná Avada/Fusion Builder, konflikt s cache/
+minifikačným pluginom (skúste dočasne vypnúť minifikáciu JS v admine),
+alebo konflikt s iným pluginom. Od verzie **1.2.0** nemusíte čakať na
+vyriešenie príčiny: použite **Nástroje → IDEANET obsah** — samostatnú
+admin stránku s vlastným formulárom (Pridať/Odstrániť položku,
+Knižnica médií pre obrázky/video), ktorá funguje úplne nezávisle od
+Avada Builderu a jeho JS. Obsah uložený tu má prioritu pred obsahom
+z buildera aj pred defaultmi — pozri sekciu *Ako pridať referencie,
+videá a obrázky* vyššie, Spôsob 1.
 
 **Defaultné náhľadové obrázky (poster) sa zobrazujú ako rozbitý obrázok a prehrávanie v karuseli/lightboxe nefunguje.**
 Vo verzii **1.1.0** sa predvolené náhľady generovali ako `data:` URI
