@@ -239,6 +239,16 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
+**Kliknutím na video v karuseli sa neprehrá so zvukom.**
+Do verzie **1.2.1** klik na dlaždicu videa v karuseli (aj v Hero
+„Posledné realizácie") iba prepínal malý tichý (`muted`) náhľad priamo
+v dlaždici — rovnaký náhľad, aký sa spúšťa pri prejdení myšou na
+desktope. Nebol spôsob, ako sa cez klik dostať k plnému prehrávaču so
+zvukom. Od verzie **1.2.2** klik na dlaždicu vždy otvorí lightbox
+s plným `<video controls>` prehrávačom (so zvukom, s ovládacími
+prvkami) — tichý náhľad pri prejdení myšou zostáva zachovaný ako
+samostatná, nezávislá funkcia len pre desktop.
+
 **Najprv choďte na Nástroje → IDEANET bloky** (pozri sekciu *Diagnostika*
 vyššie) — tá okamžite ukáže, či je skutočný problém v registrácii
 (Fusion Builder nedetegovaný, shortcode sa nezaregistroval) alebo vo

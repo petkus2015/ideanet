@@ -140,20 +140,15 @@
       v.pause();
       slide.classList.remove('is-playing');
     }
-    function toggle(i) {
-      const v = $('video', slides()[i]);
-      if (!v) { openLightbox(items, i); return; }
-      v.paused ? play(i) : pause(i);
-    }
-
     rail.addEventListener('click', (e) => {
       if (rail.dataset.moved === '1') return;
       const slide = e.target.closest('.ib-slide');
       if (!slide) return;
       const i = slides().indexOf(slide);
-      const act = e.target.closest('[data-act]')?.dataset.act;
-      if (act === 'open') { openLightbox(items, i); return; }
-      isVideo ? toggle(i) : openLightbox(items, i);
+      /* Dlaždica v karuseli prehráva pri videu len tichý náhľad (pozri
+         hover nižšie) — klik vždy otvorí lightbox s plným prehrávačom
+         (ovládacie prvky, zvuk), nech už bol klik na dlaždicu kdekoľvek. */
+      openLightbox(items, i);
     });
 
     if (isVideo && FINE.matches && !REDUCED) {
