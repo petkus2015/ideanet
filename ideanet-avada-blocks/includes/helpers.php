@@ -387,6 +387,30 @@ function ideanet_blocks_head( $kicker, $heading, $emphasis, $sub, $extra_cls = '
 }
 
 /**
+ * Bezpečne escapuje URL obrázka/videa pre atribút HTML.
+ *
+ * WordPress `esc_url()` štandardne odstráni `data:` URI (nie je v
+ * `wp_allowed_protocols()`) — presne také URI generuje
+ * `ideanet_blocks_placeholder_image()` pre defaultné náhľady. Bez tejto
+ * výnimky by sa predvolené náhľady na reálnom WordPresse vykresľovali ako
+ * rozbitý obrázok (prázdne `src`), aj keď v lokálnom PHP teste (kde
+ * `esc_url()` toto správanie nereplikuje) to vyzeralo v poriadku.
+ * Hodnota `data:image/...` je vždy vygenerovaná priamo pluginom
+ * (`base64_encode()` vlastného SVG), nikdy nepochádza od používateľa —
+ * `esc_attr()` je preto dostatočné a bezpečné. Skutočné URL z Knižnice
+ * médií (http/https) naďalej prechádzajú cez `esc_url()`.
+ *
+ * @param string $url Pôvodná hodnota poľa poster/video.
+ * @return string Bezpečná hodnota pre atribút.
+ */
+function ideanet_blocks_esc_media_url( $url ) {
+	if ( 0 === strpos( (string) $url, 'data:image/' ) ) {
+		return esc_attr( $url );
+	}
+	return esc_url( $url );
+}
+
+/**
  * Vykreslí jednu kartu karuselu (aj hero karusel používa tú istú šablónu).
  *
  * @param array $item {
@@ -414,17 +438,17 @@ function ideanet_blocks_render_tile( $item ) {
 	<article class="ib-slide"
 		data-title="<?php echo esc_attr( $title ); ?>"
 		data-desc="<?php echo esc_attr( $desc ); ?>"
-		data-poster="<?php echo esc_url( $poster ); ?>"
+		data-poster="<?php echo ideanet_blocks_esc_media_url( $poster ); ?>"
 		<?php if ( 'video' === $mode && $video ) : ?>
 			data-video="<?php echo esc_url( $video ); ?>"
 		<?php endif; ?>
 		role="option" aria-label="<?php echo esc_attr( $title ); ?>">
 		<div class="ib-tile" data-mode="<?php echo esc_attr( $mode ); ?>">
 			<?php if ( $poster ) : ?>
-				<img src="<?php echo esc_url( $poster ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy" decoding="async">
+				<img src="<?php echo ideanet_blocks_esc_media_url( $poster ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy" decoding="async">
 			<?php endif; ?>
 			<?php if ( 'video' === $mode && $video ) : ?>
-				<video preload="none" playsinline muted loop poster="<?php echo esc_url( $poster ); ?>" aria-label="<?php echo esc_attr( $title ); ?>">
+				<video preload="none" playsinline muted loop poster="<?php echo ideanet_blocks_esc_media_url( $poster ); ?>" aria-label="<?php echo esc_attr( $title ); ?>">
 					<source src="<?php echo esc_url( $video ); ?>" type="video/mp4">
 				</video>
 				<span class="ib-tile__bar"></span>

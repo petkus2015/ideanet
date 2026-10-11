@@ -101,18 +101,33 @@ kontaktnom formulári na stránke automaticky zaškrtne zodpovedajúca
 položka v poli „Zoznam služieb” — hodnoty sa musia zhodovať presne
 (napr. `Školenia pre tím` v oboch blokoch).
 
-## Ako pridať referencie, videá a obrázky
+## Ako pridať referencie, videá a obrázky — krok za krokom
 
-Repeater polia (Realizácie, Karty služieb, Ukážky, Kroky, Cenové
-balíky, Formáty, Referencie) majú v Avada Builderi tlačidlo
-**„Add Item”** — každá pridaná položka má vlastné polia na text
-a tlačidlo na výber obrázka/videa z Knižnice médií. Poradie položiek
-sa dá v builderi preusporiadať ťahaním.
+1. Otvorte stránku v **Avada Builderi** (tlačidlo „Edit with Avada
+   Builder” hore na stránke, alebo z editácie stránky).
+2. Nájdite na stránke blok, do ktorého chcete pridať obsah (napr.
+   „IDEANET — Hero” alebo „IDEANET — Portfólio karusel”), a kliknite
+   naň — zobrazí sa ikona ozubeného kolieska/ceruzky, kliknite na ňu.
+3. V paneli nastavení prvku prejdite na záložku **Content/Obsah**
+   a nižšie nájdete repeater pole — podľa bloku sa volá napr.
+   „Realizácie v karuseli” (Hero), „Ukážky” (Portfólio karusel),
+   „Karty služieb”, „Referencie” atď.
+4. Kliknite na tlačidlo **„Add Item”** pod repeaterom — pridá sa
+   prázdny riadok s vlastnými poľami.
+5. Vyplňte textové polia (Názov, Kategória…) a pri poliach „Náhľadový
+   obrázok” / „Video (MP4)” kliknite na tlačidlo pre nahratie —
+   otvorí sa **Knižnica médií WordPressu**, kde nahráte súbor z počítača
+   alebo vyberiete už nahraný.
+6. Potvrďte (**Save**) v paneli prvku a potom stránku **uložte/publikujte**
+   v Avada Builderi (tlačidlo Save vpravo hore).
+7. Poradie položiek sa dá v repeateri preusporiadať ťahaním za úchytku.
 
-- **Video** — nahrajte MP4 priamo cez tlačidlo pri poli „Video“.
-- **Obrázok / náhľad** — rovnako cez Knižnicu médií.
-- **Referencie** — blok Referencie, pridajte položku, vyplňte citát,
-  meno a pozíciu/firmu.
+**Dôležité:** defaultné ukážkové položky (napr. „Ranná káva”, „Séria
+pre klub”…) **nie sú v builderi vidieť ako položky na úpravu** — sú to
+vstavané záložné hodnoty, ktoré sa použijú len vtedy, keď je repeater
+úplne prázdny. Keď chcete vlastný obsah, nemusíte nič mazať — stačí
+pridať vlastné položky cez „Add Item” a defaultné sa automaticky
+prestanú zobrazovať (nahradia sa, nepridajú sa k nim).
 
 ## Predvolený (defaultný) obsah
 
@@ -179,6 +194,23 @@ vyššie) — tá okamžite ukáže, či je skutočný problém v registrácii
 (Fusion Builder nedetegovaný, shortcode sa nezaregistroval) alebo vo
 vykresľovaní (shortcode existuje, ale samo-test hlási chybu). Scenáre
 nižšie sú pre prípad, že diagnostika sama problém nevysvetlí.
+
+**Defaultné náhľadové obrázky (poster) sa zobrazujú ako rozbitý obrázok a prehrávanie v karuseli/lightboxe nefunguje.**
+Vo verzii **1.1.0** sa predvolené náhľady generovali ako `data:` URI
+(SVG zakódované priamo do atribútu `src`), ale vykresľovali sa cez
+`esc_url()`. WordPress v `esc_url()` štandardne **odstráni každú URL,
+ktorej protokol nie je na zozname povolených** (`wp_allowed_protocols()`)
+— a `data:` tam nie je, z bezpečnostných dôvodov. V praxi to znamenalo,
+že `src` aj `data-poster` vyšli na reálnom WordPresse prázdne, prehliadač
+zobrazil rozbitú ikonu namiesto obrázka a karusel/lightbox nemali z čoho
+video alebo ukážku prehrať — presne toto správanie nahlásili prví
+testeri. (V lokálnom PHP teste to prejde bez chyby, lebo jednoduchý
+testovací shim `esc_url()` toto orezávanie nereplikuje — preto sa chyba
+odhalila až na reálnej inštalácii.) Od verzie **1.1.1** nová funkcia
+`ideanet_blocks_esc_media_url()` rozlíši vygenerovaný `data:` náhľad
+(vždy bezpečný, lebo ho tvorí plugin sám) od skutočnej URL z Knižnice
+médií — prvý sa escapuje cez `esc_attr()`, druhý naďalej cez `esc_url()`.
+Ak ste si plugin stiahli vo verzii 1.1.0, aktualizujte na 1.1.1.
 
 **Nadpisy/text/tlačidlá majú inú farbu alebo font, než majú — dizajn „nesedí".**
 Reálna Avada stránka načítava vlastný „Dynamic CSS" súbor (generovaný
