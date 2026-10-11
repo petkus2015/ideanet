@@ -8,8 +8,11 @@ cenové balíky) sa dopĺňajú priamo v builderi, bez úpravy kódu.
 
 Vizuálne vychádza z pôvodného statického webu (priečinok `../index.html`
 a spol. v tomto repozitári) — tmavá paleta, akcent `#ff0056`, písma
-Manrope + Fraunces (kurzíva), rovnaký karusel (desktop viac kariet vedľa
-seba, mobil 1,5 karty so swajpovaním).
+Inter + Instrument Serif (kurzíva), rovnaký karusel (desktop viac
+kariet vedľa seba, mobil 1,5 karty so swajpovaním). Interaktívne prvky
+(karty, tlačidlá, karusel, cenník, referencie, kroky procesu…) majú
+jemné hover efekty (nadvihnutie, tieň, farebné zvýraznenie, pohyb
+šípky) — pozri sekciu *Technické poznámky*.
 
 **Cieľová kompatibilita:** Avada **7.15.5**, Avada Builder (Fusion
 Builder) **3.15.5**. Registrácia blokov používa dlhodobo dokumentované,
@@ -209,6 +212,12 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Technické poznámky
 
+- Interaktívne prvky (karty služieb, cenníkové balíky, referencie,
+  kroky procesu, karuselové dlaždice, tlačidlá, odkazy, chips vo
+  formulári) majú jemné `transition`-based hover efekty — nadvihnutie
+  s tieňom, farebné zvýraznenie okraja, posun šípky/čísla, jemné
+  pretočenie ikony. Všetky zdieľajú rovnaké časovanie (`--ib-ease` v
+  `:root` bloku `.ib-scope`) pre konzistentný pocit naprieč webom.
 - Shortcody sú zaregistrované klasickým, dlhodobo zdokumentovaným
   Fusion Builder Element API (`fusion_builder_map()` +
   `add_shortcode()`), ktoré Avada udržiava spätne kompatibilné už
@@ -239,16 +248,16 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
-**Chcem iné/modernejšie písmo.**
-Od verzie **1.3.1** plugin používa **Manrope** (bežný text, nadpisy)
-a **Fraunces** (kurzívne zvýraznenia — nahradili pôvodné Inter +
-Instrument Serif). Obe sa načítavajú z Google Fonts rovnakým
-mechanizmom ako predtým (`ideanet_blocks_enqueue_assets()` v
-`includes/helpers.php`). Ak chcete inú dvojicu, stačí zmeniť URL na
-riadku s `fonts.googleapis.com` v tejto funkcii na iné rodiny
-z [fonts.google.com](https://fonts.google.com) a nahradiť názvy
-`'Manrope'` / `'Fraunces'` v `assets/css/blocks.css` (jednoduché
-hromadné nahradenie reťazca).
+**Chcem iné písmo.**
+Plugin používa **Inter** (bežný text, nadpisy) a **Instrument Serif**
+(kurzívne zvýraznenia), načítavané z Google Fonts cez
+`ideanet_blocks_enqueue_assets()` v `includes/helpers.php`. Ak chcete
+inú dvojicu, stačí zmeniť URL na riadku s `fonts.googleapis.com`
+v tejto funkcii na iné rodiny z [fonts.google.com](https://fonts.google.com)
+a nahradiť názvy `'Inter'` / `'Instrument Serif'` v
+`assets/css/blocks.css` (jednoduché hromadné nahradenie reťazca).
+(V skúšanej verzii 1.3.1 boli dočasne nasadené Manrope + Fraunces —
+po spätnej väzbe vrátené na pôvodnú dvojicu vo verzii 1.3.2.)
 
 **Pozadie/odlesk v Hero sekcii nesiaha od okraja po okraj obrazovky.**
 Do verzie **1.2.2** zdieľal hlavný `<div>` Hero sekcie súčasne triedy

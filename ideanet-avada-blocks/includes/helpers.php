@@ -511,7 +511,7 @@ function ideanet_blocks_enqueue_assets() {
 	}
 	wp_enqueue_style(
 		'ideanet-blocks-fonts',
-		'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Fraunces:ital,opsz@0,9..144;1,9..144&display=swap',
+		'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap',
 		array(),
 		null
 	);
