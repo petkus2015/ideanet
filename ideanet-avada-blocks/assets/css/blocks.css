@@ -33,7 +33,7 @@
   display:block;
   background:var(--ib-canvas);
   color:var(--ib-ink) !important;
-  font:400 clamp(15.5px,1.05vw,17px)/1.65 'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font:400 clamp(15.5px,1.05vw,17px)/1.65 'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
   -webkit-font-smoothing:antialiased;
   padding:clamp(56px,8vw,104px) 0;
   overflow:hidden;
@@ -42,20 +42,20 @@
 .ib-scope *,.ib-scope *::before,.ib-scope *::after{box-sizing:border-box}
 .ib-scope img,.ib-scope svg,.ib-scope video{display:block;max-width:100%}
 .ib-scope button,.ib-scope input,.ib-scope textarea{
-  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif !important;
+  font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif !important;
   color:inherit !important;
 }
 .ib-scope a{color:inherit !important;text-decoration:none !important}
 .ib-scope h1,.ib-scope h2,.ib-scope h3,.ib-scope h4{
   margin:0;font-weight:600;letter-spacing:-.022em;line-height:1.1;text-wrap:balance;
-  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif !important;
+  font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif !important;
   color:var(--ib-ink) !important;
 }
 .ib-scope em{
-  font-family:'Instrument Serif',Georgia,serif !important;
+  font-family:'Fraunces',Georgia,serif !important;
   font-style:italic;font-weight:400;letter-spacing:-.01em;color:inherit !important;
 }
-.ib-scope p{margin:0;font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif !important;color:inherit !important}
+.ib-scope p{margin:0;font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif !important;color:inherit !important}
 .ib-scope ul,.ib-scope ol{margin:0;padding:0;list-style:none !important}
 .ib-scope ::selection{background:var(--ib-accent);color:var(--ib-accent-ink) !important}
 .ib-scope :focus-visible{outline:2px solid var(--ib-accent-2);outline-offset:3px;border-radius:6px}
@@ -78,7 +78,7 @@ p.ib-sub{font-size:clamp(15px,1.1vw,17px);color:var(--ib-ink-2) !important;max-w
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
   padding:15px 26px !important;border:1px solid var(--bd) !important;border-radius:999px !important;
   background:var(--bg) !important;color:var(--fg) !important;
-  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif !important;
+  font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif !important;
   font-size:15px !important;font-weight:550 !important;text-decoration:none !important;cursor:pointer;
   transition:transform .2s var(--ib-ease),box-shadow .25s var(--ib-ease);
 }
@@ -230,7 +230,7 @@ button.ib-arrow{
 /* ══════════════════════ PROCES ══════════════════════════════ */
 .ib-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,2vw,28px)}
 .ib-step{padding-top:24px;border-top:1px solid var(--ib-line)}
-.ib-step__no{display:block;margin-bottom:12px;font-family:'Instrument Serif',Georgia,serif;font-size:32px;color:var(--ib-accent-2) !important}
+.ib-step__no{display:block;margin-bottom:12px;font-family:'Fraunces',Georgia,serif;font-size:32px;color:var(--ib-accent-2) !important}
 .ib-step h3{font-size:18px;margin-bottom:9px}
 .ib-step p{font-size:14.5px;color:var(--ib-ink-2) !important}
 

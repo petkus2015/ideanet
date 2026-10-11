@@ -8,7 +8,7 @@ cenové balíky) sa dopĺňajú priamo v builderi, bez úpravy kódu.
 
 Vizuálne vychádza z pôvodného statického webu (priečinok `../index.html`
 a spol. v tomto repozitári) — tmavá paleta, akcent `#ff0056`, písma
-Inter + Instrument Serif, rovnaký karusel (desktop viac kariet vedľa
+Manrope + Fraunces (kurzíva), rovnaký karusel (desktop viac kariet vedľa
 seba, mobil 1,5 karty so swajpovaním).
 
 **Cieľová kompatibilita:** Avada **7.15.5**, Avada Builder (Fusion
@@ -238,6 +238,17 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
   vložiť vlastné SVG cez voľbu „Vlastné SVG“.
 
 ## Riešenie problémov
+
+**Chcem iné/modernejšie písmo.**
+Od verzie **1.3.1** plugin používa **Manrope** (bežný text, nadpisy)
+a **Fraunces** (kurzívne zvýraznenia — nahradili pôvodné Inter +
+Instrument Serif). Obe sa načítavajú z Google Fonts rovnakým
+mechanizmom ako predtým (`ideanet_blocks_enqueue_assets()` v
+`includes/helpers.php`). Ak chcete inú dvojicu, stačí zmeniť URL na
+riadku s `fonts.googleapis.com` v tejto funkcii na iné rodiny
+z [fonts.google.com](https://fonts.google.com) a nahradiť názvy
+`'Manrope'` / `'Fraunces'` v `assets/css/blocks.css` (jednoduché
+hromadné nahradenie reťazca).
 
 **Pozadie/odlesk v Hero sekcii nesiaha od okraja po okraj obrazovky.**
 Do verzie **1.2.2** zdieľal hlavný `<div>` Hero sekcie súčasne triedy
