@@ -24,8 +24,226 @@ function ideanet_blocks_multiple( $raw ) {
 		if ( is_array( $decoded ) ) {
 			return $decoded;
 		}
+		// Niektoré verzie uložia hodnotu s HTML entitami (&quot; namiesto ") —
+		// skúsime to ešte raz po dekódovaní entít, kým to vzdáme.
+		$decoded = json_decode( html_entity_decode( $raw, ENT_QUOTES ), true );
+		if ( is_array( $decoded ) ) {
+			return $decoded;
+		}
 	}
 	return array();
+}
+
+/**
+ * Vráti riadky repeatera — buď to, čo zadal používateľ v builderi, alebo
+ * (ak je prázdne) vstavaný predvolený obsah. Vďaka tomu blok nikdy
+ * nevyzerá prázdny, kým si ho používateľ nenaplní vlastným obsahom.
+ *
+ * @param mixed $raw      Surová hodnota z $args (repeater).
+ * @param array $defaults Predvolené riadky, použijú sa len ak je $raw prázdne.
+ * @return array<int, array<string, mixed>>
+ */
+function ideanet_blocks_multiple_or_default( $raw, $defaults ) {
+	$rows = ideanet_blocks_multiple( $raw );
+	return $rows ? $rows : $defaults;
+}
+
+/**
+ * Vygeneruje jemný farebný prechod ako SVG data URI — zástupný "obrázok"
+ * pre ukážky, kým používateľ nenahrá vlastné. Bez závislosti na externých
+ * súboroch, rovnaký vzhľad pri každom načítaní (seed = deterministický).
+ *
+ * @param string $seed  Ľubovoľný text, podľa ktorého sa vyberie paleta.
+ * @param string $ratio '9/16' alebo '4/5'.
+ * @return string data: URI.
+ */
+function ideanet_blocks_placeholder_image( $seed = '', $ratio = '9/16' ) {
+	$palettes = array(
+		array( '#2a0f1f', '#0a070c' ),
+		array( '#1f2a3a', '#0a070c' ),
+		array( '#3a1f14', '#0a070c' ),
+		array( '#1a2a28', '#0a070c' ),
+		array( '#2a1a3a', '#0a070c' ),
+		array( '#1a2438', '#0a070c' ),
+		array( '#30221a', '#0a070c' ),
+		array( '#241a30', '#0a070c' ),
+	);
+	$idx          = abs( crc32( (string) $seed ) ) % count( $palettes );
+	list( $top, $bot ) = $palettes[ $idx ];
+	list( $w, $h )      = '4/5' === $ratio ? array( 480, 600 ) : array( 420, 746 );
+
+	$svg = sprintf(
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %1$d %2$d">'
+		. '<defs><linearGradient id="g" x1="0" y1="0" x2="0.35" y2="1">'
+		. '<stop offset="0" stop-color="%3$s"/><stop offset="1" stop-color="%4$s"/>'
+		. '</linearGradient></defs>'
+		. '<rect width="%1$d" height="%2$d" fill="url(#g)"/>'
+		. '<rect width="%1$d" height="%2$d" fill="#ff0056" opacity="0.05"/>'
+		. '</svg>',
+		$w,
+		$h,
+		$top,
+		$bot
+	);
+	return 'data:image/svg+xml;base64,' . base64_encode( $svg );
+}
+
+/**
+ * Predvolené ukážky pre video karusely (Hero aj Portfólio karusel
+ * v režime „video“), keď používateľ ešte nič nepridal.
+ *
+ * @return array<int, array<string, string>>
+ */
+function ideanet_blocks_default_video_items() {
+	$rows = array(
+		array( 'category' => 'Gastro', 'title' => 'Ranná káva', 'description' => 'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', 'meta' => '0:18' ),
+		array( 'category' => 'Fitness', 'title' => 'Séria pre klub', 'description' => 'Dvanásť tréningových videí natočených počas jedného popoludnia.', 'meta' => '0:22' ),
+		array( 'category' => 'Produkt', 'title' => 'Detail chuti', 'description' => 'Makro produktové zábery pre e-shop s pralinkami.', 'meta' => '0:15' ),
+		array( 'category' => 'Reality', 'title' => 'Prehliadka bytu', 'description' => 'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.', 'meta' => '0:29' ),
+		array( 'category' => 'Event', 'title' => 'Aftermovie', 'description' => 'Zostrih z firemnej konferencie dodaný do 24 hodín.', 'meta' => '0:34' ),
+		array( 'category' => 'Fashion', 'title' => 'Lookbook jeseň', 'description' => 'Vertikálny lookbook pre lokálnu módnu značku.', 'meta' => '0:20' ),
+	);
+	foreach ( $rows as &$row ) {
+		$row['poster'] = ideanet_blocks_placeholder_image( $row['title'], '9/16' );
+		$row['video']  = '';
+	}
+	return $rows;
+}
+
+/**
+ * Predvolené ukážky pre karusel v režime „obrázok“ (grafika).
+ *
+ * @return array<int, array<string, string>>
+ */
+function ideanet_blocks_default_graphic_items() {
+	$rows = array(
+		array( 'category' => 'Identita', 'title' => 'NORDA Studio', 'description' => 'Logo, značkový systém a pravidlá používania.', 'meta' => 'Logo' ),
+		array( 'category' => 'Typografia', 'title' => 'Typografický systém', 'description' => 'Výber rezov a hierarchia pre web aj tlač.', 'meta' => 'Brand manuál' ),
+		array( 'category' => 'Tlač', 'title' => 'Letná scéna', 'description' => 'Plagátová séria pre mestský festival.', 'meta' => 'Plagát B1' ),
+		array( 'category' => 'Obaly', 'title' => 'Roast No. 4', 'description' => 'Obalový dizajn pre pražiareň kávy.', 'meta' => 'Packaging' ),
+	);
+	foreach ( $rows as &$row ) {
+		$row['poster'] = ideanet_blocks_placeholder_image( $row['title'], '4/5' );
+		$row['video']  = '';
+	}
+	return $rows;
+}
+
+/**
+ * Predvolené karty služieb (Videografia, Grafický dizajn, Správa
+ * sociálnych sietí), keď používateľ ešte nenaplnil repeater.
+ *
+ * @return array<int, array<string, string>>
+ */
+function ideanet_blocks_default_services() {
+	return array(
+		array(
+			'icon'        => 'video',
+			'title'       => 'Videografia',
+			'description' => 'Od nápadu po hotový zostrih. Natáčam vertikálny obsah pre siete aj klasické firemné video.',
+			'points'      => 'Reels, TikTok, YouTube Shorts; Produktové a imidžové video; Eventy a aftermovie; Strih z vášho materiálu',
+			'link_text'   => 'Ukážky videí',
+			'link_url'    => '#video',
+		),
+		array(
+			'icon'        => 'design',
+			'title'       => 'Grafický dizajn',
+			'description' => 'Vizuálna identita, ktorá drží pokope naprieč tlačou aj obrazovkou.',
+			'points'      => 'Logo a vizuálna identita; Brand manuál a šablóny; Tlačoviny, obaly, menu; Bannery a kampaňové vizuály',
+			'link_text'   => 'Ukážky grafiky',
+			'link_url'    => '#grafika',
+		),
+		array(
+			'icon'        => 'megaphone',
+			'title'       => 'Správa sociálnych sietí',
+			'description' => 'Obsahový plán, príprava príspevkov, publikovanie a vyhodnotenie.',
+			'points'      => 'Stratégia a obsahový plán; Copywriting a publikovanie; Komunita a odpovede; Mesačný report výsledkov',
+			'link_text'   => 'Ukážky správy',
+			'link_url'    => '#social',
+		),
+	);
+}
+
+/**
+ * Predvolené kroky procesu.
+ *
+ * @return array<int, array<string, string>>
+ */
+function ideanet_blocks_default_steps() {
+	return array(
+		array( 'number' => '01', 'title' => 'Zoznámenie', 'description' => 'Krátky hovor o tom, čo predávate, komu a čo vám dnes na obsahu nefunguje.' ),
+		array( 'number' => '02', 'title' => 'Koncept', 'description' => 'Dostanete návrh formátov, vizuálny smer a rozpočet.' ),
+		array( 'number' => '03', 'title' => 'Produkcia', 'description' => 'Natáčanie, strih, grafika — pri eventoch aj priamo na mieste.' ),
+		array( 'number' => '04', 'title' => 'Publikovanie', 'description' => 'Export vo všetkých pomeroch a nasadenie na siete ešte v ten istý večer.' ),
+	);
+}
+
+/**
+ * Predvolené cenové balíky.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function ideanet_blocks_default_plans() {
+	return array(
+		array(
+			'title'          => 'Video',
+			'price'          => 'od 390 €',
+			'price_suffix'   => '/ natáčací deň',
+			'description'    => 'Pre eventy a značky, ktoré potrebujú obsah von, kým je téma živá.',
+			'features'       => 'Až 8 hotových vertikálnych videí; Scenár, natáčanie, strih; Grading, titulky, hudba',
+			'featured'       => 'no',
+			'featured_label' => '',
+			'button_text'    => 'Mám záujem',
+			'button_link'    => '#kontakt',
+		),
+		array(
+			'title'          => 'Kompletná starostlivosť',
+			'price'          => 'od 790 €',
+			'price_suffix'   => '/ mesiac',
+			'description'    => 'Video, grafika aj správa profilov v jednom balíku.',
+			'features'       => 'Jeden natáčací deň mesačne; 12 príspevkov vrátane grafiky; Obsahový plán a publikovanie',
+			'featured'       => 'yes',
+			'featured_label' => 'Najčastejšia voľba',
+			'button_text'    => 'Mám záujem',
+			'button_link'    => '#kontakt',
+		),
+		array(
+			'title'          => 'Grafika',
+			'price'          => 'od 290 €',
+			'price_suffix'   => '/ projekt',
+			'description'    => 'Keď potrebujete identitu alebo sadu vizuálov bez videa.',
+			'features'       => 'Logo a vizuálny štýl; Mini brand manuál; Šablóny pre siete',
+			'featured'       => 'no',
+			'featured_label' => '',
+			'button_text'    => 'Mám záujem',
+			'button_link'    => '#kontakt',
+		),
+	);
+}
+
+/**
+ * Predvolené formáty školenia.
+ *
+ * @return array<int, array<string, string>>
+ */
+function ideanet_blocks_default_formats() {
+	return array(
+		array( 'name' => 'Poldeň · 4 hodiny', 'price' => 'od 490 €', 'description' => 'Základy natáčania a strihu naživo, max. 8 ľudí, na mieste vo firme.' ),
+		array( 'name' => 'Celý deň · 8 hodín', 'price' => 'od 890 €', 'description' => 'Workshop aj praktické natáčanie a strih na reálnom obsahu vašej firmy.' ),
+	);
+}
+
+/**
+ * Predvolené referencie.
+ *
+ * @return array<int, array<string, string>>
+ */
+function ideanet_blocks_default_testimonials() {
+	return array(
+		array( 'quote' => 'Otvárali sme o šiestej a o pol deviatej už boli prvé videá online. Ľudia z toho večera nám písali ešte ten istý večer.', 'name' => 'Lucia H.', 'role' => 'majiteľka kaviarne' ),
+		array( 'quote' => 'Zo správy profilov sa stala rutina, ktorú už neriešim. Čísla rastú a všetko vyzerá ako jedna značka.', 'name' => 'Martin K.', 'role' => 'fitness klub' ),
+		array( 'quote' => 'Nové logo, obaly aj video k produktu od jedného človeka. Ušetrilo nám to týždne dohadovania.', 'name' => 'Zuzana P.', 'role' => 'e-shop s kávou' ),
+	);
 }
 
 /**

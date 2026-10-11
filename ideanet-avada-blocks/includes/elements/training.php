@@ -161,7 +161,7 @@ class Ideanet_Blocks_Training {
 			'ideanet_training'
 		);
 
-		$formats  = ideanet_blocks_multiple( $args['formats'] );
+		$formats  = ideanet_blocks_multiple_or_default( $args['formats'], ideanet_blocks_default_formats() );
 		$outcomes = ideanet_blocks_lines( $args['outcomes'] );
 
 		ob_start();

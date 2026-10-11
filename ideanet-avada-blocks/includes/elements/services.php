@@ -123,7 +123,7 @@ class Ideanet_Blocks_Services {
 			'ideanet_services'
 		);
 
-		$services = ideanet_blocks_multiple( $args['services'] );
+		$services = ideanet_blocks_multiple_or_default( $args['services'], ideanet_blocks_default_services() );
 
 		ob_start();
 		?>

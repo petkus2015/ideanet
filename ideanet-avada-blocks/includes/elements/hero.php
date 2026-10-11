@@ -172,7 +172,10 @@ class Ideanet_Blocks_Hero {
 			'ideanet_hero'
 		);
 
-		$slides = ideanet_blocks_multiple( $args['slides'] );
+		$slides = ideanet_blocks_multiple_or_default(
+			$args['slides'],
+			array_slice( ideanet_blocks_default_video_items(), 0, 3 )
+		);
 		$uid    = ideanet_blocks_uid( 'ib-hero' );
 
 		ob_start();

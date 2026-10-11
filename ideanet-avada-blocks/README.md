@@ -105,7 +105,7 @@ položka v poli „Zoznam služieb” — hodnoty sa musia zhodovať presne
 
 Repeater polia (Realizácie, Karty služieb, Ukážky, Kroky, Cenové
 balíky, Formáty, Referencie) majú v Avada Builderi tlačidlo
-**„Add Item“** — každá pridaná položka má vlastné polia na text
+**„Add Item”** — každá pridaná položka má vlastné polia na text
 a tlačidlo na výber obrázka/videa z Knižnice médií. Poradie položiek
 sa dá v builderi preusporiadať ťahaním.
 
@@ -113,6 +113,34 @@ sa dá v builderi preusporiadať ťahaním.
 - **Obrázok / náhľad** — rovnako cez Knižnicu médií.
 - **Referencie** — blok Referencie, pridajte položku, vyplňte citát,
   meno a pozíciu/firmu.
+
+## Predvolený (defaultný) obsah
+
+Od verzie **1.1.0** každý blok s repeaterom (Realizácie v Hero, Karty
+služieb, Ukážky v Portfólio karuseli — video aj grafika, Kroky
+procesu, Cenové balíky, Formáty školení, Referencie) zobrazuje
+kompletný ukážkový obsah **hneď po vložení**, aj keď do neho ešte
+nepridáte ani jednu vlastnú položku cez „Add Item”. Náhľadové obrázky
+v defaultnom obsahu sú generované priamo na serveri (farebný gradient
+v palete webu), takže sa nespoliehajú na žiadny externý súbor či
+sieťové pripojenie.
+
+Toto rieši situáciu, kedy bol blok v builderi vložený, ale ešte nikto
+nestihol doplniť reálne videá/fotky/referencie — stránka dovtedy nie
+je prázdna, ale pôsobí hotovo a predáva ukážkový príklad toho, ako má
+obsah vyzerať.
+
+**Dôležité:** akonáhle do repeatera pridáte čo i len jednu vlastnú
+položku tlačidlom „Add Item” a stránku uložíte, defaultný obsah sa
+pre daný blok úplne nahradí vašimi položkami (nepridáva sa k nim —
+nahrádza ich). Ak teda chcete vidieť len svoje tri realizácie v Hero
+karuseli, netreba mazať nič navyše — stačí mať v builderi pridané
+presne tie tri.
+
+Textové polia mimo repeaterov (nadpisy, úvodný text, popisy v sekcii
+Školenia a pod.) toto pravidlo nepotrebujú — Avada Builder do nich
+pri vložení bloku automaticky predvyplní rovnaký ukážkový text, aký
+vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Technické poznámky
 
@@ -167,12 +195,14 @@ načítanej po `blocks.css` — výsledné farby, fonty aj rádiusy tlačidiel
 zostali presne podľa dizajnu pluginu.
 
 **Karusely / karty služieb / cenník sú na stránke prázdne (bez obsahu).**
-Skontrolujte, či ste v Avada Builderi do daného bloku naozaj pridali
-položky tlačidlom **„Add Item"** (realizácie v Hero, ukážky v Portfólio
-karuseli, karty v Službách, balíky v Cenníku, formáty v Školeniach,
-citáty v Referenciách) — bez nich blok nemá čo vykresliť, čo je
-očakávané správanie, nie chyba. Ak ste položky pridali a aj tak sa
-nezobrazujú, pošlite report z Nástroje → IDEANET bloky.
+Od verzie **1.1.0** by sa toto nemalo stať — pokiaľ do repeatera
+(realizácie v Hero, ukážky v Portfólio karuseli, karty v Službách,
+kroky procesu, balíky v Cenníku, formáty v Školeniach, citáty v
+Referenciách) ešte nepridáte vlastné položky, blok zobrazí kompletný
+defaultný obsah namiesto prázdneho miesta (pozri sekciu *Predvolený
+(defaultný) obsah* vyššie). Ak sa aj tak zobrazuje prázdne miesto bez
+defaultného obsahu, ide o reálnu chybu — pošlite report z Nástroje →
+IDEANET bloky (samo-test ukáže presne, ktorý shortcode zlyháva a prečo).
 
 **Zoznam bodov (napr. „Čo si tím odnesie" v Školeniach) sa zobrazí
 ako jedna dlhá veta namiesto samostatných bodiek.**

@@ -137,7 +137,7 @@ class Ideanet_Blocks_Pricing {
 			'ideanet_pricing'
 		);
 
-		$plans = ideanet_blocks_multiple( $args['plans'] );
+		$plans = ideanet_blocks_multiple_or_default( $args['plans'], ideanet_blocks_default_plans() );
 
 		ob_start();
 		?>

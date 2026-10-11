@@ -158,7 +158,10 @@ class Ideanet_Blocks_Carousel {
 		);
 
 		$mode  = 'image' === $args['mode'] ? 'image' : 'video';
-		$items = ideanet_blocks_multiple( $args['items'] );
+		$items = ideanet_blocks_multiple_or_default(
+			$args['items'],
+			'image' === $mode ? ideanet_blocks_default_graphic_items() : ideanet_blocks_default_video_items()
+		);
 		$uid   = ideanet_blocks_uid( 'ib-car' );
 
 		ob_start();
