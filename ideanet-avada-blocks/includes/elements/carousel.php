@@ -40,6 +40,19 @@ class Ideanet_Blocks_Carousel {
 						'description' => __( 'Z iných blokov naň môžete odkazovať cez #video.', 'ideanet-avada-blocks' ),
 					),
 					array(
+						'type'       => 'select',
+						'heading'    => __( 'Zdroj obsahu z Nástroje → IDEANET obsah', 'ideanet-avada-blocks' ),
+						'param_name' => 'content_source',
+						'value'      => array(
+							''                  => __( 'Žiadny — len z tohto panelu / defaulty', 'ideanet-avada-blocks' ),
+							'carousel_video'    => __( 'Videografia', 'ideanet-avada-blocks' ),
+							'carousel_grafika'  => __( 'Grafický dizajn', 'ideanet-avada-blocks' ),
+							'carousel_social'   => __( 'Sociálne siete', 'ideanet-avada-blocks' ),
+						),
+						'default'     => '',
+						'description' => __( 'Vyberte, ktorú sekciu z admin stránky „IDEANET obsah“ má tento konkrétny karusel použiť. Nesúvisí s poľom Kotva vyššie — nechajte prázdne, ak chcete spravovať obsah len tu v builderi.', 'ideanet-avada-blocks' ),
+					),
+					array(
 						'type'       => 'textfield',
 						'heading'    => __( 'Názov karuselu', 'ideanet-avada-blocks' ),
 						'param_name' => 'title',
@@ -144,14 +157,15 @@ class Ideanet_Blocks_Carousel {
 
 		$args = shortcode_atts(
 			array(
-				'anchor'        => '',
-				'title'         => '',
-				'note'          => '',
-				'mode'          => 'video',
-				'ratio'         => '9/16',
-				'cards_desktop' => '5.5',
-				'cards_mobile'  => '1.5',
-				'items'         => array(),
+				'anchor'         => '',
+				'content_source' => '',
+				'title'          => '',
+				'note'           => '',
+				'mode'           => 'video',
+				'ratio'          => '9/16',
+				'cards_desktop'  => '5.5',
+				'cards_mobile'   => '1.5',
+				'items'          => array(),
 			),
 			$atts,
 			'ideanet_carousel'
@@ -159,17 +173,13 @@ class Ideanet_Blocks_Carousel {
 
 		$mode     = 'image' === $args['mode'] ? 'image' : 'video';
 		$defaults = 'image' === $mode ? ideanet_blocks_default_graphic_items() : ideanet_blocks_default_video_items();
-		// Kotva ('video'/'grafika'/'social', zavedená konvencia zdokumentovaná
-		// v README) rozlišuje, ktorú z troch inštancií tohto znovupoužiteľného
-		// bloku admin stránka (Nástroje → IDEANET obsah) spravuje. Pri inej/
-		// vlastnej kotve admin obsah nevie priradiť — použije sa len builder/default.
-		$content_section = array(
-			'video'   => 'carousel_video',
-			'grafika' => 'carousel_grafika',
-			'social'  => 'carousel_social',
-		);
-		$items = isset( $content_section[ $args['anchor'] ] )
-			? ideanet_blocks_resolve_items( $content_section[ $args['anchor'] ], $args['items'], $defaults )
+		// „Zdroj obsahu“ je samostatné pole od Kotvy (tá slúži len na odkazy
+		// #video/#grafika a nemá s obsahom nič spoločné — predtým sa z nej
+		// obsah odvodzoval, čo spôsobovalo, že karusel s nezmenenou/predvolenou
+		// kotvou "video" ticho ťahal obsah z inej sekcie, aj keď bol v
+		// režime "Iba obrázok"). Bez explicitnej voľby sa použije len builder/default.
+		$items = $args['content_source']
+			? ideanet_blocks_resolve_items( $args['content_source'], $args['items'], $defaults )
 			: ideanet_blocks_multiple_or_default( $args['items'], $defaults );
 		$uid   = ideanet_blocks_uid( 'ib-car' );
 

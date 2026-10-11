@@ -91,7 +91,20 @@ istý blok** vložený trikrát — líši sa len nastavením:
 
 Pole „Kotva pre odkazy” nastaví `id` sekcie, takže na ňu môžete
 odkazovať z iného bloku (napr. tlačidlo „Ukážky videí” v Službách
-smeruje na `#video`).
+smeruje na `#video`). Toto pole **slúži výhradne na odkazovanie** —
+nerozhoduje o tom, odkiaľ sa berie obsah (pozri nižšie).
+
+Ak chcete, aby konkrétna inštancia karuselu čerpala obsah zo stránky
+**Nástroje → IDEANET obsah**, vyberte príslušnú možnosť v poli
+**„Zdroj obsahu z Nástroje → IDEANET obsah”** priamo pri danej
+inštancii (Videografia / Grafický dizajn / Sociálne siete / Žiadny).
+Toto pole je **nezávislé od Kotvy** — zámerne, aby sa zabránilo
+situácii, keď si nová inštancia karuselu (napr. s režimom „Iba
+obrázok”) omylom „ťahá” obsah určený pre inú (napr. kým nezmeníte
+Kotvu z jej predvolenej hodnoty `video`, karusel by inak nesprávne
+zobrazoval kategórie/položky z Videografie). Pri pridaní nového
+karuselu preto Zdroj obsahu buď nechajte prázdny (spravujete obsah
+len tu v builderi/cez defaulty), alebo ho vyberte explicitne.
 
 ### Prepojenie Školení s formulárom
 
@@ -134,10 +147,13 @@ Ak sekciu znova vyprázdnite (zmažete všetky riadky a uložíte), blok
 sa vráti k obsahu z Avada Builderu, alebo k defaultom, ak ani tam nič
 nie je.
 
-Portfólio karusel má na stránke tri samostatné sekcie (Videografia,
-Grafický dizajn, Sociálne siete) — každá spravuje len tú jednu
-z trojice karuselov, ktoré sú na stránke vložené s príslušnou kotvou
-(`video` / `grafika` / `social`).
+Portfólio karusel má na tejto stránke tri samostatné sekcie
+(Videografia, Grafický dizajn, Sociálne siete). Aby konkrétna
+inštancia karuselu na stránke (v builderi) vedela, z ktorej z nich
+má čerpať, musíte pri nej v builderi nastaviť pole **„Zdroj obsahu
+z Nástroje → IDEANET obsah”** na zodpovedajúcu možnosť — bez tohto
+nastavenia sa obsah z tejto stránky na daný karusel nenaviaže (pozri
+sekciu *Portfólio karusel — jeden blok, tri použitia* nižšie).
 
 ### Spôsob 2: priamo v Avada Builderi
 
