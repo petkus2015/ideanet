@@ -181,10 +181,9 @@ class Ideanet_Blocks_Hero {
 
 		ob_start();
 		?>
-		<section class="ib-scope">
-			<div class="ib-hero ib-wrap" id="<?php echo esc_attr( $uid ); ?>">
-				<div class="ib-hero__inner">
-					<div>
+		<section class="ib-scope ib-hero" id="<?php echo esc_attr( $uid ); ?>">
+			<div class="ib-hero__inner ib-wrap">
+				<div>
 						<?php if ( $args['eyebrow'] ) : ?>
 							<p class="ib-kicker ib-reveal"><?php echo esc_html( $args['eyebrow'] ); ?></p>
 						<?php endif; ?>
@@ -241,7 +240,6 @@ class Ideanet_Blocks_Hero {
 						</div>
 					<?php endif; ?>
 				</div>
-			</div>
 		</section>
 		<style>
 			#<?php echo esc_attr( $uid ); ?>{ --ib-per: <?php echo esc_attr( $args['cards_desktop'] ); ?>; }

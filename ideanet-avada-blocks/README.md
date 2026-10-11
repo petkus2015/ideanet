@@ -239,6 +239,20 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
+**Pozadie/odlesk v Hero sekcii nesiaha od okraja po okraj obrazovky.**
+Do verzie **1.2.2** zdieľal hlavný `<div>` Hero sekcie súčasne triedy
+`.ib-hero` (nosič pozadia/odlesku) aj `.ib-wrap` (vycentrovaný obsah,
+max. šírka 1240 px) — pozadie tak bolo nechcene obmedzené na tú istú
+šírku ako text a karusel. Od verzie **1.3.0** je `.ib-hero` presunuté
+priamo na vonkajšiu `<section>` (bez obmedzenia šírky), zatiaľ čo
+vycentrovaný obsah je v samostatnom vnútornom `<div>` s `.ib-wrap`.
+Vstavaný odlesk (jemný magenta glow) tak teraz siaha od okraja po
+okraj na desktope, tablete aj mobile a jeho veľkosť sa plynule
+(`clamp()` naviazaný na `vw`) prispôsobuje šírke obrazovky namiesto
+pevných pixelových rozmerov. Ak pridávate vlastné pozadie (napr. cez
+Avada Full Width Row s obrázkom na pozadí), táto zmena mu už nestojí
+v ceste.
+
 **Kliknutím na video v karuseli sa neprehrá so zvukom.**
 Do verzie **1.2.1** klik na dlaždicu videa v karuseli (aj v Hero
 „Posledné realizácie") iba prepínal malý tichý (`muted`) náhľad priamo
