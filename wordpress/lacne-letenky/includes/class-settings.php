@@ -76,8 +76,8 @@ class Lacne_Letenky_Settings {
 		$out['aff'] = array();
 		foreach ( self::aff_keys() as $k => $label ) {
 			$v = isset( $in['aff'][ $k ] ) ? trim( (string) $in['aff'][ $k ] ) : '';
-			// šablóna musí byť https odkaz a obaliť pôvodný odkaz na let ({url} alebo {url_enc})
-			if ( preg_match( '#^https://[^\s<>"\']+$#', $v ) && ( false !== strpos( $v, '{url}' ) || false !== strpos( $v, '{url_enc}' ) ) ) {
+			// šablóna musí byť https odkaz a použiť údaje o lete: {url}, {url_enc}, {origin} alebo {dest}
+			if ( preg_match( '#^https://[^\s<>"\']+$#', $v ) && preg_match( '/\{(url|url_enc|origin|dest)\}/', $v ) ) {
 				$out['aff'][ $k ] = $v;
 			}
 		}
@@ -216,7 +216,7 @@ class Lacne_Letenky_Settings {
 								<p><label for="ll-aff-<?php echo esc_attr( $k ); ?>"><strong><?php echo esc_html( $label ); ?></strong></label><br>
 								<input id="ll-aff-<?php echo esc_attr( $k ); ?>" type="url" class="large-text code" placeholder="https://… {url_enc}" name="<?php echo esc_attr( self::OPTION ); ?>[aff][<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( isset( $o['aff'][ $k ] ) ? $o['aff'][ $k ] : '' ); ?>"></p>
 							<?php endforeach; ?>
-							<p class="description">Voliteľné. Vlož partnerský odkaz zo svojej affiliate siete (Travelpayouts, Awin, …) a tam, kde sa má vložiť odkaz na let, napíš <code>{url_enc}</code> (zakódovaný) alebo <code>{url}</code>. Dostupné aj <code>{origin}</code>, <code>{dest}</code>, <code>{depart}</code>, <code>{return}</code>. Prázdne pole = odkaz ide priamo na spoločnosť. Odkazy dostanú <code>rel="sponsored nofollow"</code> a v pätičke bloku sa objaví oznam o partnerských odkazoch.</p>
+							<p class="description">Voliteľné. Vlož partnerský odkaz zo svojej affiliate siete (Travelpayouts, Awin, …). Tam, kde sa má vložiť pôvodný odkaz na let, napíš <code>{url_enc}</code> (zakódovaný) alebo <code>{url}</code>. Odkaz môžeš zostaviť aj z trasy a dátumu: <code>{origin}</code>, <code>{dest}</code>, <code>{depart}</code>, <code>{return}</code> (dátumy ako RRRR-MM-DD). Prázdne pole = odkaz ide priamo na spoločnosť. Odkazy dostanú <code>rel="sponsored nofollow"</code> a v pätičke bloku sa objaví oznam o partnerských odkazoch.</p>
 						</td>
 					</tr>
 					<tr>
