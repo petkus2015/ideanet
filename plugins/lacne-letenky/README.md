@@ -117,6 +117,8 @@ Blok vie obaliť odkaz „Kúpiť“ partnerským odkazom tvojej affiliate siete
 - Do šablóny vložíš svoj partnerský odkaz a tam, kde sa má vložiť odkaz na let, `{url_enc}` (zakódovaný) alebo `{url}`.
   Odkaz sa dá zostaviť aj z trasy a dátumu bez obalenia pôvodného: `{origin}`, `{dest}`, `{depart}`, `{return}` (RRRR-MM-DD), `{source}`.
   Príklad: `https://tvoja-siet.example/click?id=123&url={url_enc}`
+- **Travelpayouts**: ID partnera (`marker`) a ID projektu (`trs`) zadáš v nastaveniach raz a v šablónach ich použiješ
+  ako `{marker}` a `{trs}`. Šablóna, ktorá ID potrebuje bez zadaného ID, sa nepoužije.
 - Bez šablóny ide odkaz priamo na spoločnosť. Šablóna `default` platí pre spoločnosti bez vlastnej.
 - Odkazy majú `rel="sponsored nofollow"` a v pätičke je oznam, že ide o partnerské odkazy
   (označenie komerčného obsahu je potrebné aj podľa pravidiel EÚ a Slovenska).

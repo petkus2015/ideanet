@@ -20,6 +20,8 @@ class Lacne_Letenky_Settings {
 			'live_minutes'  => 10,      // výsledok živého hľadania platí X minút
 			'autoload'      => 1,       // aktuálne ceny sa načítajú pri každom otvorení stránky
 			'aff'           => array(), // partnerské odkazy podľa spoločnosti (momondo, ryanair, wizzair, pegasus, default)
+			'tp_marker'     => '',      // Travelpayouts: ID partnera (marker) – v šablónach ako {marker}
+			'tp_trs'        => '',      // Travelpayouts: ID projektu (trs) – v šablónach ako {trs}
 		);
 	}
 
@@ -32,6 +34,28 @@ class Lacne_Letenky_Settings {
 			'momondo'  => 'momondo',
 			'default'  => 'Ostatné (ak nie je zadaná konkrétna spoločnosť)',
 		);
+	}
+
+	/**
+	 * Šablóny partnerských odkazov s doplnenými ID z Travelpayouts ({marker}, {trs}).
+	 * Šablóna, ktorá ID potrebuje a nie je zadané, sa vynechá (aby v odkaze nezostalo „{marker}“).
+	 */
+	public static function affiliate() {
+		$aff = self::get( 'aff' );
+		$ids = array( '{marker}' => (string) self::get( 'tp_marker' ), '{trs}' => (string) self::get( 'tp_trs' ) );
+		$out = array();
+		foreach ( is_array( $aff ) ? $aff : array() as $k => $tpl ) {
+			foreach ( $ids as $token => $value ) {
+				if ( false !== strpos( $tpl, $token ) ) {
+					if ( '' === $value ) {
+						continue 2;
+					}
+					$tpl = str_replace( $token, $value, $tpl );
+				}
+			}
+			$out[ $k ] = $tpl;
+		}
+		return $out;
 	}
 
 	public static function get( $key ) {
@@ -73,6 +97,9 @@ class Lacne_Letenky_Settings {
 			'autoload'      => empty( $in['autoload'] ) ? 0 : 1,
 			'live_minutes'  => isset( $in['live_minutes'] ) ? max( 5, min( 120, (int) $in['live_minutes'] ) ) : $d['live_minutes'],
 		);
+		// ID z Travelpayouts sú čísla; iné znaky zahodíme
+		$out['tp_marker'] = substr( preg_replace( '/\D+/', '', isset( $in['tp_marker'] ) ? (string) $in['tp_marker'] : '' ), 0, 12 );
+		$out['tp_trs']    = substr( preg_replace( '/\D+/', '', isset( $in['tp_trs'] ) ? (string) $in['tp_trs'] : '' ), 0, 12 );
 		$out['aff'] = array();
 		foreach ( self::aff_keys() as $k => $label ) {
 			$v = isset( $in['aff'][ $k ] ) ? trim( (string) $in['aff'][ $k ] ) : '';
@@ -212,6 +239,11 @@ class Lacne_Letenky_Settings {
 					<tr>
 						<th scope="row">Partnerské odkazy (provízia)</th>
 						<td>
+							<p><label for="ll-tp-marker"><strong>Travelpayouts ID (marker)</strong></label><br>
+							<input id="ll-tp-marker" type="text" inputmode="numeric" class="regular-text" placeholder="napr. 123456" name="<?php echo esc_attr( self::OPTION ); ?>[tp_marker]" value="<?php echo esc_attr( $o['tp_marker'] ); ?>">
+							&nbsp; <label for="ll-tp-trs"><strong>ID projektu (trs)</strong></label>
+							<input id="ll-tp-trs" type="text" inputmode="numeric" class="small-text" placeholder="voliteľné" name="<?php echo esc_attr( self::OPTION ); ?>[tp_trs]" value="<?php echo esc_attr( $o['tp_trs'] ); ?>"></p>
+							<p class="description">Zadaj raz a v šablónach nižšie použi <code>{marker}</code> a <code>{trs}</code>. Šablóna, ktorá ich potrebuje, sa bez zadaného ID nepoužije. API kľúč (token) sem nepíš.</p>
 							<?php foreach ( self::aff_keys() as $k => $label ) : ?>
 								<p><label for="ll-aff-<?php echo esc_attr( $k ); ?>"><strong><?php echo esc_html( $label ); ?></strong></label><br>
 								<input id="ll-aff-<?php echo esc_attr( $k ); ?>" type="url" class="large-text code" placeholder="https://… {url_enc}" name="<?php echo esc_attr( self::OPTION ); ?>[aff][<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( isset( $o['aff'][ $k ] ) ? $o['aff'][ $k ] : '' ); ?>"></p>

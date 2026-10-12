@@ -54,7 +54,7 @@ class Lacne_Letenky_Render {
 		if ( Lacne_Letenky_Settings::get( 'live' ) && Lacne_Letenky_Settings::get( 'autoload' ) ) {
 			$attrs['data-autoload'] = '';
 		}
-		$aff = Lacne_Letenky_Settings::get( 'aff' );
+		$aff = Lacne_Letenky_Settings::affiliate();
 		if ( is_array( $aff ) && array_filter( $aff ) ) {
 			$attrs['data-affiliate'] = wp_json_encode( array_filter( $aff ) );
 		}
