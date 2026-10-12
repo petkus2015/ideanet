@@ -138,6 +138,22 @@
     });
   }
 
+  // Partnerské odkazy: šablóna odkazu pre každú spoločnosť (momondo, ryanair, wizzair, pegasus, default).
+  // Šablóna obaľuje pôvodný odkaz na let: {url} alebo {url_enc} (zakódovaný), ďalej {origin}, {dest},
+  // {depart}, {return}, {source}. Bez šablóny sa použije pôvodný odkaz.
+  function affiliateFor(opts, d) {
+    var a = opts.affiliate || {};
+    var tpl = a[d.source] || a['default'] || '';
+    if (!tpl || !d.url) return null;
+    var vars = { url: d.url, url_enc: encodeURIComponent(d.url), origin: d.origin, dest: d.dest,
+      depart: d.depart || '', 'return': d['return'] || '', source: d.source || '' };
+    return tpl.replace(/\{(\w+)\}/g, function (m, k) { return vars.hasOwnProperty(k) ? vars[k] : m; });
+  }
+  function hasAffiliate(opts) {
+    var a = opts.affiliate || {};
+    return Object.keys(a).some(function (k) { return !!a[k]; });
+  }
+
   function render(el, data, opts, note) {
     var fresh = isFresh(data);
     // Bangkok (a ďalšie sledované mestá): iba spiatočná letenka v najbližších 3 mesiacoch.
@@ -206,10 +222,16 @@
         (long ? ' od posledného hľadania' : '') + '</span>';
     }
 
+    // href + rel odkazu na let; pri partnerskom odkaze rel="sponsored nofollow" (pravidlá Google)
+    function linkAttrs(d) {
+      var aff = affiliateFor(opts, d);
+      return 'href="' + esc(aff || d.url) + '" target="_blank" rel="' + (aff ? 'sponsored nofollow noopener' : 'noopener') + '"';
+    }
+
     function cardHtml(d) {
       var from = cities[d.origin] || d.origin;
       var drop = changeHtml(d, false);
-      return '<li><a class="ll-card" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
+      return '<li><a class="ll-card" ' + linkAttrs(d) + ' aria-label="' +
           esc(d.city + ', ' + d.country + ', let z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
         '<div class="ll-card-top"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
           (stopsLabel(d.stops) ? '<span class="ll-chip">' + stopsLabel(d.stops) + '</span>' : '') + '</div>' +
@@ -230,7 +252,7 @@
       }
       var from = cities[d.origin] || d.origin;
       var drop = changeHtml(d, true);
-      return '<a class="ll-feature" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
+      return '<a class="ll-feature" ' + linkAttrs(d) + ' aria-label="' +
           esc(w.name + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
         '<svg class="ll-feature-arc" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true"><path d="M10 190 C 120 20, 290 10, 390 70"/></svg>' +
         '<div class="ll-feature-main">' +
@@ -265,7 +287,7 @@
           '</div></li>';
         }
         var from = cities[d.origin] || d.originCity || d.origin;
-        return li + '<a class="ll-row" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="' +
+        return li + '<a class="ll-row" ' + linkAttrs(d) + ' aria-label="' +
             esc(w.name + ', ' + d.city + ', spiatočná letenka z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
           '<span class="ll-row-main"><span class="ll-row-head"><b class="ll-row-name">' + esc(w.name) + '</b>' + wxHtml(d) + '</span>' +
             '<span class="ll-row-sub">' + esc(d.city) + ' · <span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
@@ -323,6 +345,7 @@
             (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
             (fresh ? '. Hľadané ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) : '') +
             '. Ceny sa menia, pred nákupom ich overte.' +
+            (hasAffiliate(opts) ? ' Odkazy na letenky sú partnerské: ak cez ne kúpite, môžem dostať províziu, cena sa pre vás nemení.' : '') +
             (hasWx ? ' Počasie v deň príletu: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (predpoveď do 15 dní, ďalej odhad ~ z minulých rokov).' : '') +
             '</p>'
         : '');
@@ -445,6 +468,7 @@
         src: el.getAttribute('data-src') || undefined,
         limit: +el.getAttribute('data-limit') || 0,
         title: el.getAttribute('data-title') || undefined,
+        affiliate: (function () { try { return JSON.parse(el.getAttribute('data-affiliate') || '') || undefined; } catch (e) { return undefined; } })(),
         fonts: el.getAttribute('data-fonts') !== 'false',
         autoRefresh: el.hasAttribute('data-autoload')
       });

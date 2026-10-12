@@ -19,6 +19,18 @@ class Lacne_Letenky_Settings {
 			'live'          => 1,       // tlačidlo spustí živé hľadanie na momondo a Ryanair
 			'live_minutes'  => 10,      // výsledok živého hľadania platí X minút
 			'autoload'      => 1,       // aktuálne ceny sa načítajú pri každom otvorení stránky
+			'aff'           => array(), // partnerské odkazy podľa spoločnosti (momondo, ryanair, wizzair, pegasus, default)
+		);
+	}
+
+	/** Spoločnosti, pre ktoré sa dá zadať partnerský odkaz. */
+	public static function aff_keys() {
+		return array(
+			'wizzair'  => 'Wizz Air',
+			'ryanair'  => 'Ryanair',
+			'pegasus'  => 'Pegasus',
+			'momondo'  => 'momondo',
+			'default'  => 'Ostatné (ak nie je zadaná konkrétna spoločnosť)',
 		);
 	}
 
@@ -61,6 +73,14 @@ class Lacne_Letenky_Settings {
 			'autoload'      => empty( $in['autoload'] ) ? 0 : 1,
 			'live_minutes'  => isset( $in['live_minutes'] ) ? max( 5, min( 120, (int) $in['live_minutes'] ) ) : $d['live_minutes'],
 		);
+		$out['aff'] = array();
+		foreach ( self::aff_keys() as $k => $label ) {
+			$v = isset( $in['aff'][ $k ] ) ? trim( (string) $in['aff'][ $k ] ) : '';
+			// šablóna musí byť https odkaz a obaliť pôvodný odkaz na let ({url} alebo {url_enc})
+			if ( preg_match( '#^https://[^\s<>"\']+$#', $v ) && ( false !== strpos( $v, '{url}' ) || false !== strpos( $v, '{url_enc}' ) ) ) {
+				$out['aff'][ $k ] = $v;
+			}
+		}
 		Lacne_Letenky_Data::flush();
 		return $out;
 	}
@@ -187,6 +207,16 @@ class Lacne_Letenky_Settings {
 							<p><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[autoload]" value="1" <?php checked( ! empty( $o['autoload'] ) ); ?>> aktuálne ceny načítať pri každom otvorení stránky</label></p>
 							<p><label>Výsledok platí <input type="number" min="5" max="120" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[live_minutes]" value="<?php echo esc_attr( $o['live_minutes'] ); ?>"> minút</label></p>
 							<p class="description">Kliknutia v tomto čase dostanú výsledok spred chvíle, aby návštevníci nezahltili zdroje. Ceny Wizz Air sa berú z aktualizácie na GitHube.</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Partnerské odkazy (provízia)</th>
+						<td>
+							<?php foreach ( self::aff_keys() as $k => $label ) : ?>
+								<p><label for="ll-aff-<?php echo esc_attr( $k ); ?>"><strong><?php echo esc_html( $label ); ?></strong></label><br>
+								<input id="ll-aff-<?php echo esc_attr( $k ); ?>" type="url" class="large-text code" placeholder="https://… {url_enc}" name="<?php echo esc_attr( self::OPTION ); ?>[aff][<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( isset( $o['aff'][ $k ] ) ? $o['aff'][ $k ] : '' ); ?>"></p>
+							<?php endforeach; ?>
+							<p class="description">Voliteľné. Vlož partnerský odkaz zo svojej affiliate siete (Travelpayouts, Awin, …) a tam, kde sa má vložiť odkaz na let, napíš <code>{url_enc}</code> (zakódovaný) alebo <code>{url}</code>. Dostupné aj <code>{origin}</code>, <code>{dest}</code>, <code>{depart}</code>, <code>{return}</code>. Prázdne pole = odkaz ide priamo na spoločnosť. Odkazy dostanú <code>rel="sponsored nofollow"</code> a v pätičke bloku sa objaví oznam o partnerských odkazoch.</p>
 						</td>
 					</tr>
 					<tr>

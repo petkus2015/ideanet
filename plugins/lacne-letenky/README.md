@@ -107,3 +107,25 @@ Kým neprebehne prvá úspešná aktualizácia, `deals.json` je prázdny a blok 
 > Keď niektorý zdroj zlyhá alebo zmení formát, ostatné fungujú ďalej; chyby sú v zázname
 > behu v Actions a v `errors` v `deals.json`. Parsery: `parse_destinations`, `parse_ryanair`,
 > `fetch_wizz`.
+
+## Zárobok z preklikov a nákupov (partnerské odkazy)
+
+Blok vie obaliť odkaz „Kúpiť“ partnerským odkazom tvojej affiliate siete. Nastavuje sa jednoducho:
+
+- **WordPress**: Nastavenia → Lacné letenky → *Partnerské odkazy*, pole pre každú spoločnosť (Wizz Air, Ryanair,
+  Pegasus, momondo, ostatné). **Mimo WordPressu**: atribút `data-affiliate='{"wizzair":"https://…{url_enc}"}'`.
+- Do šablóny vložíš svoj partnerský odkaz a tam, kde sa má vložiť odkaz na let, `{url_enc}` (zakódovaný) alebo `{url}`.
+  Dostupné sú aj `{origin}`, `{dest}`, `{depart}`, `{return}`, `{source}`.
+  Príklad: `https://tvoja-siet.example/click?id=123&url={url_enc}`
+- Bez šablóny ide odkaz priamo na spoločnosť. Šablóna `default` platí pre spoločnosti bez vlastnej.
+- Odkazy majú `rel="sponsored nofollow"` a v pätičke je oznam, že ide o partnerské odkazy
+  (označenie komerčného obsahu je potrebné aj podľa pravidiel EÚ a Slovenska).
+
+Prekliky a nákupy ti ukáže dashboard affiliate siete. Plugin ich sám nepočíta.
+
+**Ktorá spoločnosť má program** (podľa vyhľadávania 12. 10. 2026, pred registráciou si to over priamo u siete):
+Ryanair verejný affiliate program nemá, spolupracuje s predajcami cez „Approved OTA“ (napr. Trip.com,
+lastminute.com). Pri Wizz Air a Pegasus som oficiálne podmienky nenašiel. Pegasus má zmluvu s Expedia
+Partner Solutions. Najjednoduchšia cesta je registrácia v sieti, ktorá predáva letenky viacerých spoločností
+(napr. Travelpayouts alebo Awin), a vloženie jej odkazu do poľa „Ostatné“. Priemerná provízia z letenky
+býva nízka, okolo 1 až 2 % ceny.
