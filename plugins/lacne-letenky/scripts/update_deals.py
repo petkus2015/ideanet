@@ -1,0 +1,863 @@
+#!/usr/bin/env python3
+"""Aktualizuje lacné letenky z Viedne (VIE) a Bratislavy (BTS) kamkoľvek.
+
+Zdroje (z každej trasy sa ponechá najlacnejšia ponuka zo všetkých zdrojov):
+  - momondo.co.uk – "Explore" (kamkoľvek) endpoint mapy https://www.momondo.co.uk/explore
+  - ryanair.com   – verejné vyhľadávanie najlacnejších spiatočných letov (farfnd API)
+  - wizzair.com   – mapa liniek + cenový kalendár (timetable API)
+
+Výsledok zapíše do:
+
+    data/deals.json   – dáta pre plugin (fetch)
+    data/deals.js     – rovnaké dáta ako `window.LACNE_LETENKY_DATA`
+                        (náhľad funguje aj po otvorení cez file://)
+
+Použitie:
+    python3 update_deals.py              # stiahne čerstvé ceny zo všetkých zdrojov
+    python3 update_deals.py --only ryanair   # iba jeden zdroj (momondo, ryanair, wizzair)
+    python3 update_deals.py --from-file odpoved.json --origin VIE
+                                         # spracuje uloženú odpoveď API
+
+Bez závislostí – iba štandardná knižnica Pythonu.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import gzip
+import json
+import re
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from weather import add_weather  # noqa: E402
+
+try:
+    from zoneinfo import ZoneInfo
+    VIENNA = ZoneInfo("Europe/Vienna")
+except Exception:  # pragma: no cover - zoneinfo chýba len na starých Pythonoch
+    VIENNA = dt.timezone(dt.timedelta(hours=1))
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data"
+SITE = "https://www.momondo.co.uk"
+CURRENCY = "EUR"  # ceny v bloku sú vždy v eurách
+ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+EXPLORE_PATH = "/s/horizon/exploreapi/destinations"
+
+ORIGINS = {
+    "VIE": {"city": "Viedeň", "name": "Vienna International"},
+    "BTS": {"city": "Bratislava", "name": "M. R. Štefánik"},
+}
+
+# Ďalšie letiská odletu pre vybrané destinácie: do SAE hľadáme vždy aj z Budapešti a ukážeme
+# najlacnejšiu z Viedne, Bratislavy alebo Budapešti. Tieto lety idú len do riadku destinácie,
+# nie medzi karty „kamkoľvek“.
+FALLBACK_ORIGINS = {"BUD": "Budapešť"}
+FALLBACK_NOTE = {"BUD": "odlet z Budapešti"}
+FALLBACK_WATCH = {"SAE – Dubaj": ["BUD"], "SAE – Abu Dhabí": ["BUD"]}
+
+# Hľadáme iba lety s odletom najviac 3 mesiace dopredu (blok používa rovnakú hranicu).
+HORIZON_DAYS = 92
+
+# Koľko najlacnejších ponúk uložiť do deals.json – zvlášť v Európe a mimo Európy,
+# aby výber „Mimo Európy“ v bloku nebol prázdny (sledované mestá sa ukladajú zvlášť).
+MAX_PER_GROUP = 50
+
+# Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
+# featured=True -> veľká karta na začiatku bloku (Bangkok).
+# list=True     -> riadok v zozname pod Bangkokom (Ázia a SAE); ich letiská sa v páse kariet neopakujú.
+WATCH = {
+    "Bangkok": {"countryCode": "TH", "airports": ["BKK", "DMK"], "featured": True, "list": False},
+    "Thajsko": {"countryCode": "TH", "airports": ["HKT", "KBV", "CNX", "USM"], "featured": False, "list": True,
+                "note": "Phuket, Krabi, Chiang Mai, Ko Samui"},
+    "Indonézia – Bali": {"countryCode": "ID", "airports": ["DPS", "CGK"], "featured": False, "list": True},
+    "Japonsko": {"countryCode": "JP", "airports": ["NRT", "HND", "KIX"], "featured": False, "list": True},
+    "Vietnam": {"countryCode": "VN", "airports": ["SGN", "HAN", "DAD"], "featured": False, "list": True},
+    "Malajzia": {"countryCode": "MY", "airports": ["KUL"], "featured": False, "list": True},
+    "India": {"countryCode": "IN", "airports": ["DEL", "BOM"], "featured": False, "list": True},
+    "Južná Kórea": {"countryCode": "KR", "airports": ["ICN"], "featured": False, "list": True},
+    "Singapur": {"countryCode": "SG", "airports": ["SIN"], "featured": False, "list": True},
+    "Filipíny": {"countryCode": "PH", "airports": ["MNL", "CEB"], "featured": False, "list": True},
+    "SAE – Dubaj": {"countryCode": "AE", "airports": ["DXB", "DWC", "SHJ"], "featured": False, "list": True,
+                    "note": "Dubaj, Šardžá"},
+    "SAE – Abu Dhabí": {"countryCode": "AE", "airports": ["AUH"], "featured": False, "list": True},
+    # Európa: tieto letiská sa hľadajú vždy a v páse kariet sú aj vtedy, keď nie sú medzi najlacnejšími
+    # (featured=False, list=False -> vlastná karta medzi ostatnými, ukáže sa pri filtri Všetky a Európa).
+    "Alicante": {"countryCode": "ES", "airports": ["ALC"], "featured": False, "list": False},
+    "Catania": {"countryCode": "IT", "airports": ["CTA"], "featured": False, "list": False},
+    "Palermo": {"countryCode": "IT", "airports": ["PMO"], "featured": False, "list": False},
+    "Trapani": {"countryCode": "IT", "airports": ["TPS"], "featured": False, "list": False},
+    "Comiso": {"countryCode": "IT", "airports": ["CIY"], "featured": False, "list": False},
+    "Malta": {"countryCode": "MT", "airports": ["MLA"], "featured": False, "list": False},
+}
+
+# Časy aktualizácie (Europe/Vienna) – musia sedieť s .github/workflows/lacne-letenky.yml
+SCHEDULE = [("rano", "07:00"), ("obed", "12:00"), ("vecer", "18:00")]
+
+# ISO kód -> (anglický názov, slovenský názov, región)
+COUNTRIES = {
+    "AT": ("Austria", "Rakúsko", "Európa"), "SK": ("Slovakia", "Slovensko", "Európa"),
+    "CZ": ("Czech Republic", "Česko", "Európa"), "HU": ("Hungary", "Maďarsko", "Európa"),
+    "PL": ("Poland", "Poľsko", "Európa"), "DE": ("Germany", "Nemecko", "Európa"),
+    "CH": ("Switzerland", "Švajčiarsko", "Európa"), "IT": ("Italy", "Taliansko", "Európa"),
+    "ES": ("Spain", "Španielsko", "Európa"), "PT": ("Portugal", "Portugalsko", "Európa"),
+    "FR": ("France", "Francúzsko", "Európa"), "BE": ("Belgium", "Belgicko", "Európa"),
+    "NL": ("Netherlands", "Holandsko", "Európa"), "LU": ("Luxembourg", "Luxembursko", "Európa"),
+    "GB": ("United Kingdom", "Spojené kráľovstvo", "Európa"), "IE": ("Ireland", "Írsko", "Európa"),
+    "DK": ("Denmark", "Dánsko", "Európa"), "NO": ("Norway", "Nórsko", "Európa"),
+    "SE": ("Sweden", "Švédsko", "Európa"), "FI": ("Finland", "Fínsko", "Európa"),
+    "IS": ("Iceland", "Island", "Európa"), "EE": ("Estonia", "Estónsko", "Európa"),
+    "LV": ("Latvia", "Lotyšsko", "Európa"), "LT": ("Lithuania", "Litva", "Európa"),
+    "GR": ("Greece", "Grécko", "Európa"), "CY": ("Cyprus", "Cyprus", "Európa"),
+    "MT": ("Malta", "Malta", "Európa"), "HR": ("Croatia", "Chorvátsko", "Európa"),
+    "SI": ("Slovenia", "Slovinsko", "Európa"), "RS": ("Serbia", "Srbsko", "Európa"),
+    "BA": ("Bosnia and Herzegovina", "Bosna a Hercegovina", "Európa"),
+    "ME": ("Montenegro", "Čierna Hora", "Európa"), "AL": ("Albania", "Albánsko", "Európa"),
+    "MK": ("North Macedonia", "Severné Macedónsko", "Európa"), "XK": ("Kosovo", "Kosovo", "Európa"),
+    "BG": ("Bulgaria", "Bulharsko", "Európa"), "RO": ("Romania", "Rumunsko", "Európa"),
+    "MD": ("Moldova", "Moldavsko", "Európa"), "UA": ("Ukraine", "Ukrajina", "Európa"),
+    "TR": ("Turkey", "Turecko", "Európa"), "GE": ("Georgia", "Gruzínsko", "Ázia"),
+    "AM": ("Armenia", "Arménsko", "Ázia"), "AZ": ("Azerbaijan", "Azerbajdžan", "Ázia"),
+    "IL": ("Israel", "Izrael", "Ázia"), "JO": ("Jordan", "Jordánsko", "Ázia"),
+    "AE": ("United Arab Emirates", "Spojené arabské emiráty", "Ázia"),
+    "QA": ("Qatar", "Katar", "Ázia"), "OM": ("Oman", "Omán", "Ázia"),
+    "SA": ("Saudi Arabia", "Saudská Arábia", "Ázia"), "BH": ("Bahrain", "Bahrajn", "Ázia"),
+    "KW": ("Kuwait", "Kuvajt", "Ázia"), "LB": ("Lebanon", "Libanon", "Ázia"),
+    "IN": ("India", "India", "Ázia"), "LK": ("Sri Lanka", "Srí Lanka", "Ázia"),
+    "MV": ("Maldives", "Maldivy", "Ázia"), "NP": ("Nepal", "Nepál", "Ázia"),
+    "TH": ("Thailand", "Thajsko", "Ázia"), "VN": ("Vietnam", "Vietnam", "Ázia"),
+    "KH": ("Cambodia", "Kambodža", "Ázia"), "MY": ("Malaysia", "Malajzia", "Ázia"),
+    "SG": ("Singapore", "Singapur", "Ázia"), "ID": ("Indonesia", "Indonézia", "Ázia"),
+    "PH": ("Philippines", "Filipíny", "Ázia"), "CN": ("China", "Čína", "Ázia"),
+    "HK": ("Hong Kong", "Hongkong", "Ázia"), "TW": ("Taiwan", "Taiwan", "Ázia"),
+    "JP": ("Japan", "Japonsko", "Ázia"), "KR": ("South Korea", "Južná Kórea", "Ázia"),
+    "UZ": ("Uzbekistan", "Uzbekistan", "Ázia"), "KZ": ("Kazakhstan", "Kazachstan", "Ázia"),
+    "EG": ("Egypt", "Egypt", "Afrika"), "MA": ("Morocco", "Maroko", "Afrika"),
+    "TN": ("Tunisia", "Tunisko", "Afrika"), "DZ": ("Algeria", "Alžírsko", "Afrika"),
+    "KE": ("Kenya", "Keňa", "Afrika"), "TZ": ("Tanzania", "Tanzánia", "Afrika"),
+    "ZA": ("South Africa", "Južná Afrika", "Afrika"), "MU": ("Mauritius", "Maurícius", "Afrika"),
+    "SC": ("Seychelles", "Seychely", "Afrika"), "CV": ("Cape Verde", "Kapverdy", "Afrika"),
+    "ET": ("Ethiopia", "Etiópia", "Afrika"), "NA": ("Namibia", "Namíbia", "Afrika"),
+    "US": ("United States", "USA", "Amerika"), "CA": ("Canada", "Kanada", "Amerika"),
+    "MX": ("Mexico", "Mexiko", "Amerika"), "CU": ("Cuba", "Kuba", "Amerika"),
+    "DO": ("Dominican Republic", "Dominikánska republika", "Amerika"),
+    "JM": ("Jamaica", "Jamajka", "Amerika"), "CR": ("Costa Rica", "Kostarika", "Amerika"),
+    "PA": ("Panama", "Panama", "Amerika"), "CO": ("Colombia", "Kolumbia", "Amerika"),
+    "PE": ("Peru", "Peru", "Amerika"), "BR": ("Brazil", "Brazília", "Amerika"),
+    "AR": ("Argentina", "Argentína", "Amerika"), "CL": ("Chile", "Čile", "Amerika"),
+    "AU": ("Australia", "Austrália", "Oceánia"), "NZ": ("New Zealand", "Nový Zéland", "Oceánia"),
+    "FJ": ("Fiji", "Fidži", "Oceánia"),
+}
+BY_EN_NAME = {v[0].lower(): k for k, v in COUNTRIES.items()}
+
+# Zdroje vracajú anglické názvy miest – najčastejšie preložíme, ostatné ostanú v origináli.
+CITY_SK = {
+    "London": "Londýn", "Rome": "Rím", "Milan": "Miláno", "Venice": "Benátky", "Naples": "Neapol",
+    "Florence": "Florencia", "Turin": "Turín", "Brussels": "Brusel", "Paris": "Paríž", "Lisbon": "Lisabon",
+    "Athens": "Atény", "Thessaloniki": "Solún", "Copenhagen": "Kodaň", "Warsaw": "Varšava",
+    "Krakow": "Krakov", "Prague": "Praha", "Munich": "Mníchov", "Cologne": "Kolín", "Nice": "Nice",
+    "Seville": "Sevilla", "Majorca": "Mallorca", "Palma de Mallorca": "Mallorca", "Tenerife": "Tenerife",
+    "Gran Canaria": "Gran Canaria", "Rhodes": "Rodos", "Corfu": "Korfu", "Crete": "Kréta",
+    "Heraklion": "Heraklion", "Chania": "Chania", "Kos": "Kos", "Zakynthos": "Zakynthos",
+    "Valletta": "Valletta", "Malta": "Malta", "Larnaca": "Larnaka", "Paphos": "Pafos",
+    "Istanbul": "Istanbul", "Antalya": "Antalya", "Tel Aviv": "Tel Aviv", "Marrakech": "Marrákeš",
+    "Marrakesh": "Marrákeš", "Hurghada": "Hurghada", "Sharm El Sheikh": "Šarm aš-Šajch",
+    "Dubai": "Dubaj", "Abu Dhabi": "Abu Dhabí", "Bangkok": "Bangkok", "Tokyo": "Tokio",
+    "New York": "New York", "Reykjavik": "Reykjavík", "Stockholm": "Štokholm", "Oslo": "Oslo",
+    "Helsinki": "Helsinki", "Vilnius": "Vilnius", "Riga": "Riga", "Tallinn": "Tallinn",
+    "Bucharest": "Bukurešť", "Sofia": "Sofia", "Belgrade": "Belehrad", "Skopje": "Skopje",
+    "Tirana": "Tirana", "Podgorica": "Podgorica", "Kutaisi": "Kutaisi", "Tbilisi": "Tbilisi",
+    "Eindhoven": "Eindhoven", "Amsterdam": "Amsterdam", "Dublin": "Dublin", "Edinburgh": "Edinburgh",
+    "Manchester": "Manchester", "Liverpool": "Liverpool", "Bristol": "Bristol", "Barcelona": "Barcelona",
+    "Madrid": "Madrid", "Valencia": "Valencia", "Malaga": "Málaga", "Alicante": "Alicante",
+    "Phuket": "Phuket", "Krabi": "Krabi", "Chiang Mai": "Chiang Mai", "Ko Samui": "Ko Samui",
+    "Denpasar": "Bali (Denpasar)", "Bali": "Bali", "Jakarta": "Jakarta", "Osaka": "Osaka",
+    "Ho Chi Minh City": "Ho Či Minovo Mesto", "Hanoi": "Hanoj", "Da Nang": "Da Nang",
+    "Kuala Lumpur": "Kuala Lumpur", "Delhi": "Dillí", "New Delhi": "Dillí", "Mumbai": "Bombaj",
+    "Seoul": "Soul", "Incheon": "Soul (Incheon)", "Singapore": "Singapur", "Bengaluru": "Bengalúr",
+    "Chennai": "Čennaí", "Kolkata": "Kalkata", "Ho Chi Minh": "Ho Či Minovo Mesto", "Manila": "Manila", "Cebu": "Cebu", "Sharjah": "Šardžá",
+    "Porto": "Porto", "Yerevan": "Jerevan", "Tel-Aviv": "Tel Aviv", "Baku": "Baku",
+    "Agadir": "Agadir", "Amman": "Ammán", "Muscat": "Maskat", "Doha": "Dauha", "Riyadh": "Rijád",
+    "Jeddah": "Džidda", "Cairo": "Káhira", "Tashkent": "Taškent", "Almaty": "Almaty", "Faro": "Faro", "Bologna": "Bologna", "Bari": "Bari", "Catania": "Catania",
+    "Palermo": "Palermo", "Trapani": "Trapani", "Comiso": "Comiso", "Cagliari": "Cagliari", "Pisa": "Pisa", "Bergamo": "Bergamo",
+}
+BY_EN_NAME.update({"usa": "US", "uk": "GB", "czechia": "CZ", "türkiye": "TR",
+                   "turkiye": "TR", "uae": "AE", "korea, south": "KR"})
+
+HEADERS = {
+    "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                   "(KHTML, like Gecko) Chrome/128.0 Safari/537.36"),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-GB,en;q=0.9",
+    "Accept-Encoding": "gzip",
+    "Referer": SITE + "/explore",
+}
+
+
+# ---------------------------------------------------------------- momondo ---
+
+def explore_url(origin: str, selected: str = "") -> str:
+    params = {
+        "airport": origin, "budget": "", "depart": "", "return": "", "duration": "",
+        "exactDates": "false", "flightMaxStops": "", "stopsFilterActive": "false",
+        "topRightLat": "", "topRightLon": "", "bottomLeftLat": "", "bottomLeftLon": "",
+        "zoomLevel": "2", "selectedMarker": "", "themeCode": "", "selectedDestination": selected,
+        "currency": CURRENCY,
+    }
+    return SITE + EXPLORE_PATH + "?" + urllib.parse.urlencode(params)
+
+
+def fetch_json(url: str, retries: int = 3, body: dict | None = None,
+               headers: dict | None = None, label: str = "momondo") -> dict:
+    last: Exception | None = None
+    for attempt in range(retries):
+        try:
+            h = dict(headers or HEADERS)
+            data = None
+            if body is not None:
+                data = json.dumps(body).encode("utf-8")
+                h["Content-Type"] = "application/json"
+            req = urllib.request.Request(url, data=data, headers=h)
+            with urllib.request.urlopen(req, timeout=40) as resp:
+                raw = resp.read()
+                if resp.headers.get("Content-Encoding") == "gzip":
+                    raw = gzip.decompress(raw)
+                return json.loads(raw.decode("utf-8"))
+        except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as exc:
+            last = exc
+            time.sleep(2 ** (attempt + 1))
+    raise RuntimeError(f"{label} neodpovedalo ({url}): {last}")
+
+
+def fetch_text(url: str, headers: dict | None = None) -> str:
+    req = urllib.request.Request(url, headers=headers or HEADERS)
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        raw = resp.read()
+        if resp.headers.get("Content-Encoding") == "gzip":
+            raw = gzip.decompress(raw)
+        return raw.decode("utf-8", "replace")
+
+
+def fetch_ecb_rates() -> tuple[dict[str, float], str]:
+    """Denné kurzy ECB: koľko jednotiek meny stojí 1 EUR (napr. GBP -> 0.84)."""
+    req = urllib.request.Request(ECB_URL, headers={"User-Agent": HEADERS["User-Agent"]})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        xml = resp.read().decode("utf-8")
+    rates = {m.group(1): float(m.group(2))
+             for m in re.finditer(r"currency=['\"]([A-Z]{3})['\"]\s+rate=['\"]([\d.]+)['\"]", xml)}
+    day = re.search(r"time=['\"](\d{4}-\d{2}-\d{2})['\"]", xml)
+    if not rates:
+        raise RuntimeError("ECB nevrátila kurzy")
+    return rates, day.group(1) if day else ""
+
+
+def to_eur(deals: list[dict], rates: dict[str, float] | None) -> list[str]:
+    """Prepočíta ceny, ktoré neprišli v EUR. Vráti zoznam použitých mien."""
+    used = set()
+    for d in deals:
+        cur = (d.get("currency") or "").upper()
+        if cur == CURRENCY:
+            continue
+        if not rates or cur not in rates:
+            raise RuntimeError(f"chýba kurz pre {cur or 'neznámu menu'} – ceny nemožno uviesť v EUR")
+        d["priceOriginal"], d["currencyOriginal"] = d["price"], cur
+        d["price"] = max(1, round(d["price"] / rates[cur]))
+        d["currency"] = CURRENCY
+        used.add(cur)
+    return sorted(used)
+
+
+def pick(obj, *paths, default=None):
+    """Vráti prvú existujúcu hodnotu z niekoľkých možných ciest ("a.b.c")."""
+    for path in paths:
+        cur = obj
+        for key in path.split("."):
+            if isinstance(cur, dict) and key in cur:
+                cur = cur[key]
+            else:
+                cur = None
+                break
+        if cur not in (None, ""):
+            return cur
+    return default
+
+
+def parse_date(value) -> dt.date | None:
+    if not value:
+        return None
+    s = str(value).strip()[:10].replace("-", "")
+    try:
+        return dt.datetime.strptime(s[:8], "%Y%m%d").date()
+    except ValueError:
+        return None
+
+
+def search_link(origin: str, dest: str, depart: dt.date | None, ret: dt.date | None) -> str:
+    if depart and ret:
+        return f"{SITE}/flight-search/{origin}-{dest}/{depart:%Y-%m-%d}/{ret:%Y-%m-%d}?sort=price_a"
+    if depart:
+        return f"{SITE}/flight-search/{origin}-{dest}/{depart:%Y-%m-%d}?sort=price_a"
+    return f"{SITE}/explore/{origin}-{dest}"
+
+
+def country_info(code: str | None, name: str | None) -> tuple[str, str, str]:
+    code = (code or "").upper()
+    if code not in COUNTRIES and name:
+        code = BY_EN_NAME.get(name.strip().lower(), code)
+    if code in COUNTRIES:
+        _, sk, region = COUNTRIES[code]
+        return code, sk, region
+    return code, name or "", "Svet"
+
+
+def parse_destinations(payload: dict, origin: str) -> list[dict]:
+    items = payload.get("destinations") or payload.get("results") or []
+    deals = []
+    for d in items:
+        dest = pick(d, "airport.shortName", "airport.code", "airportCode", "destination")
+        price = pick(d, "flightInfo.price", "price", "flightInfo.lowestPrice")
+        if not dest or price is None:
+            continue
+        try:
+            price = round(float(price))
+        except (TypeError, ValueError):
+            continue
+        depart = parse_date(pick(d, "departd", "departDate", "flightInfo.departDate"))
+        ret = parse_date(pick(d, "returnd", "returnDate", "flightInfo.returnDate"))
+        code, country, region = country_info(
+            pick(d, "country.id", "country.code", "countryCode"),
+            pick(d, "country.name", "countryName"))
+        stops = pick(d, "flightInfo.maxStops", "flightMaxStops", "maxStops", "stops")
+        try:
+            stops = int(stops) if stops is not None else None
+        except (TypeError, ValueError):
+            stops = None
+        deals.append({
+            "origin": origin,
+            "dest": str(dest).upper(),
+            "city": pick(d, "city.name", "cityName", default=str(dest)),
+            "country": country,
+            "countryCode": code,
+            "region": region,
+            "price": price,
+            "currency": pick(d, "flightInfo.currencyCode", "currency", "currencyCode",
+                             default=payload.get("currency") or "GBP"),
+            "depart": depart.isoformat() if depart else None,
+            "return": ret.isoformat() if ret else None,
+            "nights": (ret - depart).days if depart and ret else None,
+            "stops": stops,
+            "url": search_link(origin, str(dest).upper(), depart, ret),
+            "source": "momondo",
+        })
+    return deals
+
+
+def fetch_momondo(errors: list[str]) -> list[dict]:
+    deals: list[dict] = []
+    for origin in ORIGINS:
+        try:
+            found = parse_destinations(fetch_json(explore_url(origin)), origin)
+            print(f"momondo {origin}: {len(found)} destinácií")
+            deals += found
+        except Exception as exc:  # jedno letisko nesmie zhodiť celú aktualizáciu
+            errors.append(f"momondo {origin}: {exc}")
+            print(f"momondo {origin}: CHYBA {exc}", file=sys.stderr)
+        # Sledované destinácie (Bangkok, Dubaj, Abu Dhabí) sa pýtame aj samostatne, aby nechýbali,
+        # keď ich všeobecný prehľad "kamkoľvek" nevráti.
+        for name, w in WATCH.items():
+            for code in w["airports"]:
+                try:
+                    extra = [d for d in parse_destinations(fetch_json(explore_url(origin, code)), origin)
+                             if d["dest"] in w["airports"]]
+                    print(f"momondo {origin} → {name} ({code}): {len(extra)} ponúk")
+                    deals += extra
+                except Exception as exc:
+                    print(f"momondo {origin} → {name} ({code}): CHYBA {exc}", file=sys.stderr)
+    return deals
+
+
+# ---------------------------------------------------------------- Ryanair ---
+
+RYANAIR_API = "https://www.ryanair.com/api/farfnd/v4/roundTripFares"
+RYANAIR_HEADERS = {**HEADERS, "Referer": "https://www.ryanair.com/", "Origin": "https://www.ryanair.com"}
+
+
+def ryanair_url(origin: str, today: dt.date) -> str:
+    """Najlacnejšie spiatočné lety z letiska kamkoľvek, odlet do 3 mesiacov, pobyt 2–14 nocí."""
+    params = {
+        "departureAirportIataCode": origin,
+        "outboundDepartureDateFrom": (today + dt.timedelta(days=1)).isoformat(),
+        "outboundDepartureDateTo": (today + dt.timedelta(days=HORIZON_DAYS)).isoformat(),
+        "inboundDepartureDateFrom": (today + dt.timedelta(days=3)).isoformat(),
+        "inboundDepartureDateTo": (today + dt.timedelta(days=HORIZON_DAYS + 14)).isoformat(),
+        "durationFrom": 2, "durationTo": 14,
+        "adultPaxCount": 1, "currency": CURRENCY, "market": "en-gb", "searchMode": "ALL",
+    }
+    return RYANAIR_API + "?" + urllib.parse.urlencode(params)
+
+
+def ryanair_link(origin: str, dest: str, depart: dt.date, ret: dt.date | None) -> str:
+    params = {
+        "adults": 1, "teens": 0, "children": 0, "infants": 0,
+        "dateOut": depart.isoformat(), "dateIn": ret.isoformat() if ret else "",
+        "isConnectedFlight": "false", "isReturn": "true" if ret else "false", "discount": 0,
+        "originIata": origin, "destinationIata": dest,
+    }
+    return "https://www.ryanair.com/gb/en/trip/flights/select?" + urllib.parse.urlencode(params)
+
+
+def parse_ryanair(payload: dict, origin: str) -> list[dict]:
+    deals = []
+    for f in payload.get("fares") or []:
+        out, inb = f.get("outbound") or {}, f.get("inbound") or {}
+        dest = pick(out, "arrivalAirport.iataCode")
+        price = pick(f, "summary.price.value", "outbound.price.value")
+        depart = parse_date(out.get("departureDate"))
+        ret = parse_date(inb.get("departureDate"))
+        if not dest or price is None or not depart:
+            continue
+        code, country, region = country_info(
+            pick(out, "arrivalAirport.city.countryCode", "arrivalAirport.countryCode"),
+            pick(out, "arrivalAirport.countryName"))
+        deals.append({
+            "origin": origin, "dest": dest.upper(),
+            "city": pick(out, "arrivalAirport.city.name", "arrivalAirport.name", default=dest),
+            "country": country, "countryCode": code, "region": region,
+            "price": round(float(price)),
+            "currency": pick(f, "summary.price.currencyCode", "outbound.price.currencyCode", default=CURRENCY),
+            "depart": depart.isoformat(), "return": ret.isoformat() if ret else None,
+            "nights": (ret - depart).days if ret else None,
+            "stops": 0,  # Ryanair predáva priame lety
+            "url": ryanair_link(origin, dest.upper(), depart, ret),
+            "source": "ryanair",
+        })
+    return deals
+
+
+def fetch_ryanair(origin: str, today: dt.date) -> list[dict]:
+    return parse_ryanair(fetch_json(ryanair_url(origin, today), headers=RYANAIR_HEADERS, label="Ryanair"), origin)
+
+
+# --------------------------------------------------------------- Wizz Air ---
+
+WIZZ_SITE = "https://wizzair.com"
+WIZZ_HEADERS = {**HEADERS, "Referer": WIZZ_SITE + "/", "Origin": WIZZ_SITE}
+WIZZ_CHUNK_DAYS = 30  # cenový kalendár Wizz berie kratšie obdobia, 3 mesiace delíme na časti
+# Letiská, na ktoré sa Wizz Air pýtame z VIE aj BTS vždy, aj keď ich mapa liniek (ešte) neuvádza.
+WIZZ_ALWAYS = {"AUH": ("Abu Dhabi", "AE"), "DXB": ("Dubai", "AE"), "DWC": ("Dubai", "AE"),
+               "ALC": ("Alicante", "ES"), "CTA": ("Catania", "IT"), "PMO": ("Palermo", "IT"),
+               "TPS": ("Trapani", "IT"), "CIY": ("Comiso", "IT"), "MLA": ("Malta", "MT")}
+
+
+def wizz_api_base() -> str:
+    """Wizz mení verziu API s každým vydaním webu. Skúsime viac miest, kde je uvedená."""
+    tried = []
+    for url in (WIZZ_SITE + "/buildnumber",
+                WIZZ_SITE + "/static_fe/metadata.json",
+                WIZZ_SITE + "/en-gb"):
+        try:
+            text = fetch_text(url, headers=WIZZ_HEADERS)
+        except Exception as exc:
+            tried.append(f"{url}: {exc}")
+            continue
+        m = re.search(r"https://be\.wizzair\.com/[\d.]+", text)
+        if m:
+            print(f"Wizz Air API: {m.group(0)} (z {url})")
+            return m.group(0)
+        tried.append(f"{url}: verzia API nenájdená")
+    raise RuntimeError("nepodarilo sa zistiť verziu API – " + "; ".join(tried))
+
+
+def wizz_routes(base: str, origins) -> dict[str, list[dict]]:
+    """Z mapy liniek vráti pre každé letisko zoznam destinácií {iata, city, countryCode}."""
+    payload = fetch_json(base + "/Api/asset/map?languageCode=en-gb", headers=WIZZ_HEADERS, label="Wizz Air")
+    cities = {c.get("iata"): c for c in payload.get("cities") or []}
+    routes = {}
+    for origin in origins:
+        conns = (cities.get(origin) or {}).get("connections") or []
+        routes[origin] = [{"iata": c.get("iata"),
+                           "city": (cities.get(c.get("iata")) or {}).get("shortName") or c.get("iata"),
+                           "countryCode": (cities.get(c.get("iata")) or {}).get("countryCode")}
+                          for c in conns if c.get("iata")]
+    return routes
+
+
+def clean_city(name) -> str:
+    """„Palermo (Sicily)\r\n“ -> „Palermo“ (názvy z mapy liniek Wizz Air majú zátvorky a zalomenie)."""
+    return re.sub(r"\s*\(.*?\)", "", str(name or "")).strip()
+
+
+def wizz_prices(flights, dep: str | None = None, arr: str | None = None) -> dict:
+    """Denné najnižšie ceny z odpovede cenového kalendára (iba dni s cenou na predaj).
+
+    dep/arr: iba lety presne medzi týmito letiskami – Wizz pri mestách s viacerými letiskami
+    (Dubaj DXB/DWC) vie vrátiť aj lety na iné letisko.
+    """
+    out: dict = {}
+    for f in flights or []:
+        if f.get("priceType") not in (None, "price"):
+            continue
+        if dep and f.get("departureStation") and f["departureStation"] != dep:
+            continue
+        if arr and f.get("arrivalStation") and f["arrivalStation"] != arr:
+            continue
+        amount = pick(f, "price.amount")
+        day = parse_date(f.get("departureDate"))
+        if not day or not amount:
+            continue
+        cur = pick(f, "price.currencyCode", default=CURRENCY)
+        if day not in out or amount < out[day][0]:
+            out[day] = (float(amount), cur)
+    return out
+
+
+def cheapest_round_trip(outs: dict, rets: dict, min_n: int = 2, max_n: int = 14):
+    """Najlacnejšia kombinácia tam + späť s pobytom min_n–max_n nocí (v rovnakej mene)."""
+    best = None
+    for d_out, (p_out, cur) in outs.items():
+        for n in range(min_n, max_n + 1):
+            back = rets.get(d_out + dt.timedelta(days=n))
+            if back and back[1] == cur and (best is None or p_out + back[0] < best[0]):
+                best = (p_out + back[0], cur, d_out, d_out + dt.timedelta(days=n))
+    return best
+
+
+def wizz_timetable(base: str, body: dict, attempts: int = 4) -> dict:
+    """Cenový kalendár; pri preťažení (HTTP 429/503) Wizz chvíľu počkáme a skúsime znova."""
+    for attempt in range(attempts):
+        try:
+            return fetch_json(base + "/Api/search/timetable", body=body, headers=WIZZ_HEADERS,
+                              label="Wizz Air", retries=1)
+        except RuntimeError as exc:
+            if attempt == attempts - 1 or not re.search(r"HTTP Error (429|503)", str(exc)):
+                raise
+            time.sleep(15 * (attempt + 1))
+    raise RuntimeError("Wizz Air: vyčerpané pokusy")
+
+
+def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
+               only: dict | None = None) -> tuple[list[dict], list[str]]:
+    """only = {IATA: (mesto, krajina)} – pýta sa iba na tieto letiská (náhradný odlet z Budapešti)."""
+    base = wizz_api_base()
+    routes = {o: [] for o in origins} if only else wizz_routes(base, origins)
+    deals, errors = [], []
+    horizon = today + dt.timedelta(days=HORIZON_DAYS)
+    for origin, dests in routes.items():
+        print(f"Wizz Air {origin}: {len(dests)} liniek: {', '.join(d['iata'] for d in dests) or '-'}")
+        # Nové linky (napr. návrat Wizz Air do Abu Dhabí a Dubaja) predáva skôr, než ich ukáže mapa –
+        # tieto letiská sa pýtame vždy; ak linka neexistuje, ticho ju preskočíme.
+        known = {d["iata"] for d in dests}
+        for iata, (city, cc) in (only or WIZZ_ALWAYS).items():
+            if iata not in known:
+                dests = dests + [{"iata": iata, "city": city, "countryCode": cc, "probe": True}]
+        for dst in dests:
+            outs, rets = {}, {}
+            start = today + dt.timedelta(days=1)
+            try:
+                while start <= horizon:
+                    end = min(start + dt.timedelta(days=WIZZ_CHUNK_DAYS - 1), horizon)
+                    body = {
+                        "flightList": [
+                            {"departureStation": origin, "arrivalStation": dst["iata"],
+                             "from": start.isoformat(), "to": end.isoformat()},
+                            {"departureStation": dst["iata"], "arrivalStation": origin,
+                             "from": (start + dt.timedelta(days=2)).isoformat(),
+                             "to": (end + dt.timedelta(days=14)).isoformat()},
+                        ],
+                        "priceType": "regular", "adultCount": 1, "childCount": 0, "infantCount": 0,
+                    }
+                    res = wizz_timetable(base, body)
+                    if dst.get("probe"):
+                        seen = {(f.get("departureStation"), f.get("arrivalStation"))
+                                for f in (res.get("outboundFlights") or []) + (res.get("returnFlights") or [])}
+                        print(f"Wizz Air {origin}-{dst['iata']} {start}: trasy v odpovedi {sorted(map(str, seen))}")
+                    outs.update(wizz_prices(res.get("outboundFlights"), origin, dst["iata"]))
+                    for k, v in wizz_prices(res.get("returnFlights"), dst["iata"], origin).items():
+                        if k not in rets or v[0] < rets[k][0]:
+                            rets[k] = v
+                    start = end + dt.timedelta(days=1)
+                    time.sleep(pause)
+            except Exception as exc:
+                if not dst.get("probe"):
+                    errors.append(f"Wizz Air {origin}-{dst['iata']}: {exc}")
+                else:
+                    print(f"Wizz Air {origin}-{dst['iata']}: linka nie je v predaji ({str(exc)[-40:]})")
+                continue
+            best = cheapest_round_trip(outs, rets)
+            if dst.get("probe"):
+                print(f"Wizz Air {origin}-{dst['iata']}: {len(outs)} dní tam, {len(rets)} dní späť"
+                      + (f", najlacnejšie {round(best[0])} {best[1]}" if best else ", bez spiatočnej kombinácie"))
+            if not best:
+                continue
+            price, cur, d_out, d_ret = best
+            code, country, region = country_info(dst["countryCode"], None)
+            deals.append({
+                "origin": origin, "dest": dst["iata"], "city": clean_city(dst["city"]),
+                "country": country, "countryCode": code, "region": region,
+                "price": round(price), "currency": cur,
+                "depart": d_out.isoformat(), "return": d_ret.isoformat(), "nights": (d_ret - d_out).days,
+                "stops": 0,
+                "url": f"{WIZZ_SITE}/en-gb/booking/select-flight/{origin}/{dst['iata']}/{d_out}/{d_ret}/1/0/0/null",
+                "source": "wizzair",
+            })
+    return deals, errors
+
+
+# ------------------------------------------------------- náhradné letisko ---
+
+def fetch_fallback(deals: list[dict], today: dt.date, errors: list[str], use: list[str]) -> list[dict]:
+    """Destinácie z FALLBACK_WATCH hľadá aj z ďalších letísk (SAE -> aj z Budapešti)."""
+    found: list[dict] = []
+    by_origin: dict[str, set[str]] = {}
+    for name, origins in FALLBACK_WATCH.items():
+        for origin in origins:
+            by_origin.setdefault(origin, set()).update(WATCH[name]["airports"])
+    for origin, airports in by_origin.items():
+        got: list[dict] = []
+        if "momondo" in use:
+            for code in sorted(airports):
+                try:
+                    got += [d for d in parse_destinations(fetch_json(explore_url(origin, code)), origin)
+                            if d["dest"] in airports]
+                except Exception as exc:
+                    print(f"momondo {origin} → {code}: CHYBA {exc}", file=sys.stderr)
+        if "wizzair" in use:
+            try:
+                wz, _ = fetch_wizz([origin], today, only={a: v for a, v in WIZZ_ALWAYS.items() if a in airports})
+                got += wz
+            except Exception as exc:
+                print(f"Wizz Air {origin}: CHYBA {exc}", file=sys.stderr)
+        for d in got:
+            d["originCity"] = FALLBACK_ORIGINS.get(origin, origin)
+            d["originNote"] = FALLBACK_NOTE.get(origin, "odlet z " + d["originCity"])
+        ok = [d for d in got if d["return"]]
+        print(f"Z {origin} do {', '.join(sorted(airports))}: {len(got)} ponúk, {len(ok)} spiatočných"
+              + (f", najlacnejšia {min(d['price'] for d in ok)} {ok[0]['currency']}" if ok else ""))
+        found += got
+    return found
+
+
+# ------------------------------------------------------------------ výstup ---
+
+def load_previous() -> dict:
+    try:
+        return json.loads((DATA_DIR / "deals.json").read_text("utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def slot_for(now: dt.datetime) -> str:
+    minutes = now.hour * 60 + now.minute
+    best = min(SCHEDULE, key=lambda s: abs(int(s[1][:2]) * 60 + int(s[1][3:]) - minutes))
+    return best[0]
+
+
+def next_update(now: dt.datetime) -> dt.datetime:
+    for day in range(2):
+        for _, hhmm in SCHEDULE:
+            h, m = map(int, hhmm.split(":"))
+            cand = (now + dt.timedelta(days=day)).replace(hour=h, minute=m, second=0, microsecond=0)
+            if cand > now + dt.timedelta(minutes=30):
+                return cand
+    return now + dt.timedelta(hours=8)
+
+
+def flight_key(d: dict) -> tuple:
+    return (d.get("origin"), d.get("dest"), d.get("depart"), d.get("return"))
+
+
+def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | None = None) -> dict:
+    prev = load_previous()
+    # Zmena ceny sa ukazuje iba pri tom istom lete z predchádzajúceho hľadania
+    # (rovnaké letiská aj dátumy tam a späť).
+    prev_prices = {flight_key(d): d["price"]
+                   for d in prev.get("deals", []) + [w["deal"] for w in prev.get("watch", []) if w.get("deal")]
+                   if d.get("currency") == CURRENCY}
+    today = now.date().isoformat()
+    horizon = (now.date() + dt.timedelta(days=HORIZON_DAYS)).isoformat()
+    # do bloku idú len ponuky s odletom od zajtra do 3 mesiacov – bez dátumu ich nevieme overiť
+    all_deals = deals
+    deals = [d for d in deals if d["depart"] and today < d["depart"] <= horizon]
+    # odlety z náhradného letiska (Budapešť) nepatria medzi karty „kamkoľvek“
+    fallback = [d for d in deals if d["origin"] not in ORIGINS]
+    deals = [d for d in deals if d["origin"] in ORIGINS]
+
+    # Diagnostika sledovaných miest: čo zdroje vrátili a prečo to prípadne vypadlo.
+    for name, w in WATCH.items():
+        raw = [d for d in all_deals if d["dest"] in w["airports"]]
+        ok = [d for d in deals if d["dest"] in w["airports"] and d["return"]]
+        if raw:
+            print(f"{name}: {len(raw)} ponúk od zdrojov, {len(ok)} spiatočných s odletom do {HORIZON_DAYS} dní"
+                  f" (najlacnejšia vôbec {min(d['price'] for d in raw)} {raw[0]['currency']},"
+                  f" odlety {min(d['depart'] or '?' for d in raw)} – {max(d['depart'] or '?' for d in raw)})")
+        else:
+            print(f"{name}: žiadny zdroj nevrátil ponuku")
+
+    # Na každú trasu necháme najlacnejšiu ponuku.
+    best: dict[tuple[str, str], dict] = {}
+    for d in deals:
+        key = (d["origin"], d["dest"])
+        if key not in best or d["price"] < best[key]["price"]:
+            best[key] = d
+    out = sorted(best.values(), key=lambda d: d["price"])
+    # Rovnaký let pod viacerými kódmi (napr. Miláno MIL/MXP, Varšava WAW/WMI) ukážeme raz.
+    seen, unique = set(), []
+    for d in out:
+        key = (d["origin"], d["city"], d["price"], d["depart"], d["return"])
+        if key not in seen:
+            seen.add(key)
+            unique.append(d)
+    out = unique
+    for d in out:
+        d["prevPrice"] = prev_prices.get(flight_key(d))
+        d["city"] = CITY_SK.get(d["city"], d["city"])
+
+    # Najlacnejšia ponuka do každej sledovanej destinácie (z VIE aj BTS, ľubovoľné letisko mesta).
+    watch = []
+    for name, w in WATCH.items():
+        # iba spiatočné letenky (s dátumom návratu)
+        hits = [d for d in out if d["dest"] in w["airports"] and d["return"]]
+        if name in FALLBACK_WATCH:
+            # najlacnejšia z Viedne, Bratislavy aj ďalších letísk (Budapešť)
+            extra = [dict(d) for d in fallback if d["dest"] in w["airports"] and d["return"]
+                     and d["origin"] in FALLBACK_WATCH[name]]
+            for d in extra:
+                d["city"] = CITY_SK.get(d["city"], d["city"])
+            hits += extra
+        deal = dict(min(hits, key=lambda d: d["price"])) if hits else None
+        if deal:
+            if w["featured"]:
+                deal["city"] = name  # pri zozname ostane skutočné mesto (napr. Tokio, Phuket)
+            deal["prevPrice"] = prev_prices.get(flight_key(deal))
+        watch.append({
+            "name": name,
+            "airports": w["airports"],
+            "featured": w["featured"],
+            "list": w.get("list", False),
+            "note": w.get("note"),
+            "deal": deal,
+            # keď momondo nič nevráti, blok ponúkne aspoň odkaz na vyhľadávanie
+            "searchUrl": f"{SITE}/explore/VIE-{w['airports'][0]}",
+        })
+
+    # Menší súbor = rýchlejšie načítanie aj vo WordPresse.
+    europe = [d for d in out if d["region"] == "Európa"][:MAX_PER_GROUP]
+    world = [d for d in out if d["region"] != "Európa"][:MAX_PER_GROUP]
+    out = sorted(europe + world, key=lambda d: d["price"])
+
+    return {
+        "source": "momondo.co.uk",
+        "sources": ["momondo", "ryanair", "wizzair"],
+        "currency": CURRENCY,
+        "fx": fx,  # None = momondo vrátilo ceny priamo v EUR
+        "updatedAt": now.isoformat(timespec="minutes"),
+        "prevUpdatedAt": prev.get("updatedAt"),  # s ktorým hľadaním sa porovnávajú ceny
+        "slot": slot_for(now),
+        "nextUpdate": next_update(now).isoformat(timespec="minutes"),
+        "schedule": [{"id": s, "time": t} for s, t in SCHEDULE],
+        "timezone": "Europe/Vienna",
+        "origins": [{"code": k, **v} for k, v in ORIGINS.items()],
+        "errors": errors,
+        "horizonDays": HORIZON_DAYS,
+        "watch": watch,
+        "deals": out,
+    }
+
+
+def write(data: dict) -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    text = json.dumps(data, ensure_ascii=False, indent=1)
+    (DATA_DIR / "deals.json").write_text(text + "\n", "utf-8")
+    (DATA_DIR / "deals.js").write_text(
+        "/* Vygenerované skriptom scripts/update_deals.py – needitovať ručne. */\n"
+        f"window.LACNE_LETENKY_DATA = {text};\n", "utf-8")
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--from-file", type=Path, help="spracuje uloženú odpoveď explore API")
+    ap.add_argument("--origin", default="VIE", help="letisko pre --from-file (predvolene VIE)")
+    ap.add_argument("--only", choices=["momondo", "ryanair", "wizzair"],
+                    help="stiahne iba jeden zdroj (na testovanie)")
+    ap.add_argument("--rate", action="append", default=[], metavar="MENA=KURZ",
+                    help="kurz 1 EUR voči mene namiesto ECB, napr. --rate GBP=0.84 (na testovanie)")
+    ap.add_argument("--no-weather", action="store_true", help="bez počasia v destináciách (Open-Meteo)")
+    args = ap.parse_args()
+
+    now = dt.datetime.now(VIENNA)
+    errors: list[str] = []
+
+    deals: list[dict] = []
+    if args.from_file:
+        deals = parse_destinations(json.loads(args.from_file.read_text("utf-8")), args.origin.upper())
+    else:
+        use = [args.only] if args.only else ["momondo", "ryanair", "wizzair"]
+        if "momondo" in use:
+            deals += fetch_momondo(errors)
+        if "ryanair" in use:
+            for origin in ORIGINS:
+                try:
+                    found = fetch_ryanair(origin, now.date())
+                    print(f"Ryanair {origin}: {len(found)} destinácií")
+                    deals += found
+                except Exception as exc:
+                    errors.append(f"Ryanair {origin}: {exc}")
+                    print(f"Ryanair {origin}: CHYBA {exc}", file=sys.stderr)
+        if "wizzair" in use:
+            try:
+                found, errs = fetch_wizz(list(ORIGINS), now.date())
+                print(f"Wizz Air: {len(found)} destinácií, {len(errs)} chýb")
+                deals += found
+                errors += errs[:10]  # stačí ukážka, nech deals.json zbytočne nenarastie
+            except Exception as exc:
+                errors.append(f"Wizz Air: {exc}")
+                print(f"Wizz Air: CHYBA {exc}", file=sys.stderr)
+        for src in use:
+            print(f"  {src}: {sum(1 for d in deals if d.get('source') == src)} ponúk")
+        deals += fetch_fallback(deals, now.date(), errors, use)
+
+    if not deals:
+        # Staré dáta nechávame tak – plugin radšej ukáže posledné známe ceny.
+        print("Žiadne ponuky – dáta sa neprepisujú.", file=sys.stderr)
+        return 1
+
+    fx = None
+    if any((d.get("currency") or "").upper() != CURRENCY for d in deals):
+        if args.rate:
+            rates = {k.upper(): float(v) for k, v in (r.split("=") for r in args.rate)}
+            day = "ručne zadaný"
+        else:
+            try:
+                rates, day = fetch_ecb_rates()
+            except Exception as exc:
+                print(f"Kurzy ECB nedostupné ({exc}) – dáta sa neprepisujú.", file=sys.stderr)
+                return 1
+        try:
+            used = to_eur(deals, rates)
+        except RuntimeError as exc:
+            print(f"{exc} – dáta sa neprepisujú.", file=sys.stderr)
+            return 1
+        fx = {"source": "ECB", "date": day, "rates": {c: rates[c] for c in used}}
+        print(f"Prepočítané na EUR kurzom ECB ({day}): {fx['rates']}")
+
+    data = build(deals, now, errors, fx)
+    if not args.no_weather:
+        try:
+            pool = list(dict.fromkeys(d["dest"] for d in sorted(
+                deals, key=lambda x: x.get("price") or 1e12) if d.get("dest")))
+            add_weather(data, now.date(), DATA_DIR, pool)
+        except Exception as exc:  # noqa: BLE001 – ponuky zapíšeme aj bez počasia
+            print(f"Počasie: CHYBA {exc}", file=sys.stderr)
+    write(data)
+    print(f"Zapísaných {len(deals)} ponúk ({now:%Y-%m-%d %H:%M} Europe/Vienna).")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

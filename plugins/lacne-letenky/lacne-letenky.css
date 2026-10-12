@@ -1,0 +1,300 @@
+/* Lacné letenky – plugin. Všetko je pod triedou .ll, aby sa neklialo so stránkou.
+   Blok nemá vlastné pozadie – prevezme pozadie sekcie, do ktorej ho vložíte. */
+.ll {
+  --ll-surface: #ffffff;
+  --ll-ink: #0f172a;
+  --ll-ink-2: #64748b;
+  --ll-line: #e5e8ef;
+  --ll-soft: #f1f4f9;
+  --ll-card: #f5f7fa;
+  --ll-card-hover: #ffffff;
+  --ll-feature: #0f172a;
+  --ll-feature-ink: #ffffff;
+  --ll-feature-ink-2: #a5b1c6;
+  --ll-accent: #2563eb;
+  --ll-accent-soft: #e8efff;
+  --ll-good: #047857;
+  --ll-good-soft: #e3f6ee;
+  --ll-warn: #b45309;
+  --ll-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+  --ll-shadow-hi: 0 12px 32px -12px rgba(15, 23, 42, .18), 0 2px 6px rgba(15, 23, 42, .05);
+  --ll-font: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ll-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --ll-gap: clamp(10px, 0.5rem + 0.8vw, 16px);
+  color: var(--ll-ink);
+  font-family: var(--ll-font);
+  font-size: 15px;
+  line-height: 1.45;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(16px, 0.75rem + 1.2vw, 24px);
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ll:not([data-theme="light"]) {
+    --ll-surface: #131a28; --ll-card: #141b2a; --ll-card-hover: #182032; --ll-feature: #1c2b52; --ll-feature-ink: #ffffff; --ll-feature-ink-2: #b3c0da; --ll-ink: #e8edf5; --ll-ink-2: #94a0b4; --ll-line: #232c3d; --ll-soft: #1a2233;
+    --ll-accent: #7ea6ff; --ll-accent-soft: #1b2745; --ll-good: #5fd3a2; --ll-good-soft: #123127; --ll-warn: #f5b454;
+    --ll-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    --ll-shadow-hi: 0 14px 34px -12px rgba(0, 0, 0, .7), 0 2px 6px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] .ll, .ll[data-theme="dark"] {
+  --ll-surface: #131a28; --ll-card: #141b2a; --ll-card-hover: #182032; --ll-feature: #1c2b52; --ll-feature-ink: #ffffff; --ll-feature-ink-2: #b3c0da; --ll-ink: #e8edf5; --ll-ink-2: #94a0b4; --ll-line: #232c3d; --ll-soft: #1a2233;
+  --ll-accent: #7ea6ff; --ll-accent-soft: #1b2745; --ll-good: #5fd3a2; --ll-good-soft: #123127; --ll-warn: #f5b454;
+  --ll-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  --ll-shadow-hi: 0 14px 34px -12px rgba(0, 0, 0, .7), 0 2px 6px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+.ll *, .ll *::before, .ll *::after { box-sizing: border-box; }
+.ll :focus-visible { outline: 2px solid var(--ll-accent); outline-offset: 3px; }
+.ll p { margin: 0; }
+
+/* Písmo z témy webu (WordPress: nastavenie „Písmo: podľa témy“).
+   Mení sa len rodina písma – veľkosti a hrúbky ostávajú. Kódy letísk ostávajú v strojovom písme. */
+.ll.ll-inherit-font { font-family: inherit; }
+.ll.ll-inherit-font *:not(.ll-route):not(.ll-route *) { font-family: inherit !important; }
+
+/* Poistky proti štýlom tém (napr. Newspaper od tagDiv): zoznamy, odkazy, nadpisy, odstavce. */
+.ll.ll ul, .ll.ll li { margin: 0; padding: 0; list-style: none; background: none; }
+.ll.ll li::before { content: none; }
+.ll.ll a, .ll.ll a:hover, .ll.ll a:focus { text-decoration: none; }
+.ll.ll p { margin: 0; padding: 0; line-height: inherit; }
+.ll.ll h2, .ll.ll h3 { margin: 0; padding: 0; border: 0; text-transform: none; background: none; }
+.ll.ll button { margin: 0; line-height: 1; text-transform: none; letter-spacing: 0; min-height: 0; height: auto; }
+.ll.ll svg { display: inline-block; }
+
+/* ---------- hlavička ---------- */
+.ll.ll .ll-title { margin: 6px 0 0; font: 700 clamp(24px, 3.4vw, 34px)/1.12 var(--ll-font); letter-spacing: -.02em; text-wrap: balance; }
+
+/* ---------- karty ---------- */
+.ll-rail { position: relative; }
+/* posuvný pás na všetkých šírkach: naraz vidno 1,5 karty (polovica ďalšej naznačuje posúvanie) */
+.ll.ll .ll-grid {
+  /* vnútorný okraj: tieň a nadvihnutie karty pri hover sa zmestia do pásu (inak by ich orezal) */
+  list-style: none; margin: 0; padding: 10px 16px 28px; scroll-padding-inline: 16px; display: grid; gap: var(--ll-gap);
+  grid-auto-flow: column; grid-auto-columns: calc((100% + 16px - var(--ll-gap)) / 1.5); /* 1,5 karty vo viditeľnej šírke vrátane okraja */
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
+}
+.ll-grid::-webkit-scrollbar { display: none; }
+.ll-grid > li { scroll-snap-align: start; min-width: 0; }
+.ll-grid:focus-visible { outline-offset: 4px; }
+.ll-navbar { display: flex; justify-content: flex-end; gap: 8px; margin-top: -12px; padding-inline: 16px; }
+.ll.ll .ll-nav {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--ll-line); background: var(--ll-surface); color: var(--ll-ink);
+  transition: background-color .15s ease, opacity .15s ease;
+}
+.ll-nav svg { width: 18px; height: 18px; }
+.ll-nav[data-nav="-1"] svg { transform: rotate(180deg); }
+.ll-nav:hover:not(:disabled) { background: var(--ll-card); }
+.ll-nav:disabled { opacity: .35; cursor: default; }
+/* na dotykových zariadeniach sa posúva prstom – šípky netreba */
+@media (hover: none) { .ll-navbar { display: none; } }
+
+/* výber oblasti pod ponukami */
+.ll-filter { justify-self: center; display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--ll-card); max-width: 100%; }
+.ll-filter button {
+  border: 0; background: transparent; cursor: pointer; white-space: nowrap;
+  padding: 10px clamp(12px, 0.6rem + 1vw, 20px); border-radius: 999px;
+  font: 600 14px/1 var(--ll-font); color: var(--ll-ink-2); transition: background-color .15s ease, color .15s ease;
+}
+.ll-filter button:hover { color: var(--ll-ink); }
+.ll-filter button[aria-pressed="true"] { background: var(--ll-ink); color: var(--ll-surface); }
+.ll-card {
+  height: 100%; display: grid; grid-template-rows: auto auto 1fr auto; gap: 14px;
+  padding: clamp(14px, 1.2rem + 0.4vw, 20px); border-radius: clamp(14px, 1rem + 0.5vw, 20px); background: var(--ll-card); border: 1px solid transparent;
+  color: inherit; text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
+}
+.ll-card:hover { transform: translateY(-3px); background: var(--ll-card-hover); border-color: var(--ll-line); box-shadow: var(--ll-shadow-hi); }
+.ll-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ll-route { display: inline-flex; gap: 6px; align-items: center; font: 600 12px/1 var(--ll-mono); color: var(--ll-ink-2); letter-spacing: .02em; }
+.ll-route svg { width: 13px; height: 13px; color: var(--ll-accent); }
+.ll-chip { font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--ll-surface); color: var(--ll-ink-2); white-space: nowrap; }
+.ll-card:hover .ll-chip { background: var(--ll-soft); }
+.ll.ll .ll-city { font: 700 clamp(18px, 1rem + 0.45vw, 22px)/1.15 var(--ll-font); letter-spacing: -.015em; overflow-wrap: anywhere; }
+.ll.ll .ll-country { margin-top: 2px; font-size: 14px; color: var(--ll-ink-2); }
+.ll.ll .ll-dates { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--ll-ink-2); line-height: 1.4; }
+.ll-dates svg { flex: none; width: 15px; height: 15px; margin-top: 1px; }
+.ll-card-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid var(--ll-line); }
+.ll-price { display: grid; gap: 4px; }
+.ll-price small { font-size: 12px; color: var(--ll-ink-2); }
+.ll-price strong { font: 700 clamp(22px, 1.2rem + 0.6vw, 28px)/1 var(--ll-font); letter-spacing: -.02em; }
+.ll-price-label { display: flex; gap: 8px; align-items: center; min-height: 20px; }
+.ll-source { font-size: 12px; font-weight: 600; color: var(--ll-ink-2); }
+.ll-source[data-src="ryanair"]::before, .ll-source[data-src="wizzair"]::before, .ll-source[data-src="momondo"]::before {
+  content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: 1px;
+}
+.ll-source[data-src="ryanair"]::before { background: #1f4bb8; }
+.ll-source[data-src="wizzair"]::before { background: #c6007e; }
+.ll-source[data-src="momondo"]::before { background: #ff6a4d; }
+.ll-change { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
+.ll-change.is-down { color: var(--ll-good); background: var(--ll-good-soft); }
+.ll-change.is-up { color: var(--ll-ink-2); background: var(--ll-surface); font-weight: 600; }
+.ll-go {
+  flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ll-surface); color: var(--ll-accent); transition: background-color .2s ease, color .2s ease;
+}
+.ll-go svg { width: 18px; height: 18px; transition: transform .2s ease; }
+.ll-card:hover .ll-go { background: var(--ll-accent); color: var(--ll-surface); }
+.ll-card:hover .ll-go svg { transform: translateX(2px); }
+
+/* ---------- tlačidlo Vyhľadaj aktuálne lacné letenky (pod ponukami) ---------- */
+.ll-actions { display: grid; justify-items: center; gap: 12px; }
+.ll-actions .ll-msg { width: 100%; text-align: center; }
+.ll-refresh {
+  display: inline-flex; gap: 10px; align-items: center; justify-content: center; white-space: nowrap;
+  border: 0; cursor: pointer; padding: 15px 24px; border-radius: 999px;
+  background: var(--ll-accent); color: #ffffff; font: 700 16px/1 var(--ll-font);
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--ll-accent) 70%, transparent);
+  transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+}
+.ll-refresh:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.ll-refresh:active { transform: translateY(0); }
+.ll-refresh svg { width: 18px; height: 18px; }
+.ll-refresh[aria-busy="true"] { cursor: progress; filter: saturate(.8); }
+.ll-refresh[aria-busy="true"] svg { animation: ll-spin .9s linear infinite; }
+@keyframes ll-spin { to { transform: rotate(360deg); } }
+.ll.ll .ll-msg { padding: 12px 16px; border-radius: 14px; background: var(--ll-accent-soft); color: var(--ll-ink); font-size: 14px; }
+
+/* ---------- sledovaná destinácia (Bangkok) ---------- */
+.ll-feature {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px 32px; align-items: end;
+  padding: clamp(22px, 3.5vw, 36px); border-radius: 24px;
+  background: var(--ll-feature); color: var(--ll-feature-ink); text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.ll-feature:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -18px rgba(15, 23, 42, .5); }
+.ll-feature-arc { position: absolute; right: 0; top: 0; width: 60%; height: 100%; z-index: -1; }
+.ll-feature-arc path { fill: none; stroke: rgba(255, 255, 255, .16); stroke-width: 1.5; stroke-dasharray: 4 7; vector-effect: non-scaling-stroke; }
+.ll-feature-main { display: grid; gap: 10px; min-width: 0; }
+.ll.ll .ll-feature-kicker { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; color: var(--ll-feature-ink-2); }
+.ll-feature-kicker::before {
+  content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: #5fd3a2;
+  box-shadow: 0 0 0 0 rgba(95, 211, 162, .55); animation: ll-pulse 1.8s ease-out infinite;
+}
+@keyframes ll-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(95, 211, 162, .55); }
+  70% { box-shadow: 0 0 0 9px rgba(95, 211, 162, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(95, 211, 162, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ll-feature-kicker::before { animation: none; box-shadow: 0 0 0 4px rgba(95, 211, 162, .18); }
+}
+.ll.ll .ll-feature-city { font: 700 clamp(34px, 5.5vw, 52px)/1 var(--ll-font); letter-spacing: -.03em; }
+.ll.ll .ll-feature-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 14px; color: var(--ll-feature-ink-2); }
+.ll-feature-meta svg { width: 15px; height: 15px; }
+.ll-feature .ll-route { color: var(--ll-feature-ink); }
+.ll-feature .ll-route svg { color: #7ea6ff; }
+.ll-feature-side { display: grid; justify-items: end; gap: 6px; text-align: right; }
+.ll-feature-side small { font-size: 13px; color: var(--ll-feature-ink-2); }
+.ll-feature-side strong { font: 700 clamp(40px, 6vw, 56px)/1 var(--ll-font); letter-spacing: -.03em; }
+.ll-feature .ll-change.is-down { background: rgba(95, 211, 162, .16); color: #7ee2b5; }
+.ll-feature .ll-change.is-up { background: rgba(255, 255, 255, .1); color: var(--ll-feature-ink-2); }
+.ll-feature-cta {
+  margin-top: 8px; display: inline-flex; gap: 8px; align-items: center; white-space: nowrap;
+  background: #ffffff; color: #0f172a; font-weight: 700; font-size: 14px; padding: 12px 18px; border-radius: 999px;
+}
+.ll-feature-cta svg { width: 16px; height: 16px; transition: transform .2s ease; }
+.ll-feature:hover .ll-feature-cta svg { transform: translateX(3px); }
+.ll-watch-empty { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; padding: 16px 20px; border-radius: 16px; background: var(--ll-card); font-size: 14px; color: var(--ll-ink-2); }
+.ll-watch-empty b { color: var(--ll-ink); }
+
+/* ---------- počasie v destinácii v deň príletu ---------- */
+.ll.ll .ll-wx {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px 2px 5px; border-radius: 999px;
+  background: var(--ll-surface); color: var(--ll-ink); font-weight: 600; font-size: 12px; line-height: 1.4;
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.ll.ll .ll-wx svg { flex: none; width: 18px; height: 18px; margin: 0; }
+.ll-city-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.ll-city-row .ll-city { min-width: 0; }
+.ll-row-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.ll.ll .ll-row-head .ll-wx { font-size: 11px; padding: 1px 7px 1px 4px; }
+.ll.ll .ll-row-head .ll-wx svg { width: 16px; height: 16px; }
+.ll.ll .ll-feature .ll-wx { background: rgba(255, 255, 255, .14); color: inherit; font-size: 13px; }
+
+/* ---------- zoznam Ázia a SAE pod Bangkokom ---------- */
+.ll-list-wrap { display: grid; gap: 10px; }
+.ll.ll .ll-list-title { font: 700 clamp(15px, 0.85rem + 0.3vw, 17px)/1.3 var(--ll-font); color: var(--ll-ink); letter-spacing: -.01em; }
+.ll.ll .ll-list { border-radius: clamp(14px, 1rem + 0.5vw, 20px); background: var(--ll-card); overflow: hidden; }
+.ll.ll .ll-list > li + li { border-top: 1px solid var(--ll-line); }
+.ll-row {
+  display: grid; align-items: center; gap: 6px clamp(12px, 0.5rem + 1.5vw, 24px);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) auto auto;
+  padding: clamp(9px, 0.45rem + 0.3vw, 12px) clamp(14px, 0.8rem + 0.8vw, 22px);
+  color: inherit; text-decoration: none; transition: background-color .15s ease;
+}
+a.ll-row:hover { background: var(--ll-surface); }
+.ll-row-main { display: grid; gap: 2px; min-width: 0; }
+.ll-row-name { font: 700 clamp(14px, 0.8rem + 0.3vw, 16px)/1.2 var(--ll-font); color: var(--ll-ink); }
+.ll-row-sub { font-size: 12px; color: var(--ll-ink-2); overflow-wrap: anywhere; }
+.ll-row-sub .ll-alt-origin { font-weight: 600; color: var(--ll-accent); }
+.ll-row-sub .ll-route { font-size: 11px; vertical-align: 1px; }
+.ll-row-dates { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ll-ink-2); min-width: 0; }
+.ll-row-dates svg { flex: none; width: 15px; height: 15px; }
+.ll-row-price { display: grid; justify-items: end; gap: 1px; text-align: right; }
+.ll-row-price small { font-size: 11px; color: var(--ll-ink-2); }
+.ll-row-price strong { font: 700 clamp(16px, 0.9rem + 0.4vw, 19px)/1 var(--ll-font); letter-spacing: -.02em; color: var(--ll-ink); }
+.ll-row-price em { font-style: normal; font-size: 11px; }
+.ll-row-go {
+  display: inline-flex; gap: 6px; align-items: center; white-space: nowrap;
+  font-weight: 700; font-size: 13px; color: var(--ll-accent); text-decoration: none;
+  padding: 7px 12px; border-radius: 999px; background: var(--ll-surface);
+}
+.ll-row-go svg { width: 14px; height: 14px; transition: transform .2s ease; }
+a.ll-row:hover .ll-row-go svg, .ll-row-go:hover svg { transform: translateX(2px); }
+.ll-row.is-empty .ll-row-name { color: var(--ll-ink-2); }
+.ll-row.is-empty .ll-row-go { background: transparent; }
+.ll.ll .ll-list > li[hidden] { display: none; }
+.ll.ll .ll-list-toggle {
+  justify-self: center; display: inline-flex; gap: 6px; align-items: center;
+  font: 600 13px/1 var(--ll-font); color: var(--ll-accent); background: none; border: 0;
+  padding: 8px 12px; border-radius: 999px; cursor: pointer;
+}
+.ll.ll .ll-list-toggle:hover { background: var(--ll-surface); }
+.ll.ll .ll-list-toggle:focus-visible { outline: 2px solid var(--ll-accent); outline-offset: 2px; }
+.ll-list-toggle svg { width: 16px; height: 16px; transition: transform .2s ease; }
+.ll-list-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* ---------- pätička a prázdny stav ---------- */
+.ll-foot { font-size: 13px; line-height: 1.5; color: var(--ll-ink-2); }
+.ll.ll .ll-foot a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.ll-more { color: var(--ll-accent); font-weight: 600; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+.ll-more:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ll-empty { padding: 40px 20px; border: 1px dashed var(--ll-line); border-radius: 16px; text-align: center; color: var(--ll-ink-2); display: grid; gap: 6px; justify-items: center; }
+.ll-empty b { color: var(--ll-ink); font-size: 16px; }
+
+/* skeleton pri načítaní */
+.ll-skel { height: 230px; border-radius: 16px; background: linear-gradient(90deg, var(--ll-soft), var(--ll-surface), var(--ll-soft)); background-size: 200% 100%; animation: ll-shimmer 1.4s linear infinite; }
+@keyframes ll-shimmer { to { background-position: -200% 0; } }
+
+/* mobil: karta Bangkoku, zoznam a tlačidlo */
+@media (max-width: 640px) {
+  .ll-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main price" "dates price"; row-gap: 3px; }
+  .ll-row-main { grid-area: main; }
+  .ll-row-price { grid-area: price; }
+  .ll-row-dates { grid-area: dates; font-size: 12px; }
+  .ll-row-dates svg { width: 13px; height: 13px; }
+  a.ll-row .ll-row-go, .ll-row-price em { display: none; }
+  .ll-row.is-empty { grid-template-areas: "main go" "dates go"; }
+  .ll-row.is-empty .ll-row-price { display: none; }
+  .ll-row-go { grid-area: go; justify-self: end; padding: 6px 10px; }
+  .ll-refresh { width: 100%; white-space: normal; line-height: 1.25; }
+  .ll-filter { display: flex; width: 100%; }
+  .ll-filter button { flex: 1 1 0; padding-inline: 8px; }
+  .ll-feature { grid-template-columns: 1fr; align-items: start; }
+  .ll-feature-side { justify-items: start; text-align: left; grid-template-columns: 1fr auto; align-items: end; }
+  .ll-feature-side small { grid-column: 1 / -1; }
+  .ll-feature-side .ll-change { grid-column: 1 / -1; justify-self: start; }
+  .ll-feature-cta { margin-top: 8px; grid-column: 1 / -1; justify-content: center; }
+  .ll-feature-arc { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ll *, .ll *::before { animation: none !important; transition: none !important; }
+  .ll-card:hover, .ll-feature:hover { transform: none; }
+}
