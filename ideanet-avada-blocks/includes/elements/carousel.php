@@ -145,6 +145,18 @@ class Ideanet_Blocks_Carousel {
 								'param_name' => 'video',
 								'value'      => '',
 							),
+							array(
+								'type'       => 'textfield',
+								'heading'    => __( 'Pre koho (firma) — len pri režime Video', 'ideanet-avada-blocks' ),
+								'param_name' => 'client',
+								'value'      => '',
+							),
+							array(
+								'type'       => 'textfield',
+								'heading'    => __( 'Tagy — kto je na videu, oddeľte ; — len pri režime Video', 'ideanet-avada-blocks' ),
+								'param_name' => 'tags',
+								'value'      => '',
+							),
 						),
 					),
 				),
@@ -215,6 +227,8 @@ class Ideanet_Blocks_Carousel {
 										'meta'     => $it['meta'] ?? '',
 										'poster'   => $it['poster'] ?? '',
 										'video'    => $it['video'] ?? '',
+										'client'   => $it['client'] ?? '',
+										'tags'     => $it['tags'] ?? '',
 									)
 								); // Escapované vnútri ideanet_blocks_render_tile().
 							}

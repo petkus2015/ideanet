@@ -31,6 +31,14 @@ function ideanet_blocks_content_sections() {
 	unset( $text_fields );
 
 	return array(
+		'nav_items'        => array(
+			'label'    => __( 'Navigácia — položky menu', 'ideanet-avada-blocks' ),
+			'defaults' => 'ideanet_blocks_default_nav_items',
+			'fields'   => array(
+				array( 'key' => 'label', 'label' => __( 'Text odkazu', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'link', 'label' => __( 'Cieľ (napr. #sluzby)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+			),
+		),
 		'hero_slides'      => array(
 			'label'    => __( 'Hero — posledné realizácie', 'ideanet-avada-blocks' ),
 			'defaults' => 'ideanet_blocks_default_video_items',
@@ -40,6 +48,8 @@ function ideanet_blocks_content_sections() {
 				array( 'key' => 'meta', 'label' => __( 'Dĺžka (napr. 0:18)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 				array( 'key' => 'poster', 'label' => __( 'Náhľadový obrázok', 'ideanet-avada-blocks' ), 'type' => 'image' ),
 				array( 'key' => 'video', 'label' => __( 'Video (MP4)', 'ideanet-avada-blocks' ), 'type' => 'video' ),
+				array( 'key' => 'client', 'label' => __( 'Pre koho (firma)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'tags', 'label' => __( 'Tagy — kto je na videu (oddeľte ;)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 			),
 		),
 		'services'         => array(
@@ -63,6 +73,8 @@ function ideanet_blocks_content_sections() {
 				array( 'key' => 'meta', 'label' => __( 'Štítok (dĺžka/formát)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 				array( 'key' => 'poster', 'label' => __( 'Náhľadový obrázok', 'ideanet-avada-blocks' ), 'type' => 'image' ),
 				array( 'key' => 'video', 'label' => __( 'Video (MP4)', 'ideanet-avada-blocks' ), 'type' => 'video' ),
+				array( 'key' => 'client', 'label' => __( 'Pre koho (firma)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'tags', 'label' => __( 'Tagy — kto je na videu (oddeľte ;)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 			),
 		),
 		'carousel_grafika' => array(
@@ -86,6 +98,8 @@ function ideanet_blocks_content_sections() {
 				array( 'key' => 'meta', 'label' => __( 'Štítok', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 				array( 'key' => 'poster', 'label' => __( 'Náhľadový obrázok', 'ideanet-avada-blocks' ), 'type' => 'image' ),
 				array( 'key' => 'video', 'label' => __( 'Video (MP4)', 'ideanet-avada-blocks' ), 'type' => 'video' ),
+				array( 'key' => 'client', 'label' => __( 'Pre koho (firma)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'tags', 'label' => __( 'Tagy — kto je na videu (oddeľte ;)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 			),
 		),
 		'process_steps'    => array(

@@ -20,6 +20,7 @@ require_once IDEANET_BLOCKS_DIR . 'includes/admin-content.php';
  */
 function ideanet_blocks_element_map() {
 	return array(
+		'nav'          => 'ideanet_nav',
 		'hero'         => 'ideanet_hero',
 		'services'     => 'ideanet_services',
 		'carousel'     => 'ideanet_carousel',

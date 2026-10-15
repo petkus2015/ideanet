@@ -187,9 +187,7 @@ button.ib-arrow{
   transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease);
 }
 .ib-slide:hover .ib-tile{transform:translateY(-5px);box-shadow:var(--ib-sh-2)}
-.ib-tile img,.ib-tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ib-tile video{opacity:0;transition:opacity .35s var(--ib-ease)}
-.ib-slide.is-playing .ib-tile video{opacity:1}
+.ib-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ib-tile__shade{
   position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(180deg,rgba(6,9,10,.34) 0%,rgba(6,9,10,0) 32%,rgba(6,9,10,0) 52%,rgba(6,9,10,.72) 100%);
@@ -220,10 +218,9 @@ button.ib-arrow{
   transform:translateX(3px);transition:opacity .25s;
 }
 [data-mode="image"] .ib-tile__play::after,[data-mode="image"] .ib-tile__play::before{display:none}
-.ib-slide.is-playing .ib-tile__play::after,.ib-slide.is-playing .ib-tile__play::before{opacity:0;transform:scale(.6)}
-.ib-tile__bar{position:absolute;left:0;bottom:0;height:2.5px;width:0;background:var(--ib-spark);z-index:4}
 .ib-slide__meta{padding:12px 2px 0}
 .ib-slide__meta h4{margin:0;font-size:14.5px;font-weight:600}
+.ib-slide__client{display:block;margin-top:2px;font-size:12px;color:var(--ib-accent-2) !important}
 .ib-slide__meta p{margin-top:4px;font-size:12.5px;color:var(--ib-ink-3) !important;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ib-progress{height:2px;margin-top:4px;border-radius:2px;background:var(--ib-line);overflow:hidden}
@@ -331,24 +328,80 @@ p.ib-form__status{margin-top:11px;font-size:13.5px;color:var(--ib-accent-2) !imp
 .ib-lightbox{
   position:fixed;inset:0;z-index:100000;display:grid;grid-template-columns:auto 1fr auto;
   align-items:center;gap:clamp(8px,2vw,28px);padding:clamp(14px,3vw,36px);
+  /* dolný padding navyše kvôli zatváraciemu krížiku (dole na strede) —
+     obsah stage/popisku sa s ním nesmie prekrývať */
+  padding-bottom:clamp(84px,14vw,122px);
   background:rgba(4,7,8,.92);backdrop-filter:blur(12px);
 }
 .ib-lightbox[hidden]{display:none}
 .ib-lightbox__stage{margin:0;justify-self:center;align-self:center;display:flex;flex-direction:column;align-items:center;gap:14px;max-height:100%}
-.ib-lightbox__stage video,.ib-lightbox__stage img{max-height:min(82vh,900px);max-width:100%;width:auto;border-radius:var(--ib-r-lg);background:#000;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.ib-lightbox__stage video,.ib-lightbox__stage img{max-height:min(78vh,900px);max-width:100%;width:auto;border-radius:var(--ib-r-lg);background:#000;box-shadow:0 30px 80px rgba(0,0,0,.5)}
 .ib-lightbox__cap{color:rgba(255,255,255,.86) !important;font-size:14px;text-align:center;max-width:52ch}
 .ib-lightbox__cap b{display:block;font-size:16.5px;font-weight:600;margin-bottom:4px;color:#fff !important}
+.ib-lightbox__client{display:block;font-size:12.5px;color:var(--ib-accent-2) !important;margin-bottom:8px}
+.ib-lightbox__tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.ib-lightbox__tags .ib-tag{
+  display:inline-block;padding:4px 11px;border-radius:999px;font-size:11.5px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.86) !important;
+}
 .ib-lightbox__close.ib-lightbox__close,.ib-lightbox__nav.ib-lightbox__nav{
   display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.22);
   border-radius:50%;background:rgba(255,255,255,.08);color:#fff !important;cursor:pointer;transition:background .2s,transform .2s;
 }
 .ib-lightbox__close:hover,.ib-lightbox__nav:hover{background:rgba(255,255,255,.2);transform:scale(1.06)}
 .ib-lightbox__close svg,.ib-lightbox__nav svg{width:19px;height:19px}
-.ib-lightbox__close{position:absolute;top:clamp(14px,3vw,28px);right:clamp(14px,3vw,28px);z-index:2}
+/* Dole na strede namiesto hore vpravo — na mobile sa tam lepšie trafí
+   palcom (jednoručné ovládanie), neprekáža notchu/stavovému riadku. */
+.ib-lightbox__close{
+  position:absolute;left:50%;bottom:clamp(18px,4vw,34px);top:auto;right:auto;
+  transform:translateX(-50%);z-index:2;
+}
+.ib-lightbox__close:hover{transform:translateX(-50%) scale(1.06)}
 
 /* ══════════════════════ ODHALENIE PRI SCROLLI ═════════════════ */
 .ib-reveal{opacity:0;transform:translateY(16px);transition:opacity .6s var(--ib-ease),transform .6s var(--ib-ease)}
 .ib-reveal.in{opacity:1;transform:none}
+
+/* ══════════════════════ NAVIGÁCIA (sticky, in-page) ═══════════ */
+.ib-nav{padding:0;overflow:visible;background:rgba(10,7,12,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s;z-index:9000}
+.ib-nav[data-sticky="yes"]{position:sticky;top:0}
+.ib-nav.is-scrolled{border-bottom-color:var(--ib-line-2);background:rgba(10,7,12,.92)}
+.ib-nav__bar{display:flex;align-items:center;gap:clamp(16px,3vw,36px);padding:16px 0}
+.ib-nav__brand{font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--ib-ink) !important;flex:none}
+.ib-nav__links{display:flex;align-items:center;gap:clamp(14px,2vw,28px);margin-right:auto;flex-wrap:wrap}
+a.ib-nav__link{
+  position:relative;font-size:14px;font-weight:550;color:var(--ib-ink-2) !important;
+  padding:4px 0;transition:color .2s;
+}
+a.ib-nav__link::after{
+  content:'';position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--ib-accent);
+  transition:right .25s var(--ib-ease);border-radius:2px;
+}
+a.ib-nav__link:hover{color:var(--ib-ink) !important}
+a.ib-nav__link:hover::after,a.ib-nav__link.is-active::after{right:0}
+a.ib-nav__link.is-active{color:var(--ib-ink) !important}
+.ib-nav__actions{display:flex;align-items:center;gap:14px;flex:none;margin-left:auto}
+.ib-btn.ib-nav__cta{padding:10px 20px !important;font-size:13.5px !important}
+.ib-nav__burger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;width:38px;height:38px;
+  padding:0;border:1px solid var(--ib-line);border-radius:10px;background:var(--ib-paper);cursor:pointer;
+}
+.ib-nav__burger span{display:block;width:16px;height:1.6px;margin:0 auto;background:var(--ib-ink);transition:transform .25s,opacity .25s}
+.ib-nav.is-open .ib-nav__burger span:nth-child(1){transform:translateY(6.6px) rotate(45deg)}
+.ib-nav.is-open .ib-nav__burger span:nth-child(2){opacity:0}
+.ib-nav.is-open .ib-nav__burger span:nth-child(3){transform:translateY(-6.6px) rotate(-45deg)}
+@media (max-width:860px){
+  .ib-nav__links{
+    position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:flex-start;gap:2px;
+    padding:10px clamp(20px,5vw,40px) 18px;margin:0;background:rgba(10,7,12,.98);
+    border-bottom:1px solid var(--ib-line-2);
+    opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .25s,transform .25s,visibility .25s;
+  }
+  .ib-nav.is-open .ib-nav__links{opacity:1;visibility:visible;transform:none}
+  a.ib-nav__link{width:100%;padding:11px 0}
+  .ib-nav__cta{display:none}
+  .ib-nav__burger{display:flex}
+}
 
 /* ══════════════════════ RESPONZÍVNE ═══════════════════════════ */
 @media (max-width:1180px){ .ib-scope{--ib-per:4.5} }
@@ -370,6 +423,8 @@ p.ib-form__status{margin-top:11px;font-size:13.5px;color:var(--ib-accent-2) !imp
   .ib-lightbox__nav{position:fixed;bottom:22px;z-index:2}
   .ib-lightbox__nav--prev{left:22px}
   .ib-lightbox__nav--next{right:22px}
+  /* zarovnané do jedného pásu s prev/next tlačidlami nižšie */
+  .ib-lightbox__close{bottom:22px}
 }
 
 @media (prefers-reduced-motion:reduce){

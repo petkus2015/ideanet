@@ -10,6 +10,12 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const FINE = matchMedia('(hover: hover) and (pointer: fine)');
+  /* dáta v items pochádzajú z data-* atribútov vyplnených používateľom
+     (cez admin alebo builder) — pri vkladaní do innerHTML v lightboxe ich
+     treba escapovať, inak by sa text ako "<script>" interpretoval ako HTML. */
+  const escHtml = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
 
   /* ─────────────────────────────────────────────────────────
      1) SPOLOČNÝ LIGHTBOX
@@ -54,7 +60,6 @@
     ensureLightbox();
     lbItems = items; lbIndex = index;
     lbLastFocus = document.activeElement;
-    stopAllVideos(null);
     renderLightbox();
     lb.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -65,13 +70,18 @@
     const it = lbItems[lbIndex];
     const stage = $('.ib-lightbox__stage', lb);
     const isVideo = it.mode === 'video' && it.video;
+    const tagList = (it.tags || '').split(';').map((t) => t.trim()).filter(Boolean);
+    const caption = `
+      <figcaption class="ib-lightbox__cap">
+        <b>${escHtml(it.title)}</b>${it.client ? `<span class="ib-lightbox__client">${escHtml(it.client)}</span>` : ''}
+        ${escHtml(it.desc)}
+        ${tagList.length ? `<span class="ib-lightbox__tags">${tagList.map((t) => `<span class="ib-tag">${escHtml(t)}</span>`).join('')}</span>` : ''}
+      </figcaption>`;
     stage.innerHTML = isVideo
-      ? `<video controls autoplay playsinline loop poster="${it.poster || ''}" aria-label="${it.title || ''}">
-           <source src="${it.video}" type="video/mp4">
-         </video>
-         <figcaption class="ib-lightbox__cap"><b>${it.title || ''}</b>${it.desc || ''}</figcaption>`
-      : `<img src="${it.poster || it.video || ''}" alt="${it.title || ''}">
-         <figcaption class="ib-lightbox__cap"><b>${it.title || ''}</b>${it.desc || ''}</figcaption>`;
+      ? `<video controls autoplay playsinline loop poster="${escHtml(it.poster)}" aria-label="${escHtml(it.title)}">
+           <source src="${escHtml(it.video)}" type="video/mp4">
+         </video>${caption}`
+      : `<img src="${escHtml(it.poster || it.video)}" alt="${escHtml(it.title)}">${caption}`;
     const v = $('video', stage);
     if (v) v.play().catch(() => {});
   }
@@ -92,19 +102,6 @@
     renderLightbox();
   }
 
-  /* jediné prehrávané video na celej stránke naraz */
-  let currentVideo = null;
-  function stopAllVideos(except) {
-    $$('.ib-slide.is-playing').forEach((slide) => {
-      const v = $('video', slide);
-      if (!v || v === except) return;
-      v.pause();
-      slide.classList.remove('is-playing');
-    });
-    if (currentVideo && currentVideo !== except) currentVideo.pause();
-    currentVideo = except || null;
-  }
-
   /* ─────────────────────────────────────────────────────────
      2) KARUSEL — inicializuje sa pre každý .ib-carousel zvlášť
   ───────────────────────────────────────────────────────── */
@@ -112,55 +109,33 @@
     const rail = $('.ib-rail', root);
     if (!rail) return;
     const mode = root.dataset.mode || 'video';
-    const isVideo = mode === 'video';
     const slides = () => $$('.ib-slide', rail);
     const track = $('.ib-progress', root);
     const thumb = track ? $('span', track) : null;
     const arrows = $$('.ib-arrow', root);
 
-    /* dáta pre lightbox, čítané zo samotného DOM (server ich vykreslil) */
+    /* dáta pre lightbox, čítané zo samotného DOM (server ich vykreslil).
+       Dlaždica v mriežke vždy zobrazuje len statický poster (9:16) — pri
+       videu aj pri obrázku — a klik vždy otvorí lightbox s plným
+       prehrávačom (ovládacie prvky, zvuk); žiadny tichý autoplay náhľad
+       pri prejdení myšou v mriežke. */
     const items = slides().map((slide) => ({
       mode,
       title: slide.dataset.title || '',
       desc: slide.dataset.desc || '',
       poster: slide.dataset.poster || '',
       video: slide.dataset.video || '',
+      client: slide.dataset.client || '',
+      tags: slide.dataset.tags || '',
     }));
 
-    function play(i) {
-      const slide = slides()[i], v = $('video', slide);
-      if (!v) return;
-      if (v.preload === 'none') { v.preload = 'metadata'; v.load(); }
-      stopAllVideos(v);
-      v.play().then(() => slide.classList.add('is-playing')).catch(() => {});
-    }
-    function pause(i) {
-      const slide = slides()[i], v = $('video', slide);
-      if (!v) return;
-      v.pause();
-      slide.classList.remove('is-playing');
-    }
     rail.addEventListener('click', (e) => {
       if (rail.dataset.moved === '1') return;
       const slide = e.target.closest('.ib-slide');
       if (!slide) return;
       const i = slides().indexOf(slide);
-      /* Dlaždica v karuseli prehráva pri videu len tichý náhľad (pozri
-         hover nižšie) — klik vždy otvorí lightbox s plným prehrávačom
-         (ovládacie prvky, zvuk), nech už bol klik na dlaždicu kdekoľvek. */
       openLightbox(items, i);
     });
-
-    if (isVideo && FINE.matches && !REDUCED) {
-      let hoverTimer = null;
-      slides().forEach((slide, i) => {
-        slide.addEventListener('mouseenter', () => {
-          clearTimeout(hoverTimer);
-          hoverTimer = setTimeout(() => play(i), 220);
-        });
-        slide.addEventListener('mouseleave', () => { clearTimeout(hoverTimer); pause(i); });
-      });
-    }
 
     const step = () => {
       const first = slides()[0];
@@ -223,29 +198,6 @@
     rail.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
     addEventListener('resize', sync);
     sync();
-
-    if (isVideo && 'IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((en) => {
-          if (en.intersectionRatio < 0.35) {
-            const i = slides().indexOf(en.target);
-            const v = $('video', en.target);
-            if (v && !v.paused) pause(i);
-          }
-        });
-      }, { root: rail, threshold: [0, 0.35, 0.8] });
-      slides().forEach((s) => io.observe(s));
-    }
-
-    /* voliteľné automatické tiché prehratie prvej karty (hero) */
-    if (isVideo && root.dataset.autoplay === '1' && !REDUCED && 'IntersectionObserver' in window) {
-      new IntersectionObserver((entries) => {
-        entries.forEach((en) => {
-          if (en.isIntersecting) { if (!currentVideo) play(0); }
-          else pause(0);
-        });
-      }, { threshold: 0.4 }).observe(slides()[0]);
-    }
   }
 
   /* ─────────────────────────────────────────────────────────
@@ -359,9 +311,73 @@
   }
 
   /* ─────────────────────────────────────────────────────────
+     NAVIGÁCIA — sticky lišta, zvýraznenie aktívnej sekcie
+     (scrollspy), mobilné rozbaľovacie menu.
+  ───────────────────────────────────────────────────────── */
+  function initNav(nav) {
+    const burger = $('.ib-nav__burger', nav);
+    const links = $$('.ib-nav__link', nav);
+
+    if (burger) {
+      burger.addEventListener('click', () => {
+        const open = !nav.classList.contains('is-open');
+        nav.classList.toggle('is-open', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      links.forEach((a) => a.addEventListener('click', () => {
+        nav.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+      }));
+    }
+
+    /* plynulý skrol na kotvu + zatvorenie mobilného menu */
+    links.forEach((a) => {
+      const href = a.getAttribute('href') || '';
+      if (href.charAt(0) !== '#' || href.length < 2) return;
+      a.addEventListener('click', (e) => {
+        const target = document.getElementById(href.slice(1));
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+        history.pushState(null, '', href);
+      });
+    });
+
+    /* lišta dostane tieň/nepriehľadné pozadie po odscrollovaní */
+    if ('yes' === nav.dataset.sticky) {
+      const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 8);
+      onScroll();
+      addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    /* scrollspy — zvýrazní odkaz sekcie, ktorá je práve vo výreze */
+    const targets = links
+      .map((a) => {
+        const href = a.getAttribute('href') || '';
+        const el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { link: a, el } : null;
+      })
+      .filter(Boolean);
+    if (!targets.length || !('IntersectionObserver' in window)) return;
+
+    const setActive = (el) => {
+      targets.forEach(({ link, el: e2 }) => link.classList.toggle('is-active', e2 === el));
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((en) => en.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible.length) setActive(visible[0].target);
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: [0, .25, .5, .75, 1] }
+    );
+    targets.forEach(({ el }) => io.observe(el));
+  }
+
+  /* ─────────────────────────────────────────────────────────
      INICIALIZÁCIA
   ───────────────────────────────────────────────────────── */
   function boot() {
+    $$('.ib-nav').forEach(initNav);
     $$('.ib-scope').forEach((scope) => {
       $$('.ib-carousel', scope).forEach(initCarousel);
       $$('.ib-hero', scope).forEach(initHeroFx);

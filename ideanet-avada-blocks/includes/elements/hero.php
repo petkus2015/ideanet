@@ -142,6 +142,18 @@ class Ideanet_Blocks_Hero {
 								'param_name' => 'video',
 								'value'      => '',
 							),
+							array(
+								'type'       => 'textfield',
+								'heading'    => __( 'Pre koho (firma)', 'ideanet-avada-blocks' ),
+								'param_name' => 'client',
+								'value'      => '',
+							),
+							array(
+								'type'       => 'textfield',
+								'heading'    => __( 'Tagy — kto je na videu (oddeľte ;)', 'ideanet-avada-blocks' ),
+								'param_name' => 'tags',
+								'value'      => '',
+							),
 						),
 					),
 				),
@@ -230,6 +242,8 @@ class Ideanet_Blocks_Hero {
 												'meta'     => $slide['meta'] ?? '',
 												'poster'   => $slide['poster'] ?? '',
 												'video'    => $slide['video'] ?? '',
+												'client'   => $slide['client'] ?? '',
+												'tags'     => $slide['tags'] ?? '',
 											)
 										); // Escapované vnútri ideanet_blocks_render_tile().
 									}

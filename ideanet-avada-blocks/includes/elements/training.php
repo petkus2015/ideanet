@@ -30,6 +30,13 @@ class Ideanet_Blocks_Training {
 				'params'    => array(
 					array(
 						'type'       => 'textfield',
+						'heading'    => __( 'Kotva pre odkazy (id sekcie, nepovinné)', 'ideanet-avada-blocks' ),
+						'param_name' => 'anchor',
+						'value'      => '',
+						'description' => __( 'Z iných blokov (napr. navigácia) naň môžete odkazovať cez #vlastna-kotva.', 'ideanet-avada-blocks' ),
+					),
+					array(
+						'type'       => 'textfield',
 						'heading'    => __( 'Kicker', 'ideanet-avada-blocks' ),
 						'param_name' => 'kicker',
 						'value'      => 'Pre firmy',
@@ -142,6 +149,7 @@ class Ideanet_Blocks_Training {
 
 		$args = shortcode_atts(
 			array(
+				'anchor'           => '',
 				'kicker'           => '',
 				'heading'          => '',
 				'heading_emphasis' => '',
@@ -166,7 +174,7 @@ class Ideanet_Blocks_Training {
 
 		ob_start();
 		?>
-		<section class="ib-scope">
+		<section class="ib-scope" <?php echo $args['anchor'] ? 'id="' . esc_attr( sanitize_html_class( $args['anchor'] ) ) . '"' : ''; ?>>
 			<div class="ib-wrap">
 				<?php echo ideanet_blocks_head( $args['kicker'], $args['heading'], $args['heading_emphasis'], $args['sub'] ); ?>
 

@@ -30,6 +30,13 @@ class Ideanet_Blocks_Testimonials {
 				'params'    => array(
 					array(
 						'type'       => 'textfield',
+						'heading'    => __( 'Kotva pre odkazy (id sekcie, nepovinné)', 'ideanet-avada-blocks' ),
+						'param_name' => 'anchor',
+						'value'      => 'referencie',
+						'description' => __( 'Z iných blokov (napr. navigácia) naň môžete odkazovať cez #referencie.', 'ideanet-avada-blocks' ),
+					),
+					array(
+						'type'       => 'textfield',
 						'heading'    => __( 'Kicker (nepovinné)', 'ideanet-avada-blocks' ),
 						'param_name' => 'kicker',
 						'value'      => '',
@@ -87,6 +94,7 @@ class Ideanet_Blocks_Testimonials {
 
 		$args = shortcode_atts(
 			array(
+				'anchor'           => '',
 				'kicker'           => '',
 				'heading'          => '',
 				'heading_emphasis' => '',
@@ -101,7 +109,7 @@ class Ideanet_Blocks_Testimonials {
 
 		ob_start();
 		?>
-		<section class="ib-scope">
+		<section class="ib-scope" <?php echo $args['anchor'] ? 'id="' . esc_attr( sanitize_html_class( $args['anchor'] ) ) . '"' : ''; ?>>
 			<div class="ib-wrap">
 				<?php echo ideanet_blocks_head( $args['kicker'], $args['heading'], $args['heading_emphasis'], $args['sub'] ); ?>
 

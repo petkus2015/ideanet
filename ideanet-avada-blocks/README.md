@@ -73,6 +73,7 @@ Táto stránka bez hádania ukáže:
 
 | Blok | Shortcode | Na čo slúži |
 |---|---|---|
+| IDEANET — Navigácia | `[ideanet_nav]` | Sticky in-page menu s odkazmi na sekcie stránky, logom/menom a voliteľným tlačidlom — nie je to hlavná hlavička webu (tú rieši Avada Header Builder), pozri nižšie |
 | IDEANET — Hero | `[ideanet_hero]` | Úvodná sekcia s nadpisom, dvoma tlačidlami a karuselom posledných realizácií |
 | IDEANET — Služby | `[ideanet_services]` | Tri (aj viac) karty disciplín s ikonou, popisom a zoznamom bodov |
 | IDEANET — Portfólio karusel | `[ideanet_carousel]` | Znovupoužiteľný karusel ukážok — vložte ho trikrát (video, grafika, sociálne siete), zakaždým s inými nastaveniami |
@@ -81,6 +82,26 @@ Táto stránka bez hádania ukáže:
 | IDEANET — Školenia pre firmy | `[ideanet_training]` | Sekcia „pre koho / čo si odnesú” + karta formátov a cien |
 | IDEANET — Referencie | `[ideanet_testimonials]` | Citáty klientov |
 | IDEANET — Kontakt | `[ideanet_contact]` | Kontaktné údaje, box dostupnosti a formulár (odosielanie cez `mailto:`) |
+
+### Navigácia — sticky in-page menu
+
+Blok **IDEANET — Navigácia** je doplnková lišta priamo v obsahu
+stránky (nie hlavná hlavička webu — tú aj naďalej rieši Avada Header
+Builder). Pri scrollovaní zostáva prilepená hore, zvýrazní odkaz
+sekcie, ktorá je práve vo výreze (scrollspy), a na mobile sa zbalí do
+hamburger menu.
+
+Aby odkazy fungovali, cieľová sekcia musí mať nastavenú **rovnakú
+kotvu** v poli „Kotva pre odkazy” daného bloku. Service/Cenník/
+Referencie/Kontakt majú predvolené kotvy `sluzby` / `cennik` /
+`referencie` / `kontakt`; Proces a Školenia kotvu nemajú predvolenú —
+ak na ne chcete odkazovať, vyplňte ju ručne a zhodne nastavte aj
+odkaz v položke menu. Portfólio karusely majú kotvu `video` / `grafika`
+/ `social` (nemenené).
+
+Položky menu sa dajú pridávať rovnako ako ostatné repeatery — buď
+priamo v Avada Builderi (pole „Položky menu”), alebo spoľahlivejšie
+cez **Nástroje → IDEANET obsah → Navigácia — položky menu**.
 
 ### Portfólio karusel — jeden blok, tri použitia
 
@@ -247,6 +268,28 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
   vložiť vlastné SVG cez voľbu „Vlastné SVG“.
 
 ## Riešenie problémov
+
+**Chcem pri videu pridať aj „pre koho (firma)” a tagy, kto je na videu.**
+Od verzie **1.4.0** majú repeatery pre video (Hero realizácie,
+Portfólio „Videografia” aj „Sociálne siete”) dve nové nepovinné polia:
+**„Pre koho (firma)”** (zobrazí sa pod názvom v dlaždici aj v
+lightboxe) a **„Tagy — kto je na videu”** (oddeľte bodkočiarkou `;`,
+zobrazia sa ako štítky v lightboxe). Portfólio „Grafický dizajn” tieto
+polia nemá — nejde o video.
+
+**Dlaždice videa v mriežke už neprehrávajú tichý náhľad pri prejdení myšou.**
+Od verzie **1.4.0** dlaždica (aj pri videu, aj keď je zdrojové video
+na šírku) vždy zobrazuje len statický náhľadový obrázok — video sa
+prehrá až po kliknutí, v lightboxe s plným prehrávačom a zvukom. Do
+staršej verzie sa pri prejdení myšou na desktope spúšťal tichý
+automatický náhľad priamo v dlaždici; to sa zámerne odstránilo kvôli
+jednoduchšiemu a predvídateľnejšiemu správaniu (najmä pri videách na
+šírku, kde tichý náhľad v 9:16 dlaždici pôsobil orezane).
+
+**Zatváracie tlačidlo (×) v lightboxe je dole na strede, nie hore vpravo.**
+Od verzie **1.4.0** je to zámer — na mobile sa tak lepšie trafí
+palcom pri jednoručnom ovládaní a vytvára spolu so šípkami
+Predchádzajúce/Ďalšie jeden prehľadný ovládací pás dole na obrazovke.
 
 **Chcem iné písmo.**
 Plugin používa **Inter** (bežný text, nadpisy) a **Instrument Serif**

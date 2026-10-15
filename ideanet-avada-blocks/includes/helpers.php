@@ -122,12 +122,12 @@ function ideanet_blocks_placeholder_image( $seed = '', $ratio = '9/16' ) {
  */
 function ideanet_blocks_default_video_items() {
 	$rows = array(
-		array( 'category' => 'Gastro', 'title' => 'Ranná káva', 'description' => 'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', 'meta' => '0:18' ),
-		array( 'category' => 'Fitness', 'title' => 'Séria pre klub', 'description' => 'Dvanásť tréningových videí natočených počas jedného popoludnia.', 'meta' => '0:22' ),
-		array( 'category' => 'Produkt', 'title' => 'Detail chuti', 'description' => 'Makro produktové zábery pre e-shop s pralinkami.', 'meta' => '0:15' ),
-		array( 'category' => 'Reality', 'title' => 'Prehliadka bytu', 'description' => 'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.', 'meta' => '0:29' ),
-		array( 'category' => 'Event', 'title' => 'Aftermovie', 'description' => 'Zostrih z firemnej konferencie dodaný do 24 hodín.', 'meta' => '0:34' ),
-		array( 'category' => 'Fashion', 'title' => 'Lookbook jeseň', 'description' => 'Vertikálny lookbook pre lokálnu módnu značku.', 'meta' => '0:20' ),
+		array( 'category' => 'Gastro', 'title' => 'Ranná káva', 'description' => 'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', 'meta' => '0:18', 'client' => 'Kaviareň Zrno', 'tags' => 'majiteľka; barista' ),
+		array( 'category' => 'Fitness', 'title' => 'Séria pre klub', 'description' => 'Dvanásť tréningových videí natočených počas jedného popoludnia.', 'meta' => '0:22', 'client' => 'Fit klub Nord', 'tags' => 'tréner; členovia klubu' ),
+		array( 'category' => 'Produkt', 'title' => 'Detail chuti', 'description' => 'Makro produktové zábery pre e-shop s pralinkami.', 'meta' => '0:15', 'client' => 'Pralinky Vera', 'tags' => 'produkt' ),
+		array( 'category' => 'Reality', 'title' => 'Prehliadka bytu', 'description' => 'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.', 'meta' => '0:29', 'client' => 'Reality Nord', 'tags' => 'maklér' ),
+		array( 'category' => 'Event', 'title' => 'Aftermovie', 'description' => 'Zostrih z firemnej konferencie dodaný do 24 hodín.', 'meta' => '0:34', 'client' => 'Konferencia Rast', 'tags' => 'rečníci; účastníci' ),
+		array( 'category' => 'Fashion', 'title' => 'Lookbook jeseň', 'description' => 'Vertikálny lookbook pre lokálnu módnu značku.', 'meta' => '0:20', 'client' => 'Štúdio Lumen', 'tags' => 'modelka; stylistka' ),
 	);
 	foreach ( $rows as &$row ) {
 		$row['poster'] = ideanet_blocks_placeholder_image( $row['title'], '9/16' );
@@ -269,6 +269,24 @@ function ideanet_blocks_default_testimonials() {
 		array( 'quote' => 'Otvárali sme o šiestej a o pol deviatej už boli prvé videá online. Ľudia z toho večera nám písali ešte ten istý večer.', 'name' => 'Lucia H.', 'role' => 'majiteľka kaviarne' ),
 		array( 'quote' => 'Zo správy profilov sa stala rutina, ktorú už neriešim. Čísla rastú a všetko vyzerá ako jedna značka.', 'name' => 'Martin K.', 'role' => 'fitness klub' ),
 		array( 'quote' => 'Nové logo, obaly aj video k produktu od jedného človeka. Ušetrilo nám to týždne dohadovania.', 'name' => 'Zuzana P.', 'role' => 'e-shop s kávou' ),
+	);
+}
+
+/**
+ * Predvolené položky navigačného menu. Kotvy zodpovedajú predvoleným
+ * hodnotám poľa „Kotva pre odkazy“ v jednotlivých blokoch (Služby →
+ * sluzby, Portfólio karusel „Videografia“ → video, Cenník → cennik,
+ * Referencie → referencie, Kontakt → kontakt).
+ *
+ * @return array<int, array<string, string>>
+ */
+function ideanet_blocks_default_nav_items() {
+	return array(
+		array( 'label' => 'Služby', 'link' => '#sluzby' ),
+		array( 'label' => 'Portfólio', 'link' => '#video' ),
+		array( 'label' => 'Cenník', 'link' => '#cennik' ),
+		array( 'label' => 'Referencie', 'link' => '#referencie' ),
+		array( 'label' => 'Kontakt', 'link' => '#kontakt' ),
 	);
 }
 
@@ -439,6 +457,10 @@ function ideanet_blocks_esc_media_url( $url ) {
 /**
  * Vykreslí jednu kartu karuselu (aj hero karusel používa tú istú šablónu).
  *
+ * Dlaždica v mriežke vždy zobrazuje len statický náhľadový obrázok (aj
+ * pri videu, aj keď je zdrojové video na šírku) — samotné video sa
+ * prehráva až v lightboxe po kliknutí, nikdy priamo v mriežke.
+ *
  * @param array $item {
  *     @type string $mode     'video' alebo 'image'.
  *     @type string $category Štítok kategórie.
@@ -447,17 +469,21 @@ function ideanet_blocks_esc_media_url( $url ) {
  *     @type string $meta     Štítok vpravo hore (dĺžka / formát).
  *     @type string $poster   URL náhľadového obrázka.
  *     @type string $video    URL video súboru (len mode = video).
+ *     @type string $client   Pre koho / firma (len mode = video, nepovinné).
+ *     @type string $tags     Tagy — kto je na videu, oddelené ; (len mode = video, nepovinné).
  * }
  * @return string HTML.
  */
 function ideanet_blocks_render_tile( $item ) {
-	$mode  = 'image' === ( $item['mode'] ?? 'video' ) ? 'image' : 'video';
-	$title = $item['title'] ?? '';
-	$desc  = $item['desc'] ?? '';
-	$cat   = $item['category'] ?? '';
-	$meta  = $item['meta'] ?? '';
+	$mode   = 'image' === ( $item['mode'] ?? 'video' ) ? 'image' : 'video';
+	$title  = $item['title'] ?? '';
+	$desc   = $item['desc'] ?? '';
+	$cat    = $item['category'] ?? '';
+	$meta   = $item['meta'] ?? '';
 	$poster = $item['poster'] ?? '';
 	$video  = $item['video'] ?? '';
+	$client = 'video' === $mode ? ( $item['client'] ?? '' ) : '';
+	$tags   = 'video' === $mode ? ( $item['tags'] ?? '' ) : '';
 
 	ob_start();
 	?>
@@ -467,17 +493,13 @@ function ideanet_blocks_render_tile( $item ) {
 		data-poster="<?php echo ideanet_blocks_esc_media_url( $poster ); ?>"
 		<?php if ( 'video' === $mode && $video ) : ?>
 			data-video="<?php echo esc_url( $video ); ?>"
+			data-client="<?php echo esc_attr( $client ); ?>"
+			data-tags="<?php echo esc_attr( $tags ); ?>"
 		<?php endif; ?>
 		role="option" aria-label="<?php echo esc_attr( $title ); ?>">
 		<div class="ib-tile" data-mode="<?php echo esc_attr( $mode ); ?>">
 			<?php if ( $poster ) : ?>
 				<img src="<?php echo ideanet_blocks_esc_media_url( $poster ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy" decoding="async">
-			<?php endif; ?>
-			<?php if ( 'video' === $mode && $video ) : ?>
-				<video preload="none" playsinline muted loop poster="<?php echo ideanet_blocks_esc_media_url( $poster ); ?>" aria-label="<?php echo esc_attr( $title ); ?>">
-					<source src="<?php echo esc_url( $video ); ?>" type="video/mp4">
-				</video>
-				<span class="ib-tile__bar"></span>
 			<?php endif; ?>
 			<span class="ib-tile__shade"></span>
 			<?php if ( $cat ) : ?><span class="ib-tile__cat"><?php echo esc_html( $cat ); ?></span><?php endif; ?>
@@ -485,9 +507,10 @@ function ideanet_blocks_render_tile( $item ) {
 			<button class="ib-tile__play" data-act="<?php echo 'video' === $mode ? 'play' : 'open'; ?>"
 				aria-label="<?php echo esc_attr( ( 'video' === $mode ? __( 'Prehrať ukážku', 'ideanet-avada-blocks' ) : __( 'Zobraziť', 'ideanet-avada-blocks' ) ) . ' ' . $title ); ?>"></button>
 		</div>
-		<?php if ( $title || $desc ) : ?>
+		<?php if ( $title || $desc || $client ) : ?>
 			<div class="ib-slide__meta">
 				<?php if ( $title ) : ?><h4><?php echo esc_html( $title ); ?></h4><?php endif; ?>
+				<?php if ( $client ) : ?><span class="ib-slide__client"><?php echo esc_html( $client ); ?></span><?php endif; ?>
 				<?php if ( $desc ) : ?><p><?php echo esc_html( $desc ); ?></p><?php endif; ?>
 			</div>
 		<?php endif; ?>
