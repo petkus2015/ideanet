@@ -271,6 +271,20 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
+**Chcem pri kliknutí vlnový efekt ako má Claude.**
+Od verzie **1.6.0** pri kliknutí (alebo ťuknutí na mobile) na tlačidlo,
+kartu služby/cenníka/referencie, dlaždicu v portfóliovom karuseli alebo
+odkaz v navigácii vznikne jemný ružový impulz presne z miesta kliknutia,
+ktorý sa rozšíri a vyblední (~0,65 s). Na rozdiel od klasického Material
+ripple nemá tvrdý kruhový okraj — je to mäkký radiálny gradient, ktorý
+stmieva do priehľadna ešte vo vlastnom polomere, takže nepotrebuje
+orezanie (`overflow:hidden`) na rodičovi a bezpečne funguje aj na
+cenníkovej karte so štítkom „Najčastejšia voľba“, ktorý zámerne presahuje
+cez jej horný okraj. Implementované ako jedna globálna JS delegácia
+(`initRipple()` v `assets/js/blocks.js`), takže funguje aj na obsahu,
+ktorý pribudne neskôr. Rešpektuje `prefers-reduced-motion` (efekt sa
+vôbec nevytvorí).
+
 **Odlesk v Hero nesleduje kurzor / náklon kariet pri prejdení myšou nefunguje.**
 Od verzie **1.5.0** má Hero svetlo, ktoré sa jemne presúva za kurzorom
 (mimo hover zostáva pôvodný statický odlesk), karty služieb/cenníka/

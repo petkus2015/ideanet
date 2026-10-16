@@ -75,6 +75,7 @@ p.ib-sub{font-size:clamp(15px,1.1vw,17px);color:var(--ib-ink-2) !important;max-w
 /* ── tlačidlá ──────────────────────────────────────────────── */
 .ib-btn.ib-btn{
   --bg:var(--ib-accent);--fg:var(--ib-accent-ink);--bd:transparent;
+  position:relative;
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
   padding:15px 26px !important;border:1px solid var(--bd) !important;border-radius:999px !important;
   background:var(--bg) !important;color:var(--fg) !important;
@@ -140,6 +141,7 @@ p.ib-hero__lead{font-size:clamp(16px,1.3vw,18.5px);color:var(--ib-ink-2) !import
 /* ══════════════════════ SLUŽBY / KARTY ═════════════════════ */
 .ib-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,1.8vw,24px)}
 .ib-card{
+  position:relative;
   display:flex;flex-direction:column;padding:clamp(24px,2.2vw,32px);
   background:var(--ib-paper);border:1px solid var(--ib-line-2);border-radius:var(--ib-r-xl);
   box-shadow:var(--ib-sh-1);transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease);
@@ -308,6 +310,7 @@ p.ib-price__desc{font-size:14.5px;color:var(--ib-ink-2) !important}
 /* ══════════════════════ REFERENCIE ═══════════════════════════ */
 .ib-quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,26px)}
 .ib-quote{
+  position:relative;
   margin:0;padding:clamp(22px,2vw,30px);border-radius:var(--ib-r-xl);background:var(--ib-paper);
   border:1px solid var(--ib-line-2);transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease),border-color .3s var(--ib-ease);
   transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg));
@@ -435,6 +438,30 @@ a.ib-nav__link.is-active{color:var(--ib-ink) !important}
   .ib-nav__indicator{display:none}
   .ib-nav__cta{display:none}
   .ib-nav__burger{display:flex}
+}
+
+/* ─────────────────────────────────────────────────────────
+   VLNA PRI KLIKNUTÍ (ripple)
+   Mäkký impulz z presného miesta kliknutia — na rozdiel od
+   klasického Material ripple nemá tvrdý okraj (gradient stmieva
+   do priehľadna už vo vlastnom polomere), takže nepotrebuje
+   overflow:hidden na rodičovi a nekoliduje napr. so štítkom
+   .ib-price__flag, ktorý zámerne presahuje cez horný okraj karty.
+───────────────────────────────────────────────────────── */
+.ib-ripple{
+  position:absolute;left:0;top:0;z-index:4;pointer-events:none;
+  width:var(--ib-ripple-size,220px);height:var(--ib-ripple-size,220px);
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(var(--ib-accent-soft),.4) 0%,
+    rgba(var(--ib-accent-soft),.14) 42%,
+    rgba(var(--ib-accent-soft),0) 72%);
+  transform:translate(-50%,-50%) scale(0);
+  animation:ib-ripple .65s var(--ib-ease) forwards;
+}
+@keyframes ib-ripple{
+  from{ transform:translate(-50%,-50%) scale(0); opacity:.8; }
+  to{ transform:translate(-50%,-50%) scale(1); opacity:0; }
 }
 
 /* ══════════════════════ RESPONZÍVNE ═══════════════════════════ */

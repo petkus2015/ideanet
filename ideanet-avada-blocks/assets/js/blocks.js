@@ -427,9 +427,37 @@
   }
 
   /* ─────────────────────────────────────────────────────────
+     VLNOVÝ EFEKT PRI KLIKNUTÍ (ripple)
+     Jedna globálna delegácia na celý dokument — funguje na
+     tlačidlách, kartách, cenníku, citátoch, dlaždiciach portfólia
+     aj odkazoch v navigácii, vrátane obsahu pridaného/zmeneného
+     neskôr (napr. po zmene jazyka alebo AJAX-e).
+  ───────────────────────────────────────────────────────── */
+  const RIPPLE_SEL = '.ib-btn, .ib-card, .ib-price, .ib-quote, .ib-tile, a.ib-nav__link';
+
+  function initRipple() {
+    if (REDUCED) return;
+    document.addEventListener('pointerdown', (e) => {
+      if (e.button > 0) return;
+      const target = e.target.closest(RIPPLE_SEL);
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      const span = document.createElement('span');
+      span.className = 'ib-ripple';
+      span.style.left = (e.clientX - rect.left) + 'px';
+      span.style.top = (e.clientY - rect.top) + 'px';
+      span.style.setProperty('--ib-ripple-size', Math.round(Math.hypot(rect.width, rect.height) * .9) + 'px');
+      target.appendChild(span);
+      span.addEventListener('animationend', () => span.remove());
+      setTimeout(() => span.remove(), 900); /* poistka, ak by animationend nenaskočil */
+    }, { passive: true });
+  }
+
+  /* ─────────────────────────────────────────────────────────
      INICIALIZÁCIA
   ───────────────────────────────────────────────────────── */
   function boot() {
+    initRipple();
     $$('.ib-nav').forEach(initNav);
     /* .ib-hero je od verzie 1.3.0 na tom istom elemente ako .ib-scope
        (kvôli pozadiu na celú šírku) — querySelectorAll('.ib-hero', scope)
