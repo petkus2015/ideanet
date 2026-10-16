@@ -343,11 +343,21 @@
       });
     });
 
-    /* lišta dostane tieň/nepriehľadné pozadie po odscrollovaní */
+    /* lišta dostane tieň/nepriehľadné pozadie po odscrollovaní +
+       tenký pásik dole ukazuje, koľko zo stránky už bolo prečítané. */
     if ('yes' === nav.dataset.sticky) {
-      const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 8);
+      const progress = $('.ib-nav__progress i', nav);
+      const onScroll = () => {
+        nav.classList.toggle('is-scrolled', window.scrollY > 8);
+        if (progress) {
+          const doc = document.documentElement;
+          const max = doc.scrollHeight - doc.clientHeight;
+          progress.style.width = (max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0) + '%';
+        }
+      };
       onScroll();
       addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', onScroll);
     }
 
     /* kĺzavý indikátor — sleduje aktívnu položku (scrollspy nižšie) a

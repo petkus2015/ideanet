@@ -105,6 +105,22 @@ Položky menu sa dajú pridávať rovnako ako ostatné repeatery — buď
 priamo v Avada Builderi (pole „Položky menu”), alebo spoľahlivejšie
 cez **Nástroje → IDEANET obsah → Navigácia — položky menu**.
 
+**Logo a meno.** Od verzie **1.7.0** má blok dve nové nepovinné polia:
+**„Logo”** (nahrajte obrázok, odporúčaná výška okolo 64 px, PNG/SVG s
+priehľadným pozadím) a **„Moje meno”** (predvolene „Peter Miškus”),
+ktoré sa zobrazí pod značkou menším, tlmeným písmom. Logo aj meno sú
+nepovinné — môžete mať len text, len logo, oboje, alebo nič z toho
+(blok sa jednoducho prispôsobí tomu, čo je vyplnené). Na mobile sa
+meno pod značkou skrýva, aby ostalo miesto pre menu a tlačidlo.
+
+**Modernejšia lišta.** Okrem kĺzavého podčiarknutia (od v1.5.0) má
+lišta od verzie **1.7.0** aj:
+- **tenký farebný pásik dole**, ktorý ukazuje priebeh prečítania
+  stránky (0–100 % podľa toho, koľko bolo odscrollované) — bežný
+  moderný prvok na jednostránkových weboch;
+- **zjemnenie pri scrollovaní** — po odscrollovaní sa lišta aj logo
+  mierne zmenšia (menej miesta na obrazovke), s plynulým prechodom.
+
 ### Portfólio karusel — jeden blok, tri použitia
 
 Na pôvodnom webe boli tri karusely (Videografia 9:16 video, Grafický

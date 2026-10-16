@@ -394,11 +394,20 @@ p.ib-form__status{margin-top:11px;font-size:13.5px;color:var(--ib-accent-2) !imp
 .ib-reveal.in{opacity:1;transform:none}
 
 /* ══════════════════════ NAVIGÁCIA (sticky, in-page) ═══════════ */
-.ib-nav{padding:0;overflow:visible;background:rgba(10,7,12,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s;z-index:9000}
+.ib-nav{position:relative;padding:0;overflow:visible;background:rgba(10,7,12,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s;z-index:9000}
 .ib-nav[data-sticky="yes"]{position:sticky;top:0}
 .ib-nav.is-scrolled{border-bottom-color:var(--ib-line-2);background:rgba(10,7,12,.92)}
-.ib-nav__bar{display:flex;align-items:center;gap:clamp(16px,3vw,36px);padding:16px 0}
-.ib-nav__brand{font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--ib-ink) !important;flex:none}
+.ib-nav__progress{position:absolute;left:0;bottom:-1px;width:100%;height:2px;overflow:hidden;pointer-events:none}
+.ib-nav__progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--ib-accent),rgba(var(--ib-accent-soft),.4))}
+.ib-nav__bar{display:flex;align-items:center;gap:clamp(16px,3vw,36px);padding:16px 0;transition:padding .3s var(--ib-ease)}
+.ib-nav.is-scrolled .ib-nav__bar{padding:11px 0}
+.ib-nav__brand{display:flex;align-items:center;gap:11px;flex:none;color:var(--ib-ink) !important;text-decoration:none !important;transition:opacity .2s}
+.ib-nav__brand:hover{opacity:.8}
+.ib-nav__logo{height:34px;width:auto;display:block;border-radius:8px;transition:height .3s var(--ib-ease)}
+.ib-nav.is-scrolled .ib-nav__logo{height:27px}
+.ib-nav__brand-text{display:flex;flex-direction:column;line-height:1.2}
+.ib-nav__brand-name{font-weight:700;font-size:16px;letter-spacing:-.01em}
+.ib-nav__brand-sub{font-weight:500;font-size:11.5px;letter-spacing:.01em;color:var(--ib-ink-2)}
 .ib-nav__links{position:relative;display:flex;align-items:center;gap:clamp(14px,2vw,28px);margin-right:auto;flex-wrap:wrap}
 a.ib-nav__link{
   position:relative;font-size:14px;font-weight:550;color:var(--ib-ink-2) !important;
@@ -438,6 +447,9 @@ a.ib-nav__link.is-active{color:var(--ib-ink) !important}
   .ib-nav__indicator{display:none}
   .ib-nav__cta{display:none}
   .ib-nav__burger{display:flex}
+  .ib-nav__logo{height:28px}
+  .ib-nav.is-scrolled .ib-nav__logo{height:24px}
+  .ib-nav__brand-sub{display:none}
 }
 
 /* ─────────────────────────────────────────────────────────

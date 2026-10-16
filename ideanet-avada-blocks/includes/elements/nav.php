@@ -47,6 +47,20 @@ class Ideanet_Blocks_Nav {
 						'value'      => '#',
 					),
 					array(
+						'type'       => 'upload',
+						'heading'    => __( 'Logo (nepovinné)', 'ideanet-avada-blocks' ),
+						'description' => __( 'Zobrazí sa vľavo pred menom/značkou. Odporúčaná výška okolo 64 px (zobrazí sa zmenšené), prierozné pozadie (PNG/SVG).', 'ideanet-avada-blocks' ),
+						'param_name' => 'logo',
+						'value'      => '',
+					),
+					array(
+						'type'       => 'textfield',
+						'heading'    => __( 'Moje meno (nepovinné)', 'ideanet-avada-blocks' ),
+						'description' => __( 'Zobrazí sa pod značkou menším písmom, napr. „Peter Miškus“.', 'ideanet-avada-blocks' ),
+						'param_name' => 'name_text',
+						'value'      => 'Peter Miškus',
+					),
+					array(
 						'type'       => 'radio_button_set',
 						'heading'    => __( 'Prilepiť navrchu pri scrollovaní', 'ideanet-avada-blocks' ),
 						'param_name' => 'sticky',
@@ -100,6 +114,8 @@ class Ideanet_Blocks_Nav {
 			array(
 				'brand_text' => '',
 				'brand_link' => '#',
+				'logo'       => '',
+				'name_text'  => '',
 				'sticky'     => 'yes',
 				'cta_text'   => '',
 				'cta_link'   => '#kontakt',
@@ -115,9 +131,24 @@ class Ideanet_Blocks_Nav {
 		ob_start();
 		?>
 		<header class="ib-scope ib-nav" data-sticky="<?php echo esc_attr( $sticky ); ?>">
+			<span class="ib-nav__progress" aria-hidden="true"><i></i></span>
 			<div class="ib-wrap ib-nav__bar">
-				<?php if ( $args['brand_text'] ) : ?>
-					<a class="ib-nav__brand" href="<?php echo esc_url( $args['brand_link'] ); ?>"><?php echo esc_html( $args['brand_text'] ); ?></a>
+				<?php if ( $args['logo'] || $args['brand_text'] || $args['name_text'] ) : ?>
+					<a class="ib-nav__brand" href="<?php echo esc_url( $args['brand_link'] ); ?>">
+						<?php if ( $args['logo'] ) : ?>
+							<img class="ib-nav__logo" src="<?php echo ideanet_blocks_esc_media_url( $args['logo'] ); ?>" alt="" />
+						<?php endif; ?>
+						<?php if ( $args['brand_text'] || $args['name_text'] ) : ?>
+							<span class="ib-nav__brand-text">
+								<?php if ( $args['brand_text'] ) : ?>
+									<span class="ib-nav__brand-name"><?php echo esc_html( $args['brand_text'] ); ?></span>
+								<?php endif; ?>
+								<?php if ( $args['name_text'] ) : ?>
+									<span class="ib-nav__brand-sub"><?php echo esc_html( $args['name_text'] ); ?></span>
+								<?php endif; ?>
+							</span>
+						<?php endif; ?>
+					</a>
 				<?php endif; ?>
 
 				<?php if ( $items ) : ?>
