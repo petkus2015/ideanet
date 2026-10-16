@@ -88,8 +88,10 @@ Táto stránka bez hádania ukáže:
 Blok **IDEANET — Navigácia** je doplnková lišta priamo v obsahu
 stránky (nie hlavná hlavička webu — tú aj naďalej rieši Avada Header
 Builder). Pri scrollovaní zostáva prilepená hore, zvýrazní odkaz
-sekcie, ktorá je práve vo výreze (scrollspy), a na mobile sa zbalí do
-hamburger menu.
+sekcie, ktorá je práve vo výreze (scrollspy) pomocou jedného kĺzavého
+podčiarknutia, ktoré sa plynule presúva medzi položkami (aj pri
+prejdení myšou — dočasne „skočí” pod položku pod kurzorom a po
+odídení sa vráti k aktívnej), a na mobile sa zbalí do hamburger menu.
 
 Aby odkazy fungovali, cieľová sekcia musí mať nastavenú **rovnakú
 kotvu** v poli „Kotva pre odkazy” daného bloku. Service/Cenník/
@@ -268,6 +270,24 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
   vložiť vlastné SVG cez voľbu „Vlastné SVG“.
 
 ## Riešenie problémov
+
+**Odlesk v Hero nesleduje kurzor / náklon kariet pri prejdení myšou nefunguje.**
+Od verzie **1.5.0** má Hero svetlo, ktoré sa jemne presúva za kurzorom
+(mimo hover zostáva pôvodný statický odlesk), karty služieb/cenníka/
+referencií/portfólia majú jemný 3D náklon podľa polohy kurzora a
+hlavné tlačidlo v Hero sa jemne „priťahuje” ku kurzoru. Tieto efekty
+boli v kóde pripravené už skôr, ale neboli zapojené do CSS — navyše
+po zavedení pozadia na celú šírku (v1.3.0) sa `.ib-hero` presunulo na
+rovnaký element ako `.ib-scope`, čím sa JS inicializácia (hľadala
+`.ib-hero` len medzi potomkami) prestala spúšťať úplne. Oboje je od
+v1.5.0 opravené. Efekty bežia len na myši (nie na dotyku) a rešpektujú
+`prefers-reduced-motion`. Pri kartách, ktoré sú súčasťou "objavenia pri
+scrolli" (`.ib-reveal`), bola navyše potrebná oprava CSS špecifickosti
+— `.ib-reveal.in{transform:none}` mala rovnakú špecifickosť ako
+pôvodné pravidlo pre nadvihnutie pri hoveri a pri rovnosti vyhrávala
+podľa poradia v súbore, takže hover efekt po dokončení scroll animácie
+prestal fungovať (platí to aj spätne pre jednoduché nadvihnutie bez
+náklonu z verzie 1.2.0).
 
 **Chcem pri videu pridať aj „pre koho (firma)” a tagy, kto je na videu.**
 Od verzie **1.4.0** majú repeatery pre video (Hero realizácie,

@@ -122,6 +122,7 @@ class Ideanet_Blocks_Nav {
 
 				<?php if ( $items ) : ?>
 					<nav class="ib-nav__links" aria-label="<?php esc_attr_e( 'Hlavná navigácia', 'ideanet-avada-blocks' ); ?>">
+						<span class="ib-nav__indicator" aria-hidden="true"></span>
 						<?php foreach ( $items as $item ) : ?>
 							<?php if ( ! empty( $item['label'] ) ) : ?>
 								<a href="<?php echo esc_url( $item['link'] ?? '#' ); ?>" class="ib-nav__link"><?php echo esc_html( $item['label'] ); ?></a>

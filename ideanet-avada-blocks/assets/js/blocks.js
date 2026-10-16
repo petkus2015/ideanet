@@ -350,6 +350,27 @@
       addEventListener('scroll', onScroll, { passive: true });
     }
 
+    /* kĺzavý indikátor — sleduje aktívnu položku (scrollspy nižšie) a
+       dočasne sa posunie pod tú, nad ktorou je kurzor. */
+    const wrap = $('.ib-nav__links', nav);
+    const indicator = $('.ib-nav__indicator', nav);
+    let activeLink = null;
+
+    const moveIndicator = (link) => {
+      if (!indicator || !wrap || !link) return;
+      const wrapRect = wrap.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      indicator.style.left = (linkRect.left - wrapRect.left) + 'px';
+      indicator.style.width = linkRect.width + 'px';
+      indicator.classList.add('is-visible');
+    };
+
+    if (indicator && wrap) {
+      links.forEach((a) => a.addEventListener('mouseenter', () => moveIndicator(a)));
+      wrap.addEventListener('mouseleave', () => moveIndicator(activeLink));
+      addEventListener('resize', () => moveIndicator(activeLink));
+    }
+
     /* scrollspy — zvýrazní odkaz sekcie, ktorá je práve vo výreze */
     const targets = links
       .map((a) => {
@@ -361,7 +382,12 @@
     if (!targets.length || !('IntersectionObserver' in window)) return;
 
     const setActive = (el) => {
-      targets.forEach(({ link, el: e2 }) => link.classList.toggle('is-active', e2 === el));
+      targets.forEach(({ link, el: e2 }) => {
+        const isActive = e2 === el;
+        link.classList.toggle('is-active', isActive);
+        if (isActive) activeLink = link;
+      });
+      moveIndicator(activeLink);
     };
     const io = new IntersectionObserver(
       (entries) => {
@@ -374,13 +400,46 @@
   }
 
   /* ─────────────────────────────────────────────────────────
+     6) JEMNÝ NÁKLON POD KURZOROM — karty, cenník, referencie,
+        dlaždice portfólia. Len na jemných ukazovateľoch (myš),
+        nič sa nedeje na dotykových zariadeniach ani pri
+        prefers-reduced-motion.
+  ───────────────────────────────────────────────────────── */
+  function initTilt(el, max = 6) {
+    if (REDUCED || !FINE.matches) return;
+    let raf = 0;
+    el.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        el.style.setProperty('--rx', (px * max * 2).toFixed(2) + 'deg');
+        el.style.setProperty('--ry', (-py * max * 2).toFixed(2) + 'deg');
+      });
+    });
+    el.addEventListener('pointerleave', () => {
+      el.style.setProperty('--rx', '0deg');
+      el.style.setProperty('--ry', '0deg');
+    });
+  }
+
+  /* ─────────────────────────────────────────────────────────
      INICIALIZÁCIA
   ───────────────────────────────────────────────────────── */
   function boot() {
     $$('.ib-nav').forEach(initNav);
+    /* .ib-hero je od verzie 1.3.0 na tom istom elemente ako .ib-scope
+       (kvôli pozadiu na celú šírku) — querySelectorAll('.ib-hero', scope)
+       by ho preto nenašlo (hľadá len potomkov, nie seba samého), rovnako
+       ako pri .ib-nav vyššie; preto sa inicializuje samostatne, globálne. */
+    $$('.ib-hero').forEach(initHeroFx);
     $$('.ib-scope').forEach((scope) => {
       $$('.ib-carousel', scope).forEach(initCarousel);
-      $$('.ib-hero', scope).forEach(initHeroFx);
+      $$('.ib-card, .ib-price, .ib-quote', scope).forEach((el) => initTilt(el, 5));
+      $$('.ib-slide', scope).forEach((el) => initTilt(el, 4));
       initReveal(scope);
       initContact(scope);
     });

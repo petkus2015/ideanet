@@ -80,9 +80,12 @@ p.ib-sub{font-size:clamp(15px,1.1vw,17px);color:var(--ib-ink-2) !important;max-w
   background:var(--bg) !important;color:var(--fg) !important;
   font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif !important;
   font-size:15px !important;font-weight:550 !important;text-decoration:none !important;cursor:pointer;
+  /* --tx/--ty: jemný "magnetický" posun smerom ku kurzoru (nastavuje JS
+     pri pointermove, len na jemných ukazovateľoch) — v pokoji sú 0px. */
+  transform:translate(var(--tx,0px),var(--ty,0px));
   transition:transform .2s var(--ib-ease),box-shadow .25s var(--ib-ease);
 }
-.ib-btn:hover{transform:translateY(-2px);box-shadow:var(--ib-sh-2)}
+.ib-btn:hover{transform:translate(var(--tx,0px),var(--ty,0px)) translateY(-2px);box-shadow:var(--ib-sh-2)}
 .ib-btn--ghost{--bg:transparent;--fg:var(--ib-ink);--bd:var(--ib-line)}
 .ib-btn--ghost:hover{--bg:var(--ib-paper)}
 .ib-btn--full{width:100%}
@@ -108,10 +111,16 @@ p.ib-sub{font-size:clamp(15px,1.1vw,17px);color:var(--ib-ink-2) !important;max-w
 .ib-hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
   background:
+    /* svetlo pod kurzorom — JS nastavuje --mx/--my pri pohybe myši nad
+       hero (len jemné ukazovatele, pozri initHeroFx); mimo hover je
+       --ib-glow-o 0, takže sa nič nezobrazí. Poloha sa aktualizuje
+       priebežne, takže svetlo sa plynule hýbe spolu s kurzorom. */
+    radial-gradient(560px 560px at var(--mx,50%) var(--my,20%), rgba(var(--ib-accent-soft),var(--ib-glow-o,0)), transparent 70%),
     radial-gradient(clamp(480px,90vw,1200px) clamp(280px,52vw,680px) at 50% -16%, rgba(var(--ib-accent-soft),.26), transparent 68%),
     radial-gradient(clamp(360px,68vw,900px) clamp(240px,48vw,640px) at 100% 38%, rgba(var(--ib-accent-soft),.20), transparent 70%),
     radial-gradient(clamp(340px,62vw,820px) clamp(220px,46vw,600px) at 0% 96%, rgba(var(--ib-accent-soft),.16), transparent 68%);
 }
+.ib-hero.is-live::before{ --ib-glow-o:.38; }
 /* Obsah musí sedieť nad odleskom bez ohľadu na poradie v zdroji —
    .ib-hero::before je position:absolute so z-index:0, čo by inak (podľa
    CSS pravidiel vykresľovania stacking kontextu) maľovalo NAD statickým
@@ -134,8 +143,15 @@ p.ib-hero__lead{font-size:clamp(16px,1.3vw,18.5px);color:var(--ib-ink-2) !import
   display:flex;flex-direction:column;padding:clamp(24px,2.2vw,32px);
   background:var(--ib-paper);border:1px solid var(--ib-line-2);border-radius:var(--ib-r-xl);
   box-shadow:var(--ib-sh-1);transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease);
+  /* --rx/--ry: jemný náklon podľa polohy kurzora nad kartou (JS,
+     initTilt) — v pokoji/na mobile sú 0deg, teda bez efektu. */
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg));
+  transform-style:preserve-3d;
 }
-.ib-card:hover{transform:translateY(-4px);box-shadow:var(--ib-sh-2);border-color:var(--ib-line)}
+.ib-card.ib-card:hover{
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-4px);
+  box-shadow:var(--ib-sh-2);border-color:var(--ib-line);
+}
 .ib-card__ico{
   display:grid;place-items:center;width:46px;height:46px;margin-bottom:20px;
   border-radius:14px;background:rgba(var(--ib-accent-soft),.12);color:var(--ib-accent-2) !important;
@@ -185,8 +201,12 @@ button.ib-arrow{
   position:relative;border-radius:var(--ib-r-lg);overflow:hidden;background:#101314;
   border:1px solid var(--ib-line-2);aspect-ratio:var(--ratio,9/16);box-shadow:var(--ib-sh-1);
   transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease);
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg));
 }
-.ib-slide:hover .ib-tile{transform:translateY(-5px);box-shadow:var(--ib-sh-2)}
+.ib-slide:hover .ib-tile{
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-5px);
+  box-shadow:var(--ib-sh-2);
+}
 .ib-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ib-tile__shade{
   position:absolute;inset:0;pointer-events:none;
@@ -246,8 +266,12 @@ button.ib-arrow{
   position:relative;display:flex;flex-direction:column;padding:clamp(24px,2.2vw,34px);
   background:var(--ib-paper);border:1px solid var(--ib-line-2);border-radius:var(--ib-r-xl);box-shadow:var(--ib-sh-1);
   transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease),border-color .3s var(--ib-ease);
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg));
 }
-.ib-price:hover{transform:translateY(-4px);box-shadow:var(--ib-sh-2);border-color:var(--ib-accent)}
+.ib-price.ib-price:hover{
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-4px);
+  box-shadow:var(--ib-sh-2);border-color:var(--ib-accent);
+}
 .ib-price--hot{border-color:var(--ib-accent);box-shadow:var(--ib-sh-2)}
 .ib-price__flag{
   position:absolute;top:-13px;left:clamp(24px,2.2vw,34px);padding:6px 13px;border-radius:999px;
@@ -286,8 +310,12 @@ p.ib-price__desc{font-size:14.5px;color:var(--ib-ink-2) !important}
 .ib-quote{
   margin:0;padding:clamp(22px,2vw,30px);border-radius:var(--ib-r-xl);background:var(--ib-paper);
   border:1px solid var(--ib-line-2);transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease),border-color .3s var(--ib-ease);
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg));
 }
-.ib-quote:hover{transform:translateY(-4px);box-shadow:var(--ib-sh-2);border-color:var(--ib-line)}
+.ib-quote.ib-quote:hover{
+  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-4px);
+  box-shadow:var(--ib-sh-2);border-color:var(--ib-line);
+}
 .ib-quote blockquote{margin:0;font-size:16px;line-height:1.6}
 .ib-quote figcaption{display:flex;flex-direction:column;gap:2px;margin-top:18px;padding-top:16px;border-top:1px solid var(--ib-line-2);font-size:13.5px}
 .ib-quote figcaption span{color:var(--ib-ink-3) !important}
@@ -368,18 +396,23 @@ p.ib-form__status{margin-top:11px;font-size:13.5px;color:var(--ib-accent-2) !imp
 .ib-nav.is-scrolled{border-bottom-color:var(--ib-line-2);background:rgba(10,7,12,.92)}
 .ib-nav__bar{display:flex;align-items:center;gap:clamp(16px,3vw,36px);padding:16px 0}
 .ib-nav__brand{font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--ib-ink) !important;flex:none}
-.ib-nav__links{display:flex;align-items:center;gap:clamp(14px,2vw,28px);margin-right:auto;flex-wrap:wrap}
+.ib-nav__links{position:relative;display:flex;align-items:center;gap:clamp(14px,2vw,28px);margin-right:auto;flex-wrap:wrap}
 a.ib-nav__link{
   position:relative;font-size:14px;font-weight:550;color:var(--ib-ink-2) !important;
   padding:4px 0;transition:color .2s;
 }
-a.ib-nav__link::after{
-  content:'';position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--ib-accent);
-  transition:right .25s var(--ib-ease);border-radius:2px;
-}
 a.ib-nav__link:hover{color:var(--ib-ink) !important}
-a.ib-nav__link:hover::after,a.ib-nav__link.is-active::after{right:0}
 a.ib-nav__link.is-active{color:var(--ib-ink) !important}
+/* Spoločný "kĺzavý" indikátor — JS (initNav) ho priebežne polohuje pod
+   aktívnu položku (scrollspy) a pri prejdení myšou dočasne pod tú,
+   nad ktorou je kurzor; miesto toho, aby mala každá položka vlastné
+   podčiarknutie, jeden pásik plynule "cestuje" medzi nimi. */
+.ib-nav__indicator{
+  position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--ib-accent);
+  border-radius:2px;opacity:0;pointer-events:none;
+  transition:left .3s var(--ib-ease),width .3s var(--ib-ease),opacity .2s;
+}
+.ib-nav__indicator.is-visible{opacity:1}
 .ib-nav__actions{display:flex;align-items:center;gap:14px;flex:none;margin-left:auto}
 .ib-btn.ib-nav__cta{padding:10px 20px !important;font-size:13.5px !important}
 .ib-nav__burger{
@@ -399,6 +432,7 @@ a.ib-nav__link.is-active{color:var(--ib-ink) !important}
   }
   .ib-nav.is-open .ib-nav__links{opacity:1;visibility:visible;transform:none}
   a.ib-nav__link{width:100%;padding:11px 0}
+  .ib-nav__indicator{display:none}
   .ib-nav__cta{display:none}
   .ib-nav__burger{display:flex}
 }
