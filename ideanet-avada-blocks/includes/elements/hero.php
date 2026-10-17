@@ -83,6 +83,25 @@ class Ideanet_Blocks_Hero {
 						'value'      => 'Termíny dodania platia podľa dohody a rozsahu prác.',
 					),
 					array(
+						'type'        => 'upload',
+						'heading'     => __( 'Moja fotka (nepovinné)', 'ideanet-avada-blocks' ),
+						'description' => __( 'Zobrazí sa ako malý okrúhly portrét s menom v hornej časti Hero. Odporúčaný štvorcový výrez, aspoň 200×200 px.', 'ideanet-avada-blocks' ),
+						'param_name'  => 'photo',
+						'value'       => '',
+					),
+					array(
+						'type'       => 'textfield',
+						'heading'    => __( 'Meno pri fotke', 'ideanet-avada-blocks' ),
+						'param_name' => 'photo_name',
+						'value'      => 'Peter Miškus',
+					),
+					array(
+						'type'       => 'textfield',
+						'heading'    => __( 'Popis pod menom', 'ideanet-avada-blocks' ),
+						'param_name' => 'photo_role',
+						'value'      => 'Videotvorca & content creator',
+					),
+					array(
 						'type'       => 'textfield',
 						'heading'    => __( 'Štítok nad karuselom', 'ideanet-avada-blocks' ),
 						'param_name' => 'reel_heading',
@@ -205,6 +224,9 @@ class Ideanet_Blocks_Hero {
 				'cta2_text'        => '',
 				'cta2_link'        => '#praca',
 				'note'             => '',
+				'photo'            => '',
+				'photo_name'       => '',
+				'photo_role'       => '',
 				'reel_heading'     => '',
 				'cards_desktop'    => '3',
 				'cards_mobile'     => '1.5',
@@ -239,6 +261,20 @@ class Ideanet_Blocks_Hero {
 
 						<?php if ( $args['lead'] ) : ?>
 							<p class="ib-hero__lead ib-reveal"><?php echo wp_kses_post( $args['lead'] ); ?></p>
+						<?php endif; ?>
+
+						<?php if ( $args['photo'] || $args['photo_name'] ) : ?>
+							<div class="ib-hero__person ib-reveal">
+								<?php if ( $args['photo'] ) : ?>
+									<img class="ib-hero__person-photo" src="<?php echo ideanet_blocks_esc_media_url( $args['photo'] ); ?>" alt="<?php echo esc_attr( $args['photo_name'] ); ?>" loading="lazy" decoding="async">
+								<?php endif; ?>
+								<?php if ( $args['photo_name'] || $args['photo_role'] ) : ?>
+									<span class="ib-hero__person-text">
+										<?php if ( $args['photo_name'] ) : ?><strong><?php echo esc_html( $args['photo_name'] ); ?></strong><?php endif; ?>
+										<?php if ( $args['photo_role'] ) : ?><span><?php echo esc_html( $args['photo_role'] ); ?></span><?php endif; ?>
+									</span>
+								<?php endif; ?>
+							</div>
 						<?php endif; ?>
 
 						<div class="ib-hero__cta ib-reveal">

@@ -290,6 +290,17 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
+**Chcem v Hero aj svoju fotku.**
+Od verzie **1.9.0** má blok Hero tri nové nepovinné polia: **„Moja
+fotka“** (nahrajte obrázok — odporúčaný štvorcový výrez, aspoň
+200×200 px), **„Meno pri fotke“** (predvolene „Peter Miškus“) a
+**„Popis pod menom“** (predvolene „Videotvorca & content creator“).
+Ak je fotka alebo meno vyplnené, zobrazí sa malý okrúhly portrét s
+menom a popisom medzi úvodným textom a hlavnými tlačidlami — funguje
+ako osobný „podpis“ hneď vedľa výzvy na akciu. Vyplniť stačí čo
+potrebujete — samotná fotka, samotné meno, alebo oboje; bez nich sa
+nič nezobrazí.
+
 **Chcem pri kliknutí vlnový efekt ako má Claude.**
 Od verzie **1.6.0** pri kliknutí (alebo ťuknutí na mobile) na tlačidlo,
 kartu služby/cenníka/referencie, dlaždicu v portfóliovom karuseli alebo
