@@ -75,6 +75,7 @@ Táto stránka bez hádania ukáže:
 |---|---|---|
 | IDEANET — Navigácia | `[ideanet_nav]` | Sticky in-page menu s odkazmi na sekcie stránky, logom/menom a voliteľným tlačidlom — nie je to hlavná hlavička webu (tú rieši Avada Header Builder), pozri nižšie |
 | IDEANET — Hero | `[ideanet_hero]` | Úvodná sekcia s nadpisom, dvoma tlačidlami a karuselom posledných realizácií |
+| IDEANET — O mne | `[ideanet_about]` | Väčšia osobná fotka (vľavo/vpravo) + krátky príbeh, zvýraznené body a tlačidlo |
 | IDEANET — Služby | `[ideanet_services]` | Tri (aj viac) karty disciplín s ikonou, popisom a zoznamom bodov |
 | IDEANET — Portfólio karusel | `[ideanet_carousel]` | Znovupoužiteľný karusel ukážok — vložte ho trikrát (video, grafika, sociálne siete), zakaždým s inými nastaveniami |
 | IDEANET — Proces | `[ideanet_process]` | Očíslované kroky spolupráce |
@@ -82,6 +83,19 @@ Táto stránka bez hádania ukáže:
 | IDEANET — Školenia pre firmy | `[ideanet_training]` | Sekcia „pre koho / čo si odnesú” + karta formátov a cien |
 | IDEANET — Referencie | `[ideanet_testimonials]` | Citáty klientov |
 | IDEANET — Kontakt | `[ideanet_contact]` | Kontaktné údaje, box dostupnosti a formulár (odosielanie cez `mailto:`) |
+
+### O mne — osobná fotka a krátky príbeh
+
+Blok **IDEANET — O mne** je samostatná sekcia (odporúčame vložiť ju
+hneď za Hero) s dvojstĺpcovým layoutom: na jednej strane väčšia
+portrétová fotka (pomer 4:5, jemný zaoblený rám a mäkký farebný
+odlesk za ňou), na druhej kicker, nadpis, krátky príbeh, zoznam
+zvýraznených bodov (napr. roky skúseností, počet projektov) a
+voliteľné tlačidlo. Pole **„Strana fotky (desktop)”** určuje, či je
+fotka vpravo (predvolené) alebo vľavo — na mobile sa vždy zobrazí
+hore, nad textom. Fotka reaguje na pohyb kurzora jemným 3D náklonom,
+rovnako ako karty služieb a cenníka. Ak pole „Fotka” necháte prázdne,
+zobrazí sa len text bez prázdneho miesta po fotke.
 
 ### Navigácia — sticky in-page menu
 
@@ -291,15 +305,9 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 ## Riešenie problémov
 
 **Chcem v Hero aj svoju fotku.**
-Od verzie **1.9.0** má blok Hero tri nové nepovinné polia: **„Moja
-fotka“** (nahrajte obrázok — odporúčaný štvorcový výrez, aspoň
-200×200 px), **„Meno pri fotke“** (predvolene „Peter Miškus“) a
-**„Popis pod menom“** (predvolene „Videotvorca & content creator“).
-Ak je fotka alebo meno vyplnené, zobrazí sa malý okrúhly portrét s
-menom a popisom medzi úvodným textom a hlavnými tlačidlami — funguje
-ako osobný „podpis“ hneď vedľa výzvy na akciu. Vyplniť stačí čo
-potrebujete — samotná fotka, samotné meno, alebo oboje; bez nich sa
-nič nezobrazí.
+Vo verzii **1.9.0** mal blok Hero malý okrúhly portrét priamo v
+úvodnom texte. Od verzie **2.0.0** je namiesto toho samostatný blok
+**IDEANET — O mne** s podstatne väčšou fotkou — pozri nižšie.
 
 **Chcem pri kliknutí vlnový efekt ako má Claude.**
 Od verzie **1.6.0** pri kliknutí (alebo ťuknutí na mobile) na tlačidlo,

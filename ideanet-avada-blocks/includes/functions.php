@@ -22,6 +22,7 @@ function ideanet_blocks_element_map() {
 	return array(
 		'nav'          => 'ideanet_nav',
 		'hero'         => 'ideanet_hero',
+		'about'        => 'ideanet_about',
 		'services'     => 'ideanet_services',
 		'carousel'     => 'ideanet_carousel',
 		'process'      => 'ideanet_process',
