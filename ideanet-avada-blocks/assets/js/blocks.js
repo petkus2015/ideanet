@@ -17,6 +17,14 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[c]));
 
+  /* rovnaký vizuálny štýl ako ideanet_blocks_role_icon_svg() v helpers.php —
+     udržiavať synchronizované, ak sa menia ikony rolí. */
+  const ROLE_META = {
+    natacal: { label: 'Natáčal', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="13" height="12" rx="2.5"/><path d="M15 10.5l6-3.5v10l-6-3.5z"/></svg>' },
+    strihal: { label: 'Strihal', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 7.5L20 18M20 6L8.5 16.5"/></svg>' },
+    scenar: { label: 'Scenár', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 13h6M9 17h4"/></svg>' },
+  };
+
   /* ─────────────────────────────────────────────────────────
      1) SPOLOČNÝ LIGHTBOX
      Vytvorí sa raz, lenivo, pri prvom použití — funguje pre
@@ -71,10 +79,12 @@
     const stage = $('.ib-lightbox__stage', lb);
     const isVideo = it.mode === 'video' && it.video;
     const tagList = (it.tags || '').split(';').map((t) => t.trim()).filter(Boolean);
+    const roleList = (it.roles || '').split(';').map((r) => r.trim()).filter((r) => ROLE_META[r]);
     const caption = `
       <figcaption class="ib-lightbox__cap">
         <b>${escHtml(it.title)}</b>${it.client ? `<span class="ib-lightbox__client">${escHtml(it.client)}</span>` : ''}
         ${escHtml(it.desc)}
+        ${roleList.length ? `<span class="ib-lightbox__roles">${roleList.map((r) => `<span class="ib-role-chip">${ROLE_META[r].svg}${escHtml(ROLE_META[r].label)}</span>`).join('')}</span>` : ''}
         ${tagList.length ? `<span class="ib-lightbox__tags">${tagList.map((t) => `<span class="ib-tag">${escHtml(t)}</span>`).join('')}</span>` : ''}
       </figcaption>`;
     stage.innerHTML = isVideo
@@ -127,6 +137,7 @@
       video: slide.dataset.video || '',
       client: slide.dataset.client || '',
       tags: slide.dataset.tags || '',
+      roles: slide.dataset.roles || '',
     }));
 
     rail.addEventListener('click', (e) => {

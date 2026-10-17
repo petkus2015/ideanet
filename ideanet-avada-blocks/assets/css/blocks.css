@@ -225,6 +225,15 @@ button.ib-arrow{
   background:rgba(16,11,18,.62);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(8px);
   font-size:11px;font-weight:550;color:#f3ecf2 !important;font-variant-numeric:tabular-nums;
 }
+/* Malé ikonky rolí (natáčal/strihal/scenár) — len tie, ktoré sú pri
+   danej realizácii nastavené na „Áno“; bez nich sa riadok nevykreslí. */
+.ib-tile__roles{position:absolute;bottom:10px;left:10px;display:flex;gap:6px}
+.ib-role-badge{
+  display:grid;place-items:center;width:25px;height:25px;border-radius:50%;
+  background:rgba(16,11,18,.62);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(8px);
+  color:#f3ecf2;
+}
+.ib-role-badge svg{width:12.5px;height:12.5px}
 .ib-tile__play{
   position:absolute;inset:0;width:100%;height:100%;padding:0;margin:0;border:0;background:transparent;
   cursor:pointer;display:grid;place-items:center;
@@ -375,6 +384,12 @@ p.ib-form__status{margin-top:11px;font-size:13.5px;color:var(--ib-accent-2) !imp
   display:inline-block;padding:4px 11px;border-radius:999px;font-size:11.5px;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.86) !important;
 }
+.ib-lightbox__roles{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.ib-lightbox__roles .ib-role-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;border-radius:999px;font-size:11.5px;
+  background:rgba(var(--ib-accent-soft),.16);border:1px solid rgba(var(--ib-accent-soft),.32);color:#fff !important;
+}
+.ib-lightbox__roles .ib-role-chip svg{width:12px;height:12px;flex:none}
 .ib-lightbox__close.ib-lightbox__close,.ib-lightbox__nav.ib-lightbox__nav{
   display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.22);
   border-radius:50%;background:rgba(255,255,255,.08);color:#fff !important;cursor:pointer;transition:background .2s,transform .2s;

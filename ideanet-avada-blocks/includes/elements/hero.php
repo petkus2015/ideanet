@@ -154,6 +154,36 @@ class Ideanet_Blocks_Hero {
 								'param_name' => 'tags',
 								'value'      => '',
 							),
+							array(
+								'type'       => 'radio_button_set',
+								'heading'    => __( 'Natáčal', 'ideanet-avada-blocks' ),
+								'param_name' => 'natacal',
+								'value'      => array(
+									'yes' => __( 'Áno', 'ideanet-avada-blocks' ),
+									'no'  => __( 'Nie', 'ideanet-avada-blocks' ),
+								),
+								'default'    => 'no',
+							),
+							array(
+								'type'       => 'radio_button_set',
+								'heading'    => __( 'Strihal', 'ideanet-avada-blocks' ),
+								'param_name' => 'strihal',
+								'value'      => array(
+									'yes' => __( 'Áno', 'ideanet-avada-blocks' ),
+									'no'  => __( 'Nie', 'ideanet-avada-blocks' ),
+								),
+								'default'    => 'no',
+							),
+							array(
+								'type'       => 'radio_button_set',
+								'heading'    => __( 'Písal scenár', 'ideanet-avada-blocks' ),
+								'param_name' => 'scenar',
+								'value'      => array(
+									'yes' => __( 'Áno', 'ideanet-avada-blocks' ),
+									'no'  => __( 'Nie', 'ideanet-avada-blocks' ),
+								),
+								'default'    => 'no',
+							),
 						),
 					),
 				),
@@ -244,6 +274,9 @@ class Ideanet_Blocks_Hero {
 												'video'    => $slide['video'] ?? '',
 												'client'   => $slide['client'] ?? '',
 												'tags'     => $slide['tags'] ?? '',
+												'natacal'  => $slide['natacal'] ?? 'no',
+												'strihal'  => $slide['strihal'] ?? 'no',
+												'scenar'   => $slide['scenar'] ?? 'no',
 											)
 										); // Escapované vnútri ideanet_blocks_render_tile().
 									}

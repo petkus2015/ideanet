@@ -330,6 +330,18 @@ lightboxe) a **„Tagy — kto je na videu”** (oddeľte bodkočiarkou `;`,
 zobrazia sa ako štítky v lightboxe). Portfólio „Grafický dizajn” tieto
 polia nemá — nejde o video.
 
+**Chcem pri videu označiť, či som natáčal, strihal alebo písal scenár.**
+Od verzie **1.8.0** majú tie isté repeatery (Hero realizácie, Portfólio
+„Videografia” aj „Sociálne siete”) tri nové prepínače Áno/Nie:
+**„Natáčal”**, **„Strihal”** a **„Písal scenár”** — zaškrtnite len tie,
+ktoré pri danej realizácii sedia (môžete mať napr. len „Strihal”, ak
+ste dostali hotové zábery od klienta). Pri každom sa automaticky
+zobrazí malá ikonka — kamera / nožnice / dokument — ako odznak v ľavom
+dolnom rohu dlaždice v mriežke a ako štítok s popiskom v lightboxe po
+kliknutí. Ak nie je zaškrtnuté nič, žiadne ikonky sa nezobrazia. V
+**Nástroje → IDEANET obsah** sú tie isté tri polia dostupné ako
+zaškrtávacie políčka.
+
 **Dlaždice videa v mriežke už neprehrávajú tichý náhľad pri prejdení myšou.**
 Od verzie **1.4.0** dlaždica (aj pri videu, aj keď je zdrojové video
 na šírku) vždy zobrazuje len statický náhľadový obrázok — video sa

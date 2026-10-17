@@ -122,12 +122,12 @@ function ideanet_blocks_placeholder_image( $seed = '', $ratio = '9/16' ) {
  */
 function ideanet_blocks_default_video_items() {
 	$rows = array(
-		array( 'category' => 'Gastro', 'title' => 'Ranná káva', 'description' => 'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', 'meta' => '0:18', 'client' => 'Kaviareň Zrno', 'tags' => 'majiteľka; barista' ),
-		array( 'category' => 'Fitness', 'title' => 'Séria pre klub', 'description' => 'Dvanásť tréningových videí natočených počas jedného popoludnia.', 'meta' => '0:22', 'client' => 'Fit klub Nord', 'tags' => 'tréner; členovia klubu' ),
-		array( 'category' => 'Produkt', 'title' => 'Detail chuti', 'description' => 'Makro produktové zábery pre e-shop s pralinkami.', 'meta' => '0:15', 'client' => 'Pralinky Vera', 'tags' => 'produkt' ),
-		array( 'category' => 'Reality', 'title' => 'Prehliadka bytu', 'description' => 'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.', 'meta' => '0:29', 'client' => 'Reality Nord', 'tags' => 'maklér' ),
-		array( 'category' => 'Event', 'title' => 'Aftermovie', 'description' => 'Zostrih z firemnej konferencie dodaný do 24 hodín.', 'meta' => '0:34', 'client' => 'Konferencia Rast', 'tags' => 'rečníci; účastníci' ),
-		array( 'category' => 'Fashion', 'title' => 'Lookbook jeseň', 'description' => 'Vertikálny lookbook pre lokálnu módnu značku.', 'meta' => '0:20', 'client' => 'Štúdio Lumen', 'tags' => 'modelka; stylistka' ),
+		array( 'category' => 'Gastro', 'title' => 'Ranná káva', 'description' => 'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', 'meta' => '0:18', 'client' => 'Kaviareň Zrno', 'tags' => 'majiteľka; barista', 'natacal' => 'yes', 'strihal' => 'yes', 'scenar' => 'yes' ),
+		array( 'category' => 'Fitness', 'title' => 'Séria pre klub', 'description' => 'Dvanásť tréningových videí natočených počas jedného popoludnia.', 'meta' => '0:22', 'client' => 'Fit klub Nord', 'tags' => 'tréner; členovia klubu', 'natacal' => 'yes', 'strihal' => 'yes', 'scenar' => 'no' ),
+		array( 'category' => 'Produkt', 'title' => 'Detail chuti', 'description' => 'Makro produktové zábery pre e-shop s pralinkami.', 'meta' => '0:15', 'client' => 'Pralinky Vera', 'tags' => 'produkt', 'natacal' => 'no', 'strihal' => 'yes', 'scenar' => 'no' ),
+		array( 'category' => 'Reality', 'title' => 'Prehliadka bytu', 'description' => 'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.', 'meta' => '0:29', 'client' => 'Reality Nord', 'tags' => 'maklér', 'natacal' => 'yes', 'strihal' => 'yes', 'scenar' => 'no' ),
+		array( 'category' => 'Event', 'title' => 'Aftermovie', 'description' => 'Zostrih z firemnej konferencie dodaný do 24 hodín.', 'meta' => '0:34', 'client' => 'Konferencia Rast', 'tags' => 'rečníci; účastníci', 'natacal' => 'yes', 'strihal' => 'yes', 'scenar' => 'yes' ),
+		array( 'category' => 'Fashion', 'title' => 'Lookbook jeseň', 'description' => 'Vertikálny lookbook pre lokálnu módnu značku.', 'meta' => '0:20', 'client' => 'Štúdio Lumen', 'tags' => 'modelka; stylistka', 'natacal' => 'no', 'strihal' => 'no', 'scenar' => 'yes' ),
 	);
 	foreach ( $rows as &$row ) {
 		$row['poster'] = ideanet_blocks_placeholder_image( $row['title'], '9/16' );
@@ -334,6 +334,53 @@ function ideanet_blocks_icon_set() {
 }
 
 /**
+ * Štítky rolí pri konkrétnej realizácii (čo z toho ste robili vy) —
+ * zobrazujú sa ako malé ikonky na dlaždici aj v lightboxe. Nezávisí
+ * od toho, či je nahraté reálne video — platí len pre režim „video“.
+ *
+ * @return array<string, string> Kľúč role => popisok.
+ */
+function ideanet_blocks_role_labels() {
+	return array(
+		'natacal' => __( 'Natáčal', 'ideanet-avada-blocks' ),
+		'strihal' => __( 'Strihal', 'ideanet-avada-blocks' ),
+		'scenar'  => __( 'Scenár', 'ideanet-avada-blocks' ),
+	);
+}
+
+/**
+ * SVG ikona pre danú rolu (rovnaký vizuálny štýl ako ideanet_blocks_icon_set()).
+ *
+ * @param string $key 'natacal' | 'strihal' | 'scenar'.
+ * @return string SVG markup, alebo prázdny reťazec pri neznámom kľúči.
+ */
+function ideanet_blocks_role_icon_svg( $key ) {
+	$icons = array(
+		'natacal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="13" height="12" rx="2.5"/><path d="M15 10.5l6-3.5v10l-6-3.5z"/></svg>',
+		'strihal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 7.5L20 18M20 6L8.5 16.5"/></svg>',
+		'scenar'  => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 13h6M9 17h4"/></svg>',
+	);
+	return $icons[ $key ] ?? '';
+}
+
+/**
+ * Z položky repeatera (mode = video) vyberie zoznam kľúčov rolí
+ * nastavených na „yes“, v pevnom poradí natacal → strihal → scenar.
+ *
+ * @param array $item Položka s kľúčmi 'natacal'/'strihal'/'scenar' ('yes'/'no').
+ * @return array<int, string>
+ */
+function ideanet_blocks_active_roles( $item ) {
+	$active = array();
+	foreach ( array_keys( ideanet_blocks_role_labels() ) as $key ) {
+		if ( 'yes' === ( $item[ $key ] ?? 'no' ) ) {
+			$active[] = $key;
+		}
+	}
+	return $active;
+}
+
+/**
  * Vráti pole možností ikon pre 'select' parameter builderu (kľúč => popisok).
  *
  * @return array<string, string>
@@ -471,6 +518,9 @@ function ideanet_blocks_esc_media_url( $url ) {
  *     @type string $video    URL video súboru (len mode = video).
  *     @type string $client   Pre koho / firma (len mode = video, nepovinné).
  *     @type string $tags     Tagy — kto je na videu, oddelené ; (len mode = video, nepovinné).
+ *     @type string $natacal  'yes'/'no' — natáčal (len mode = video, nepovinné).
+ *     @type string $strihal  'yes'/'no' — strihal (len mode = video, nepovinné).
+ *     @type string $scenar   'yes'/'no' — písal scenár (len mode = video, nepovinné).
  * }
  * @return string HTML.
  */
@@ -484,6 +534,8 @@ function ideanet_blocks_render_tile( $item ) {
 	$video  = $item['video'] ?? '';
 	$client = 'video' === $mode ? ( $item['client'] ?? '' ) : '';
 	$tags   = 'video' === $mode ? ( $item['tags'] ?? '' ) : '';
+	$roles  = 'video' === $mode ? ideanet_blocks_active_roles( $item ) : array();
+	$labels = ideanet_blocks_role_labels();
 
 	ob_start();
 	?>
@@ -495,6 +547,7 @@ function ideanet_blocks_render_tile( $item ) {
 			data-video="<?php echo esc_url( $video ); ?>"
 			data-client="<?php echo esc_attr( $client ); ?>"
 			data-tags="<?php echo esc_attr( $tags ); ?>"
+			data-roles="<?php echo esc_attr( implode( ';', $roles ) ); ?>"
 		<?php endif; ?>
 		role="option" aria-label="<?php echo esc_attr( $title ); ?>">
 		<div class="ib-tile" data-mode="<?php echo esc_attr( $mode ); ?>">
@@ -504,6 +557,13 @@ function ideanet_blocks_render_tile( $item ) {
 			<span class="ib-tile__shade"></span>
 			<?php if ( $cat ) : ?><span class="ib-tile__cat"><?php echo esc_html( $cat ); ?></span><?php endif; ?>
 			<?php if ( $meta ) : ?><span class="ib-tile__meta"><?php echo esc_html( $meta ); ?></span><?php endif; ?>
+			<?php if ( $roles ) : ?>
+				<span class="ib-tile__roles">
+					<?php foreach ( $roles as $key ) : ?>
+						<span class="ib-role-badge" title="<?php echo esc_attr( $labels[ $key ] ); ?>"><?php echo ideanet_blocks_role_icon_svg( $key ); ?></span>
+					<?php endforeach; ?>
+				</span>
+			<?php endif; ?>
 			<button class="ib-tile__play" data-act="<?php echo 'video' === $mode ? 'play' : 'open'; ?>"
 				aria-label="<?php echo esc_attr( ( 'video' === $mode ? __( 'Prehrať ukážku', 'ideanet-avada-blocks' ) : __( 'Zobraziť', 'ideanet-avada-blocks' ) ) . ' ' . $title ); ?>"></button>
 		</div>

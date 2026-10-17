@@ -50,6 +50,9 @@ function ideanet_blocks_content_sections() {
 				array( 'key' => 'video', 'label' => __( 'Video (MP4)', 'ideanet-avada-blocks' ), 'type' => 'video' ),
 				array( 'key' => 'client', 'label' => __( 'Pre koho (firma)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 				array( 'key' => 'tags', 'label' => __( 'Tagy — kto je na videu (oddeľte ;)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'natacal', 'label' => __( 'Natáčal', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
+				array( 'key' => 'strihal', 'label' => __( 'Strihal', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
+				array( 'key' => 'scenar', 'label' => __( 'Písal scenár', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
 			),
 		),
 		'services'         => array(
@@ -75,6 +78,9 @@ function ideanet_blocks_content_sections() {
 				array( 'key' => 'video', 'label' => __( 'Video (MP4)', 'ideanet-avada-blocks' ), 'type' => 'video' ),
 				array( 'key' => 'client', 'label' => __( 'Pre koho (firma)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 				array( 'key' => 'tags', 'label' => __( 'Tagy — kto je na videu (oddeľte ;)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'natacal', 'label' => __( 'Natáčal', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
+				array( 'key' => 'strihal', 'label' => __( 'Strihal', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
+				array( 'key' => 'scenar', 'label' => __( 'Písal scenár', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
 			),
 		),
 		'carousel_grafika' => array(
@@ -100,6 +106,9 @@ function ideanet_blocks_content_sections() {
 				array( 'key' => 'video', 'label' => __( 'Video (MP4)', 'ideanet-avada-blocks' ), 'type' => 'video' ),
 				array( 'key' => 'client', 'label' => __( 'Pre koho (firma)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 				array( 'key' => 'tags', 'label' => __( 'Tagy — kto je na videu (oddeľte ;)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'natacal', 'label' => __( 'Natáčal', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
+				array( 'key' => 'strihal', 'label' => __( 'Strihal', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
+				array( 'key' => 'scenar', 'label' => __( 'Písal scenár', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
 			),
 		),
 		'process_steps'    => array(
