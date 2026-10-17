@@ -107,11 +107,14 @@ cez **Nástroje → IDEANET obsah → Navigácia — položky menu**.
 
 **Logo a meno.** Od verzie **1.7.0** má blok dve nové nepovinné polia:
 **„Logo”** (nahrajte obrázok, odporúčaná výška okolo 64 px, PNG/SVG s
-priehľadným pozadím) a **„Moje meno”** (predvolene „Peter Miškus”),
-ktoré sa zobrazí pod značkou menším, tlmeným písmom. Logo aj meno sú
-nepovinné — môžete mať len text, len logo, oboje, alebo nič z toho
-(blok sa jednoducho prispôsobí tomu, čo je vyplnené). Na mobile sa
-meno pod značkou skrýva, aby ostalo miesto pre menu a tlačidlo.
+priehľadným pozadím) a **„Podtitul”**. Značka má zvyčajný formát
+osobného branda „Meno **by** Štúdio” — pole **„Meno”** (predvolene
+„Peter Miškus”) sa zobrazí tučným písmom ako hlavný text, pole
+**„Podtitul”** (predvolene „by IDEANET”) pod ním menším, tlmeným
+písmom. Logo, meno aj podtitul sú nepovinné — môžete mať len text, len
+logo, ľubovoľnú kombináciu, alebo nič z toho (blok sa jednoducho
+prispôsobí tomu, čo je vyplnené). Na mobile sa podtitul skrýva, aby
+ostalo miesto pre menu a tlačidlo.
 
 **Modernejšia lišta.** Okrem kĺzavého podčiarknutia (od v1.5.0) má
 lišta od verzie **1.7.0** aj:

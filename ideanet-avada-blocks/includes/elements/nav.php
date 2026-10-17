@@ -36,9 +36,10 @@ class Ideanet_Blocks_Nav {
 				'params'    => array(
 					array(
 						'type'       => 'textfield',
-						'heading'    => __( 'Značka / meno (vľavo)', 'ideanet-avada-blocks' ),
+						'heading'    => __( 'Meno (vľavo, hlavný text)', 'ideanet-avada-blocks' ),
+						'description' => __( 'Zobrazí sa tučným písmom ako hlavná časť značky, napr. „Peter Miškus“.', 'ideanet-avada-blocks' ),
 						'param_name' => 'brand_text',
-						'value'      => 'IDEANET',
+						'value'      => 'Peter Miškus',
 					),
 					array(
 						'type'       => 'textfield',
@@ -55,10 +56,10 @@ class Ideanet_Blocks_Nav {
 					),
 					array(
 						'type'       => 'textfield',
-						'heading'    => __( 'Moje meno (nepovinné)', 'ideanet-avada-blocks' ),
-						'description' => __( 'Zobrazí sa pod značkou menším písmom, napr. „Peter Miškus“.', 'ideanet-avada-blocks' ),
+						'heading'    => __( 'Podtitul (nepovinné)', 'ideanet-avada-blocks' ),
+						'description' => __( 'Zobrazí sa pod menom menším, tlmeným písmom — zvyčajný formát je „by [značka]“, napr. „by IDEANET“.', 'ideanet-avada-blocks' ),
 						'param_name' => 'name_text',
-						'value'      => 'Peter Miškus',
+						'value'      => 'by IDEANET',
 					),
 					array(
 						'type'       => 'radio_button_set',
