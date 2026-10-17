@@ -1,6 +1,8 @@
 <?php
 /**
- * IDEANET — O mne (väčšia osobná fotka + krátky príbeh).
+ * IDEANET — O mne (väčšia osobná fotka, krátky príbeh, pohľad na
+ * tvorbu a zvýraznené body). Odporúčané miesto: nižšie na stránke,
+ * napr. tesne pred blokom Kontakt — nejde o úvodný Hero prvok.
  *
  * Shortcode: [ideanet_about]
  *
@@ -76,6 +78,13 @@ class Ideanet_Blocks_About {
 					),
 					array(
 						'type'        => 'textarea',
+						'heading'     => __( 'Pohľad na tvorbu (nepovinné)', 'ideanet-avada-blocks' ),
+						'description' => __( 'Krátka osobná myšlienka o tom, ako pristupujete k tvorbe — zobrazí sa zvýraznene, ako citát.', 'ideanet-avada-blocks' ),
+						'param_name'  => 'approach',
+						'value'       => 'Nemám rád obsah naokolo bez dôvodu — každé video alebo vizuál musí niečo riešiť. Radšej menej, ale premyslené, než desať verzií toho istého.',
+					),
+					array(
+						'type'        => 'textarea',
 						'heading'     => __( 'Zvýraznené body (oddeľte bodkočiarkou ;)', 'ideanet-avada-blocks' ),
 						'param_name'  => 'highlights',
 						'description' => __( 'Krátke fakty, napr. roky skúseností alebo počet projektov.', 'ideanet-avada-blocks' ),
@@ -110,6 +119,7 @@ class Ideanet_Blocks_About {
 				'heading'          => '',
 				'heading_emphasis' => '',
 				'bio'              => '',
+				'approach'         => '',
 				'highlights'       => '',
 				'cta_text'         => '',
 				'cta_link'         => '#kontakt',
@@ -131,6 +141,10 @@ class Ideanet_Blocks_About {
 
 						<?php if ( $args['bio'] ) : ?>
 							<p class="ib-about__bio"><?php echo wp_kses_post( $args['bio'] ); ?></p>
+						<?php endif; ?>
+
+						<?php if ( $args['approach'] ) : ?>
+							<blockquote class="ib-about__approach"><p><?php echo wp_kses_post( $args['approach'] ); ?></p></blockquote>
 						<?php endif; ?>
 
 						<?php if ( $highlights ) : ?>

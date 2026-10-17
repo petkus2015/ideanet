@@ -86,16 +86,22 @@ Táto stránka bez hádania ukáže:
 
 ### O mne — osobná fotka a krátky príbeh
 
-Blok **IDEANET — O mne** je samostatná sekcia (odporúčame vložiť ju
-hneď za Hero) s dvojstĺpcovým layoutom: na jednej strane väčšia
-portrétová fotka (pomer 4:5, jemný zaoblený rám a mäkký farebný
-odlesk za ňou), na druhej kicker, nadpis, krátky príbeh, zoznam
-zvýraznených bodov (napr. roky skúseností, počet projektov) a
-voliteľné tlačidlo. Pole **„Strana fotky (desktop)”** určuje, či je
-fotka vpravo (predvolené) alebo vľavo — na mobile sa vždy zobrazí
-hore, nad textom. Fotka reaguje na pohyb kurzora jemným 3D náklonom,
-rovnako ako karty služieb a cenníka. Ak pole „Fotka” necháte prázdne,
-zobrazí sa len text bez prázdneho miesta po fotke.
+Blok **IDEANET — O mne** je samostatná sekcia s dvojstĺpcovým
+layoutom: na jednej strane väčšia portrétová fotka (pomer 4:5, jemný
+zaoblený rám a mäkký farebný odlesk za ňou), na druhej kicker, nadpis,
+krátky príbeh, voliteľný zvýraznený **„Pohľad na tvorbu”** (osobná
+myšlienka o prístupe k práci, zobrazí sa ako citát s akcentovým
+orámovaním), zoznam zvýraznených bodov (napr. roky skúseností, počet
+projektov) a voliteľné tlačidlo. Pole **„Strana fotky (desktop)”**
+určuje, či je fotka vpravo (predvolené) alebo vľavo — na mobile sa
+vždy zobrazí hore, nad textom. Fotka reaguje na pohyb kurzora jemným
+3D náklonom, rovnako ako karty služieb a cenníka. Ak pole „Fotka”
+necháte prázdne, zobrazí sa len text bez prázdneho miesta po fotke.
+
+Keďže je to samostatný blok nezávislý na polohe, vložte ho kdekoľvek
+v Avada Builderi podľa potreby — **odporúčame nižšie na stránke,
+tesne pred blok Kontakt**, ako osobné uzavretie pred výzvou na akciu
+(nie hneď za Hero).
 
 ### Navigácia — sticky in-page menu
 

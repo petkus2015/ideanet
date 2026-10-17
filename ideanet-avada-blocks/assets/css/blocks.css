@@ -142,6 +142,10 @@ p.ib-hero__lead{font-size:clamp(16px,1.3vw,18.5px);color:var(--ib-ink-2) !import
 .ib-about__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,4vw,64px);align-items:center}
 .ib-about[data-photo-pos="left"] .ib-about__media{order:-1}
 .ib-about__bio{margin-top:18px;font-size:15.5px;line-height:1.65;color:var(--ib-ink-2) !important;max-width:56ch}
+.ib-about__approach{
+  margin:22px 0 0;padding-left:18px;border-left:2px solid var(--ib-accent);max-width:52ch;
+}
+.ib-about__approach p{margin:0;font-style:italic;font-size:15px;line-height:1.6;color:var(--ib-ink) !important}
 .ib-about__copy .ib-ticks{margin:22px 0 28px}
 .ib-about__media{
   position:relative;display:flex;justify-content:center;
