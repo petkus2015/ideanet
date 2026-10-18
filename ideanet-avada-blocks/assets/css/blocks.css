@@ -138,36 +138,6 @@ p.ib-hero__lead{font-size:clamp(16px,1.3vw,18.5px);color:var(--ib-ink-2) !import
   .ib-hero__inner{grid-template-columns:1.1fr .9fr;column-gap:clamp(36px,4vw,60px);align-items:center}
 }
 
-/* ══════════════════════ O MNE ═══════════════════════════════ */
-.ib-about__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,4vw,64px);align-items:center}
-.ib-about[data-photo-pos="left"] .ib-about__media{order:-1}
-.ib-about__bio{margin-top:18px;font-size:15.5px;line-height:1.65;color:var(--ib-ink-2) !important;max-width:56ch}
-.ib-about__approach{
-  margin:22px 0 0;padding-left:18px;border-left:2px solid var(--ib-accent);max-width:52ch;
-}
-.ib-about__approach p{margin:0;font-style:italic;font-size:15px;line-height:1.6;color:var(--ib-ink) !important}
-.ib-about__copy .ib-ticks{margin:22px 0 28px}
-.ib-about__media{
-  position:relative;display:flex;justify-content:center;
-  /* --rx/--ry: jemný náklon podľa polohy kurzora (JS, initTilt) —
-     v pokoji/na mobile sú 0deg, teda bez efektu. */
-  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg));
-  transform-style:preserve-3d;transition:transform .3s var(--ib-ease);
-}
-.ib-about__glow{
-  position:absolute;inset:-12%;z-index:0;pointer-events:none;filter:blur(10px);
-  background:radial-gradient(60% 60% at 50% 38%,rgba(var(--ib-accent-soft),.26),transparent 70%);
-}
-.ib-about__photo{
-  position:relative;z-index:1;display:block;width:100%;max-width:420px;aspect-ratio:4/5;object-fit:cover;
-  border-radius:var(--ib-r-xl);border:1px solid var(--ib-line-2);box-shadow:var(--ib-sh-2);background:#101314;
-}
-@media (max-width:900px){
-  .ib-about__grid{grid-template-columns:1fr}
-  .ib-about__media{order:-1 !important;margin-bottom:6px}
-  .ib-about__photo{max-width:320px;margin:0 auto}
-}
-
 /* ══════════════════════ SLUŽBY / KARTY ═════════════════════ */
 .ib-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,1.8vw,24px)}
 .ib-card{

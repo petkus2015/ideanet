@@ -75,7 +75,6 @@ Táto stránka bez hádania ukáže:
 |---|---|---|
 | IDEANET — Navigácia | `[ideanet_nav]` | Sticky in-page menu s odkazmi na sekcie stránky, logom/menom a voliteľným tlačidlom — nie je to hlavná hlavička webu (tú rieši Avada Header Builder), pozri nižšie |
 | IDEANET — Hero | `[ideanet_hero]` | Úvodná sekcia s nadpisom, dvoma tlačidlami a karuselom posledných realizácií |
-| IDEANET — O mne | `[ideanet_about]` | Väčšia osobná fotka (vľavo/vpravo) + krátky príbeh, zvýraznené body a tlačidlo |
 | IDEANET — Služby | `[ideanet_services]` | Tri (aj viac) karty disciplín s ikonou, popisom a zoznamom bodov |
 | IDEANET — Portfólio karusel | `[ideanet_carousel]` | Znovupoužiteľný karusel ukážok — vložte ho trikrát (video, grafika, sociálne siete), zakaždým s inými nastaveniami |
 | IDEANET — Proces | `[ideanet_process]` | Očíslované kroky spolupráce |
@@ -83,25 +82,6 @@ Táto stránka bez hádania ukáže:
 | IDEANET — Školenia pre firmy | `[ideanet_training]` | Sekcia „pre koho / čo si odnesú” + karta formátov a cien |
 | IDEANET — Referencie | `[ideanet_testimonials]` | Citáty klientov |
 | IDEANET — Kontakt | `[ideanet_contact]` | Kontaktné údaje, box dostupnosti a formulár (odosielanie cez `mailto:`) |
-
-### O mne — osobná fotka a krátky príbeh
-
-Blok **IDEANET — O mne** je samostatná sekcia s dvojstĺpcovým
-layoutom: na jednej strane väčšia portrétová fotka (pomer 4:5, jemný
-zaoblený rám a mäkký farebný odlesk za ňou), na druhej kicker, nadpis,
-krátky príbeh, voliteľný zvýraznený **„Pohľad na tvorbu”** (osobná
-myšlienka o prístupe k práci, zobrazí sa ako citát s akcentovým
-orámovaním), zoznam zvýraznených bodov (napr. roky skúseností, počet
-projektov) a voliteľné tlačidlo. Pole **„Strana fotky (desktop)”**
-určuje, či je fotka vpravo (predvolené) alebo vľavo — na mobile sa
-vždy zobrazí hore, nad textom. Fotka reaguje na pohyb kurzora jemným
-3D náklonom, rovnako ako karty služieb a cenníka. Ak pole „Fotka”
-necháte prázdne, zobrazí sa len text bez prázdneho miesta po fotke.
-
-Keďže je to samostatný blok nezávislý na polohe, vložte ho kdekoľvek
-v Avada Builderi podľa potreby — **odporúčame nižšie na stránke,
-tesne pred blok Kontakt**, ako osobné uzavretie pred výzvou na akciu
-(nie hneď za Hero).
 
 ### Navigácia — sticky in-page menu
 
@@ -310,10 +290,12 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
-**Chcem v Hero aj svoju fotku.**
-Vo verzii **1.9.0** mal blok Hero malý okrúhly portrét priamo v
-úvodnom texte. Od verzie **2.0.0** je namiesto toho samostatný blok
-**IDEANET — O mne** s podstatne väčšou fotkou — pozri nižšie.
+**Kde je blok „O mne” s fotkou?**
+Vo verziách **1.9.0 – 2.1.0** existoval buď malý portrét priamo v
+Hero, alebo samostatný blok **IDEANET — O mne** s väčšou fotkou. Od
+verzie **2.2.0** je úplne odstránený — stránka je späť v pôvodnom
+stave (Hero bez fotky, žiadny blok O mne), presne tak, ako bola pred
+týmto experimentom.
 
 **Chcem pri kliknutí vlnový efekt ako má Claude.**
 Od verzie **1.6.0** pri kliknutí (alebo ťuknutí na mobile) na tlačidlo,

@@ -487,7 +487,7 @@
     $$('.ib-hero').forEach(initHeroFx);
     $$('.ib-scope').forEach((scope) => {
       $$('.ib-carousel', scope).forEach(initCarousel);
-      $$('.ib-card, .ib-price, .ib-quote, .ib-about__media', scope).forEach((el) => initTilt(el, 5));
+      $$('.ib-card, .ib-price, .ib-quote', scope).forEach((el) => initTilt(el, 5));
       $$('.ib-slide', scope).forEach((el) => initTilt(el, 4));
       initReveal(scope);
       initContact(scope);
