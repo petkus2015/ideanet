@@ -290,6 +290,16 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
+**Navigácia teraz vyzerá ako „plávajúca kapsula”.**
+Od verzie **2.3.0** lišta `[ideanet_nav]` už nie je pás na celú šírku
+obrazovky — je od okrajov odsadená a vznáša sa nad obsahom ako
+zaoblená kapsula so sklenným pozadím a jemným tieňom (bežný moderný
+vzor). Kĺzavý indikátor, logo/meno, tlačidlo aj pásik priebehu
+scrollovania fungujú rovnako ako predtým, len vizuálne vnútri kapsuly
+namiesto pásu na celú šírku. Na mobile sa rozbalené menu zobrazí ako
+samostatná zaoblená karta tesne pod lištou, nie ako pás pripojený
+k jej spodnému okraju.
+
 **Kde je blok „O mne” s fotkou?**
 Vo verziách **1.9.0 – 2.1.0** existoval buď malý portrét priamo v
 Hero, alebo samostatný blok **IDEANET — O mne** s väčšou fotkou. Od
