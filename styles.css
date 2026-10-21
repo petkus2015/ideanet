@@ -304,10 +304,18 @@ body.is-menu .nav.is-away{transform:none}
 
 /* ── spoločné ────────────────────────────── */
 .eyebrow{
-  display:inline-flex;align-items:center;gap:.55rem;margin:0 0 1rem;
-  font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600;
+  display:inline-flex;align-items:flex-start;gap:.55rem;margin:0 0 1rem;
+  font-size:.78rem;line-height:1.7;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600;
 }
-.dot{width:7px;height:7px;border-radius:50%;background:var(--magenta);box-shadow:0 0 0 4px rgba(255,45,148,.18);animation:pulse 2.4s infinite}
+/* flex:none — bez toho zalomený text (na mobile má popis role aj tri
+   riadky) guličku stlačí na elipsu. Odsadenie ju drží v strede prvého
+   riadku, nie v strede celého zalomeného bloku. */
+.dot{
+  flex:none;width:7px;height:7px;border-radius:50%;
+  margin-top:calc((1.7em - 7px) / 2);
+  background:var(--magenta);box-shadow:0 0 0 4px rgba(255,45,148,.18);
+  animation:pulse 2.4s infinite;
+}
 @keyframes pulse{50%{box-shadow:0 0 0 9px rgba(255,45,148,0)}}
 .lead{color:var(--muted);font-size:clamp(1rem,.4vw + .95rem,1.16rem);max-width:56ch}
 .lead b{color:var(--text);font-weight:600}
