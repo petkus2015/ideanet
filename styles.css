@@ -123,14 +123,16 @@ p{margin:0 0 1rem}
 .nav.is-stuck{padding-block:.6rem}
 .nav.is-stuck .nav__inner{
   min-height:clamp(54px,6vh,64px);
-  background:rgba(8,11,28,.72);
-  backdrop-filter:blur(20px) saturate(160%);
+  background:rgba(7,10,26,.94);
   border-color:rgba(255,255,255,.1);
   border-radius:999px;
   box-shadow:0 20px 50px -26px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.07);
 }
 /* pri skrolovaní dole lištu odsunieme, pri pohybe hore sa vráti */
 .nav.is-away{transform:translateY(calc(-100% - 1rem))}
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .nav.is-stuck .nav__inner{background:rgba(8,11,28,.72);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
+}
 
 .brand{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--display);font-weight:700;letter-spacing:.02em;font-size:1.05rem}
 .brand__mark{
@@ -161,25 +163,60 @@ p{margin:0 0 1rem}
 }
 .nav__links a:hover,.nav__links a.is-active{color:var(--text)}
 
-/* ── prepínač mobilného menu ───────────────── */
-.burger{
-  display:none;width:44px;height:44px;border:1px solid var(--line-2);
-  background:rgba(255,255,255,.04);border-radius:14px;cursor:pointer;padding:0;
-  /* align-content musí byť center — inak sa riadky roztiahnu na celú výšku
-     a paličky sa pri zatváraní nestretnú v strede, takže z krížika
-     vyjde šípka */
-  place-items:center;align-content:center;gap:4.2px;
-  transition:background .25s,border-color .25s;
+/* ── spodná navigácia na mobile ────────────
+   Palec na spodok displeja dosiahne, na vršok nie. Hore preto zostáva
+   len značka a navigáciu preberá plávajúca lišta pri spodnom okraji. */
+.tabbar{
+  display:none;
+  position:fixed;left:50%;z-index:88;
+  bottom:calc(.7rem + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);
+  width:min(420px, calc(100vw - 2 * var(--gutter)));
+  grid-template-columns:repeat(5,1fr);
+  padding:.4rem;
+  /* základ je takmer nepriehľadný, aby bola lišta čitateľná aj tam,
+     kde prehliadač rozostrenie pozadia nevie */
+  background:rgba(7,10,26,.95);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:24px;
+  box-shadow:0 22px 50px -18px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.07);
 }
-.burger:hover{border-color:rgba(255,45,148,.5)}
-.burger span{display:block;width:18px;height:1.8px;background:var(--text);border-radius:2px;
-  transition:transform .3s cubic-bezier(.3,1.2,.5,1), opacity .2s}
-.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(5.8px) rotate(45deg)}
-.burger[aria-expanded="true"] span:nth-child(2){opacity:0;transform:scaleX(.3)}
-.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-5.8px) rotate(-45deg)}
+.tabbar__pill{
+  position:absolute;top:.4rem;bottom:.4rem;left:0;width:0;
+  border-radius:18px;background:rgba(255,45,148,.16);
+  border:1px solid rgba(255,45,148,.4);
+  box-shadow:0 6px 18px -8px rgba(255,45,148,.9);
+  opacity:0;pointer-events:none;transform:translate3d(0,0,0);
+  transition:transform .42s cubic-bezier(.3,1.2,.5,1), width .42s cubic-bezier(.3,1.2,.5,1), opacity .25s;
+}
+.tabbar a,.tabbar button{
+  position:relative;z-index:1;
+  display:grid;justify-items:center;align-content:center;gap:.22rem;
+  padding:.5rem .15rem;border:0;background:none;border-radius:18px;
+  color:var(--muted);cursor:pointer;font:inherit;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .25s;
+}
+.tabbar__ico{display:grid;place-items:center;width:22px;height:22px}
+.tabbar svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tabbar__t{font-size:.63rem;font-weight:600;letter-spacing:.01em;line-height:1}
+.tabbar a.is-active,.tabbar button[aria-expanded="true"]{color:var(--text)}
+.tabbar a:active,.tabbar button:active{transform:scale(.94)}
+
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .tabbar{background:rgba(8,11,28,.74);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%)}
+}
+
+@media (max-width:860px){
+  .tabbar{display:grid}
+  /* aby lišta neprekryla pätičku */
+  body{padding-bottom:calc(5.6rem + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){
+  .tabbar__pill{transition:none}
+}
 
 /* ── mobilné menu cez celú obrazovku ───────── */
-body.is-menu .nav{z-index:100}          /* prepínač musí ostať nad prekrytím */
 body.is-menu .nav.is-away{transform:none}
 .mobile-menu{
   position:fixed;inset:0;z-index:95;
@@ -189,6 +226,16 @@ body.is-menu .nav.is-away{transform:none}
   animation:menuFade .35s ease both;
 }
 @keyframes menuFade{from{opacity:0}to{opacity:1}}
+.mobile-menu__close{
+  position:absolute;top:clamp(1rem,3vh,1.6rem);right:var(--gutter);
+  width:46px;height:46px;display:grid;place-items:center;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.05);
+  border-radius:16px;cursor:pointer;color:var(--text);
+  transition:border-color .25s,background .25s,transform .25s;
+}
+.mobile-menu__close:hover{border-color:rgba(255,45,148,.6)}
+.mobile-menu__close:active{transform:scale(.93)}
+.mobile-menu__close svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .mobile-menu nav{display:grid}
 .mobile-menu nav a{
   display:flex;align-items:baseline;gap:1rem;
@@ -818,7 +865,6 @@ body.is-locked{overflow:hidden}
 @media (max-width:860px){
   .nav__links{display:none}
   .nav__cta{display:none}
-  .burger{display:grid}
   .nav__inner{justify-content:space-between}
   .brand{margin-right:auto}
   .reels__arrow{display:none}

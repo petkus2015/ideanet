@@ -126,9 +126,20 @@ a po odídení myši sa vráti na práve čítanú sekciu. Pozíciu počíta
 JavaScript z `offsetLeft` a `offsetWidth` odkazu, takže sa prepočítava
 pri zmene šírky okna aj po načítaní písiem.
 
-Na mobile sa menu otvára cez celú obrazovku s postupným odkrývaním
-položiek. Lišta vtedy ide nad prekrytie (`body.is-menu`), aby zostal
-prepínač klikateľný, a stránka pod ňou sa zamkne.
+Na mobile hore zostáva len značka a navigáciu preberá **plávajúca lišta
+pri spodnom okraji** (`.tabbar`) — palec na ňu dosiahne, na vršok displeja
+nie. Má päť miest: Portfólio, Cenník, Kalkulačka, Kontakt a Viac.
+Vlastná plávajúca značka sleduje čítanú sekciu; keď je čítaná sekcia,
+ktorá v lište nie je (Služby, Podmienky), značka sa schová namiesto toho,
+aby ukazovala inam.
+
+Tlačidlo **Viac** otvára celoobrazovkové menu so všetkými šiestimi
+sekciami, postupným odkrývaním položiek a vlastným zatváracím tlačidlom.
+Stránka pod ním sa zamkne.
+
+Pozadie oboch líšt je takmer nepriehľadné a rozostrenie sa pridáva len
+cez `@supports`, aby lišty zostali čitateľné aj tam, kde prehliadač
+`backdrop-filter` nevie.
 
 Úplne hore je tenký ukazovateľ prečítanej časti stránky.
 

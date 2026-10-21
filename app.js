@@ -456,7 +456,8 @@
   let activeLink = null;
 
   const movePill = (el) => {
-    if (!el || !navLinks.offsetParent) { pill.style.opacity = '0'; return; }
+    /* offsetWidth, nie offsetParent — ten je pri position:fixed vždy null */
+    if (!el || !navLinks.offsetWidth) { pill.style.opacity = '0'; return; }
     pill.style.opacity = '1';
     pill.style.width = el.offsetWidth + 'px';
     pill.style.transform = `translate3d(${el.offsetLeft}px,-50%,0)`;
@@ -470,46 +471,76 @@
   navLinks.addEventListener('pointerleave', restorePill);
   navLinks.addEventListener('focusout', restorePill);
 
+  /* ── spodná lišta na mobile ────────────────
+     Vlastná značka, lebo položky sú inak široké než hore a sú to iné
+     sekcie — do piatich miest sa všetkých šesť nezmestí. */
+  const tabbar = $('#tabbar'), tabPill = $('#tabPill');
+  const tabs = $$('a', tabbar);
+
+  const moveTabPill = (el) => {
+    if (!el || !tabbar.offsetWidth) { tabPill.style.opacity = '0'; return; }
+    tabPill.style.opacity = '1';
+    tabPill.style.width = el.offsetWidth + 'px';
+    tabPill.style.transform = `translate3d(${el.offsetLeft}px,0,0)`;
+  };
+
   /* ── mobilné menu ──────────────────────────── */
-  const burger = $('#burger'), menu = $('#mobileMenu');
+  const moreBtn = $('#moreBtn'), menuClose = $('#menuClose'), menu = $('#mobileMenu');
   const setMenu = (open) => {
     menu.hidden = !open;
     document.body.classList.toggle('is-menu', open);
     document.body.classList.toggle('is-locked', open);
-    burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Zavrieť menu' : 'Otvoriť menu');
+    moreBtn.setAttribute('aria-expanded', String(open));
+    moreBtn.setAttribute('aria-label', open ? 'Zavrieť ďalšie sekcie' : 'Otvoriť ďalšie sekcie');
     if (open) { nav.classList.remove('is-away'); parked = false; }
+    else moreBtn.focus({ preventScroll: true });
   };
-  burger.addEventListener('click', () => setMenu(menu.hidden));
+  moreBtn.addEventListener('click', () => setMenu(menu.hidden));
+  menuClose.addEventListener('click', () => setMenu(false));
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
   matchMedia('(min-width: 861px)').addEventListener('change', (e) => {
     if (e.matches) setMenu(false);
     restorePill();
+    restoreTabPill();
   });
 
-  /* ── práve čítaná sekcia ───────────────────── */
+  /* ── práve čítaná sekcia ─────────────────────
+     Spodná lišta nemá všetky sekcie, takže keď je čítaná niektorá
+     z chýbajúcich, značka sa schová namiesto toho, aby ukazovala inam. */
+  let activeTab = null;
+  const restoreTabPill = () => moveTabPill(activeTab);
+
+  const markActive = (id) => {
+    links.forEach(a => {
+      const on = a.getAttribute('href') === '#' + id;
+      a.classList.toggle('is-active', on);
+      if (on) activeLink = a;
+    });
+    activeTab = null;
+    tabs.forEach(a => {
+      const on = a.getAttribute('href') === '#' + id;
+      a.classList.toggle('is-active', on);
+      if (on) activeTab = a;
+    });
+    if (!navLinks.matches(':hover')) restorePill();
+    restoreTabPill();
+  };
+
   const sections = links.map(a => $(a.getAttribute('href'))).filter(Boolean);
   const spy = new IntersectionObserver((ents) => {
-    ents.forEach(en => {
-      if (!en.isIntersecting) return;
-      links.forEach(a => {
-        const on = a.getAttribute('href') === '#' + en.target.id;
-        a.classList.toggle('is-active', on);
-        if (on) activeLink = a;
-      });
-      if (!navLinks.matches(':hover')) restorePill();
-    });
+    ents.forEach(en => { if (en.isIntersecting) markActive(en.target.id); });
   }, { rootMargin: '-45% 0px -50%' });
   sections.forEach(s => spy.observe(s));
 
-  /* rozmery odkazov sa menia s písmom aj šírkou okna */
+  /* rozmery položiek sa menia s písmom aj šírkou okna */
   let pillTimer = null;
+  const repositionPills = () => { restorePill(); restoreTabPill(); };
   addEventListener('resize', () => {
     clearTimeout(pillTimer);
-    pillTimer = setTimeout(restorePill, 120);
+    pillTimer = setTimeout(repositionPills, 120);
   });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(restorePill);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(repositionPills);
 
   /* ───────────────────────────────────────────
      7) DROBNOSTI
