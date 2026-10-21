@@ -40,7 +40,7 @@ jeden natáčací blok mesačne. To je kľúčové číslo celej stratégie.
 
 ---
 
-## 3. Tri zdroje príjmu
+## 3. Štyri zdroje príjmu
 
 Nespoliehať sa na jeden. Každý má inú dynamiku.
 
@@ -61,6 +61,17 @@ Jedna agentúra môže priniesť štyroch klientov naraz.
 
 Nepravidelné, ale rýchle peniaze a dobrý zdroj referencií.
 Pri same-day predávaš rýchlosť, nie strih — preto si môžeš pýtať viac.
+
+### D. Podcast
+**400 € za epizódu**
+
+Firmy, ktoré chcú podcast, zvyčajne nemajú štúdio ani človeka na kameru.
+Keď prídeš za nimi, odpadá im najväčšia prekážka. Podcast sa navyše
+nakrúca pravidelne — je to druhý najlepší kandidát na paušál hneď
+po mesačných Reels balíkoch.
+
+Dobrá kombinácia: klient, ktorý už má GROW, si k nemu pridá jednu
+epizódu mesačne. Z 690 € sa stane 1 090 € pri jednom výjazde navyše.
 
 **Najväčší potenciál:** 2 – 3 agentúry, ktoré pravidelne posielajú klientov.
 Nie desiatky jednorazových zákaziek.

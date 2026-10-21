@@ -586,6 +586,12 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 .calc__total b{font-size:clamp(2.4rem,6vw,3.4rem);line-height:1;letter-spacing:-.04em}
 .calc__total span{font-size:1.3rem;color:var(--muted)}
 .calc__unit{margin:.15rem 0 0;color:var(--muted-2);font-size:.85rem}
+.calc__per{
+  margin:.7rem 0 0;padding:.6rem .85rem;border-radius:12px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,45,148,.25);
+  font-size:.86rem;color:var(--muted);
+}
+.calc__per b{color:var(--text);font-weight:700}
 .calc__rows{list-style:none;padding:1rem 0 0;margin:1rem 0 0;border-top:1px solid var(--line);display:grid;gap:.45rem}
 .calc__rows li{display:flex;justify-content:space-between;gap:1rem;font-size:.87rem;color:var(--muted)}
 .calc__rows li b{color:var(--text);font-weight:600;white-space:nowrap}

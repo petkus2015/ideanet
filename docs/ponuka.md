@@ -57,6 +57,24 @@ Klient si kupuje tvoju dostupnosť v konkrétny deň.
 
 Každá ďalšia hodina na mieste: **70 € / h**
 
+### Podcast u vás
+
+**400 € za epizódu**
+
+- natáčanie do 3 hodín u klienta
+- zostrih celej epizódy 16:9
+- 3 vertikálne výstrižky na Reels a TikTok
+- zvuk z mikroportov
+- základný color grading a hudba
+- dodanie do 5 pracovných dní
+
+Hlavný predajný argument: klient nemusí nikam cestovať ani si prenajímať
+štúdio. Technika príde za ním.
+
+Každá ďalšia epizóda natočená v ten istý deň je lacnejšia — svetlo, zvuk
+a kamery už stoja. Pri pravidelnom podcaste nacením sériu individuálne
+a dohodni si pevný termín v mesiaci. To je ďalší kandidát na paušál.
+
 ### Doplnok — správa sociálnych sietí
 
 **+ 300 až 500 € mesačne k balíku**
@@ -300,7 +318,7 @@ Začatá polhodina = minimálna účtovacia jednotka.
 Pri zmene cenníka treba upraviť **štyri miesta**:
 
 1. `index.html` — sekcia cenníka
-2. `index.html` — atribúty `value` v `#calcPkg` (kalkulačka)
+2. `index.html` — atribúty `value` a `data-reels` v `#calcPkg` (kalkulačka)
 3. `ponuka/pre-firmy.html`
 4. `ponuka/pre-agentury.html`
 

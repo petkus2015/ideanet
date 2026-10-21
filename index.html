@@ -408,6 +408,23 @@
             </li>
           </ul>
 
+          <h3 class="sub reveal">Podcast u vás</h3>
+          <p class="sub__note reveal">Prídem s technikou k vám, nemusíte nikam cestovať ani si prenajímať štúdio.</p>
+          <ul class="tiers reveal" role="list">
+            <li class="tier tier--best">
+              <div class="tier__main">
+                <b>Podcast u vás</b>
+                <span>natáčanie do 3 hodín · zostrih celej epizódy 16:9 · 3 vertikálne výstrižky na Reels · zvuk z mikroportov</span>
+              </div>
+              <span class="tier__price">400 €</span>
+              <a class="tier__cta" href="#kontakt" data-package="Podcast u vás — 400 €">Dopyt</a>
+            </li>
+          </ul>
+          <p class="panel__foot reveal">
+            Každá ďalšia epizóda natočená v ten istý deň je lacnejšia — technika aj svetlo
+            už stoja. Pri pravidelnom podcaste nacením sériu individuálne.
+          </p>
+
           <aside class="addon reveal">
             <div>
               <span class="addon__tag">Doplnok</span>
@@ -588,11 +605,12 @@
       <div class="section__head reveal">
         <div>
           <p class="eyebrow"><span class="dot"></span> Kalkulačka</p>
-          <h2>Orientačná cena za 20 sekúnd</h2>
+          <h2>Orientačná cena za 1 Reel — od natočenia po dodanie</h2>
         </div>
         <p class="section__note">
-          Poskladajte si zákazku a hneď vidíte, na čom sa pohybujeme.
-          Výsledok je orientačný odhad bez DPH, nie záväzná ponuka.
+          Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video
+          vrátane natáčania, strihu aj dodania. Orientačný odhad bez DPH,
+          nie záväzná ponuka.
         </p>
       </div>
 
@@ -602,27 +620,30 @@
             <label for="calcPkg">Balík alebo produkcia</label>
             <select id="calcPkg">
               <optgroup label="Firmy — mesačne">
-                <option value="390" data-unit="mesačne">START — 3 Reels · 390 €</option>
-                <option value="690" data-unit="mesačne" selected>GROW — 6 Reels · 690 €</option>
-                <option value="990" data-unit="mesačne">PRO — 10 Reels · 990 €</option>
+                <option value="390" data-unit="mesačne" data-reels="3">START — 3 Reels · 390 €</option>
+                <option value="690" data-unit="mesačne" data-reels="6" selected>GROW — 6 Reels · 690 €</option>
+                <option value="990" data-unit="mesačne" data-reels="10">PRO — 10 Reels · 990 €</option>
               </optgroup>
               <optgroup label="Firmy — jednorazovo">
-                <option value="160" data-unit="jednorazovo">1 Reel · 160 €</option>
-                <option value="350" data-unit="jednorazovo">3 Reels · 350 €</option>
-                <option value="520" data-unit="jednorazovo">5 Reels · 520 €</option>
+                <option value="160" data-unit="jednorazovo" data-reels="1">1 Reel · 160 €</option>
+                <option value="350" data-unit="jednorazovo" data-reels="3">3 Reels · 350 €</option>
+                <option value="520" data-unit="jednorazovo" data-reels="5">5 Reels · 520 €</option>
+              </optgroup>
+              <optgroup label="Podcast">
+                <option value="400" data-unit="epizóda">Podcast u vás · 400 €</option>
               </optgroup>
               <optgroup label="Agentúry — white-label">
-                <option value="120" data-unit="produkcia">Reel Basic · 120 €</option>
-                <option value="250" data-unit="produkcia">Content Mini · 250 €</option>
-                <option value="390" data-unit="produkcia">Content Day · 390 €</option>
-                <option value="550" data-unit="produkcia">Content Plus · 550 €</option>
-                <option value="290" data-unit="produkcia">Same-Day Event · 290 €</option>
-                <option value="450" data-unit="produkcia">Event Plus · 450 €</option>
+                <option value="120" data-unit="produkcia" data-reels="1">Reel Basic · 120 €</option>
+                <option value="250" data-unit="produkcia" data-reels="3">Content Mini · 250 €</option>
+                <option value="390" data-unit="produkcia" data-reels="5">Content Day · 390 €</option>
+                <option value="550" data-unit="produkcia" data-reels="8">Content Plus · 550 €</option>
+                <option value="290" data-unit="produkcia" data-reels="1">Same-Day Event · 290 €</option>
+                <option value="450" data-unit="produkcia" data-reels="3">Event Plus · 450 €</option>
               </optgroup>
               <optgroup label="Eventy">
-                <option value="290" data-unit="event">Event Mini · 290 €</option>
-                <option value="450" data-unit="event">Event · 450 €</option>
-                <option value="590" data-unit="event">Event Same-Day · 590 €</option>
+                <option value="290" data-unit="event" data-reels="1">Event Mini · 290 €</option>
+                <option value="450" data-unit="event" data-reels="2">Event · 450 €</option>
+                <option value="590" data-unit="event" data-reels="3">Event Same-Day · 590 €</option>
               </optgroup>
             </select>
           </div>
@@ -662,6 +683,8 @@
           <p class="calc__label">Orientačná cena</p>
           <p class="calc__total"><b id="calcTotal">690</b> <span>€</span></p>
           <p class="calc__unit" id="calcUnit">mesačne, bez DPH</p>
+
+          <p class="calc__per" id="calcPer" hidden></p>
 
           <ul class="calc__rows" id="calcRows"></ul>
 
@@ -789,6 +812,9 @@
               <option>Event Mini — 290 €</option>
               <option>Event — 450 €</option>
               <option>Event Same-Day — 590 €</option>
+            </optgroup>
+            <optgroup label="Podcast">
+              <option>Podcast u vás — 400 €</option>
             </optgroup>
             <optgroup label="Iné">
               <option>Správa sociálnych sietí k balíku</option>

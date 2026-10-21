@@ -39,7 +39,7 @@ assets/videos/      videá portfólia
 | Pre koho | segmenty, kde video priamo pomáha predávať |
 | Proces | štyri kroky od zadania po dodanie |
 | Cenník | prepínač troch pohľadov — firmy, agentúry (white-label), eventy |
-| Kalkulačka | orientačná cena podľa balíka, expresu, dopravy, extra hodín a RAW |
+| Kalkulačka | orientačná cena podľa balíka, expresu, dopravy, extra hodín a RAW, vrátane dopočtu na jeden Reel |
 | Podmienky | osem krátkych kariet + odkaz na plnú ponuku |
 | Kontakt | dopytový formulár s predvyplneným balíkom |
 
@@ -50,6 +50,7 @@ z atribútov `value` v `#calcPkg`. **Pri zmene ceny upravte obe miesta.**
 
 **Firmy — mesačne:** START 390 € · GROW 690 € · PRO 990 €
 **Firmy — jednorazovo:** 1 Reel 160 € · 3 Reels 350 € · 5 Reels 520 €
+**Podcast:** Podcast u vás 400 € za epizódu
 **Agentúry (white-label):** Reel Basic 120 € · Content Mini 250 € · Content Day 390 €
 · Content Plus 550 € · Same-Day Event 290 € · Event Plus 450 € · Partner od 1 200 €/mes.
 **Eventy:** Event Mini 290 € · Event 450 € · Event Same-Day 590 € · ďalšia hodina 70 €
@@ -75,7 +76,7 @@ V priečinku `docs/` sú dva interné dokumenty — nie sú určené klientom.
 
 | Súbor | Obsah |
 |---|---|
-| `docs/strategia.md` | pozicionovanie, tri zdroje príjmu, koho a ako oslovovať, white-label model, čo nerobiť, plán na prvý týždeň, čo ešte treba rozhodnúť |
+| `docs/strategia.md` | pozicionovanie, štyri zdroje príjmu, koho a ako oslovovať, white-label model, čo nerobiť, plán na prvý týždeň, čo ešte treba rozhodnúť |
 | `docs/ponuka.md` | celý cenník a podmienky v texte plus hotové texty na skopírovanie do správy alebo e-mailu |
 
 ## Ponuky na poslanie klientovi

@@ -204,10 +204,16 @@
 
     /* kratší posun nesmie trvať rovnako dlho ako cesta cez celý pás */
     const ms = dur || clamp(Math.abs(dist) * 0.85, 300, 820);
-    const t0 = performance.now();
+
+    /* Čas berieme až z prvého snímku. Značka, ktorú requestAnimationFrame
+       podá, patrí začiatku práve kresleného snímku a vie byť staršia než
+       performance.now() v okamihu naplánovania — rozdiel potom vyjde
+       záporný a pás na začiatku animácie cúvol. */
+    let t0 = null;
 
     const frame = (t) => {
-      const p = Math.min(1, (t - t0) / ms);
+      if (t0 === null) t0 = t;
+      const p = Math.min(1, Math.max(0, (t - t0) / ms));
       rail.scrollLeft = from + dist * (1 - Math.pow(1 - p, 3));   // easeOutCubic
       if (p < 1) { glideRaf = requestAnimationFrame(frame); return; }
       glideRaf = null;
@@ -464,9 +470,10 @@
       if (!ents[0].isIntersecting) return;
       obs.disconnect();
       if (reduce) { el.textContent = target + suffix; return; }
-      const t0 = performance.now(), dur = 1400;
+      let t0 = null; const dur = 1400;
       const tick = (t) => {
-        const p = Math.min(1, (t - t0) / dur);
+        if (t0 === null) t0 = t;
+        const p = Math.min(1, Math.max(0, (t - t0) / dur));
         el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
         if (p < 1) requestAnimationFrame(tick);
       };
@@ -526,7 +533,8 @@
           km    = $('#calcKm'),    hours = $('#calcHours'),
           raw   = $('#calcRaw');
     const outTotal = $('#calcTotal'), outUnit = $('#calcUnit'),
-          outRows  = $('#calcRows'),  outCta  = $('#calcCta');
+          outRows  = $('#calcRows'),  outCta  = $('#calcCta'),
+          outPer   = $('#calcPer');
 
     const KM_RATE = .4, HOUR_RATE = 60, RAW_FEE = 80;
     const eur = (n) => Math.round(n).toLocaleString('sk-SK') + ' €';
@@ -558,6 +566,16 @@
 
       outTotal.textContent = Math.round(total).toLocaleString('sk-SK');
       outUnit.textContent  = (unit === 'mesačne' ? 'mesačne, bez DPH' : unit + ', bez DPH');
+
+      /* Koľko stojí jedno hotové video vrátane natáčania aj dodania.
+         Pri podcaste to nedáva zmysel — hlavný výstup je epizóda, nie Reels. */
+      const reels = +opt.dataset.reels || 0;
+      outPer.hidden = reels < 1;
+      if (reels >= 1) {
+        outPer.innerHTML = reels === 1
+          ? 'Jeden Reel od natočenia po dodanie.'
+          : `Vychádza to na <b>${eur(total / reels)}</b> za jeden Reel.`;
+      }
 
       /* prenos výberu do kontaktného formulára */
       outCta.dataset.package = opt.textContent.split(' · ')[0];
