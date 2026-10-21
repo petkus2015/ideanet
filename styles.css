@@ -220,7 +220,7 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 }
 .chip--1{top:6%;left:-2%;color:#fff}
 .chip--2{top:44%;right:-4%;border-color:rgba(255,45,148,.45);color:#ffd7ea;animation-delay:-2s}
-.chip--3{bottom:8%;left:4%;animation-delay:-4s}
+.chip--3{bottom:14%;left:4%;animation-delay:-4s}
 @keyframes bob{50%{transform:translateY(-12px)}}
 
 .marquee{border-block:1px solid var(--line);overflow:hidden;background:rgba(5,7,20,.5);padding-block:.85rem}

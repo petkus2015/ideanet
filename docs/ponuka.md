@@ -66,7 +66,7 @@ Každá ďalšia hodina na mieste: **70 € / h**
 - 3 vertikálne výstrižky na Reels a TikTok
 - zvuk z mikroportov
 - základný color grading a hudba
-- dodanie do 5 pracovných dní
+- dodanie do 3 pracovných dní
 
 Hlavný predajný argument: klient nemusí nikam cestovať ani si prenajímať
 štúdio. Technika príde za ním.
@@ -166,7 +166,7 @@ inú štruktúru a prvú polovicu prestrihať“.
 ### Termíny a same-day
 
 Štandard: **do 24 hodín** od natáčania, počítané od dodania všetkých
-potrebných podkladov. Výnimka je podcast — celá epizóda do 5 pracovných dní.
+potrebných podkladov. Výnimka je podcast — celá epizóda do 3 pracovných dní.
 
 | Termín | Príplatok |
 |---|---|
