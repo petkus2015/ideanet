@@ -21,7 +21,7 @@ Hlavný produkt. Jedno natáčanie, obsah na celý mesiac.
 | Titulky | áno | áno | áno |
 | Hudba | áno | áno | áno |
 | Revízie | 1 kolo | 1 kolo | 2 kolá |
-| Dodanie | 5 dní | 3 – 5 dní | 3 dni |
+| Dodanie | do 24 h | do 24 h | do 24 h |
 | Prioritné termíny | — | — | áno |
 
 **GROW je hlavný produkt.** START je vstupná možnosť, PRO vytvára cenovú kotvu.
@@ -142,7 +142,7 @@ Rovnaký štandard pri každom balíku:
 - export 1080 × 1920
 - 1 kolo revízií
 - dodanie cez cloud
-- dodanie do 3 pracovných dní
+- dodanie do 24 hodín
 
 Posledný bod je jeden z najsilnejších predajných argumentov. Používaj ho.
 
@@ -163,15 +163,15 @@ záber oproti zadaniu. To opravíš bezplatne.
 Za revíziu sa **považuje**: „klient si to rozmyslel a chce inú hudbu,
 inú štruktúru a prvú polovicu prestrihať“.
 
-### Termíny a expres
+### Termíny a same-day
 
-Štandard: **do 3 pracovných dní** od natáčania (START do 5 dní),
-počítané od dodania všetkých potrebných podkladov.
+Štandard: **do 24 hodín** od natáčania, počítané od dodania všetkých
+potrebných podkladov. Výnimka je podcast — celá epizóda do 5 pracovných dní.
 
 | Termín | Príplatok |
 |---|---|
-| do 24 hodín | + 30 % |
-| same-day | + 50 % |
+| do 24 hodín | v cene |
+| same-day, ešte v deň natáčania | + 50 % |
 
 Príklad: produkcia za 390 € stojí v same-day režime 585 €.
 
@@ -277,7 +277,7 @@ Začatá polhodina = minimálna účtovacia jednotka.
 > s agentúrami ako externý dodávateľ produkčnej časti.
 >
 > V praxi to funguje tak, že s klientom komunikujete vy, ja prídem,
-> natočím a dodám hotové Reels — dodanie do 3 pracovných dní,
+> natočím a dodám hotové Reels — dodanie do 24 hodín,
 > white-label, NDA bez príplatku.
 >
 > Ceny začínajú na 120 € za produkciu, najčastejšie sa objednáva
@@ -294,7 +294,7 @@ Začatá polhodina = minimálna účtovacia jednotka.
 > Rozsah: 1× natáčanie do 3 hodín mesačne, 6 hotových Reels 9:16
 > V cene: návrh tém, strih, color grading, titulky, hudba, export 1080×1920,
 > 1 kolo revízií, dodanie cez cloud
-> Dodanie: do 3 – 5 pracovných dní od natáčania
+> Dodanie: do 24 hodín od natáčania
 > Doprava: Bratislava v cene
 >
 > Cena: 690 € mesačne bez DPH

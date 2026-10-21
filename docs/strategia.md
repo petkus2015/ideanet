@@ -175,7 +175,7 @@ Nie „viem vám natočiť video“, ale rovno **produkčný balík pre ich klie
 
 > **White-label Reels Production**
 > 1 natáčací deň na klienta · 4 – 6 hotových Reels · 9:16 pre IG, TikTok,
-> Shorts · dodanie do 3 – 5 dní · možnosť same-day · s klientom komunikuje agentúra
+> Shorts · dodanie do 24 hodín · možnosť same-day · s klientom komunikuje agentúra
 
 ### Čo si dohodnúť dopredu
 

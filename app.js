@@ -555,7 +555,7 @@
       const total    = base + rushFee + hoursFee + travel + rawFee;
 
       const rows = [[opt.textContent.split(' · ')[0], eur(base), 'is-base']];
-      if (rushFee)  rows.push([rush === .5 ? 'Same-day (+50 %)' : 'Expres do 24 h (+30 %)', eur(rushFee)]);
+      if (rushFee)  rows.push(['Same-day (+50 %)', eur(rushFee)]);
       if (hoursFee) rows.push([`Natáčanie navyše — ${extraH} h`, eur(hoursFee)]);
       if (travel)   rows.push([`Doprava — ${kmOne * 2} km`, eur(travel)]);
       if (rawFee)   rows.push(['RAW materiál', eur(rawFee)]);
