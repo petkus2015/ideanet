@@ -114,6 +114,24 @@ a obe ponuky v `ponuka/`.
 Prehráva sa vždy len jedno video; pri odchode karty zo stredu alebo pásu
 z obrazovky sa prehrávanie zastaví.
 
+### Navigácia
+
+Lišta hore je priehľadná, po odskrolovaní sa odlepí od okraja a zmení sa
+na plávajúcu kapsulu (`is-stuck`). Pri skrolovaní dole sa odsunie preč
+(`is-away`), pri pohybe hore sa vráti — spúšťa sa až po prvej obrazovke,
+aby hneď na začiatku neposkakovala.
+
+Pod odkazmi pláva značka (`#navPill`), ktorá sa presúva pod kurzor
+a po odídení myši sa vráti na práve čítanú sekciu. Pozíciu počíta
+JavaScript z `offsetLeft` a `offsetWidth` odkazu, takže sa prepočítava
+pri zmene šírky okna aj po načítaní písiem.
+
+Na mobile sa menu otvára cez celú obrazovku s postupným odkrývaním
+položiek. Lišta vtedy ide nad prekrytie (`body.is-menu`), aby zostal
+prepínač klikateľný, a stránka pod ňou sa zamkne.
+
+Úplne hore je tenký ukazovateľ prečítanej časti stránky.
+
 ### Ako je riešená plynulosť
 
 Pás sa nikdy nehýbe dvoma spôsobmi naraz:

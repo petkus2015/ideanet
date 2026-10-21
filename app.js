@@ -424,31 +424,92 @@
   /* ───────────────────────────────────────────
      6) NAVIGÁCIA + MENU
   ─────────────────────────────────────────── */
-  const nav = $('#nav');
-  const onScroll = () => nav.classList.toggle('is-stuck', scrollY > 12);
-  onScroll(); addEventListener('scroll', onScroll, { passive: true });
+  const nav = $('#nav'), navLinks = $('#navLinks'), pill = $('#navPill'),
+        progress = $('#scrollProgress');
+  const links = $$('a', navLinks);
 
+  /* ── ukazovateľ priebehu + správanie lišty ──
+     Lišta sa skrýva až po prejdení prvej obrazovky, aby hneď na začiatku
+     neposkakovala. Pri pohybe hore sa vráti okamžite. */
+  let lastY = scrollY, parked = false;
+
+  const onScroll = () => {
+    const y = scrollY;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progress.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+
+    nav.classList.toggle('is-stuck', y > 12);
+
+    if (document.body.classList.contains('is-menu')) { lastY = y; return; }
+    const dy = y - lastY;
+    if (Math.abs(dy) > 6) {                       // drobné pohyby ignorujeme
+      const away = dy > 0 && y > innerHeight * 0.6;
+      if (away !== parked) { parked = away; nav.classList.toggle('is-away', away); }
+      lastY = y;
+    }
+  };
+  onScroll();
+  addEventListener('scroll', onScroll, { passive: true });
+
+  /* ── plávajúca značka pod odkazmi ──────────
+     Presúva sa pod kurzor, po odídení myši sa vráti na čítanú sekciu. */
+  let activeLink = null;
+
+  const movePill = (el) => {
+    if (!el || !navLinks.offsetParent) { pill.style.opacity = '0'; return; }
+    pill.style.opacity = '1';
+    pill.style.width = el.offsetWidth + 'px';
+    pill.style.transform = `translate3d(${el.offsetLeft}px,-50%,0)`;
+  };
+  const restorePill = () => movePill(activeLink);
+
+  links.forEach(a => {
+    a.addEventListener('pointerenter', () => movePill(a));
+    a.addEventListener('focus', () => movePill(a));
+  });
+  navLinks.addEventListener('pointerleave', restorePill);
+  navLinks.addEventListener('focusout', restorePill);
+
+  /* ── mobilné menu ──────────────────────────── */
   const burger = $('#burger'), menu = $('#mobileMenu');
   const setMenu = (open) => {
     menu.hidden = !open;
+    document.body.classList.toggle('is-menu', open);
+    document.body.classList.toggle('is-locked', open);
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Zavrieť menu' : 'Otvoriť menu');
+    if (open) { nav.classList.remove('is-away'); parked = false; }
   };
   burger.addEventListener('click', () => setMenu(menu.hidden));
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
-  matchMedia('(min-width: 861px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
+  matchMedia('(min-width: 861px)').addEventListener('change', (e) => {
+    if (e.matches) setMenu(false);
+    restorePill();
+  });
 
-  /* aktívna sekcia v menu */
-  const links = $$('.nav__links a');
+  /* ── práve čítaná sekcia ───────────────────── */
   const sections = links.map(a => $(a.getAttribute('href'))).filter(Boolean);
   const spy = new IntersectionObserver((ents) => {
     ents.forEach(en => {
       if (!en.isIntersecting) return;
-      links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + en.target.id));
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + en.target.id;
+        a.classList.toggle('is-active', on);
+        if (on) activeLink = a;
+      });
+      if (!navLinks.matches(':hover')) restorePill();
     });
   }, { rootMargin: '-45% 0px -50%' });
   sections.forEach(s => spy.observe(s));
+
+  /* rozmery odkazov sa menia s písmom aj šírkou okna */
+  let pillTimer = null;
+  addEventListener('resize', () => {
+    clearTimeout(pillTimer);
+    pillTimer = setTimeout(restorePill, 120);
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(restorePill);
 
   /* ───────────────────────────────────────────
      7) DROBNOSTI
