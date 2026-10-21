@@ -101,8 +101,9 @@ a obe ponuky v `ponuka/`.
 
 | Ovládanie | Čo robí |
 |---|---|
-| ťahanie prstom / myšou | posúva pás videí |
-| koliesko myši | posúva pás, na kraji pokračuje skrolovanie stránky |
+| ťahanie prstom | natívne skrolovanie prehliadača aj s jeho zotrvačnosťou |
+| ťahanie myšou | posúva pás; po švihu doletí zotrvačnosťou na najbližšiu kartu |
+| koliesko myši | posúva pás voľne, po zastavení dojde na kartu; na kraji pokračuje skrolovanie stránky |
 | šípky ← → alebo bočné tlačidlá | posun o jednu kartu |
 | klik na kartu / Enter | spustí a zastaví ukážku |
 | tlačidlo **Zvuk** | zapne alebo vypne zvuk |
@@ -110,6 +111,23 @@ a obe ponuky v `ponuka/`.
 
 Prehráva sa vždy len jedno video; pri odchode karty zo stredu alebo pásu
 z obrazovky sa prehrávanie zastaví.
+
+### Ako je riešená plynulosť
+
+Pás sa nikdy nehýbe dvoma spôsobmi naraz:
+
+- **Dotyk** si rieši prehliadač sám — má vlastné zotrvačné skrolovanie
+  aj CSS snap a čokoľvek vlastné by bolo horšie.
+- **Myš, koliesko a tlačidlá** vedie jediná časovo riadená animácia
+  (`easeOutCubic`). Počas nej sa CSS snap vypína triedou `is-gliding`
+  a vracia sa až vtedy, keď pás stojí presne na karte.
+
+Dôležité je poradie: snap sa musí vypnúť **skôr**, než sa prvýkrát
+prečíta `scrollLeft`. Čítanie si vynúti prepočet layoutu a snap v tej
+chvíli stihne pásom šklbnúť.
+
+Geometria kariet sa meria raz (`measure()`), nie pri každom snímku —
+čítanie `offsetLeft` počas skrolovania bol druhý zdroj trhania.
 
 ## Prispôsobenie
 

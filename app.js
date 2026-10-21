@@ -134,44 +134,116 @@
 
   /* ───────────────────────────────────────────
      4) POSÚVANIE — ťahanie, šípky, koliesko
-  ─────────────────────────────────────────── */
-  let active = 0;
 
-  function center(i, behavior = 'smooth') {
-    const card = cards[i];
-    if (!card) return;
-    const left = card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2;
-    rail.scrollTo({ left, behavior: reduce ? 'auto' : behavior });
+     Pás sa nikdy nehýbe dvoma spôsobmi naraz. Buď ho ťahá prst
+     (vtedy to rieši prehliadač a má vlastnú zotrvačnosť), alebo
+     ho vedie jedna animácia tu v kóde. CSS snap sa počas nej vypína,
+     aby sa s ňou nepretláčal.
+  ─────────────────────────────────────────── */
+  /* -1 znamená „ešte nič nenastavené“, aby prvé updateActive() triedy naozaj rozdalo */
+  let active = -1, railW = 0, maxScroll = 0, geo = [];
+  const bar = $('#railBar'), prevBtn = $('#prevReel'), nextBtn = $('#nextReel');
+  const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
+
+  /* Rozmery kariet čítame raz — nie pri každom snímku animácie.
+     Čítanie offsetLeft počas skrolovania si vynucuje prepočet layoutu
+     a práve to pás trhalo. */
+  function measure() {
+    railW = rail.clientWidth;
+    maxScroll = rail.scrollWidth - railW;
+    geo = cards.map(c => ({
+      left: c.offsetLeft,
+      width: c.offsetWidth,
+      mid: c.offsetLeft + c.offsetWidth / 2,
+    }));
+    bar.style.width = (100 / Math.max(1, cards.length)) + '%';
   }
 
-  function updateActive() {
-    const max = rail.scrollWidth - rail.clientWidth;
-    const mid = rail.scrollLeft + rail.clientWidth / 2;
+  const targetFor = (i) => {
+    const g = geo[i];
+    return g ? clamp(g.left - (railW - g.width) / 2, 0, maxScroll) : 0;
+  };
+
+  /* Karta najbližšie k stredu. Rozhoduje geometria, nie poradie — vľavo
+     je pás odsadený len na úroveň textu, takže prvé karty sa do stredu
+     dostať nedajú a „na kraji je aktívna prvá“ by klamalo. */
+  function nearest(scrollLeft = rail.scrollLeft) {
+    if (scrollLeft >= maxScroll - 2) return cards.length - 1;
+    const mid = scrollLeft + railW / 2;
     let best = 0, bestD = Infinity;
-    cards.forEach((c, i) => {
-      const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
+    for (let i = 0; i < geo.length; i++) {
+      const d = Math.abs(geo[i].mid - mid);
       if (d < bestD) { bestD = d; best = i; }
-    });
-    /* na krajoch sa karta vycentrovať nedá — aktívna je teda prvá / posledná */
-    if (rail.scrollLeft <= 2) best = 0;
-    else if (rail.scrollLeft >= max - 2) best = cards.length - 1;
+    }
+    return best;
+  }
+
+  /* ── jedna plynulá animácia pásu ───────────
+     Poradie tu je dôležitejšie, než sa zdá. CSS snap sa musí vypnúť
+     skôr, než sa prvýkrát prečíta pozícia pásu — čítanie si vynúti
+     prepočet layoutu a snap v tej chvíli stihne pás šklbnúť na svoju
+     stranu. Späť ho pustíme až vtedy, keď pás stojí presne na karte. */
+  let glideRaf = null;
+
+  function cancelGlide() {
+    if (glideRaf) cancelAnimationFrame(glideRaf);
+    glideRaf = null;
+  }
+
+  const freeze = () => rail.classList.add('is-gliding');    // snap preč
+  const settle = () => rail.classList.remove('is-gliding'); // snap späť
+
+  function glideTo(i, dur) {
+    cancelGlide();
+    freeze();
+    const from = rail.scrollLeft, to = targetFor(i), dist = to - from;
+
+    if (reduce || Math.abs(dist) < 1) {
+      rail.scrollLeft = to; settle(); updateActive(); return;
+    }
+
+    /* kratší posun nesmie trvať rovnako dlho ako cesta cez celý pás */
+    const ms = dur || clamp(Math.abs(dist) * 0.85, 300, 820);
+    const t0 = performance.now();
+
+    const frame = (t) => {
+      const p = Math.min(1, (t - t0) / ms);
+      rail.scrollLeft = from + dist * (1 - Math.pow(1 - p, 3));   // easeOutCubic
+      if (p < 1) { glideRaf = requestAnimationFrame(frame); return; }
+      glideRaf = null;
+      settle();
+      updateActive();
+    };
+    glideRaf = requestAnimationFrame(frame);
+  }
+
+  function center(i, instant) {
+    if (!cards[i]) return;
+    if (instant || reduce) {
+      cancelGlide(); freeze();
+      rail.scrollLeft = targetFor(i);
+      settle(); updateActive();
+      return;
+    }
+    glideTo(i);
+  }
+
+  /* ── stav pod pásom ────────────────────────── */
+  function updateActive() {
+    const best = nearest();
     if (best !== active) {
       active = best;
       stopAll(videos[active]);                       // mimo stredu sa neprehráva
+      cards.forEach((c, i) => {
+        c.classList.toggle('is-active', i === active);
+        c.setAttribute('aria-selected', i === active);
+      });
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
     }
-    cards.forEach((c, i) => {
-      c.classList.toggle('is-active', i === active);
-      c.setAttribute('aria-selected', i === active);
-    });
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
-
-    const pct = max > 0 ? rail.scrollLeft / max : 0;
-    const bar = $('#railBar');
-    bar.style.width = (100 / cards.length) + '%';
+    const pct = maxScroll > 0 ? rail.scrollLeft / maxScroll : 0;
     bar.style.transform = `translateX(${pct * (cards.length - 1) * 100}%)`;
-
-    $('#prevReel').disabled = rail.scrollLeft < 4;
-    $('#nextReel').disabled = rail.scrollLeft > max - 4;
+    prevBtn.disabled = rail.scrollLeft < 4;
+    nextBtn.disabled = rail.scrollLeft > maxScroll - 4;
   }
 
   rail.addEventListener('scroll', () => {
@@ -179,52 +251,106 @@
     rail._raf = requestAnimationFrame(() => { rail._raf = null; updateActive(); });
   }, { passive: true });
 
-  $('#prevReel').addEventListener('click', () => center(Math.max(0, active - 1)));
-  $('#nextReel').addEventListener('click', () => center(Math.min(cards.length - 1, active + 1)));
+  /* Posun o kartu, ktorá pásom skutočne pohne. Krajné karty majú cieľovú
+     pozíciu orezanú na 0, takže „aktívna + 1“ vedela skončiť na mieste
+     a tlačidlo vyzeralo pokazené. */
+  function stepCard(dir) {
+    const cur = rail.scrollLeft;
+    if (dir > 0) {
+      for (let i = 0; i < cards.length; i++) if (targetFor(i) > cur + 1) return glideTo(i);
+      return glideTo(cards.length - 1);
+    }
+    for (let i = cards.length - 1; i >= 0; i--) if (targetFor(i) < cur - 1) return glideTo(i);
+    return glideTo(0);
+  }
+
+  prevBtn.addEventListener('click', () => stepCard(-1));
+  nextBtn.addEventListener('click', () => stepCard(1));
   dots.forEach(d => d.addEventListener('click', () => center(+d.dataset.i)));
 
-  /* ťahanie myšou / prstom */
-  let down = false, startX = 0, startScroll = 0;
+  /* ── ťahanie myšou ─────────────────────────
+     Dotyku sa nedotýkame. Prehliadač má pre prst vlastné zotrvačné
+     skrolovanie aj snap a čokoľvek, čím by sme ho nahradili, by bolo
+     horšie. Myš takú zotrvačnosť nemá, tak ju dorobíme. */
+  let down = false, dragging = false, startX = 0, startScroll = 0, lastX = 0, lastT = 0, vel = 0;
+
   rail.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch') return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    down = true; startX = e.clientX; startScroll = rail.scrollLeft;
+    cancelGlide(); freeze();
+    down = true; dragging = false; vel = 0;
+    startX = lastX = e.clientX;
+    startScroll = rail.scrollLeft;
+    lastT = performance.now();
     rail.dataset.moved = '0';
   });
+
   rail.addEventListener('pointermove', (e) => {
     if (!down) return;
     const dx = e.clientX - startX;
-    if (Math.abs(dx) > 6) {
+
+    if (!dragging) {
+      if (Math.abs(dx) <= 6) return;                 // ešte to môže byť klik
+      dragging = true;
       rail.dataset.moved = '1';
       rail.classList.add('is-dragging');
-      rail.setPointerCapture?.(e.pointerId);
+      /* zachytenie vie odmietnuť ukazovateľ, ktorý už nie je aktívny */
+      try { rail.setPointerCapture(e.pointerId); } catch (_) {}
     }
-    if (rail.dataset.moved === '1') rail.scrollLeft = startScroll - dx;
+
+    rail.scrollLeft = startScroll - dx;
+
+    /* rýchlosť v px/ms, vyhladená — surové hodnoty medzi snímkami skáču */
+    const now = performance.now(), dt = now - lastT;
+    if (dt > 0) {
+      vel = vel * 0.7 + ((lastX - e.clientX) / dt) * 0.3;
+      lastX = e.clientX;
+      lastT = now;
+    }
   });
-  const endDrag = () => {
+
+  function endDrag() {
     if (!down) return;
     down = false;
+    if (!dragging) { settle(); return; }        // bol to klik, nie ťahanie
+    dragging = false;
     rail.classList.remove('is-dragging');
-    if (rail.dataset.moved === '1') {
-      requestAnimationFrame(() => { updateActive(); center(active); });
-      setTimeout(() => { rail.dataset.moved = '0'; }, 0);
-    }
-  };
-  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => rail.addEventListener(ev, endDrag));
 
-  /* vertikálne koliesko → horizontálny posun */
+    /* Kam by pás doletel, keby mal zotrvačnosť — a tam dotiahneme
+       najbližšiu kartu. Jedna animácia namiesto dojazdu, ktorý by ešte
+       dobiehal, keď už snap ťahá inam. */
+    if (performance.now() - lastT > 120) vel = 0;    // pred pustením sa už nehýbal
+    const projected = clamp(rail.scrollLeft + vel * 170, 0, maxScroll);
+    glideTo(nearest(projected));
+    setTimeout(() => { rail.dataset.moved = '0'; }, 0);
+  }
+
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev =>
+    rail.addEventListener(ev, endDrag));
+
+  /* ── koliesko a touchpad ───────────────────
+     Kým sa točí, pás ide voľne a snap je vypnutý. Keď sa zastaví,
+     dojde na najbližšiu kartu. Pôvodne sa každý tik kolieska pretláčal
+     so snapom a z toho bolo to trhanie. */
+  let wheelTimer = null;
+
   rail.addEventListener('wheel', (e) => {
-    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-    const max = rail.scrollWidth - rail.clientWidth;
-    const at = (e.deltaY < 0 && rail.scrollLeft <= 0) || (e.deltaY > 0 && rail.scrollLeft >= max - 1);
-    if (at) return;                                   // na kraji necháme skrolovať stránku
+    const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    const atEdge = (d < 0 && rail.scrollLeft <= 0) || (d > 0 && rail.scrollLeft >= maxScroll - 1);
+    if (atEdge) return;                              // na kraji nech skroluje stránka
     e.preventDefault();
-    rail.scrollLeft += e.deltaY;
+
+    cancelGlide(); freeze();                         // snap počas pohybu prekáža
+    rail.scrollLeft = clamp(rail.scrollLeft + d, 0, maxScroll);
+
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(() => glideTo(nearest(), 360), 140);
   }, { passive: false });
 
-  /* klávesnica */
+  /* ── klávesnica ────────────────────────────── */
   rail.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); center(Math.min(cards.length - 1, active + 1)); }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); center(Math.max(0, active - 1)); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); stepCard(1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); stepCard(-1); }
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(active); }
   });
 
@@ -232,8 +358,14 @@
   new IntersectionObserver(([en]) => { if (!en.isIntersecting) stopAll(); }, { threshold: 0 })
     .observe(rail);
 
-  requestAnimationFrame(() => { center(0, 'auto'); updateActive(); });
-  addEventListener('resize', () => { center(active, 'auto'); updateActive(); });
+  measure();
+  requestAnimationFrame(() => { measure(); center(0, true); });
+
+  let resizeTimer = null;
+  addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { measure(); center(active, true); }, 120);
+  });
 
   /* ───────────────────────────────────────────
      5) LIGHTBOX

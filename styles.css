@@ -243,7 +243,10 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   -webkit-overflow-scrolling:touch;
 }
 .rail::-webkit-scrollbar{display:none}
-.rail.is-dragging{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.rail.is-dragging{cursor:grabbing}
+/* kým pás vedie animácia alebo prst na myši, CSS snap sa musí stiahnuť —
+   inak ťahá pás na svoju stranu a pohyb vyzerá trhane */
+.rail.is-dragging,.rail.is-gliding{scroll-snap-type:none;scroll-behavior:auto}
 .rail.is-dragging *{pointer-events:none}
 
 .reel{
@@ -323,7 +326,8 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 .reels__arrow--next{right:max(.5rem, calc((100vw - var(--shell))/2 - 62px))}
 
 .rail__progress{width:min(360px,60vw);height:3px;border-radius:3px;background:rgba(255,255,255,.1);margin:1.4rem auto 0;overflow:hidden}
-.rail__progress span{display:block;height:100%;width:20%;border-radius:3px;background:linear-gradient(90deg,var(--magenta),var(--violet));transition:transform .18s ease, width .18s ease;transform-origin:left}
+/* posúva sa každý snímok, takže prechod by ho len rozmazal a oneskoril */
+.rail__progress span{display:block;height:100%;width:20%;border-radius:3px;background:linear-gradient(90deg,var(--magenta),var(--violet));transform-origin:left;will-change:transform}
 .rail__dots{display:flex;justify-content:center;gap:.45rem;margin-top:1rem;flex-wrap:wrap}
 .rail__dots button{
   width:9px;height:9px;padding:0;border-radius:50%;cursor:pointer;border:0;
