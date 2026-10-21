@@ -182,14 +182,14 @@ Rovnaký štandard pri každom balíku:
 - profesionálne nastavená mobilná video technika
 - vertikál 9:16
 - výber najlepších záberov
-- strih na rytmus
+- strih
 - základný color grading
 - hudba
 - jednoduché titulky a texty
-- export 1080 × 1920
+- export 1080 × 1920 / 4K
 - 1 kolo revízií
 - dodanie cez cloud
-- dodanie do 24 hodín
+- dodanie cez cloud do 24 hodín alebo podľa dohody
 
 Posledný bod je jeden z najsilnejších predajných argumentov. Používaj ho.
 
@@ -258,7 +258,8 @@ Dôvod: z trojhodinového natáčania sa dá neskôr vyrobiť aj dvadsať
 Štandardne môžeš **publikované** videá použiť vo svojom portfóliu
 a na vlastných sociálnych sieťach.
 
-Ak si klient neželá zverejnenie, rešpektuj NDA a **nepýtaj si zaň príplatok**.
+Ak si klient neželá zverejnenie, rešpektuj NDA — **jednorazový poplatok 30 €**
+za celú spoluprácu.
 
 ### Platobné podmienky
 
@@ -326,7 +327,7 @@ Začatá polhodina = minimálna účtovacia jednotka.
 >
 > V praxi to funguje tak, že s klientom komunikujete vy, ja prídem,
 > natočím a dodám hotové Reels — dodanie do 24 hodín,
-> white-label, NDA bez príplatku.
+> white-label, NDA za 30 €.
 >
 > Ceny začínajú na 120 € za produkciu, najčastejšie sa objednáva
 > balík za 390 € (natáčanie do 3 hodín, 5 hotových Reels).

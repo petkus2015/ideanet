@@ -367,7 +367,7 @@
   /* ── pás s videami ─────────────────────────── */
   const reelsRail = createRail({
     rail, cards, dots,
-    prev: $('#prevReel'), next: $('#nextReel'), bar: $('#railBar'),
+    prev: $('#prevReel'), next: $('#nextReel'),   // bez ukazovateľa priebehu — stačia guličky
     onActive: (i) => stopAll(videos[i]),            // mimo stredu sa neprehráva
   });
   const center = (i, instant) => reelsRail.center(i, instant);

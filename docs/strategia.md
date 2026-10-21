@@ -198,8 +198,8 @@ videí v portfóliu a čo je už práca navyše.
 ### NDA
 
 Ak agentúra povie „nechceme, aby bolo verejne známe, kto nám videá vyrába“,
-rešpektuj to a **nepýtaj si zaň príplatok**. Stabilná spolupráca je
-hodnotnejšia než možnosť dať každé video do portfólia.
+rešpektuj to za **jednorazový poplatok 30 €**. Je to symbolická suma —
+nejde o zarobenie, ale o to, aby bolo zrejmé, že sa vzdávaš referencie.
 
 ---
 
