@@ -204,6 +204,10 @@ a do pár hodín má klient vertikálne video pripravené na IG a TikTok.
 
 **Tu nepredávaš strih. Predávaš rýchlosť.**
 
+K eventu sa dá prilepiť aj **grafika za 180 €** — vizuál podujatia
+rozpísaný do formátov pre siete. Klient ju potrebuje tak či tak, lebo
+event komunikuje dopredu, a ty ju predávaš k videu, ktoré príde po ňom.
+
 Video z konferencie, ktoré príde o týždeň, je archív. Video, ktoré vyjde
 ešte v ten večer, zachytí moment, keď majú ľudia akciu v hlave.
 

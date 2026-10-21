@@ -56,6 +56,22 @@ Klient si kupuje tvoju dostupnosť v konkrétny deň.
 
 Každá ďalšia hodina na mieste: **70 € / h**
 
+### Grafika na event
+
+**180 € za sadu**
+
+- jeden vizuálny koncept podujatia
+- formát 9:16 na stories a Reels cover
+- formát 1:1 do feedu
+- formát 16:9 na web, cover a prezentáciu
+- pozvánka, oznámenie a pripomienka termínu
+- **2 kolá revízií** namiesto štandardného jedného
+- dodanie do 3 pracovných dní
+
+Predáva sa to samo pri každom evente, ktorý sa komunikuje dopredu. Klient
+má aj tak potrebu niečo vyvesiť na siete — takto to vyzerá jednotne
+s videom, ktoré príde po evente.
+
 ### Podcast u vás
 
 **400 € za epizódu**
@@ -152,7 +168,8 @@ Posledný bod je jeden z najsilnejších predajných argumentov. Používaj ho.
 
 ### Revízie
 
-V cene **1 kolo**, pri balíku PRO **2 kolá**. Pripomienky naraz.
+V cene **1 kolo**, pri balíku PRO a pri grafike na event **2 kolá**.
+Pripomienky naraz.
 
 Ďalšie úpravy: **40 € / h** pre firmy, **35 € / h** pre agentúry,
 minimálne účtovanie 30 minút.

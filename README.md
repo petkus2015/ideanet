@@ -54,6 +54,7 @@ z atribútov `value` v `#calcPkg`. **Pri zmene ceny upravte obe miesta.**
 **Agentúry (white-label):** Reel Basic 120 € · Content Mini 250 € · Content Day 390 €
 · Content Plus 550 € · Same-Day Event 290 € · Event Plus 450 € · Partner od 1 200 €/mes.
 **Eventy:** Event Mini 290 € · Event 450 € · Event Same-Day 590 € · ďalšia hodina 70 €
+**Grafika na event:** 180 € za sadu formátov, 2 kolá revízií
 
 Sadzby v kalkulačke sú konštanty na začiatku bloku *9) KALKULAČKA* v `app.js`:
 
