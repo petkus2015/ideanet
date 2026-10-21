@@ -44,6 +44,23 @@ assets/videos/      videá portfólia
 | Podmienky | osem krátkych kariet + odkaz na plnú ponuku |
 | Kontakt | dopytový formulár s predvyplneným balíkom |
 
+## Odkazy na sociálne siete
+
+Ikony sú v pätičke a v rozbalenom mobilnom menu — Instagram, TikTok,
+YouTube a Facebook. **Adresy sú zástupné** (`ideanet.studio`), treba ich
+prepísať na skutočné profily; nachádzajú sa na dvoch miestach
+v `index.html`, v blokoch s triedou `socials`.
+
+Pridanie ďalšej siete znamená skopírovať jeden `<a>` s vlastnou
+`aria-label` a cestou ikony.
+
+## Svetlo pod kurzorom
+
+Za obsahom sa pohybuje jemné svetlo, ktoré sa k myši približuje, nie ju
+kopíruje (`#cursorGlow`). Leží na `z-index:-1`, takže nič netónuje ani
+neblokuje klikanie, a na dotykových zariadeniach aj pri
+`prefers-reduced-motion` sa vôbec nezapína.
+
 ## Portrét v značke
 
 Vedľa mena je v hlavičke aj v pätičke kruhový portrét, ktorý sa pri

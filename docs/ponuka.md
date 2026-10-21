@@ -45,9 +45,15 @@ Pre klientov, ktorí nechcú paušál. Slúži ako vstupný produkt.
 | 3 Reels | do 4 hodín | 350 € |
 | každý ďalší Reel | +1 hodina | +95 € |
 
-**Celodenná účasť** (som u klienta do 8 hodín): **420 € vrátane 3 Reels**,
-každý ďalší Reel +95 €. Platí sa deň, nie počet videí — pre eventy,
-otvorenia a natáčacie dni, keď treba byť k dispozícii celý čas.
+**Rezervácia času** — platí sa za čas, nie za počet videí. Pre eventy,
+otvorenia a natáčacie dni, keď treba byť k dispozícii celý čas:
+
+| Rezervácia | V cene | Cena |
+|---|---|---|
+| Poldeň, do 4 hodín | 2 Reels | 280 € |
+| Celý deň, do 8 hodín | 3 Reels | 420 € |
+
+Každý ďalší Reel nad rámec rezervácie +95 €.
 
 Návrh tém, plánovanie obsahu a jednotný vizuál naprieč profilom
 sú súčasťou mesačných balíkov, nie jednorazovej produkcie.

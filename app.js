@@ -573,12 +573,31 @@
   }, { threshold: .12, rootMargin: '0px 0px -8%' });
   $$('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
 
-  /* svetlo pod kurzorom na kartách */
-  $$('.card').forEach(c => c.addEventListener('pointermove', (e) => {
-    const r = c.getBoundingClientRect();
-    c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-    c.style.setProperty('--my', (e.clientY - r.top) + 'px');
-  }));
+  /* ── jemné svetlo pod kurzorom ──────────────
+     Pozícia sa k myši len približuje, nekopíruje ju — skok o celý
+     rozdiel by pôsobil tvrdo. Kreslí sa raz za snímok, nie pri každom
+     pohybe myši, ktorých príde aj niekoľko na snímok. */
+  const glow = $('#cursorGlow');
+  if (glow && matchMedia('(hover:hover)').matches && !reduce) {
+    let gx = innerWidth / 2, gy = innerHeight / 2, tx = gx, ty = gy, raf = null;
+
+    const draw = () => {
+      gx += (tx - gx) * 0.12;
+      gy += (ty - gy) * 0.12;
+      glow.style.transform = `translate3d(${gx}px,${gy}px,0)`;
+      raf = (Math.abs(tx - gx) > .5 || Math.abs(ty - gy) > .5) ? requestAnimationFrame(draw) : null;
+    };
+
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      tx = e.clientX; ty = e.clientY;
+      glow.classList.add('is-on');
+      if (!raf) raf = requestAnimationFrame(draw);
+    }, { passive: true });
+
+    addEventListener('pointerleave', () => glow.classList.remove('is-on'));
+    document.addEventListener('mouseleave', () => glow.classList.remove('is-on'));
+  }
 
   /* ───────────────────────────────────────────
      8) CENNÍK — prepínanie pohľadov
