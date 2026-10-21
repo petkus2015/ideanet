@@ -58,8 +58,14 @@ Pridanie ďalšej siete znamená skopírovať jeden `<a>` s vlastnou
 
 Za obsahom sa pohybuje jemné svetlo, ktoré sa k myši približuje, nie ju
 kopíruje (`#cursorGlow`). Leží na `z-index:-1`, takže nič netónuje ani
-neblokuje klikanie, a na dotykových zariadeniach aj pri
-`prefers-reduced-motion` sa vôbec nezapína.
+neblokuje klikanie.
+
+Pri kliknutí sa od kurzoru rozbehne tenký prstenec (`.ripple`). Ten je
+naopak nad obsahom, inak by ho karty prekryli práve tam, kde človek
+klikne; `pointer-events:none` ho drží mimo cesty.
+
+Oboje sa na dotykových zariadeniach a pri `prefers-reduced-motion`
+vôbec nezapína.
 
 ## Portrét v značke
 

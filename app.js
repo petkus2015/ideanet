@@ -597,6 +597,17 @@
 
     addEventListener('pointerleave', () => glow.classList.remove('is-on'));
     document.addEventListener('mouseleave', () => glow.classList.remove('is-on'));
+
+    /* nárazová vlna pri kliknutí — prstenec sa sám odstráni, keď dobehne */
+    addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') return;
+      const w = document.createElement('span');
+      w.className = 'ripple';
+      w.style.left = e.clientX + 'px';
+      w.style.top = e.clientY + 'px';
+      document.body.appendChild(w);
+      w.addEventListener('animationend', () => w.remove(), { once: true });
+    }, { passive: true });
   }
 
   /* ───────────────────────────────────────────

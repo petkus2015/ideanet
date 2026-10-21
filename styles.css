@@ -985,6 +985,22 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 .glow.is-on{opacity:1}
 @media (hover:none),(prefers-reduced-motion:reduce){.glow{display:none}}
 
+/* ── nárazová vlna pri kliknutí ────────────
+   Tenký prstenec, ktorý sa rozbehne od kurzoru a zhasne. Leží nad
+   obsahom, ale neklikateľne — inak by ho karty prekryli a nebolo by ho
+   vidieť práve tam, kde človek klikne. */
+.ripple{
+  position:fixed;z-index:70;pointer-events:none;
+  width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;
+  border:1.5px solid rgba(255,45,148,.6);
+  animation:ripple .62s cubic-bezier(.2,.75,.3,1) forwards;
+}
+@keyframes ripple{
+  from{transform:scale(1);opacity:.7}
+  to{transform:scale(16);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){.ripple{display:none}}
+
 /* ── ikony sociálnych sietí ────────────────── */
 .socials{display:flex;gap:.5rem;align-items:center}
 .socials a{
@@ -1005,7 +1021,9 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 .footer{border-top:1px solid var(--line);padding-block:2rem;background:rgba(4,5,14,.6)}
 .footer__inner{display:flex;flex-wrap:wrap;gap:1rem 2rem;align-items:center;justify-content:space-between}
 .footer p{margin:0;color:var(--muted-2);font-size:.84rem}
-.footer__links{display:flex;gap:1.2rem;font-size:.86rem;color:var(--muted)}
+/* bez zalamovania tvorí päť odkazov jeden dlhý riadok, ktorý na úzkom
+   displeji pretláčal celú stránku do strany */
+.footer__links{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem 1.2rem;font-size:.86rem;color:var(--muted)}
 .footer__links a:hover{color:var(--magenta)}
 
 /* ── lightbox ────────────────────────────── */
