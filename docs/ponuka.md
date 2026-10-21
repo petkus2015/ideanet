@@ -1,5 +1,7 @@
 # Ponuka a cenník — textová verzia
 
+Peter Miškus — IDEANET
+
 Všetky ceny sú **bez DPH**.
 Na konci sú hotové texty na skopírovanie do správy alebo e-mailu.
 
@@ -97,6 +99,29 @@ Každá ďalšia epizóda natočená v ten istý deň je lacnejšia — svetlo, 
 a kamery už stoja. Pri pravidelnom podcaste nacením sériu individuálne
 a dohodni si pevný termín v mesiaci. To je ďalší kandidát na paušál.
 
+### Tvorba vizuálov a identity
+
+**Vizuály pre siete — 280 €**
+
+- sada šablón pre Instagram a Facebook
+- formáty 9:16, 1:1 a 16:9
+- citáty, oznamy, akcie
+- vo farbách a písmach klienta
+- 2 kolá revízií
+
+**Vizuálna identita — 690 €**
+
+- logo a jeho varianty
+- farebná paleta a písma
+- sada šablón pre siete
+- jednoduchý manuál používania
+- 2 kolá revízií
+- dodanie do 10 pracovných dní
+
+Ak klient identitu už má, stačia vizuály. Ak nemá nič, oplatí sa začať
+identitou — video aj grafika z nej potom vychádzajú a profil vyzerá ako
+jedna značka.
+
 ### Doplnok — správa sociálnych sietí
 
 **+ 300 až 500 € mesačne k balíku**
@@ -174,7 +199,7 @@ Posledný bod je jeden z najsilnejších predajných argumentov. Používaj ho.
 
 ### Revízie
 
-V cene **1 kolo**, pri balíku PRO a pri grafike na event **2 kolá**.
+V cene **1 kolo**, pri balíku PRO a pri všetkej grafike **2 kolá**.
 Pripomienky naraz.
 
 Ďalšie úpravy: **40 € / h** pre firmy, **35 € / h** pre agentúry,
@@ -200,10 +225,10 @@ Príklad: produkcia za 390 € stojí v same-day režime 585 €.
 
 ### Doprava
 
-Bratislava **v cene**.
+Bratislava, Žilina a Brno sú **v cene**.
 
-Mimo Bratislavy **0,40 € / km** tam aj späť. Parkovné, diaľničné poplatky
-a ubytovanie podľa reálnych nákladov po dohode.
+Mimo nich **0,40 € / km** tam aj späť, alebo podľa dohody. Parkovné,
+diaľničné poplatky a ubytovanie podľa reálnych nákladov.
 
 Pri väčších zákazkách zahrň dopravu priamo do cenovej ponuky.
 
@@ -255,7 +280,7 @@ Ak si klient neželá zverejnenie, rešpektuj NDA a **nepýtaj si zaň príplato
 - titulky v ďalšom jazyku
 - RAW materiál
 - extra natáčací čas
-- cestovanie mimo Bratislavy
+- cestovanie mimo Bratislavy, Žiliny a Brna
 - expresné dodanie
 
 ### Extra čas
@@ -318,7 +343,7 @@ Začatá polhodina = minimálna účtovacia jednotka.
 > V cene: návrh tém, strih, color grading, titulky, hudba, export 1080×1920,
 > 1 kolo revízií, dodanie cez cloud
 > Dodanie: do 24 hodín od natáčania
-> Doprava: Bratislava v cene
+> Doprava: Bratislava, Žilina a Brno v cene
 >
 > Cena: 690 € mesačne bez DPH
 >

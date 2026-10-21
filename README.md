@@ -35,6 +35,7 @@ assets/videos/      videá portfólia
 |---|---|
 | Hero | pozicionovanie „prídem → natočím → zostrihám → máte obsah“ |
 | Portfólio | interaktívny pás vertikálnych videí |
+| Vizuály | druhý pás s ukážkami grafiky a identít v pomere 4:5 |
 | Služby | tri cesty spolupráce (firmy / agentúry / eventy) + čo je vždy v cene |
 | Pre koho | segmenty, kde video priamo pomáha predávať |
 | Proces | štyri kroky od zadania po dodanie |
@@ -77,6 +78,7 @@ z atribútov `value` v `#calcPkg`. **Pri zmene ceny upravte obe miesta.**
 · Content Plus 550 € · Same-Day Event 290 € · Event Plus 450 € · Partner od 1 200 €/mes.
 **Eventy:** Event Mini 290 € · Event 450 € · Event Same-Day 590 € · ďalšia hodina 70 €
 **Grafika na event:** 180 € za sadu formátov, 2 kolá revízií
+**Vizuály a identita:** Vizuály pre siete 280 € · Vizuálna identita 690 €
 
 Sadzby v kalkulačke sú konštanty na začiatku bloku *9) KALKULAČKA* v `app.js`:
 

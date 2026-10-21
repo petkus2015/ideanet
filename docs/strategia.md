@@ -62,6 +62,14 @@ Jedna agentúra môže priniesť štyroch klientov naraz.
 Nepravidelné, ale rýchle peniaze a dobrý zdroj referencií.
 Pri same-day predávaš rýchlosť, nie strih — preto si môžeš pýtať viac.
 
+### E. Vizuály a identita
+**280 € za sadu vizuálov, 690 € za identitu**
+
+Nie je to video, ale predáva sa tomu istému klientovi a v tom istom
+hovore. Kto si objedná mesačný balík Reels, zvyčajne nemá poriadne logo
+ani jednotné šablóny — a vadí mu to. Identita je navyše jednorazová
+práca s dobrou hodinovou sadzbou.
+
 ### D. Podcast
 **400 € za epizódu**
 

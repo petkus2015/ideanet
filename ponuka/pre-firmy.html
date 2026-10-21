@@ -41,7 +41,10 @@ b,strong{font-weight:700;color:var(--ink)}
 .logo{display:flex;align-items:center;gap:.55rem;font-weight:800;letter-spacing:-.02em;font-size:1.02rem;color:var(--ink);text-decoration:none}
 .logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--brand-lite),var(--brand-dark));display:grid;place-items:center}
 .logo i::after{content:"";border-left:7px solid #fff;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;margin-left:2px}
-.logo span{color:var(--brand)}
+.logo__txt{display:grid;line-height:1.15;gap:1px}
+.logo__txt b{font-weight:800;font-size:1rem;letter-spacing:-.015em;color:var(--ink)}
+.logo__txt>span{font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.logo__txt>span i{font-style:normal;color:var(--brand)}
 .bar__act{display:flex;gap:.5rem;align-items:center}
 .mini{font-size:.82rem;color:var(--muted);white-space:nowrap}
 @media(max-width:620px){.mini{display:none}}
@@ -246,7 +249,9 @@ b,strong{font-weight:700;color:var(--ink)}
 
 <div class="bar noprint">
   <div class="wrap bar__in">
-    <a class="logo" href="../index.html"><i></i>IDEA<span>NET</span></a>
+    <a class="logo" href="../index.html"><i></i>
+      <span class="logo__txt"><b>Peter Miškus</b><span>IDEA<i>NET</i></span></span>
+    </a>
     <div class="bar__act">
       <span class="mini">Ponuka pre menšie firmy a živnostníkov</span>
       <button class="btn btn--sm" type="button" onclick="window.print()">Uložiť ako PDF</button>
@@ -266,7 +271,7 @@ b,strong{font-weight:700;color:var(--ink)}
     <ul class="chips">
       <li>Natáčanie u vás</li>
       <li>Same-day alebo do 24 hodín</li>
-      <li>Bratislava v cene dopravy</li>
+      <li>Bratislava, Žilina a Brno bez dopravy</li>
       <li>Ceny bez DPH</li>
     </ul>
     <div class="band__cta noprint">
@@ -626,8 +631,8 @@ b,strong{font-weight:700;color:var(--ink)}
       </div>
       <div class="term">
         <h4>Doprava</h4>
-        <p>Bratislava je v cene. Mimo Bratislavy 0,40 € / km tam aj späť, parkovné a diaľničné
-           poplatky podľa reálnych nákladov.</p>
+        <p>Bratislava, Žilina a Brno sú v cene. Mimo nich 0,40 € / km tam aj späť
+           alebo podľa dohody; parkovné a diaľničné poplatky podľa reálnych nákladov.</p>
       </div>
       <div class="term">
         <h4>Storno a presun termínu</h4>
@@ -670,7 +675,7 @@ b,strong{font-weight:700;color:var(--ink)}
 </section>
 
 <footer class="wrap foot">
-  <span>IDEANET — videoprodukcia pre sociálne siete</span>
+  <span>Peter Miškus — IDEANET · videoprodukcia pre sociálne siete</span>
   <span>Ponuka je orientačná, ceny bez DPH, platnosť 30 dní od odoslania.</span>
 </footer>
 

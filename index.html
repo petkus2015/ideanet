@@ -32,7 +32,7 @@
     <a class="brand" href="#top" aria-label="Domov">
       <span class="brand__mark" aria-hidden="true"><i></i></span>
       <span class="brand__text">
-        <span class="brand__name">Meno Priezvisko</span>
+        <span class="brand__name">Peter Miškus</span>
         <span class="brand__co">IDEA<b>NET</b></span>
       </span>
     </a>
@@ -171,6 +171,93 @@
 
       <div class="rail__progress" aria-hidden="true"><span id="railBar"></span></div>
       <div class="rail__dots" id="railDots" role="tablist" aria-label="Prejsť na video"></div>
+    </div>
+  </section>
+
+  <!-- ══ VIZUÁLY ══ -->
+  <section class="section section--shots" id="vizualy">
+    <div class="wrap">
+      <div class="section__head reveal">
+        <div>
+          <p class="eyebrow"><span class="dot"></span> Vizuály a identita</p>
+          <h2>Nielen video</h2>
+        </div>
+        <p class="section__note">
+          Logo, farby, písma a šablóny pre siete. Aby profil vyzeral ako jedna
+          značka, nie ako zbierka príspevkov od rôznych ľudí.
+        </p>
+      </div>
+    </div>
+
+    <div class="reels reels--shots" id="shots">
+      <button class="reels__arrow reels__arrow--prev" id="prevVis" aria-label="Predchádzajúci vizuál" aria-controls="visRail">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="rail rail--shots" id="visRail" tabindex="0" role="listbox" aria-label="Ukážky vizuálov a identít">
+        <article class="shot" data-i="0" role="option" aria-selected="false" aria-label="Identita kaviarne">
+          <img src="assets/visuals/vizual-01.svg" alt="Ukážka vizuálu — Identita kaviarne" loading="lazy" decoding="async" width="1080" height="1350">
+          <div class="shot__meta">
+            <span class="shot__cat">Identita</span>
+            <h3>Identita kaviarne</h3>
+            <p>Logo, farby a šablóny pre mestskú kaviareň.</p>
+          </div>
+        </article>
+        <article class="shot" data-i="1" role="option" aria-selected="false" aria-label="Šablóny pre fitness">
+          <img src="assets/visuals/vizual-02.svg" alt="Ukážka vizuálu — Šablóny pre fitness" loading="lazy" decoding="async" width="1080" height="1350">
+          <div class="shot__meta">
+            <span class="shot__cat">Vizuály</span>
+            <h3>Šablóny pre fitness</h3>
+            <p>Sada príspevkov na tréningy a rozpisy.</p>
+          </div>
+        </article>
+        <article class="shot" data-i="2" role="option" aria-selected="false" aria-label="Rebranding salónu">
+          <img src="assets/visuals/vizual-03.svg" alt="Ukážka vizuálu — Rebranding salónu" loading="lazy" decoding="async" width="1080" height="1350">
+          <div class="shot__meta">
+            <span class="shot__cat">Identita</span>
+            <h3>Rebranding salónu</h3>
+            <p>Nové logo a vizuálny rukopis pre kaderníctvo.</p>
+          </div>
+        </article>
+        <article class="shot" data-i="3" role="option" aria-selected="false" aria-label="Vizuál pre kliniku">
+          <img src="assets/visuals/vizual-04.svg" alt="Ukážka vizuálu — Vizuál pre kliniku" loading="lazy" decoding="async" width="1080" height="1350">
+          <div class="shot__meta">
+            <span class="shot__cat">Vizuály</span>
+            <h3>Vizuál pre kliniku</h3>
+            <p>Pokojný set pre zubnú ambulanciu.</p>
+          </div>
+        </article>
+        <article class="shot" data-i="4" role="option" aria-selected="false" aria-label="Set pre e-shop">
+          <img src="assets/visuals/vizual-05.svg" alt="Ukážka vizuálu — Set pre e-shop" loading="lazy" decoding="async" width="1080" height="1350">
+          <div class="shot__meta">
+            <span class="shot__cat">Vizuály</span>
+            <h3>Set pre e-shop</h3>
+            <p>Grafiky na akcie, novinky a recenzie.</p>
+          </div>
+        </article>
+        <article class="shot" data-i="5" role="option" aria-selected="false" aria-label="Identita podujatia">
+          <img src="assets/visuals/vizual-06.svg" alt="Ukážka vizuálu — Identita podujatia" loading="lazy" decoding="async" width="1080" height="1350">
+          <div class="shot__meta">
+            <span class="shot__cat">Event</span>
+            <h3>Identita podujatia</h3>
+            <p>Pozvánka, oznámenie a cover pre konferenciu.</p>
+          </div>
+        </article>
+      </div>
+
+      <button class="reels__arrow reels__arrow--next" id="nextVis" aria-label="Ďalší vizuál" aria-controls="visRail">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="rail__progress" aria-hidden="true"><span id="visBar"></span></div>
+      <div class="rail__dots" id="visDots" role="tablist" aria-label="Prejsť na vizuál">
+        <button role="tab" data-i="0" aria-label="Vizuál 1: Identita kaviarne"></button>
+        <button role="tab" data-i="1" aria-label="Vizuál 2: Šablóny pre fitness"></button>
+        <button role="tab" data-i="2" aria-label="Vizuál 3: Rebranding salónu"></button>
+        <button role="tab" data-i="3" aria-label="Vizuál 4: Vizuál pre kliniku"></button>
+        <button role="tab" data-i="4" aria-label="Vizuál 5: Set pre e-shop"></button>
+        <button role="tab" data-i="5" aria-label="Vizuál 6: Identita podujatia"></button>
+      </div>
     </div>
   </section>
 
@@ -441,6 +528,32 @@
             už stoja. Pri pravidelnom podcaste nacením sériu individuálne.
           </p>
 
+          <h3 class="sub reveal">Tvorba vizuálov a identity</h3>
+          <p class="sub__note reveal">Aby profil vyzeral ako jedna značka, nie ako zbierka príspevkov od rôznych ľudí.</p>
+          <ul class="tiers reveal" role="list">
+            <li class="tier">
+              <div class="tier__main">
+                <b>Vizuály pre siete</b>
+                <span>sada šablón pre Instagram a Facebook · formáty 9:16, 1:1 a 16:9 · citáty, oznamy, akcie · vo vašich farbách a písmach · 2 kolá revízií</span>
+              </div>
+              <span class="tier__price">280 €</span>
+              <a class="tier__cta" href="#kontakt" data-package="Vizuály pre siete — 280 €">Dopyt</a>
+            </li>
+            <li class="tier tier--best">
+              <div class="tier__main">
+                <b>Vizuálna identita</b>
+                <span>logo a jeho varianty · farebná paleta a písma · sada šablón pre siete · jednoduchý manuál používania · 2 kolá revízií · dodanie do 10 pracovných dní</span>
+              </div>
+              <span class="tier__price">690 €</span>
+              <a class="tier__cta" href="#kontakt" data-package="Vizuálna identita — 690 €">Dopyt</a>
+            </li>
+          </ul>
+          <p class="panel__foot reveal">
+            Ak identitu už máte, stačia vizuály — pracujem s vašimi farbami, písmami
+            a logom. Ak nemáte nič, oplatí sa začať identitou: všetko ostatné, video
+            aj grafika, z nej potom vychádza.
+          </p>
+
           <aside class="addon reveal">
             <div>
               <span class="addon__tag">Doplnok</span>
@@ -658,13 +771,22 @@
             <small class="hint" id="shootHint">Prvý Reel počíta s natáčaním do 2 hodín, každý ďalší pridá hodinu.</small>
           </div>
 
-          <div class="field field--check field--wide">
-            <label class="check">
-              <input type="checkbox" id="calcDay">
-              <span>Celodenná účasť — som u vás do 8 hodín <b>420 € vrátane 3 Reels</b></span>
+          <fieldset class="field field--wide modes">
+            <legend>Rezervácia času</legend>
+            <label class="radio">
+              <input type="radio" name="calcMode" value="none" checked>
+              <span>Bez rezervácie — platí sa podľa počtu Reels</span>
             </label>
-            <small class="hint">Pre eventy, otvorenia a natáčacie dni, keď treba byť k dispozícii celý čas. Každý Reel nad tri sa pripočíta.</small>
-          </div>
+            <label class="radio">
+              <input type="radio" name="calcMode" value="half">
+              <span>Poldeň — som u vás do 4 hodín <b>280 € vrátane 2 Reels</b></span>
+            </label>
+            <label class="radio">
+              <input type="radio" name="calcMode" value="day">
+              <span>Celý deň — som u vás do 8 hodín <b>420 € vrátane 3 Reels</b></span>
+            </label>
+            <small class="hint">Pre eventy, otvorenia a natáčacie dni, keď treba byť k dispozícii celý čas. Každý Reel nad rámec sa pripočíta.</small>
+          </fieldset>
 
           <fieldset class="field field--wide addons">
             <legend>Doplnky</legend>
@@ -681,15 +803,19 @@
               <span>Grafika na event — vizuál a formáty pre siete <b>+ 180 €</b></span>
             </label>
             <label class="check">
+              <input type="checkbox" id="calcVisuals">
+              <span>Vizuály pre siete — sada šablón vo vašich farbách <b>+ 280 €</b></span>
+            </label>
+            <label class="check">
               <input type="checkbox" id="calcSocial">
               <span>Správa sociálnych sietí <b>+ 300 € / mesiac</b></span>
             </label>
           </fieldset>
 
           <div class="field field--wide">
-            <label for="calcKm">Vzdialenosť mimo Bratislavy <i>(km jedným smerom)</i></label>
+            <label for="calcKm">Vzdialenosť mimo Bratislavy, Žiliny a Brna <i>(km jedným smerom)</i></label>
             <input id="calcKm" type="number" min="0" max="500" step="5" value="0" inputmode="numeric">
-            <small class="hint">Bratislava je v cene. Mimo Bratislavy 0,40 € / km tam aj späť.</small>
+            <small class="hint">Bratislava, Žilina a Brno sú v cene. Mimo nich 0,40 € / km tam aj späť, alebo podľa dohody.</small>
           </div>
         </form>
 
@@ -731,7 +857,7 @@
         </div>
         <div class="fact">
           <h3>Dodanie</h3>
-          <p>Do 24 hodín od natáčania. Žiadne čakanie na voľnú kapacitu.</p>
+          <p>Video do 24 hodín od natáčania. Grafika a podcast majú vlastné termíny — od 3 do 10 pracovných dní podľa rozsahu.</p>
         </div>
         <div class="fact">
           <h3>Same-day</h3>
@@ -739,7 +865,7 @@
         </div>
         <div class="fact">
           <h3>Doprava</h3>
-          <p>Bratislava v cene. Mimo Bratislavy 0,40 € / km tam aj späť.</p>
+          <p>Bratislava, Žilina a Brno sú v cene. Mimo nich 0,40 € / km tam aj späť, alebo podľa dohody.</p>
         </div>
         <div class="fact">
           <h3>Storno</h3>
@@ -785,7 +911,7 @@
           <li><span aria-hidden="true">◎</span><a href="#portfolio">@ideanet.studio</a></li>
         </ul>
         <ul class="contact__facts" role="list">
-          <li><b>Bratislava</b><span>doprava v cene</span></li>
+          <li><b>BA · ZA · Brno</b><span>doprava v cene</span></li>
           <li><b>do 24 h</b><span>alebo same-day</span></li>
           <li><b>bez DPH</b><span>všetky uvedené ceny</span></li>
         </ul>
@@ -827,10 +953,14 @@
               <option>Event Mini — 290 €</option>
               <option>Event — 450 €</option>
               <option>Event Same-Day — 590 €</option>
-              <option>Grafika na event — 180 €</option>
             </optgroup>
             <optgroup label="Podcast">
               <option>Podcast u vás, do 70 minút — 400 €</option>
+            </optgroup>
+            <optgroup label="Grafika a identita">
+              <option>Vizuály pre siete — 280 €</option>
+              <option>Vizuálna identita — 690 €</option>
+              <option>Grafika na event — 180 €</option>
             </optgroup>
             <optgroup label="Vlastná zostava">
               <option>Vlastná zostava podľa kalkulačky</option>
@@ -858,13 +988,13 @@
     <a class="brand" href="#top">
       <span class="brand__mark" aria-hidden="true"><i></i></span>
       <span class="brand__text">
-        <span class="brand__name">Meno Priezvisko</span>
+        <span class="brand__name">Peter Miškus</span>
         <span class="brand__co">IDEA<b>NET</b></span>
       </span>
     </a>
-    <p>© <span id="year">2026</span> IDEANET — videograf &amp; strihač vertikálneho obsahu.</p>
+    <p>© <span id="year">2026</span> Peter Miškus — IDEANET · videograf &amp; strihač vertikálneho obsahu.</p>
     <nav class="footer__links" aria-label="Pätička">
-      <a href="#portfolio">Portfólio</a><a href="#cennik">Cenník</a><a href="#podmienky">Podmienky</a><a href="#kontakt">Kontakt</a>
+      <a href="#portfolio">Portfólio</a><a href="#vizualy">Vizuály</a><a href="#cennik">Cenník</a><a href="#podmienky">Podmienky</a><a href="#kontakt">Kontakt</a>
     </nav>
   </div>
 </footer>

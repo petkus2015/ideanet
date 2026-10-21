@@ -14,6 +14,8 @@
 
   /* akcent */
   --magenta:#ff2d94;
+  --blue:#4d86ff;
+  --blue-2:#2a5bd7;
   --magenta-2:#c81e7a;
   --violet:#8b2bff;
 
@@ -378,7 +380,9 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   display:flex;gap:clamp(.9rem,1.8vw,1.5rem);
   overflow-x:auto;overflow-y:hidden;
   scroll-snap-type:x mandatory;
-  padding-block:clamp(1rem,2vw,2rem);
+  /* dosť miesta hore aj dole, nech žiara aktívnej karty nie je useknutá
+     orezaním posuvného kontajnera */
+  padding-block:clamp(2.6rem,4.5vw,4rem);
   padding-inline:max(var(--gutter), calc((100vw - var(--shell))/2)) max(var(--gutter), calc(50% - var(--card-w)/2));
   scrollbar-width:none;-ms-overflow-style:none;
   cursor:grab;
@@ -477,6 +481,52 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   background:rgba(255,255,255,.2);transition:.25s;
 }
 .rail__dots button.is-active{background:var(--magenta);width:26px;border-radius:999px;box-shadow:0 0 14px rgba(255,45,148,.8)}
+
+/* ── ukážky vizuálov ───────────────────────
+   Rovnaký pás ako pri videách, len pomer 4:5 a modrý odtieň, nech sa
+   obe časti portfólia od seba na prvý pohľad odlíšia. */
+.section--shots{padding-block:clamp(3rem,6vw,5rem)}
+.rail--shots{--card-w:clamp(230px, 24vw, 322px)}
+
+.shot{
+  position:relative;flex:0 0 auto;
+  width:var(--card-w);
+  aspect-ratio:4/5;
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  background:var(--navy);
+  border:1px solid var(--line);
+  scroll-snap-align:center;
+  box-shadow:var(--shadow);
+  transition:transform .45s cubic-bezier(.2,.8,.3,1), box-shadow .45s, border-color .3s, opacity .45s;
+  transform:scale(.9);opacity:.55;
+  isolation:isolate;
+  cursor:default;
+}
+.shot.is-active{
+  transform:scale(1);opacity:1;
+  border-color:rgba(77,134,255,.5);
+  box-shadow:var(--shadow), 0 0 70px -18px rgba(77,134,255,.95);
+}
+.shot img{width:100%;height:100%;object-fit:cover}
+.shot__meta{
+  position:absolute;inset:auto 0 0;padding:1.1rem 1.2rem;
+  display:grid;gap:.25rem;
+  background:linear-gradient(to top, rgba(4,7,18,.94), rgba(4,7,18,.6) 55%, transparent);
+}
+.shot__cat{
+  justify-self:start;font-size:.64rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:#9dbcff;
+  padding:.22rem .55rem;border-radius:999px;
+  background:rgba(77,134,255,.16);border:1px solid rgba(77,134,255,.4);
+}
+.shot__meta h3{margin:.15rem 0 0;font-size:1.02rem}
+.shot__meta p{margin:0;font-size:.82rem;color:var(--muted)}
+
+/* modré ovládanie pre tento pás */
+.reels--shots .reels__arrow:hover{background:var(--blue);border-color:transparent}
+.reels--shots .rail__progress span{background:linear-gradient(90deg,var(--blue),#8fb4ff)}
+.reels--shots .rail__dots button.is-active{background:var(--blue);box-shadow:0 0 14px rgba(77,134,255,.85)}
 
 /* ── karty služieb ───────────────────────── */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,264px),1fr));gap:clamp(.9rem,1.8vw,1.4rem)}
@@ -763,6 +813,25 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   background:linear-gradient(140deg,var(--magenta),var(--magenta-2));
 }
 .stepper input[type="range"]:focus-visible{outline:2px solid var(--magenta);outline-offset:4px}
+
+.modes{border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;margin:0;display:grid;gap:.6rem}
+.modes legend{
+  padding:0 .4rem;font-size:.74rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--magenta);
+}
+.radio{display:flex;align-items:flex-start;gap:.65rem;cursor:pointer;font-size:.92rem;color:var(--muted);line-height:1.45}
+.radio input[type="radio"]{
+  appearance:none;-webkit-appearance:none;flex:none;
+  width:21px;height:21px;min-width:21px;margin:.1rem 0 0;padding:0;border-radius:50%;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.04);cursor:pointer;
+  display:grid;place-items:center;transition:border-color .2s;
+}
+.radio input[type="radio"]:checked{border-color:var(--magenta)}
+.radio input[type="radio"]:checked::after{
+  content:"";width:11px;height:11px;border-radius:50%;background:var(--magenta);
+}
+.radio b{color:var(--text)}
+.modes .hint{color:var(--muted-2);font-size:.78rem;line-height:1.45;margin-top:.1rem}
 
 .addons{border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;margin:0;display:grid;gap:.75rem}
 .addons legend{
