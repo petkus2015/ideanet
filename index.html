@@ -29,9 +29,12 @@
 
 <header class="nav" id="nav">
   <div class="wrap nav__inner">
-    <a class="brand" href="#top" aria-label="IDEANET domov">
+    <a class="brand" href="#top" aria-label="Domov">
       <span class="brand__mark" aria-hidden="true"><i></i></span>
-      <span class="brand__text">IDEA<b>NET</b></span>
+      <span class="brand__text">
+        <span class="brand__name">Meno Priezvisko</span>
+        <span class="brand__co">IDEA<b>NET</b></span>
+      </span>
     </a>
 
     <nav class="nav__links" id="navLinks" aria-label="Hlavná navigácia">
@@ -407,15 +410,15 @@
           </div>
 
           <h3 class="sub reveal">Jednorazová produkcia</h3>
-          <p class="sub__note reveal">Keď chcete najprv vyskúšať, ako to celé funguje.</p>
+          <p class="sub__note reveal">Keď chcete najprv vyskúšať, ako to celé funguje. Každý ďalší Reel +95 € a +1 hodina natáčania — poskladáte si to v <a href="#kalkulacka">kalkulačke</a>.</p>
           <ul class="tiers reveal" role="list">
             <li class="tier">
-              <div class="tier__main"><b>1 Reel</b><span>natáčanie do 1 hodiny + strih</span></div>
+              <div class="tier__main"><b>1 Reel</b><span>natáčanie do 2 hodín + strih</span></div>
               <span class="tier__price">160 €</span>
               <a class="tier__cta" href="#kontakt" data-package="Jednorazovo — 1 Reel, 160 €">Dopyt</a>
             </li>
             <li class="tier">
-              <div class="tier__main"><b>3 Reels</b><span>natáčanie do 2 hodín</span></div>
+              <div class="tier__main"><b>3 Reels</b><span>natáčanie do 4 hodín</span></div>
               <span class="tier__price">350 €</span>
               <a class="tier__cta" href="#kontakt" data-package="Jednorazovo — 3 Reels, 350 €">Dopyt</a>
             </li>
@@ -642,76 +645,64 @@
 
       <div class="calc reveal">
         <form class="calc__form" id="calcForm">
-          <div class="field">
-            <label for="calcPkg">Balík alebo produkcia</label>
-            <select id="calcPkg">
-              <optgroup label="Firmy — mesačne">
-                <option value="390" data-unit="mesačne" data-reels="3">START — 3 Reels · 390 €</option>
-                <option value="690" data-unit="mesačne" data-reels="6" selected>GROW — 6 Reels · 690 €</option>
-                <option value="990" data-unit="mesačne" data-reels="10">PRO — 10 Reels · 990 €</option>
-              </optgroup>
-              <optgroup label="Firmy — jednorazovo">
-                <option value="160" data-unit="jednorazovo" data-reels="1">1 Reel · 160 €</option>
-                <option value="350" data-unit="jednorazovo" data-reels="3">3 Reels · 350 €</option>
-              </optgroup>
-              <optgroup label="Podcast">
-                <option value="400" data-unit="epizóda">Podcast u vás, do 70 minút · 400 €</option>
-              </optgroup>
-              <optgroup label="Agentúry — white-label">
-                <option value="120" data-unit="produkcia" data-reels="1">Reel Basic · 120 €</option>
-                <option value="250" data-unit="produkcia" data-reels="3">Content Mini · 250 €</option>
-                <option value="390" data-unit="produkcia" data-reels="5">Content Day · 390 €</option>
-                <option value="550" data-unit="produkcia" data-reels="8">Content Plus · 550 €</option>
-                <option value="290" data-unit="produkcia" data-reels="1">Same-Day Event · 290 €</option>
-                <option value="450" data-unit="produkcia" data-reels="3">Event Plus · 450 €</option>
-              </optgroup>
-              <optgroup label="Eventy">
-                <option value="180" data-unit="sada">Grafika na event · 180 €</option>
-                <option value="290" data-unit="event" data-reels="1">Event Mini · 290 €</option>
-                <option value="450" data-unit="event" data-reels="2">Event · 450 €</option>
-                <option value="590" data-unit="event" data-reels="3">Event Same-Day · 590 €</option>
-              </optgroup>
-            </select>
+
+          <div class="field field--wide">
+            <label for="calcReels">Koľko Reels potrebujete</label>
+            <div class="stepper">
+              <button type="button" class="stepper__btn" id="reelsDown" aria-label="Menej Reels">−</button>
+              <input id="calcReels" type="range" min="1" max="8" step="1" value="3"
+                     aria-describedby="reelsOut">
+              <button type="button" class="stepper__btn" id="reelsUp" aria-label="Viac Reels">+</button>
+              <output class="stepper__val" id="reelsOut" for="calcReels">3</output>
+            </div>
+            <small class="hint" id="shootHint">Prvý Reel počíta s natáčaním do 2 hodín, každý ďalší pridá hodinu.</small>
           </div>
 
-          <div class="field">
-            <label for="calcSpeed">Termín dodania</label>
-            <select id="calcSpeed">
-              <option value="0">Štandard — do 24 hodín</option>
-              <option value="0.5">Same-day — ešte v deň natáčania, príplatok 50 %</option>
-            </select>
-            <small class="hint">Do 24 hodín je v cene každého balíka. Pri same-day balíkoch nechajte príplatok na štandarde.</small>
+          <div class="field field--check field--wide">
+            <label class="check">
+              <input type="checkbox" id="calcDay">
+              <span>Celodenná účasť — som u vás do 8 hodín <b>420 € vrátane 3 Reels</b></span>
+            </label>
+            <small class="hint">Pre eventy, otvorenia a natáčacie dni, keď treba byť k dispozícii celý čas. Každý Reel nad tri sa pripočíta.</small>
           </div>
 
-          <div class="field">
-            <label for="calcKm">Vzdialenosť mimo Bratislavy <i>(km jedným smerom)</i></label>
-            <input id="calcKm" type="number" min="0" max="500" step="5" value="0" inputmode="numeric">
-            <small class="hint">Bratislava je v cene. Mimo BA 0,40 € / km tam aj späť.</small>
-          </div>
-
-          <div class="field">
-            <label for="calcHours">Natáčanie navyše <i>(hodiny nad rámec balíka)</i></label>
-            <input id="calcHours" type="number" min="0" max="12" step="0.5" value="0" inputmode="decimal">
-            <small class="hint">60 € / h, začatá polhodina je minimálna účtovacia jednotka.</small>
-          </div>
-
-          <div class="field field--check">
+          <fieldset class="field field--wide addons">
+            <legend>Doplnky</legend>
+            <label class="check">
+              <input type="checkbox" id="calcSameDay">
+              <span>Same-day dodanie — ešte v deň natáčania <b>+ 50 %</b></span>
+            </label>
             <label class="check">
               <input type="checkbox" id="calcRaw">
               <span>RAW materiál z natáčania <b>+ 80 €</b></span>
             </label>
-            <small class="hint">Všetky zábery, z ktorých viete neskôr vyrábať ďalší obsah.</small>
+            <label class="check">
+              <input type="checkbox" id="calcGraphics">
+              <span>Grafika na event — vizuál a formáty pre siete <b>+ 180 €</b></span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="calcSocial">
+              <span>Správa sociálnych sietí <b>+ 300 € / mesiac</b></span>
+            </label>
+          </fieldset>
+
+          <div class="field field--wide">
+            <label for="calcKm">Vzdialenosť mimo Bratislavy <i>(km jedným smerom)</i></label>
+            <input id="calcKm" type="number" min="0" max="500" step="5" value="0" inputmode="numeric">
+            <small class="hint">Bratislava je v cene. Mimo Bratislavy 0,40 € / km tam aj späť.</small>
           </div>
         </form>
 
         <aside class="calc__out" aria-live="polite">
           <p class="calc__label">Orientačná cena</p>
-          <p class="calc__total"><b id="calcTotal">690</b> <span>€</span></p>
-          <p class="calc__unit" id="calcUnit">mesačne, bez DPH</p>
+          <p class="calc__total"><b id="calcTotal">350</b> <span>€</span></p>
+          <p class="calc__unit" id="calcUnit">jednorazovo, bez DPH</p>
 
-          <p class="calc__per" id="calcPer" hidden></p>
+          <p class="calc__per" id="calcPer"></p>
 
           <ul class="calc__rows" id="calcRows"></ul>
+
+          <p class="calc__tip" id="calcTip" hidden></p>
 
           <a class="btn btn--primary btn--full" href="#kontakt" id="calcCta">Poslať tento dopyt</a>
           <p class="calc__disc">Presnú cenu potvrdím po krátkom hovore — závisí od miesta, rozsahu a termínu.</p>
@@ -841,6 +832,9 @@
             <optgroup label="Podcast">
               <option>Podcast u vás, do 70 minút — 400 €</option>
             </optgroup>
+            <optgroup label="Vlastná zostava">
+              <option>Vlastná zostava podľa kalkulačky</option>
+            </optgroup>
             <optgroup label="Iné">
               <option>Správa sociálnych sietí k balíku</option>
               <option>Zatiaľ neviem, poraďte mi</option>
@@ -863,7 +857,10 @@
   <div class="wrap footer__inner">
     <a class="brand" href="#top">
       <span class="brand__mark" aria-hidden="true"><i></i></span>
-      <span class="brand__text">IDEA<b>NET</b></span>
+      <span class="brand__text">
+        <span class="brand__name">Meno Priezvisko</span>
+        <span class="brand__co">IDEA<b>NET</b></span>
+      </span>
     </a>
     <p>© <span id="year">2026</span> IDEANET — videograf &amp; strihač vertikálneho obsahu.</p>
     <nav class="footer__links" aria-label="Pätička">

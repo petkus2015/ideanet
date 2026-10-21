@@ -618,62 +618,111 @@
 
   /* ───────────────────────────────────────────
      9) KALKULAČKA
+
+     Cenník stojí na tom, že prvý Reel počíta s natáčaním do dvoch hodín
+     a každý ďalší pridá hodinu. Prírastok 95 € za Reel je odvodený
+     z cenníka: 1 Reel 160 €, 3 Reels 350 €.
+
+     Celodenná účasť je samostatná sadzba — platí sa deň, nie počet
+     videí, takže 420 € kryje tri Reels a ďalšie sa pripočítajú.
   ─────────────────────────────────────────── */
   const calc = $('#calcForm');
   if (calc) {
-    const pkg   = $('#calcPkg'),   speed = $('#calcSpeed'),
-          km    = $('#calcKm'),    hours = $('#calcHours'),
-          raw   = $('#calcRaw');
-    const outTotal = $('#calcTotal'), outUnit = $('#calcUnit'),
-          outRows  = $('#calcRows'),  outCta  = $('#calcCta'),
-          outPer   = $('#calcPer');
+    const FIRST = 160, NEXT = 95, DAY = 420, DAY_REELS = 3,
+          KM_RATE = .4, RAW = 80, GRAPHICS = 180, SOCIAL = 300, RUSH = .5;
 
-    const KM_RATE = .4, HOUR_RATE = 60, RAW_FEE = 80;
+    const reels  = $('#calcReels'), reelsOut = $('#reelsOut'),
+          dayBox = $('#calcDay'),   rushBox  = $('#calcSameDay'),
+          rawBox = $('#calcRaw'),   grBox    = $('#calcGraphics'),
+          socBox = $('#calcSocial'), km      = $('#calcKm'),
+          shootHint = $('#shootHint');
+
+    const outTotal = $('#calcTotal'), outUnit = $('#calcUnit'), outPer = $('#calcPer'),
+          outRows  = $('#calcRows'),  outTip  = $('#calcTip'), outCta = $('#calcCta');
+
     const eur = (n) => Math.round(n).toLocaleString('sk-SK') + ' €';
+    /* po predložke „do" je genitív: do 1 hodiny, do 2 hodín, do 5 hodín */
+    const hodin = (n) => n + (n === 1 ? ' hodiny' : ' hodín');
+    /* samostatný počet má iný tvar: 1 hodina, 2 hodiny, 5 hodín */
+    const hodinPocet = (n) => n + (n === 1 ? ' hodina' : n < 5 ? ' hodiny' : ' hodín');
+    const kusov = (n) => n === 1 ? '1 Reel' : n < 5 ? n + ' Reels' : n + ' Reels';
 
     const recalc = () => {
-      const opt  = pkg.options[pkg.selectedIndex];
-      const base = +opt.value;
-      const unit = opt.dataset.unit || '';
-      const rush = +speed.value;
-      /* účtuje sa každá začatá polhodina */
-      const extraH = Math.ceil(Math.max(0, +hours.value || 0) * 2) / 2;
-      const kmOne  = Math.max(0, +km.value || 0);
+      const n = +reels.value;
+      const day = dayBox.checked;
+      reelsOut.textContent = n;
 
-      const rushFee  = base * rush;
-      const hoursFee = extraH * HOUR_RATE;
-      const travel   = kmOne * 2 * KM_RATE;
-      const rawFee   = raw.checked ? RAW_FEE : 0;
-      const total    = base + rushFee + hoursFee + travel + rawFee;
+      /* natáčací čas: prvý Reel do 2 h, každý ďalší +1 h */
+      const shoot = day ? 8 : 2 + (n - 1);
+      shootHint.textContent = day
+        ? `Celodenná účasť — som u vás do 8 hodín.`
+        : `Natáčanie do ${hodin(shoot)} — prvý Reel do 2 hodín, každý ďalší pridá hodinu.`;
 
-      const rows = [[opt.textContent.split(' · ')[0], eur(base), 'is-base']];
-      if (rushFee)  rows.push(['Same-day (+50 %)', eur(rushFee)]);
-      if (hoursFee) rows.push([`Natáčanie navyše — ${extraH} h`, eur(hoursFee)]);
-      if (travel)   rows.push([`Doprava — ${kmOne * 2} km`, eur(travel)]);
-      if (rawFee)   rows.push(['RAW materiál', eur(rawFee)]);
+      /* základ */
+      const extra = day ? Math.max(0, n - DAY_REELS) : n - 1;
+      const base = day ? DAY + extra * NEXT : FIRST + extra * NEXT;
+
+      /* základ kryje prvý Reel (alebo celý deň a tri Reels), zvyšok ide
+         do samostatného riadku, nech je vidieť, z čoho sa cena skladá */
+      const rows = [[
+        day ? `Celodenná účasť do 8 hodín · ${kusov(Math.min(n, DAY_REELS))}`
+            : `Prvý Reel · natáčanie do ${hodin(2)}`,
+        eur(day ? DAY : FIRST), 'is-base']];
+      if (extra > 0) rows.push([
+        day ? `${extra}× Reel navyše` : `${extra}× Reel navyše · natáčanie +${hodinPocet(extra)}`,
+        eur(extra * NEXT)]);
+
+      const rushFee = rushBox.checked ? base * RUSH : 0;
+      if (rushFee) rows.push(['Same-day dodanie (+50 %)', eur(rushFee)]);
+
+      const rawFee = rawBox.checked ? RAW : 0;
+      if (rawFee) rows.push(['RAW materiál', eur(rawFee)]);
+
+      const grFee = grBox.checked ? GRAPHICS : 0;
+      if (grFee) rows.push(['Grafika na event', eur(grFee)]);
+
+      const kmOne = Math.max(0, +km.value || 0);
+      const travel = kmOne * 2 * KM_RATE;
+      if (travel) rows.push([`Doprava — ${kmOne * 2} km`, eur(travel)]);
+
+      const total = base + rushFee + rawFee + grFee + travel;
+
+      /* správa sociálnych sietí je mesačná, preto sa do jednorazovej
+         sumy nesčítava a uvádza sa zvlášť */
+      const social = socBox.checked ? SOCIAL : 0;
 
       outRows.innerHTML = rows
         .map(([l, v, cls]) => `<li class="${cls || ''}"><span>${l}</span><b>${v}</b></li>`)
-        .join('');
+        .join('') + (social
+          ? `<li class="is-side"><span>Správa sociálnych sietí</span><b>+ ${eur(social)} / mes.</b></li>` : '');
 
       outTotal.textContent = Math.round(total).toLocaleString('sk-SK');
-      outUnit.textContent  = (unit === 'mesačne' ? 'mesačne, bez DPH' : unit + ', bez DPH');
+      outUnit.textContent  = 'jednorazovo, bez DPH';
+      outPer.innerHTML = n === 1
+        ? 'Jeden Reel od natočenia po dodanie.'
+        : `Vychádza to na <b>${eur(total / n)}</b> za jeden Reel.`;
 
-      /* Koľko stojí jedno hotové video vrátane natáčania aj dodania.
-         Pri podcaste to nedáva zmysel — hlavný výstup je epizóda, nie Reels. */
-      const reels = +opt.dataset.reels || 0;
-      outPer.hidden = reels < 1;
-      if (reels >= 1) {
-        outPer.innerHTML = reels === 1
-          ? 'Jeden Reel od natočenia po dodanie.'
-          : `Vychádza to na <b>${eur(total / reels)}</b> za jeden Reel.`;
-      }
+      /* pri väčšom objeme je mesačná spolupráca rozumnejšia */
+      const tip = n >= 4;
+      outTip.hidden = !tip;
+      if (tip) outTip.innerHTML =
+        'Pri takomto objeme sa oplatí pozrieť <a href="#cennik">mesačný balík</a> — ' +
+        'okrem videí je v ňom aj návrh tém a rezervovaný termín každý mesiac.';
 
-      /* prenos výberu do kontaktného formulára */
-      outCta.dataset.package = opt.textContent.split(' · ')[0];
+      /* podklad pre dopyt */
+      outCta.dataset.package = 'Vlastná zostava podľa kalkulačky';
       outCta.dataset.summary = rows.map(([l, v]) => `${l}: ${v}`).join('\n')
-        + `\nSpolu (orientačne): ${eur(total)} ${unit === 'mesačne' ? 'mesačne' : ''}`.trimEnd();
+        + `\nSpolu (orientačne): ${eur(total)}`
+        + (social ? `\nSpráva sociálnych sietí: + ${eur(social)} / mesiac` : '');
     };
+
+    /* krokovanie tlačidlami aj ťahaním */
+    const nudge = (d) => {
+      reels.value = Math.min(+reels.max, Math.max(+reels.min, +reels.value + d));
+      recalc();
+    };
+    $('#reelsUp').addEventListener('click', () => nudge(1));
+    $('#reelsDown').addEventListener('click', () => nudge(-1));
 
     calc.addEventListener('input', recalc);
     calc.addEventListener('change', recalc);

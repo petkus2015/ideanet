@@ -39,9 +39,31 @@ assets/videos/      videá portfólia
 | Pre koho | segmenty, kde video priamo pomáha predávať |
 | Proces | štyri kroky od zadania po dodanie |
 | Cenník | prepínač troch pohľadov — firmy, agentúry (white-label), eventy |
-| Kalkulačka | orientačná cena podľa balíka, expresu, dopravy, extra hodín a RAW, vrátane dopočtu na jeden Reel |
+| Kalkulačka | interaktívny konfigurátor — počet Reels, celodenná účasť, doplnky a doprava |
 | Podmienky | osem krátkych kariet + odkaz na plnú ponuku |
 | Kontakt | dopytový formulár s predvyplneným balíkom |
+
+## Konfigurátor zákazky
+
+Kalkulačka počíta jednorazovú produkciu z počtu Reels:
+
+- prvý Reel: **160 €**, natáčanie do 2 hodín
+- každý ďalší: **+95 €** a **+1 hodina** natáčania
+- celodenná účasť (do 8 hodín): **420 € vrátane 3 Reels**, ďalšie +95 €
+
+Prírastok 95 € nie je náhodný — je odvodený z cenníka tak, aby
+3 Reels vyšli presne na 350 €, ako sú uvedené v ponuke.
+
+Doplnky sú zaškrtávacie: same-day (+50 %), RAW (+80 €), grafika na event
+(+180 €) a správa sociálnych sietí (+300 €/mes.). Tá posledná sa do
+jednorazovej sumy nesčítava a uvádza sa zvlášť, lebo je mesačná.
+
+Sadzby sú konštanty na začiatku bloku *9) KALKULAČKA* v `app.js`:
+
+```js
+const FIRST = 160, NEXT = 95, DAY = 420, DAY_REELS = 3,
+      KM_RATE = .4, RAW = 80, GRAPHICS = 180, SOCIAL = 300, RUSH = .5;
+```
 
 ## Cenník
 
