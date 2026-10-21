@@ -606,7 +606,9 @@
       w.style.left = e.clientX + 'px';
       w.style.top = e.clientY + 'px';
       document.body.appendChild(w);
-      w.addEventListener('animationend', () => w.remove(), { once: true });
+      /* animácie bežia na dvoch pseudoprvkoch, takže animationend by
+         prišiel skôr, než dobehne tá pomalšia — radšej jeden časovač */
+      setTimeout(() => w.remove(), 2000);
     }, { passive: true });
   }
 

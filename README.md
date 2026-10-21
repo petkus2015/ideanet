@@ -60,9 +60,18 @@ Za obsahom sa pohybuje jemné svetlo, ktoré sa k myši približuje, nie ju
 kopíruje (`#cursorGlow`). Leží na `z-index:-1`, takže nič netónuje ani
 neblokuje klikanie.
 
-Pri kliknutí sa od kurzoru rozbehne tenký prstenec (`.ripple`). Ten je
-naopak nad obsahom, inak by ho karty prekryli práve tam, kde človek
-klikne; `pointer-events:none` ho drží mimo cesty.
+Pri kliknutí sa od kurzoru rozbehne vlna (`.ripple`). Nie je to prstenec
+s ostrou čiarou, ale úzky pás z radiálneho prechodu, navyše rozostrený —
+tak nemá hranu, ktorú by oko čítalo ako kružnicu. Vlny sú dve, druhá
+pomalšia a slabšia, aby mal dojazd hĺbku. Opacita padá rýchlejšie, než
+sa pás rozťahuje: amplitúda vlny klesá s polomerom, takže sa rozplynie,
+namiesto aby zmizla. Je nad obsahom, inak by ju karty prekryli práve
+tam, kde človek klikne; `pointer-events:none` ju drží mimo cesty.
+
+Animácia sa z pseudo-prvkov nedá spoľahlivo doladiť na časovaných
+snímkach — každá snímka má vlastné oneskorenie. Fázy sa dajú zachytiť
+presne tak, že sa animácia zastaví (`animation-play-state:paused`) a
+záporným `animation-delay` sa previnie na konkrétny čas.
 
 Oboje sa na dotykových zariadeniach a pri `prefers-reduced-motion`
 vôbec nezapína.

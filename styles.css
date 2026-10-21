@@ -986,18 +986,36 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 @media (hover:none),(prefers-reduced-motion:reduce){.glow{display:none}}
 
 /* ── nárazová vlna pri kliknutí ────────────
-   Tenký prstenec, ktorý sa rozbehne od kurzoru a zhasne. Leží nad
-   obsahom, ale neklikateľne — inak by ho karty prekryli a nebolo by ho
-   vidieť práve tam, kde človek klikne. */
+   Vlna na hladine, nie prstenec: úzky pás z prechodu bez ostrej čiary,
+   rozostrený, s nízkou sýtosťou. Amplitúda klesá s polomerom, takže
+   opacita padá rýchlejšie, než sa pás rozťahuje — vlna sa rozplynie,
+   nezmizne. Dve za sebou, druhá pomalšia a slabšia (ozvena). */
 .ripple{
   position:fixed;z-index:70;pointer-events:none;
-  width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;
-  border:1.5px solid rgba(255,45,148,.6);
-  animation:ripple .62s cubic-bezier(.2,.75,.3,1) forwards;
+  width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;
+}
+.ripple::before,.ripple::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,
+    transparent 50%,
+    rgba(255,45,148,.42) 61%,
+    rgba(160,110,255,.18) 75%,
+    transparent 89%);
+  filter:blur(1px);
+  will-change:transform,opacity;
+  /* rýchly nábeh, dlhý dojazd — vlna sa spomaľuje, nezastaví */
+  animation:ripple 1.15s cubic-bezier(.17,.72,.28,1) forwards;
+}
+.ripple::after{
+  animation-duration:1.7s;
+  animation-delay:.11s;
+  opacity:.42;
 }
 @keyframes ripple{
-  from{transform:scale(1);opacity:.7}
-  to{transform:scale(16);opacity:0}
+  from{transform:scale(.55);opacity:.68}
+  30%{opacity:.54}
+  65%{opacity:.24}
+  to{transform:scale(11);opacity:0}
 }
 @media (prefers-reduced-motion:reduce){.ripple{display:none}}
 
