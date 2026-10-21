@@ -364,10 +364,14 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   background:rgba(10,14,35,.82);border:1px solid var(--line-2);backdrop-filter:blur(10px);
   box-shadow:0 12px 30px -14px #000;animation:bob 6s ease-in-out infinite;
 }
-.chip--1{top:6%;left:-2%;color:#fff}
-.chip--2{top:44%;right:-4%;border-color:rgba(255,45,148,.45);color:#ffd7ea;animation-delay:-2s}
-.chip--3{bottom:14%;left:4%;animation-delay:-4s}
-.chip--4{bottom:32%;right:-6%;animation-delay:-6s}
+/* šesť štítkov okolo telefónu — tri vľavo, tri vpravo, každý vo vlastnom
+   vodorovnom pásme, nech sa pri poskakovaní nestretnú */
+.chip--1{top:3%;left:-2%;color:#fff}
+.chip--2{top:19%;right:-4%;border-color:rgba(255,45,148,.45);color:#ffd7ea;animation-delay:-1s}
+.chip--5{top:37%;left:-8%;animation-delay:-2s}
+.chip--4{top:53%;right:-7%;animation-delay:-3s}
+.chip--6{bottom:26%;right:-1%;animation-delay:-4s}
+.chip--3{bottom:9%;left:2%;animation-delay:-5s}
 @keyframes bob{50%{transform:translateY(-12px)}}
 
 .marquee{border-block:1px solid var(--line);overflow:hidden;background:rgba(5,7,20,.5);padding-block:.85rem}
@@ -983,8 +987,8 @@ body.is-locked{overflow:hidden}
   .hero__visual{order:-1;min-height:auto;margin-bottom:1rem}
   .phone{width:min(216px,52vw)}
   .chip--1{left:2%}
-  .chip--2{right:2%}
-  .chip--4{right:2%}
+  .chip--2,.chip--4,.chip--6{right:2%}
+  .chip--5{left:2%}
   .contact{grid-template-columns:1fr}
 }
 @media (max-width:900px){
@@ -1002,10 +1006,13 @@ body.is-locked{overflow:hidden}
   /* Na úzkom displeji je telefón nízky a štítky sú dlhé, takže
      rozhadzovanie do rohov nestačí — rozložíme ich do štyroch
      vodorovných pásiem a striedavo doľava a doprava. */
-  .chip--1{top:2%;bottom:auto;left:2%;right:auto}
-  .chip--2{top:25%;bottom:auto;right:2%;left:auto}
-  .chip--4{top:48%;bottom:auto;right:2%;left:auto}
-  .chip--3{top:71%;bottom:auto;left:2%;right:auto}
+  .chip{font-size:.72rem;padding:.42rem .7rem}
+  .chip--1{top:0%;bottom:auto;left:2%;right:auto}
+  .chip--2{top:13%;bottom:auto;right:2%;left:auto}
+  .chip--5{top:26%;bottom:auto;left:2%;right:auto}
+  .chip--4{top:39%;bottom:auto;right:2%;left:auto}
+  .chip--6{top:52%;bottom:auto;left:2%;right:auto}
+  .chip--3{top:65%;bottom:auto;right:2%;left:auto}
   .tabs__btn{padding:.6rem .9rem;font-size:.88rem}
   .tabs__btn span{display:none}
   .tier{align-items:flex-start}
