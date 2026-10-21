@@ -326,14 +326,6 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 .hero{padding-top:clamp(2.5rem,6vw,5rem);position:relative}
 .hero__inner{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(2rem,5vw,4.5rem);align-items:center;padding-bottom:clamp(3rem,6vw,5rem)}
 .hero__cta{display:flex;flex-wrap:wrap;gap:.8rem;margin:2rem 0 2.6rem}
-.hero__stats{display:flex;flex-wrap:wrap;gap:clamp(1.2rem,4vw,3rem);list-style:none;padding:0;margin:0}
-.hero__stats b{display:block;font-family:var(--display);font-size:clamp(1.6rem,3vw,2.3rem);line-height:1;color:#fff}
-.hero__stats li{max-width:20ch}
-/* tretí údaj nesie celú vetu, nie dve slová — nech má miesto */
-.hero__stats--wide{max-width:38ch}
-/* aby sa „same-day“ nelámal na spojovníku */
-.hero__stats span i{font-style:normal;white-space:nowrap}
-.hero__stats span{font-size:.84rem;color:var(--muted-2);letter-spacing:.02em;line-height:1.45;display:block;margin-top:.3rem}
 
 .hero__visual{position:relative;display:grid;place-items:center;min-height:min(62vh,540px)}
 .phone{
@@ -1025,7 +1017,6 @@ body.is-locked{overflow:hidden}
   .tier__price{margin-left:auto}
   .contact__facts{gap:1rem 1.4rem}
   :root{--radius-lg:22px}
-  .hero__stats{gap:1.1rem 1.6rem}
   .hero__cta .btn{flex:1 1 100%}
   .lightbox{grid-template-columns:1fr}
   .lightbox__nav{position:absolute;bottom:clamp(.8rem,3vw,1.5rem)}

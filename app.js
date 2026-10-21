@@ -573,24 +573,6 @@
   }, { threshold: .12, rootMargin: '0px 0px -8%' });
   $$('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
 
-  /* počítadlá */
-  $$('[data-count]').forEach(el => {
-    const target = +el.dataset.count, suffix = el.dataset.suffix || '';
-    new IntersectionObserver((ents, obs) => {
-      if (!ents[0].isIntersecting) return;
-      obs.disconnect();
-      if (reduce) { el.textContent = target + suffix; return; }
-      let t0 = null; const dur = 1400;
-      const tick = (t) => {
-        if (t0 === null) t0 = t;
-        const p = Math.min(1, Math.max(0, (t - t0) / dur));
-        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }, { threshold: .6 }).observe(el);
-  });
-
   /* svetlo pod kurzorom na kartách */
   $$('.card').forEach(c => c.addEventListener('pointermove', (e) => {
     const r = c.getBoundingClientRect();
