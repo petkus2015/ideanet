@@ -387,7 +387,7 @@
       rail: visRail,
       cards: $$('.shot', visRail),
       dots: $$('button', $('#visDots')),
-      prev: $('#prevVis'), next: $('#nextVis'), bar: $('#visBar'),
+      prev: $('#prevVis'), next: $('#nextVis'),   // bez ukazovateľa priebehu — stačia guličky
     });
   }
 
