@@ -40,7 +40,6 @@ Pre klientov, ktorí nechcú paušál. Slúži ako vstupný produkt.
 |---|---|---|
 | 1 Reel | do 1 hodiny | 160 € |
 | 3 Reels | do 2 hodín | 350 € |
-| 5 Reels | do 3 hodín | 520 € |
 
 Návrh tém, plánovanie obsahu a jednotný vizuál naprieč profilom
 sú súčasťou mesačných balíkov, nie jednorazovej produkcie.
@@ -62,6 +61,7 @@ Každá ďalšia hodina na mieste: **70 € / h**
 **400 € za epizódu**
 
 - natáčanie do 3 hodín u klienta
+- epizóda v dĺžke do 70 minút
 - zostrih celej epizódy 16:9
 - 3 vertikálne výstrižky na Reels a TikTok
 - zvuk z mikroportov

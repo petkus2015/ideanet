@@ -258,20 +258,26 @@ sú pekné, ale nedajú sa plánovať.
 
 ## 11. Čo ešte treba rozhodnúť
 
-Tri veci, ktoré v cenníku zatiaľ nie sú doriešené:
+Dve veci, ktoré v cenníku zatiaľ nie sú doriešené.
 
-### Jednorazová produkcia podlieza mesačný balík
+**Vyriešené:** jednorazový balík 5 Reels za 520 € vychádzal na 104 € za
+video, teda lacnejšie než GROW (115 € za video). Zrušením tohto balíka sa
+rebrík narovnal — čím väčší objem, tým nižšia cena za kus, a GROW je
+najvýhodnejší:
 
-5 Reels jednorazovo za 520 € vychádza na 104 € za video.
-GROW za 690 € vychádza na 115 € za video.
+| Čo | Cena | Za jeden Reel |
+|---|---|---|
+| 1 Reel jednorazovo | 160 € | 160 € |
+| 3 Reels jednorazovo | 350 € | 117 € |
+| START (3 Reels mesačne) | 390 € | 130 € |
+| **GROW (6 Reels mesačne)** | **690 €** | **115 €** |
+| PRO (10 Reels mesačne) | 990 € | 99 € |
 
-Kto si to prepočíta, zistí, že jednorazovka je za kus lacnejšia — čo je
-presný opak toho, čo chceš komunikovať. V ponukách preto cenu za kus
-nikde neuvádzam a mesačný balík obhajujem návrhom tém, rezervovaným
-termínom a jednotným vizuálom.
-
-**Odporúčanie:** zdvihnúť 5 Reels na **590 – 620 €**. Tým sa ladder narovná
-a mesačný balík začne dávať zmysel aj čisto matematicky.
+Zostáva jedna drobnosť: START vychádza na 130 € za kus, teda viac než
+3 Reels jednorazovo za 117 €. Pri rovnakom počte videí je to o 40 € drahšie.
+Obhájiť sa to dá tým, že START obsahuje návrh tém a rezervovaný termín
+každý mesiac — ale ak by si to chcel mať čisté, START patrí na 350 €
+alebo na 4 Reels.
 
 ### Dĺžka viazanosti pri mesačných balíkoch
 

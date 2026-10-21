@@ -49,8 +49,8 @@ Ceny sú v `index.html` uvedené priamo v texte, kalkulačka ich číta
 z atribútov `value` v `#calcPkg`. **Pri zmene ceny upravte obe miesta.**
 
 **Firmy — mesačne:** START 390 € · GROW 690 € · PRO 990 €
-**Firmy — jednorazovo:** 1 Reel 160 € · 3 Reels 350 € · 5 Reels 520 €
-**Podcast:** Podcast u vás 400 € za epizódu
+**Firmy — jednorazovo:** 1 Reel 160 € · 3 Reels 350 €
+**Podcast:** Podcast u vás, epizóda do 70 minút 400 €
 **Agentúry (white-label):** Reel Basic 120 € · Content Mini 250 € · Content Day 390 €
 · Content Plus 550 € · Same-Day Event 290 € · Event Plus 450 € · Partner od 1 200 €/mes.
 **Eventy:** Event Mini 290 € · Event 450 € · Event Same-Day 590 € · ďalšia hodina 70 €
