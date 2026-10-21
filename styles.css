@@ -149,9 +149,10 @@ p{margin:0 0 1rem}
 .brand__name{font-family:var(--display);font-weight:700;font-size:.98rem;letter-spacing:-.015em;white-space:nowrap}
 .brand__co{
   font-family:var(--font);font-size:.64rem;font-weight:700;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--muted-2);white-space:nowrap;
+  text-transform:uppercase;color:#fff;white-space:nowrap;
 }
-.brand__co b{color:var(--magenta);font-weight:700}
+/* nápis IDEANET je jednofarebný — bez zvýraznenej časti */
+.brand__co b{color:inherit;font-weight:700}
 
 /* ── odkazy s plávajúcou značkou ───────────
    Značka sa presúva pod kurzor a po odídení myši sa vráti
