@@ -44,6 +44,18 @@ assets/videos/      videá portfólia
 | Podmienky | osem krátkych kariet + odkaz na plnú ponuku |
 | Kontakt | dopytový formulár s predvyplneným balíkom |
 
+## Portrét v značke
+
+Vedľa mena je v hlavičke aj v pätičke kruhový portrét, ktorý sa pri
+prechode myšou nakloní. `assets/foto-peter.svg` je **zástupný obrázok** —
+nahraďte ho vlastnou fotkou:
+
+1. nahrajte štvorcovú fotku, napríklad `assets/foto-peter.jpg`
+2. v `index.html` prepíšte `src` v oboch `.brand__mark` (hlavička a pätička)
+
+Fotka sa orezáva cez `object-fit:cover`, takže štvorec nie je podmienka,
+ale pri inom pomere sa oreže na stred.
+
 ## Konfigurátor zákazky
 
 Kalkulačka počíta jednorazovú produkciu z počtu Reels:
