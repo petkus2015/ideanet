@@ -115,8 +115,8 @@ function ideanet_js_data() {
 			'desc'   => get_the_excerpt( $post ),
 			'dur'    => ideanet_meta( $post->ID, 'dur' ),
 			'poster' => $poster ? $poster : '',
-			'video'  => ideanet_meta( $post->ID, 'video' ),
-			'webm'   => ideanet_meta( $post->ID, 'webm' ),
+			'video'  => ideanet_media_url( ideanet_meta( $post->ID, 'video' ) ),
+			'webm'   => ideanet_media_url( ideanet_meta( $post->ID, 'webm' ) ),
 			'tags'   => array_values( array_filter( array_map( 'trim', preg_split( '/\R/', ideanet_meta( $post->ID, 'tags' ) ) ) ) ),
 		);
 	}
@@ -138,6 +138,7 @@ function ideanet_js_data() {
 		'reels'  => $reels,
 		'texts'  => array(
 			'noVideo'   => __( 'Video sem doplníte v administrácii — Reels → upraviť.', 'ideanet' ),
+			'badVideo'  => __( 'Video sa nepodarilo prehrať. Skontrolujte formát — prehliadače spoľahlivo zvládajú MP4 (H.264) a WebM.', 'ideanet' ),
 			'sound'     => __( 'Zvuk', 'ideanet' ),
 			'expand'    => __( 'Rozbaliť', 'ideanet' ),
 			'play'      => __( 'Prehrať ukážku', 'ideanet' ),

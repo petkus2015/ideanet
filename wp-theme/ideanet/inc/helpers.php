@@ -347,3 +347,32 @@ function ideanet_default_sections() {
 		'#kontakt'    => __( 'Kontakt', 'ideanet' ),
 	);
 }
+
+/**
+ * Zrovná adresu súboru s tým, ako práve beží stránka.
+ *
+ * Adresa sa do poľa uloží aj s http:// alebo https:// podľa toho, ako
+ * bol web nastavený v tej chvíli. Keď sa to neskôr rozíde — a po
+ * prechode na https sa to rozchádza často —, prehliadač súbor
+ * z nezabezpečenej adresy na zabezpečenej stránke potichu zablokuje
+ * a video sa jednoducho neprehrá.
+ *
+ * @param string $url Uložená adresa.
+ * @return string
+ */
+function ideanet_media_url( $url ) {
+	$url = trim( (string) $url );
+	if ( '' === $url ) {
+		return '';
+	}
+
+	$doma = wp_parse_url( home_url(), PHP_URL_HOST );
+	$ich  = wp_parse_url( $url, PHP_URL_HOST );
+
+	/* Cudzie adresy necháme tak — o ich nastavení nič nevieme. */
+	if ( ! $doma || ! $ich || strtolower( $doma ) !== strtolower( $ich ) ) {
+		return $url;
+	}
+
+	return set_url_scheme( $url );
+}

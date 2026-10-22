@@ -638,7 +638,7 @@ function ideanet_image( $post, $size, $key ) {
 		return $url;
 	}
 
-	return ideanet_meta( $post->ID, $key );
+	return ideanet_media_url( ideanet_meta( $post->ID, $key ) );
 }
 
 /**

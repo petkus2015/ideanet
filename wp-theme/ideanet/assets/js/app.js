@@ -27,6 +27,21 @@
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
+  /* Typ súboru berieme z prípony. Keby sme sa spoliehali na to, do
+     ktorého poľa ho niekto vložil, stačí jedno pomýlenie a Safari
+     s Firefoxom taký zdroj rovno preskočia. Neznámu príponu radšej
+     neoznačíme vôbec — prehliadač si poradí sám. */
+  const typSuboru = (url) => {
+    const p = (String(url).split('?')[0].split('#')[0].match(/\.([a-z0-9]+)$/i) || [])[1];
+    return { mp4:'video/mp4', m4v:'video/mp4', webm:'video/webm', ogv:'video/ogg', ogg:'video/ogg',
+             mov:'video/quicktime' }[(p || '').toLowerCase()] || '';
+  };
+  const zdroj = (url) => {
+    if (!url) return '';
+    const t = typSuboru(url);
+    return `<source src="${esc(url)}"${t ? ` type="${t}"` : ''}>`;
+  };
+
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,8 +67,8 @@
       <div class="reel__media">
         ${r.poster ? `<img src="${esc(r.poster)}" alt="${esc(r.title)}" loading="lazy" decoding="async" width="1080" height="1920">` : ''}
         <video preload="${(r.video || r.webm) ? 'metadata' : 'none'}" playsinline muted loop ${r.poster ? `poster="${esc(r.poster)}"` : ''} aria-label="${esc(r.title)}">
-          ${r.video ? `<source src="${esc(r.video)}" type="video/mp4">` : ''}
-          ${r.webm  ? `<source src="${esc(r.webm)}" type="video/webm">` : ''}
+          ${zdroj(r.video)}
+          ${zdroj(r.webm)}
         </video>
       </div>
       <div class="reel__shade"></div>
@@ -64,7 +79,7 @@
       </div>
 
       <button class="reel__play" data-act="play" aria-label="${esc(T.play + ' ' + r.title)}"></button>
-      <p class="reel__hint">${esc(T.noVideo)}</p>
+      <p class="reel__hint${(r.video || r.webm) ? ' reel__hint--error' : ''}">${esc((r.video || r.webm) ? T.badVideo : T.noVideo)}</p>
 
       <div class="reel__body">
         <h3>${esc(r.title)}</h3>
@@ -108,9 +123,17 @@
          než sa sem dostaneme — vtedy by nám tá udalosť ušla. */
       if (v.readyState >= 1) ukazDlzku();
 
+      /* Chyba na <source> znamená, že prehliadač ten súbor neprijal —
+         zlý formát, zablokovaná adresa, nedostupný server. Na karte sa
+         potom ukáže, čo sa deje; mlčať by bolo horšie. */
       v.addEventListener('error', () => {
         if (v.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) cards[i].classList.add('no-src');
       }, true);
+      v.querySelectorAll('source').forEach(src => {
+        src.addEventListener('error', () => {
+          if (v.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) cards[i].classList.add('no-src');
+        });
+      });
 
       /* Počas prehrávania bublina ukazuje, koľko ešte zostáva. */
       v.addEventListener('timeupdate', () => {
@@ -473,8 +496,8 @@
     lbFrame.innerHTML =
       `${r.poster ? `<img src="${esc(r.poster)}" alt="${esc(r.title)}">` : ''}
        <video ${r.poster ? `poster="${esc(r.poster)}"` : ''} playsinline controls autoplay loop>
-          ${r.video ? `<source src="${esc(r.video)}" type="video/mp4">` : ''}
-          ${r.webm  ? `<source src="${esc(r.webm)}" type="video/webm">` : ''}
+          ${zdroj(r.video)}
+          ${zdroj(r.webm)}
        </video>`;
     $('#lbTitle').textContent = r.title;
     $('#lbDesc').textContent  = r.desc;

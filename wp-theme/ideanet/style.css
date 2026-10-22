@@ -503,6 +503,15 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   opacity:0;transition:opacity .3s;text-align:center;width:80%;
 }
 .reel.no-src .reel__hint{opacity:1}
+/* Keď video na karte je, ale nejde prehrať, nie je to krátka nápoveda,
+   ale celá veta — tá sa veľkými písmenami s preloženými medzerami číta
+   zle a cez plagát sa stráca. */
+.reel__hint--error{
+  text-transform:none;letter-spacing:0;font-size:.78rem;line-height:1.45;
+  color:rgba(255,255,255,.78);width:86%;
+  background:rgba(4,6,18,.74);border:1px solid var(--line-2);
+  border-radius:12px;padding:.6rem .7rem;backdrop-filter:blur(6px);
+}
 
 /* šípky + indikátory */
 .reels__arrow{
