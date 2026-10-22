@@ -42,12 +42,15 @@ function ideanet_defaults() {
 		'hero_cta2_url'   => '#portfolio',
 		'hero_chips'      => "9:16 / 16:9\nTitulky\nSame-day alebo do 24 h\nHudba\nEfekty FX, SFX & AI FX\nThumbnail",
 		'hero_caption'    => 'natáčam · strihám · dodávam',
+		'hero_video'      => '',
+		'hero_webm'       => '',
+		'hero_poster'     => '',
 		'hero_marquee'    => 'Gastro, Fitness, Reality, Beauty, Kliniky, Hotely, Developeri, Eventy, E-shopy',
 
 		/* ── hlavičky sekcií ───────────────────── */
 		'portfolio_eyebrow' => 'Portfólio',
 		'portfolio_title'   => 'Tvorba na výšku',
-		'portfolio_note'    => 'Potiahnite prstom alebo myšou, skrolujte kolieskom, alebo použite šípky. Klik na kartu spustí ukážku, tlačidlo <b>Rozbaliť</b> otvorí video na celú výšku.',
+		'portfolio_note'    => 'Potiahnite prstom alebo myšou, skrolujte kolieskom, alebo použite šípky. Klik na kartu spustí ukážku, ikona vpravo dole otvorí video na celú výšku.',
 
 		'vizualy_eyebrow' => 'Vizuály a identita',
 		'vizualy_title'   => 'Nielen video',

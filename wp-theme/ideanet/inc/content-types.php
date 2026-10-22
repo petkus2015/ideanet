@@ -27,7 +27,7 @@ function ideanet_post_types() {
 			'fields'   => array(
 				'poster' => array( 'Plagát — náhradný obrázok', 'media', 'Použije sa len vtedy, keď položka nemá náhľadový obrázok.', 'image' ),
 				'cat'   => array( 'Kategória', 'text', 'Štítok vľavo hore na karte — napríklad Gastro.' ),
-				'dur'   => array( 'Dĺžka', 'text', 'Napríklad 0:18.' ),
+				'dur'   => array( 'Dĺžka', 'text', 'Nechajte prázdne — dĺžka sa prečíta z videa. Vyplňte len vtedy, keď chcete ukázať niečo iné, alebo keď video ešte nemáte.' ),
 				'video' => array( 'Video (MP4)', 'media', 'Nahrajte alebo vyberte súbor z knižnice médií. Vertikál 9:16.', 'video' ),
 				'webm'  => array( 'Video (WebM) — nepovinné', 'media', 'Druhý formát pre staršie prehliadače.', 'video' ),
 				'tags'  => array( 'Štítky', 'textarea', 'Jeden na riadok. Zobrazia sa pod popisom.' ),

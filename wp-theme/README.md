@@ -41,6 +41,18 @@ V administrácii je vľavo položka **IDEANET** a v nej rozcestník.
 | Dopyty, ktoré prišli z formulára | **Prijaté dopyty** |
 | Fotku vedľa mena | Prispôsobiť → IDEANET → Značka a hlavička |
 
+### Video v úvodnej obrazovke
+
+Prispôsobiť → IDEANET → **Úvodná obrazovka**. Dole sú tri polia:
+*Video v telefóne (MP4)*, nepovinný *WebM* a *Prvý obrázok videa*.
+
+Nahrajte krátku vertikálnu slučku (9:16, pár sekúnd, bez zvuku —
+prehráva sa automaticky a stlmene). Kým je pole prázdne, v telefóne
+zostane dnešná animovaná obrazovka, takže sa nič nepokazí.
+
+Komu má systém vypnuté animácie, tomu sa video nespustí a uvidí prvý
+obrázok. Preto sa oplatí ho vyplniť.
+
 ### Pridanie videa
 
 **Reels → Pridať nový.** Nadpis je názov na karte, **Výpis** (vpravo dole,
@@ -51,6 +63,10 @@ prípadne cez Nastavenia → Výpis) je popis pod ním.
 - **Video (MP4)** nahráte cez tlačidlo *Vybrať z knižnice*. Ak je súbor
   veľký, nahrajte ho radšej inam a sem vložte priamu adresu.
 - *Video (WebM)* je nepovinné — je to druhý formát pre staršie prehliadače.
+- **Dĺžku nevypĺňajte** — prečíta sa sama z videa, hneď ako prehliadač
+  načíta jeho popis. Pole slúži len vtedy, keď video ešte nemáte alebo
+  chcete ukázať iný čas. Kým nie je ani jedno, bublina s časom sa
+  nezobrazí vôbec.
 - **Poradie** kariet riadi pole *Poradie* v boxe Vlastnosti stránky.
 
 Keď video nevyplníte, karta zostane na plagáte a nespadne.

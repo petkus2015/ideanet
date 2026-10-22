@@ -51,7 +51,7 @@
     <article class="reel" id="${r.id}" data-i="${i}" role="option" aria-selected="false" aria-label="${esc(r.title)}">
       <div class="reel__media">
         ${r.poster ? `<img src="${esc(r.poster)}" alt="${esc(r.title)}" loading="lazy" decoding="async" width="1080" height="1920">` : ''}
-        <video preload="none" playsinline muted loop ${r.poster ? `poster="${esc(r.poster)}"` : ''} aria-label="${esc(r.title)}">
+        <video preload="${(r.video || r.webm) ? 'metadata' : 'none'}" playsinline muted loop ${r.poster ? `poster="${esc(r.poster)}"` : ''} aria-label="${esc(r.title)}">
           ${r.video ? `<source src="${esc(r.video)}" type="video/mp4">` : ''}
           ${r.webm  ? `<source src="${esc(r.webm)}" type="video/webm">` : ''}
         </video>
@@ -72,7 +72,7 @@
         <span class="tags">${(r.tags || []).map(x => `<span>${esc(x)}</span>`).join('')}</span>
         <div class="reel__tools">
           <button class="tool" data-act="sound" aria-label="${esc(T.soundOn)}">${icon.mute}<span>${esc(T.sound)}</span></button>
-          <button class="tool" data-act="expand" aria-label="${esc(T.expand + ' ' + r.title)}">${icon.exp}<span>${esc(T.expand)}</span></button>
+          <button class="tool tool--expand" data-act="expand" title="${esc(T.expand)}" aria-label="${esc(T.expand + ' ' + r.title)}">${icon.exp}</button>
         </div>
       </div>
       <span class="reel__line"></span>
@@ -81,8 +81,21 @@
     cards  = $$('.reel', rail);
     videos = $$('.reel video', rail);
 
+    /* Dĺžka na karte sa berie z videa, nie z ručne vyplneného poľa —
+       prehliadač ju pozná hneď, ako načíta popis súboru. Vyplnená
+       hodnota slúži len dovtedy, prípadne keď video chýba. */
+    const cas = (sek) => {
+      const m = Math.floor(sek / 60), z = Math.round(sek % 60);
+      return z === 60 ? (m + 1) + ':00' : m + ':' + String(z).padStart(2, '0');
+    };
+
     /* plagát ako záloha, keď video chýba alebo sa nedá prehrať */
     videos.forEach((v, i) => {
+      v.addEventListener('loadedmetadata', () => {
+        if (!isFinite(v.duration) || v.duration <= 0) return;
+        const el = cards[i].querySelector('.reel__dur');
+        if (el) el.textContent = cas(v.duration);
+      });
       v.addEventListener('error', () => {
         if (v.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) cards[i].classList.add('no-src');
       }, true);
@@ -113,7 +126,12 @@
 
   function play(i) {
     const v = videos[i], card = cards[i];
-    if (v.preload === 'none') { v.preload = 'auto'; v.load(); }
+    if (v.preload !== 'auto') {
+      /* load() by zahodil už načítaný popis aj dĺžku — stačí povoliť
+         sťahovanie, zvyšok dotiahne samotné play() */
+      v.preload = 'auto';
+      if (!v.currentSrc) v.load();
+    }
     stopAll(v);
     v.play().then(() => card.classList.add('is-playing'))
             .catch(() => { if (!v.currentSrc) card.classList.add('no-src'); });
@@ -456,6 +474,27 @@
     if (e.key === 'ArrowRight') step(1);
     if (e.key === 'ArrowLeft') step(-1);
   });
+
+  /* ── video v telefóne na úvodnej obrazovke ──
+     Je to ozdoba, takže sa prehráva samo a bez zvuku. Kto má vypnuté
+     animácie, uvidí prvý obrázok — hýbuce sa video by bolo presne to,
+     čomu sa tým nastavením chce vyhnúť. */
+  const heroVideo = $('#heroVideo');
+  if (heroVideo) {
+    if (reduce) {
+      heroVideo.autoplay = false;
+      heroVideo.removeAttribute('autoplay');
+      heroVideo.pause();
+    } else {
+      /* Safari autoplay niekedy odmietne, keď je karta na pozadí —
+         skúsime to znova, až keď je video na obrazovke. */
+      const spusti = () => { const p = heroVideo.play(); if (p) p.catch(() => {}); };
+      spusti();
+      new IntersectionObserver((ents) => {
+        ents.forEach(en => { if (en.isIntersecting && heroVideo.paused) spusti(); });
+      }, { threshold: .2 }).observe(heroVideo);
+    }
+  }
 
   /* ───────────────────────────────────────────
      6) NAVIGÁCIA + MENU

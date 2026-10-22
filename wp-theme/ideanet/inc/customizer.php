@@ -51,6 +51,9 @@ function ideanet_customizer_map() {
 				'hero_cta2_url' => array( __( 'Druhé tlačidlo — odkaz', 'ideanet' ), 'text' ),
 				'hero_chips'    => array( __( 'Štítky okolo telefónu', 'ideanet' ), 'area', $lines . ' ' . __( 'Najviac šesť.', 'ideanet' ) ),
 				'hero_caption'  => array( __( 'Text na obrazovke telefónu', 'ideanet' ), 'text' ),
+				'hero_video'    => array( __( 'Video v telefóne (MP4)', 'ideanet' ), 'video', __( 'Vertikál 9:16, krátka slučka bez zvuku. Prázdne = zostane dnešná animovaná obrazovka.', 'ideanet' ) ),
+				'hero_webm'     => array( __( 'Video v telefóne (WebM) — nepovinné', 'ideanet' ), 'video', __( 'Druhý formát pre staršie prehliadače.', 'ideanet' ) ),
+				'hero_poster'   => array( __( 'Prvý obrázok videa', 'ideanet' ), 'image', __( 'Zobrazí sa, kým sa video načíta, a tiež ľuďom, ktorí majú vypnuté animácie.', 'ideanet' ) ),
 				'hero_marquee'  => array( __( 'Bežiaci pás odborov', 'ideanet' ), 'text', __( 'Oddeľte čiarkami.', 'ideanet' ) ),
 			),
 		),
@@ -353,6 +356,14 @@ function ideanet_customize_register( $wp_customize ) {
 				continue;
 			}
 
+			if ( 'video' === $type ) {
+				$args['mime_type'] = 'video';
+				$wp_customize->add_control(
+					new WP_Customize_Upload_Control( $wp_customize, $id, $args )
+				);
+				continue;
+			}
+
 			$map = array(
 				'area'   => 'textarea',
 				'url'    => 'url',
@@ -403,6 +414,7 @@ function ideanet_sanitizer( $type ) {
 		case 'check':
 			return 'ideanet_sanitize_check';
 		case 'image':
+		case 'video':
 			return 'esc_url_raw';
 		case 'area':
 			return 'ideanet_sanitize_area';

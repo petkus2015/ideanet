@@ -24,16 +24,17 @@ function ideanet_seed() {
 
 	$assets = get_theme_file_uri( 'assets/media' );
 
-	/* ── portfólio ─────────────────────────── */
+	/* ── portfólio ───────────────────────────
+	   Dĺžka sa tu nevypĺňa zámerne: prehliadač si ju prečíta z videa. */
 	$reels = array(
-		array( 'Ranná káva', 'Gastro', '0:18', 'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', "Brand film\nGrading\nZvuk" ),
-		array( 'Séria pre klub', 'Fitness', '0:22', 'Dvanásť tréningových reels natočených počas jedného popoludnia.', "Séria\nTitulky\nSlow-mo" ),
-		array( 'Detail chuti', 'Produkt', '0:15', 'Makro produktové zábery pre e-shop s pralinkami.', "Makro\nProdukt\nSvetlo" ),
-		array( 'Prehliadka bytu', 'Reality', '0:29', 'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.', "Gimbal\nTour\nHudba" ),
-		array( 'Aftermovie', 'Event', '0:34', 'Zostrih z firemnej konferencie dodaný do 24 hodín.', "Event\nRýchle dodanie" ),
-		array( 'Lookbook jeseň', 'Fashion', '0:20', 'Vertikálny lookbook pre lokálnu módnu značku.', "Fashion\nGrading\nMotion" ),
-		array( 'Pred a po', 'Beauty', '0:24', 'Premenový formát pre kadernícky salón, kompletne na kľúč.', "Transformácia\nTitulky" ),
-		array( 'Ako to funguje', 'Startup', '0:31', 'Vysvetľovacie video k aplikácii — scenár, natáčanie, motion.', "Explainer\nMotion\nScenár" ),
+		array( 'Ranná káva', 'Gastro', 'Brand film pre mestskú kaviareň — jeden natáčací deň, šesť reels.', "Brand film\nGrading\nZvuk" ),
+		array( 'Séria pre klub', 'Fitness', 'Dvanásť tréningových reels natočených počas jedného popoludnia.', "Séria\nTitulky\nSlow-mo" ),
+		array( 'Detail chuti', 'Produkt', 'Makro produktové zábery pre e-shop s pralinkami.', "Makro\nProdukt\nSvetlo" ),
+		array( 'Prehliadka bytu', 'Reality', 'Plynulá gimbal prehliadka novostavby pre realitnú kanceláriu.', "Gimbal\nTour\nHudba" ),
+		array( 'Aftermovie', 'Event', 'Zostrih z firemnej konferencie dodaný do 24 hodín.', "Event\nRýchle dodanie" ),
+		array( 'Lookbook jeseň', 'Fashion', 'Vertikálny lookbook pre lokálnu módnu značku.', "Fashion\nGrading\nMotion" ),
+		array( 'Pred a po', 'Beauty', 'Premenový formát pre kadernícky salón, kompletne na kľúč.', "Transformácia\nTitulky" ),
+		array( 'Ako to funguje', 'Startup', 'Vysvetľovacie video k aplikácii — scenár, natáčanie, motion.', "Explainer\nMotion\nScenár" ),
 	);
 
 	foreach ( $reels as $i => $r ) {
@@ -45,12 +46,11 @@ function ideanet_seed() {
 			array(
 				'poster' => $assets . '/posters/reel-' . $n . '.svg',
 				'cat'    => $r[1],
-				'dur'    => $r[2],
 				'webm'   => $assets . '/videos/reel-' . $n . '.webm',
-				'tags'   => $r[4],
+				'tags'   => $r[3],
 			),
 			$i,
-			$r[3]
+			$r[2]
 		);
 	}
 

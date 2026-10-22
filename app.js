@@ -62,7 +62,7 @@
         <span class="tags">${r.tags.map(t => `<span>${t}</span>`).join('')}</span>
         <div class="reel__tools">
           <button class="tool" data-act="sound" aria-label="Zapnúť zvuk">${icon.mute}<span>Zvuk</span></button>
-          <button class="tool" data-act="expand" aria-label="Rozbaliť ${r.title}">${icon.exp}<span>Rozbaliť</span></button>
+          <button class="tool tool--expand" data-act="expand" title="Rozbaliť" aria-label="Rozbaliť ${r.title}">${icon.exp}</button>
         </div>
       </div>
       <span class="reel__line"></span>

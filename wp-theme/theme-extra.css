@@ -75,3 +75,20 @@
   color:var(--text);padding:.7rem .85rem;font:inherit;margin-bottom:.9rem}
 .comment-respond .comment-form-cookies-consent{display:flex;gap:.5rem;align-items:flex-start}
 .comment-respond .comment-form-cookies-consent label{margin:0}
+
+/* ── video v telefóne na úvodnej obrazovke ──
+   Nahrádza animovanú obrazovku, keď je v Prispôsobiť nahraté video.
+   Prekrytie s odleskom a riadkami necháme, len slabšie — inak by
+   z videa nebolo nič vidieť. */
+.phone__video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;border-radius:inherit;z-index:0;
+}
+.phone--video .phone__screen::before{opacity:.4;z-index:1;pointer-events:none}
+.phone--video .phone__caption{text-shadow:0 1px 10px rgba(0,0,0,.8)}
+
+/* Kto má vypnuté animácie, dostane prvý obrázok videa. Zastavuje ho
+   skript, CSS na prehrávanie nedosiahne. */
+@media (prefers-reduced-motion:reduce){
+  .phone--video{animation:none}
+}

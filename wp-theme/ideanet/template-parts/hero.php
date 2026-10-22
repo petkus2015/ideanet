@@ -8,6 +8,10 @@
 defined( 'ABSPATH' ) || exit;
 
 $chips   = array_slice( ideanet_lines( 'hero_chips' ), 0, 6 );
+$video   = ideanet_opt( 'hero_video' );
+$webm    = ideanet_opt( 'hero_webm' );
+$poster  = ideanet_opt( 'hero_poster' );
+$ma_video = ( $video || $webm );
 $marquee = array_filter( array_map( 'trim', explode( ',', ideanet_opt( 'hero_marquee' ) ) ) );
 ?>
 <section class="hero">
@@ -36,11 +40,26 @@ $marquee = array_filter( array_map( 'trim', explode( ',', ideanet_opt( 'hero_mar
 		</div>
 
 		<div class="hero__visual reveal" aria-hidden="true">
-			<div class="phone">
+			<div class="phone<?php echo $ma_video ? ' phone--video' : ''; ?>">
 				<div class="phone__screen">
-					<span class="phone__bar"></span>
-					<span class="phone__play"></span>
-					<span class="phone__caption"><?php echo esc_html( ideanet_opt( 'hero_caption' ) ); ?></span>
+					<?php if ( $ma_video ) : ?>
+						<?php /* Ozdoba, nie obsah — preto bez zvuku, bez ovládania a v slučke. */ ?>
+						<video class="phone__video" id="heroVideo" autoplay muted loop playsinline preload="metadata"
+							<?php echo $poster ? 'poster="' . esc_url( $poster ) . '"' : ''; ?>>
+							<?php if ( $video ) : ?>
+								<source src="<?php echo esc_url( $video ); ?>" type="video/mp4">
+							<?php endif; ?>
+							<?php if ( $webm ) : ?>
+								<source src="<?php echo esc_url( $webm ); ?>" type="video/webm">
+							<?php endif; ?>
+						</video>
+					<?php else : ?>
+						<span class="phone__bar"></span>
+						<span class="phone__play"></span>
+					<?php endif; ?>
+					<?php if ( ideanet_opt( 'hero_caption' ) ) : ?>
+						<span class="phone__caption"><?php echo esc_html( ideanet_opt( 'hero_caption' ) ); ?></span>
+					<?php endif; ?>
 				</div>
 			</div>
 			<?php foreach ( $chips as $i => $chip ) : ?>
