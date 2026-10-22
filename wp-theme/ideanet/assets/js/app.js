@@ -181,8 +181,16 @@
     });
   }
 
+  /* Kým sa pás presúva na kliknutú kartu, prechádza cez iné karty
+     a „práve čítaná" sa po ceste mení. Zastavovanie videí mimo stredu
+     by potom vyplo práve to, ktoré človek pred chvíľou spustil — klik
+     by vyzeral, že nerobí vôbec nič. Na čas presunu ho preto chránime. */
+  let chcene = -1, chraneneDo = 0;
+
   function play(i) {
     const v = videos[i], card = cards[i];
+    chcene = i;
+    chraneneDo = performance.now() + 1200;
     if (v.preload !== 'auto') {
       /* load() by zahodil už načítaný popis aj dĺžku — stačí povoliť
          sťahovanie, zvyšok dotiahne samotné play() */
@@ -191,7 +199,11 @@
     }
     stopAll(v);
     v.play().then(() => card.classList.add('is-playing'))
-            .catch(() => { if (!v.currentSrc) card.classList.add('no-src'); });
+            .catch((err) => {
+              /* Prerušenie naším vlastným zastavením nie je chyba. */
+              if (err && err.name === 'AbortError') return;
+              card.classList.add('no-src');
+            });
   }
 
   function toggle(i) {
@@ -457,7 +469,10 @@
     reelsRail = createRail({
       rail, cards, dots,
       prev: $('#prevReel'), next: $('#nextReel'),   // bez ukazovateľa priebehu — stačia guličky
-      onActive: (i) => stopAll(videos[i]),            // mimo stredu sa neprehráva
+        onActive: (j) => {
+        const chraneny = (chcene >= 0 && performance.now() < chraneneDo) ? chcene : j;
+        stopAll(videos[chraneny]);                  // mimo stredu sa neprehráva
+      },
     });
 
     rail.addEventListener('keydown', (e) => {

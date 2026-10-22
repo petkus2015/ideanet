@@ -1123,6 +1123,11 @@ body.is-locked{overflow:hidden}
   .calc__out{position:static}
 }
 @media (max-width:860px){
+  /* Na mobile ide pravý blok úvodu preč — telefón s videom aj štítky
+     okolo neho. Na úzkom displeji zaberal celú prvú obrazovku a text
+     odtláčal pod zlom. */
+  .hero__visual{display:none}
+  .hero__inner{padding-bottom:clamp(2rem,5vw,3.5rem)}
   .nav__links{display:none}
   .nav__cta{display:none}
   .nav__inner{justify-content:space-between}
