@@ -261,7 +261,11 @@ function ideanet_admin_page() {
 		);
 	}
 
+	/* translators: %s: číslo verzie témy. */
+	$verzia = sprintf( __( 'Verzia témy %s — zistiť, či je novšia', 'ideanet' ), wp_get_theme( get_template() )->get( 'Version' ) );
+
 	$ostatne = array(
+		array( $verzia, ideanet_check_now_link() ),
 		array( __( 'Menu — hore, spodná lišta na mobile, pätička', 'ideanet' ), admin_url( 'nav-menus.php' ) ),
 		array( __( 'Obrázky a videá v knižnici médií', 'ideanet' ), admin_url( 'upload.php' ) ),
 		array( __( 'Stránky s ponukou na jednu stranu', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),

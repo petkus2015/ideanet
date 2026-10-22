@@ -156,6 +156,68 @@ balíkov ako cenník, takže sa to nemá ako rozísť.
 Pri tlači (Ctrl+P → Uložiť ako PDF) sa tmavé pozadie, menu aj tlačidlá
 vypnú a strana vyjde čitateľná na bielom papieri.
 
+## Aktualizácie
+
+Téma nie je v katalógu na wordpress.org, ale aktualizuje sa rovnako ako
+hociktorá iná: keď vyjde nové vydanie, WordPress ho sám nájde a vo
+**Vzhľad → Témy** ponúkne *Aktualizovať*. Jedno kliknutie, nič sa
+nenahráva ručne.
+
+Stojí to na hlavičke `Update URI` v `style.css`, ktorú WordPress pozná
+od verzie 6.1, a na vydaniach v tomto repozitári. Kontroluje sa to
+dvakrát denne; kto nechce čakať, klikne v administrácii na
+**IDEANET → Kde čo upraviť → Verzia témy … — zistiť, či je novšia**.
+
+**Obsah a nastavenia sa pri aktualizácii nestratia.** Texty, ceny, menu
+aj videá sú v databáze, nie v súboroch témy. Prepíšu sa len súbory témy.
+Ukážkový obsah sa znovu nepridá.
+
+### Ako vydať novú verziu
+
+```bash
+./wp-theme/release.sh 1.1.0
+```
+
+Skript zmení verziu v hlavičke témy, poskladá `style.css`, zabalí tému
+do `wp-theme/ideanet-theme.zip` a vypíše, čo ďalej — zapísať zmenu
+a vytvoriť vydanie:
+
+```bash
+git add -A && git commit -m "Téma 1.1.0" && git push
+gh release create theme-v1.1.0 wp-theme/ideanet-theme.zip \
+  --title "Téma 1.1.0" --notes "Čo je nové…"
+```
+
+Na GitHube sa to isté dá spraviť cez *Releases → Draft a new release*:
+značka `theme-v1.1.0`, k vydaniu priložiť súbor `ideanet-theme.zip`.
+
+Dve veci musia sedieť, inak sa aktualizácia neponúkne:
+
+- **priložený súbor sa musí volať `ideanet-theme.zip`** — podľa toho si
+  ho WordPress nájde. Zdrojový archív, ktorý GitHub pribalí sám,
+  obsahuje celý repozitár aj so statickou verziou webu a témou by nebol;
+- **verzia v hlavičke témy musí byť vyššia** než nainštalovaná. O to sa
+  stará `release.sh`.
+
+Značka smie byť `theme-v1.1.0`, `v1.1.0` aj `1.1.0`.
+
+### Keby bol repozitár súkromný
+
+Do `wp-config.php` patrí prístupový token:
+
+```php
+define( 'IDEANET_UPDATE_TOKEN', 'github_pat_…' );
+```
+
+Iný repozitár sa nastaví cez `define( 'IDEANET_UPDATE_REPO', 'kto/co' );`.
+
+### Ručná cesta
+
+Keď aktualizácia z nejakého dôvodu nejde (napríklad hosting nepustí
+WordPress na internet), funguje aj staré dobré nahratie: Vzhľad → Témy →
+Pridať novú → Nahrať tému, vybrať `ideanet-theme.zip` a potvrdiť
+nahradenie. Obsah ani nastavenia sa tým nestratia.
+
 ## Úprava vzhľadu
 
 Nerobte to priamo v `style.css` — ten súbor sa generuje. Buď
@@ -177,6 +239,7 @@ dizajnu a doplnkov. Tak sa obe verzie nerozídu.
 
 ```
 wp-theme/
+├── release.sh             pripraví nové vydanie (verzia + ZIP)
 ├── build-style.sh         poskladá style.css témy zo spoločného dizajnu
 ├── theme-header.css       hlavička témy
 ├── theme-extra.css        štýly navyše (príspevky, diskusia, tlač)
@@ -191,6 +254,7 @@ wp-theme/
     │   ├── customizer.php     celý panel IDEANET v Prispôsobiť
     │   ├── pricing.php        výpis cenníka
     │   ├── form.php           spracovanie dopytu
+    │   ├── updater.php        aktualizácie z vydaní na GitHube
     │   └── demo.php           ukážkový obsah po aktivácii
     ├── template-parts/    jednotlivé sekcie úvodnej stránky
     ├── page-templates/    ponuka na jednu stranu

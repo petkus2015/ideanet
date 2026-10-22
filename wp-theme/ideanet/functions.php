@@ -15,6 +15,7 @@ require_once get_theme_file_path( 'inc/customizer.php' );
 require_once get_theme_file_path( 'inc/pricing.php' );
 require_once get_theme_file_path( 'inc/form.php' );
 require_once get_theme_file_path( 'inc/demo.php' );
+require_once get_theme_file_path( 'inc/updater.php' );
 
 /**
  * Popis stránky pre vyhľadávače, keď ho WordPress sám nedoplní.

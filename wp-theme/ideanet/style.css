@@ -10,6 +10,7 @@ Tested up to: 7.1
 Requires PHP: 7.4
 License: GNU General Public License v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Update URI: https://github.com/petkus2015/ideanet
 Text Domain: ideanet
 Tags: one-column, custom-menu, custom-logo, custom-colors, editor-style, portfolio, translation-ready
 */
@@ -460,8 +461,10 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 }
 .reel__dur{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.72);background:rgba(4,6,18,.6);padding:.32rem .55rem;border-radius:999px;backdrop-filter:blur(8px)}
 /* Dĺžku dopĺňa skript z videa. Kým ju nepozná, nech tam nevisí prázdna
-   bublina. */
+   bublina. Počas prehrávania odpočítava, čo zostáva — vtedy je o niečo
+   výraznejšia, nech je jasné, že sa hýbe. */
 .reel__dur:empty{display:none}
+.reel__dur.is-live{color:#fff;background:rgba(255,45,148,.7)}
 
 .reel__play{
   position:absolute;inset:0;margin:auto;width:66px;height:66px;border-radius:50%;

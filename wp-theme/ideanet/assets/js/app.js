@@ -91,20 +91,54 @@
 
     /* plagát ako záloha, keď video chýba alebo sa nedá prehrať */
     videos.forEach((v, i) => {
-      v.addEventListener('loadedmetadata', () => {
-        if (!isFinite(v.duration) || v.duration <= 0) return;
-        const el = cards[i].querySelector('.reel__dur');
-        if (el) el.textContent = cas(v.duration);
-      });
+      const bublina = cards[i].querySelector('.reel__dur');
+      const ciara   = cards[i].querySelector('.reel__line');
+
+      const dlzkaZnama = () => isFinite(v.duration) && v.duration > 0;
+      const ukazDlzku = () => {
+        if (!bublina || !dlzkaZnama()) return;
+        bublina.textContent = cas(v.duration);
+        bublina.classList.remove('is-live');
+      };
+
+      v.addEventListener('loadedmetadata', ukazDlzku);
+      /* Niektoré súbory oznámia skutočnú dĺžku až dodatočne. */
+      v.addEventListener('durationchange', ukazDlzku);
+      /* A keď je video už v pamäti prehliadača, dĺžku môže poznať skôr,
+         než sa sem dostaneme — vtedy by nám tá udalosť ušla. */
+      if (v.readyState >= 1) ukazDlzku();
+
       v.addEventListener('error', () => {
         if (v.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) cards[i].classList.add('no-src');
       }, true);
+
+      /* Počas prehrávania bublina ukazuje, koľko ešte zostáva. */
       v.addEventListener('timeupdate', () => {
-        if (!v.duration) return;
-        cards[i].querySelector('.reel__line').style.width = (v.currentTime / v.duration * 100) + '%';
+        if (!dlzkaZnama()) return;
+        if (ciara) ciara.style.width = (v.currentTime / v.duration * 100) + '%';
+        if (!bublina || v.paused) return;
+        bublina.textContent = cas(Math.max(0, v.duration - v.currentTime));
+        bublina.classList.add('is-live');
       });
+
+      /* Po zastavení sa vráti celková dĺžka. */
+      ['pause', 'ended', 'emptied'].forEach(ev => v.addEventListener(ev, ukazDlzku));
+
       if (!v.querySelector('source')) cards[i].classList.add('no-src');
     });
+
+    /* Niektoré prehliadače preload="metadata" ignorujú — pri šetrení dát
+       alebo na pomalom pripojení. Keď je karta na obrazovke a dĺžku stále
+       nepoznáme, vypýtame si ju. Raz, nie dookola. */
+    const dotiahni = new IntersectionObserver((ents) => {
+      ents.forEach(en => {
+        const v = en.target.querySelector('video');
+        if (!en.isIntersecting || !v) return;
+        dotiahni.unobserve(en.target);
+        if (v.readyState === 0 && v.querySelector('source')) v.load();
+      });
+    }, { rootMargin: '200px' });
+    cards.forEach(c => dotiahni.observe(c));
 
     if (dotsWrap) {
       dotsWrap.innerHTML = REELS.map((r, i) =>

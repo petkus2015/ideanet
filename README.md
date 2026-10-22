@@ -37,6 +37,10 @@ obsah (texty, menu, videá, obrázky, ceny, formulár) sa upravuje
 v administrácii, bez zásahu do kódu a bez ďalších pluginov. Návod je
 v [`wp-theme/README.md`](wp-theme/README.md).
 
+Téma sa aktualizuje priamo vo WordPresse — nové vydanie v tomto
+repozitári sa objaví vo Vzhľad → Témy a nainštaluje sa jedným
+kliknutím. Vydanie pripraví `./wp-theme/release.sh <verzia>`.
+
 Statická verzia v koreni zostáva ako rýchly náhľad a zdroj dizajnu.
 Keď sa mení vzhľad, mení sa na oboch miestach — `wp-theme/ideanet/style.css`
 je `styles.css` s hlavičkou témy navrchu.
