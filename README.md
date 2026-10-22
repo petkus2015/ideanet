@@ -27,7 +27,19 @@ ponuka/             samostatné ponuky na poslanie klientovi
 docs/               stratégia a cenník v textovej podobe
 assets/posters/     náhľady kariet 9:16 (SVG)
 assets/videos/      videá portfólia
+wp-theme/ideanet/   tá istá stránka ako WordPress téma
 ```
+
+## WordPress
+
+V `wp-theme/ideanet/` je tá istá stránka ako téma pre WordPress — celý
+obsah (texty, menu, videá, obrázky, ceny, formulár) sa upravuje
+v administrácii, bez zásahu do kódu a bez ďalších pluginov. Návod je
+v [`wp-theme/README.md`](wp-theme/README.md).
+
+Statická verzia v koreni zostáva ako rýchly náhľad a zdroj dizajnu.
+Keď sa mení vzhľad, mení sa na oboch miestach — `wp-theme/ideanet/style.css`
+je `styles.css` s hlavičkou témy navrchu.
 
 ## Obsah stránky
 
