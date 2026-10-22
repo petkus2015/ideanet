@@ -77,14 +77,22 @@
 .comment-respond .comment-form-cookies-consent label{margin:0}
 
 /* ── video v telefóne na úvodnej obrazovke ──
-   Nahrádza animovanú obrazovku, keď je v Prispôsobiť nahraté video.
-   Prekrytie s odleskom a riadkami necháme, len slabšie — inak by
-   z videa nebolo nič vidieť. */
-.phone__video{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;border-radius:inherit;z-index:0;
+   Vertikálne video má pomer 9:16, telefón je štíhlejší. Keby video
+   vypĺňalo celú obrazovku, orezalo by sa po stranách — a práve tam
+   býva to podstatné. Video preto sedí hore v svojom pomere, telefón
+   je o kúsok nižší a dole zostane voľný pás s popisom. */
+.phone--video{aspect-ratio:9/18.5}
+.phone--video .phone__screen{display:block}
+.phone--video .phone__video{
+  position:relative;inset:auto;display:block;
+  width:100%;height:auto;aspect-ratio:9/16;
+  object-fit:cover;border-radius:0;z-index:0;
 }
+/* Prekrytie s odleskom a riadkami necháme, len slabšie — inak by
+   z videa nebolo nič vidieť. */
 .phone--video .phone__screen::before{opacity:.4;z-index:1;pointer-events:none}
+/* Popis zostáva pri spodnom okraji, nie hneď pod videom — inak by sa
+   stretol so štítkom, ktorý okolo telefónu pláva v tej istej výške. */
 .phone--video .phone__caption{text-shadow:0 1px 10px rgba(0,0,0,.8)}
 
 /* Kto má vypnuté animácie, dostane prvý obrázok videa. Zastavuje ho

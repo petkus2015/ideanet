@@ -55,6 +55,10 @@ Nahrajte krátku vertikálnu slučku (9:16, pár sekúnd, bez zvuku —
 prehráva sa automaticky a stlmene). Kým je pole prázdne, v telefóne
 zostane dnešná animovaná obrazovka, takže sa nič nepokazí.
 
+Telefón sa videu prispôsobí: video sedí hore v pomere **9:16**, celé
+a neorezané, a dole zostane voľný pás s popisom. Ak nahráte iný pomer
+(napríklad 16:9), oreže sa — do telefónu patrí vertikál.
+
 Komu má systém vypnuté animácie, tomu sa video nespustí a uvidí prvý
 obrázok. Preto sa oplatí ho vyplniť.
 
