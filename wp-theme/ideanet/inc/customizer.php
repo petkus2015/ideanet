@@ -51,7 +51,7 @@ function ideanet_customizer_map() {
 				'hero_cta2_url' => array( __( 'Druhé tlačidlo — odkaz', 'ideanet' ), 'text' ),
 				'hero_chips'    => array( __( 'Štítky okolo telefónu', 'ideanet' ), 'area', $lines . ' ' . __( 'Najviac šesť.', 'ideanet' ) ),
 				'hero_caption'  => array( __( 'Text na obrazovke telefónu', 'ideanet' ), 'text' ),
-				'hero_video'    => array( __( 'Video v telefóne (MP4)', 'ideanet' ), 'video', __( 'Vertikál 9:16, krátka slučka bez zvuku. Prázdne = zostane dnešná animovaná obrazovka.', 'ideanet' ) ),
+				'hero_video'    => array( __( 'Video v telefóne (MP4)', 'ideanet' ), 'video', __( 'Vertikál 9:16, krátka slučka bez zvuku. Prázdne = zostane animovaná obrazovka s tlačidlom. Okno sa otvorí na záložke Nahrať súbory — ak už súbor máte v knižnici, prepnite na Knižnica médií. Po výbere kliknite hore na Zverejniť.', 'ideanet' ) ),
 				'hero_webm'     => array( __( 'Video v telefóne (WebM) — nepovinné', 'ideanet' ), 'video', __( 'Druhý formát pre staršie prehliadače.', 'ideanet' ) ),
 				'hero_poster'   => array( __( 'Prvý obrázok videa', 'ideanet' ), 'image', __( 'Zobrazí sa, kým sa video načíta, a tiež ľuďom, ktorí majú vypnuté animácie.', 'ideanet' ) ),
 				'hero_marquee'  => array( __( 'Bežiaci pás odborov', 'ideanet' ), 'text', __( 'Oddeľte čiarkami.', 'ideanet' ) ),
@@ -478,3 +478,111 @@ function ideanet_customize_preview_js() {
 	);
 }
 add_action( 'customize_preview_init', 'ideanet_customize_preview_js' );
+
+/**
+ * Ceruzky v náhľade.
+ *
+ * Panel má vyše sto polí a hľadať v ňom, kde sa mení konkrétna veta, je
+ * otrava. WordPress vie k časti stránky priradiť ovládače — v náhľade sa
+ * pri nej objaví ceruzka a kliknutím sa otvorí práve to pole.
+ *
+ * Časti sa tu vypisujú bez vlastného vykresľovania. Po zmene sa náhľad
+ * načíta celý — o nič nejde, zmyslom je tá ceruzka.
+ *
+ * @return array<string,string[]> Výber v stránke => zoznam nastavení.
+ */
+function ideanet_edit_map() {
+	$sekcie = array( 'portfolio', 'vizualy', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'kalkulacka', 'podmienky' );
+
+	$map = array(
+		'.nav .brand'       => array( 'brand_name', 'brand_co', 'brand_co_bold', 'brand_photo' ),
+		'.nav__cta'         => array( 'nav_cta' ),
+
+		'.hero .eyebrow'    => array( 'hero_eyebrow' ),
+		'.hero h1'          => array( 'hero_title', 'hero_title_2', 'hero_title_hl' ),
+		'.hero__flow'       => array( 'hero_flow' ),
+		'.hero__cta'        => array( 'hero_cta1', 'hero_cta1_url', 'hero_cta2', 'hero_cta2_url' ),
+		'.hero__visual'     => array( 'hero_video', 'hero_webm', 'hero_poster', 'hero_chips', 'hero_caption' ),
+		'.marquee'          => array( 'hero_marquee' ),
+
+		'.incl'             => array( 'vcene_title', 'vcene_note', 'vcene_items' ),
+		'.segments'         => array( 'prekoho_items' ),
+
+		'.tabs__list'       => array( 'tab_firmy', 'tab_firmy_sub', 'tab_agentury', 'tab_agentury_sub', 'tab_eventy', 'tab_eventy_sub' ),
+		'#panel-firmy .panel__intro'    => array( 'firmy_intro' ),
+		'#panel-agentury .panel__intro' => array( 'agentury_intro' ),
+		'#panel-eventy .panel__intro'   => array( 'eventy_intro' ),
+		'.addon'            => array( 'addon_tag', 'addon_title', 'addon_text', 'addon_price', 'addon_unit' ),
+		'.partner'          => array( 'partner_tag', 'partner_title', 'partner_text', 'partner_items', 'partner_pre', 'partner_price', 'partner_unit', 'partner_cta', 'partner_note' ),
+		'.notes'            => array( 'agentury_notes_title', 'agentury_notes' ),
+		'.tiers--tight'     => array( 'eventy_hour_title', 'eventy_hour_note', 'eventy_hour_price' ),
+
+		'.calc__form .modes'  => array( 'calc_modes_label', 'calc_mode_none', 'calc_mode_half', 'calc_mode_day', 'calc_modes_hint' ),
+		'.calc__form .addons' => array( 'calc_addons_label', 'calc_addons' ),
+		'.calc__out'          => array( 'calc_out_label', 'calc_unit', 'calc_cta', 'calc_disc', 'calc_tip' ),
+		'.stepper'            => array( 'calc_reels_label', 'calc_first', 'calc_next', 'calc_min', 'calc_max', 'calc_start' ),
+
+		'.grab'             => array( 'podmienky_grab', 'ponuka_firmy_url', 'ponuka_firmy_label', 'ponuka_agentury_url', 'ponuka_agentury_label' ),
+
+		'.contact__copy'    => array( 'kontakt_eyebrow', 'kontakt_title', 'kontakt_note', 'contact_email', 'contact_phone', 'contact_social', 'contact_social_url', 'contact_facts' ),
+		'#contactForm'      => array( 'form_name', 'form_name_ph', 'form_email', 'form_email_ph', 'form_type', 'form_msg', 'form_msg_ph', 'form_submit', 'form_gdpr', 'form_to', 'form_subject', 'form_ok', 'form_err' ),
+
+		'.footer__inner p'  => array( 'footer_text' ),
+		'.footer .socials'  => array( 'social_instagram', 'social_tiktok', 'social_youtube', 'social_facebook' ),
+	);
+
+	/* hlavičky sekcií — pri každej tie isté tri polia */
+	foreach ( $sekcie as $slug ) {
+		$map[ '#' . $slug . ' .section__head' ] = array( $slug . '_eyebrow', $slug . '_title', $slug . '_note' );
+	}
+
+	/* medzinadpisy v cenníku si nesú kľúč so sebou */
+	$bloky = array(
+		'firmy_jednorazovo_title' => array( 'firmy_jednorazovo_title', 'firmy_jednorazovo_note' ),
+		'firmy_podcast_title'     => array( 'firmy_podcast_title', 'firmy_podcast_note', 'firmy_podcast_foot' ),
+		'firmy_vizualy_title'     => array( 'firmy_vizualy_title', 'firmy_vizualy_note', 'firmy_vizualy_foot' ),
+		'eventy_graf_title'       => array( 'eventy_graf_title', 'eventy_graf_note' ),
+	);
+	foreach ( $bloky as $kluc => $polia ) {
+		$map[ '[data-ideanet-edit="' . $kluc . '"]' ] = $polia;
+	}
+
+	return $map;
+}
+
+/**
+ * Zaregistruje tie časti.
+ *
+ * @param WP_Customize_Manager $wp_customize Správca Prispôsobiť.
+ */
+function ideanet_register_partials( $wp_customize ) {
+	if ( ! isset( $wp_customize->selective_refresh ) ) {
+		return;
+	}
+
+	$i = 0;
+	foreach ( ideanet_edit_map() as $vyber => $polia ) {
+		$nastavenia = array();
+		foreach ( $polia as $pole ) {
+			$id = 'ideanet_' . $pole;
+			if ( $wp_customize->get_setting( $id ) ) {
+				$nastavenia[] = $id;
+			}
+		}
+
+		if ( ! $nastavenia ) {
+			continue;
+		}
+
+		$wp_customize->selective_refresh->add_partial(
+			'ideanet_edit_' . ( ++$i ),
+			array(
+				'selector'            => $vyber,
+				'settings'            => $nastavenia,
+				'container_inclusive' => false,
+				'fallback_refresh'    => true,
+			)
+		);
+	}
+}
+add_action( 'customize_register', 'ideanet_register_partials', 20 );

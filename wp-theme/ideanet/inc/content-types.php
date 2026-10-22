@@ -640,3 +640,47 @@ function ideanet_image( $post, $size, $key ) {
 
 	return ideanet_meta( $post->ID, $key );
 }
+
+/**
+ * Skratky v hornej lište, keď je človek prihlásený a pozerá sa na web.
+ *
+ * Texty sa dajú upraviť ceruzkou priamo v náhľade, ale videá, vizuály
+ * a ceny sú položky obsahu — tie ceruzku nemajú. Odtiaľto sa k nim
+ * dostane na jedno kliknutie.
+ *
+ * @param WP_Admin_Bar $bar Horná lišta.
+ */
+function ideanet_admin_bar( $bar ) {
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		return;
+	}
+
+	$bar->add_node(
+		array(
+			'id'    => 'ideanet',
+			'title' => 'IDEANET',
+			'href'  => admin_url( 'admin.php?page=ideanet' ),
+		)
+	);
+
+	$polozky = array(
+		'texty'   => array( __( 'Upraviť texty a ceny', 'ideanet' ), admin_url( 'customize.php' ) ),
+		'reels'   => array( __( 'Reels (portfólio)', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_reel' ) ),
+		'vizualy' => array( __( 'Vizuály a identita', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_vizual' ) ),
+		'baliky'  => array( __( 'Balíky a ceny', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_balik' ) ),
+		'menu'    => array( __( 'Menu', 'ideanet' ), admin_url( 'nav-menus.php' ) ),
+		'dopyty'  => array( __( 'Prijaté dopyty', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_dopyt' ) ),
+	);
+
+	foreach ( $polozky as $id => $polozka ) {
+		$bar->add_node(
+			array(
+				'parent' => 'ideanet',
+				'id'     => 'ideanet-' . $id,
+				'title'  => $polozka[0],
+				'href'   => $polozka[1],
+			)
+		);
+	}
+}
+add_action( 'admin_bar_menu', 'ideanet_admin_bar', 80 );

@@ -37,6 +37,9 @@ obsah (texty, menu, videá, obrázky, ceny, formulár) sa upravuje
 v administrácii, bez zásahu do kódu a bez ďalších pluginov. Návod je
 v [`wp-theme/README.md`](wp-theme/README.md).
 
+Texty sa upravujú kliknutím na ceruzku priamo v náhľade
+(Vzhľad → Prispôsobiť), obsah cez hornú lištu na webe.
+
 Téma sa aktualizuje priamo vo WordPresse — nové vydanie v tomto
 repozitári sa objaví vo Vzhľad → Témy a nainštaluje sa jedným
 kliknutím. Vydanie pripraví `./wp-theme/release.sh <verzia>`.

@@ -140,7 +140,7 @@ function ideanet_tier_block( $group, $block, $title, $note = '', $foot = '' ) {
 		return;
 	}
 	?>
-	<h3 class="sub reveal"><?php echo esc_html( ideanet_opt( $title ) ); ?></h3>
+	<h3 class="sub reveal" data-ideanet-edit="<?php echo esc_attr( $title ); ?>"><?php echo esc_html( ideanet_opt( $title ) ); ?></h3>
 	<?php if ( $note && ideanet_opt( $note ) ) : ?>
 		<p class="sub__note reveal"><?php ideanet_text( $note ); ?></p>
 	<?php endif; ?>

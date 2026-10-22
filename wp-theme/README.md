@@ -25,7 +25,18 @@ zmažte v databáze možnosť `ideanet_seeded` a tému znovu aktivujte.
 
 ## Kde sa čo upravuje
 
-V administrácii je vľavo položka **IDEANET**. Prvá podpoložka
+**Najrýchlejšia cesta: kliknite na text priamo v náhľade.** Vo
+Vzhľad → Prispôsobiť sa pri každom texte objaví modrá ceruzka. Kliknutím
+na ňu sa vľavo otvorí práve to pole — nemusíte ho v zozname hľadať.
+Funguje to pri nadpisoch, vetách, cenách, kontakte, formulári aj pri
+telefóne v úvode.
+
+Videá, vizuály a ceny sú položky obsahu, nie texty — tie ceruzku nemajú.
+Keď ste prihlásený a pozeráte sa na web, máte ich v hornej lište pod
+**IDEANET**: Reels, Vizuály, Balíky a ceny, Menu aj prijaté dopyty.
+
+Keď niečo meníte radšej zo zoznamu: v administrácii je vľavo položka
+**IDEANET**. Prvá podpoložka
 **Kde čo upraviť** je rozcestník — vypíše všetky sekcie aj typy obsahu
 a každý odkaz vedie rovno na miesto, kde sa to mení. Dve veci, ktoré sa
 hľadajú najčastejšie, sú hneď pod ňou: **Kontakt a siete** a **Formulár**.
@@ -53,7 +64,12 @@ Prispôsobiť → IDEANET → **Úvodná obrazovka**. Dole sú tri polia:
 
 Nahrajte krátku vertikálnu slučku (9:16, pár sekúnd, bez zvuku —
 prehráva sa automaticky a stlmene). Kým je pole prázdne, v telefóne
-zostane dnešná animovaná obrazovka, takže sa nič nepokazí.
+zostane animovaná obrazovka s tlačidlom, takže sa nič nepokazí.
+
+> **Dve miesta, kde sa to dá prehliadnuť.** Okno s médiami sa otvára na
+> záložke **Nahrať súbory**. Ak už video v knižnici máte, prepnite hore
+> na **Knižnica médií** — inak to vyzerá, že tam nič nie je. A po výbere
+> treba ešte hore kliknúť na **Zverejniť**, inak sa zmena neuloží.
 
 Telefón sa videu prispôsobí: video sedí hore v pomere **9:16**, celé
 a neorezané, a dole zostane voľný pás s popisom. Ak nahráte iný pomer
