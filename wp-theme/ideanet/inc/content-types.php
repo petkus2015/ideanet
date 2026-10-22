@@ -220,35 +220,112 @@ function ideanet_admin_menu() {
 	);
 
 	add_submenu_page( 'ideanet', __( 'Kde čo upraviť', 'ideanet' ), __( 'Kde čo upraviť', 'ideanet' ), 'edit_posts', 'ideanet', 'ideanet_admin_page' );
+
+	/* Dve veci sa hľadajú najčastejšie, nech sú na dosah z ľavého stĺpca. */
+	add_submenu_page( 'ideanet', __( 'Kontakt', 'ideanet' ), __( 'Kontakt a siete', 'ideanet' ), 'customize', ideanet_customize_link( 'kontakt' ) );
+	add_submenu_page( 'ideanet', __( 'Formulár', 'ideanet' ), __( 'Formulár', 'ideanet' ), 'customize', ideanet_customize_link( 'formular' ) );
 }
 add_action( 'admin_menu', 'ideanet_admin_menu', 9 );
 
 /**
+ * Priamy odkaz do Prispôsobiť, rovno na konkrétnu sekciu.
+ *
+ * @param string $slug Názov sekcie bez predpony.
+ * @return string
+ */
+function ideanet_customize_link( $slug ) {
+	return add_query_arg(
+		array( 'autofocus' => array( 'section' => 'ideanet_' . $slug ) ),
+		admin_url( 'customize.php' )
+	);
+}
+
+/**
  * Rozcestník v administrácii.
+ *
+ * Panel v Prispôsobiť má sedemnásť sekcií a hľadať v ňom, kde sa mení
+ * e-mail alebo formulár, je otrava. Tu je na každú priamy odkaz.
  */
 function ideanet_admin_page() {
-	$rows = array(
-		array( __( 'Texty, ceny v kalkulačke, kontakt, siete', 'ideanet' ), admin_url( 'customize.php' ), __( 'Vzhľad → Prispôsobiť', 'ideanet' ) ),
-		array( __( 'Menu hore, dole na mobile aj v pätičke', 'ideanet' ), admin_url( 'nav-menus.php' ), __( 'Vzhľad → Menu', 'ideanet' ) ),
-		array( __( 'Videá v portfóliu', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_reel' ), __( 'Reels', 'ideanet' ) ),
-		array( __( 'Ukážky vizuálov', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_vizual' ), __( 'Vizuály', 'ideanet' ) ),
-		array( __( 'Ceny a balíky v cenníku', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_balik' ), __( 'Balíky a ceny', 'ideanet' ) ),
-		array( __( 'Prijaté dopyty z formulára', 'ideanet' ), admin_url( 'edit.php?post_type=ideanet_dopyt' ), __( 'Dopyty', 'ideanet' ) ),
+	$texty = array();
+	foreach ( ideanet_customizer_map() as $slug => $section ) {
+		$texty[] = array( $section['title'], ideanet_customize_link( $slug ) );
+	}
+
+	$obsah = array();
+	foreach ( ideanet_post_types() as $slug => $def ) {
+		$obsah[] = array(
+			$def['labels'][1],
+			admin_url( 'edit.php?post_type=' . $slug ),
+			isset( $def['help'] ) ? $def['help'] : '',
+		);
+	}
+
+	$ostatne = array(
+		array( __( 'Menu — hore, spodná lišta na mobile, pätička', 'ideanet' ), admin_url( 'nav-menus.php' ) ),
+		array( __( 'Obrázky a videá v knižnici médií', 'ideanet' ), admin_url( 'upload.php' ) ),
+		array( __( 'Stránky s ponukou na jednu stranu', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),
 	);
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'IDEANET — kde čo upraviť', 'ideanet' ); ?></h1>
-		<p><?php esc_html_e( 'Celý web sa dá upraviť bez zásahu do kódu. Tu je rozcestník.', 'ideanet' ); ?></p>
-		<table class="widefat striped" style="max-width:860px">
-			<tbody>
-			<?php foreach ( $rows as $row ) : ?>
-				<tr>
-					<td style="width:60%"><?php echo esc_html( $row[0] ); ?></td>
-					<td><a class="button" href="<?php echo esc_url( $row[1] ); ?>"><?php echo esc_html( $row[2] ); ?></a></td>
-				</tr>
-			<?php endforeach; ?>
-			</tbody>
-		</table>
+		<p><?php esc_html_e( 'Celý web sa dá upraviť bez zásahu do kódu. Každý odkaz vedie rovno na miesto, kde sa to mení.', 'ideanet' ); ?></p>
+
+		<div style="display:flex;flex-wrap:wrap;gap:1.5rem;align-items:flex-start;max-width:1200px">
+
+			<div style="flex:1 1 380px">
+				<h2><?php esc_html_e( 'Texty, ceny a kontakt', 'ideanet' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Všetko v Prispôsobiť — zmeny vidíte hneď v náhľade vpravo.', 'ideanet' ); ?></p>
+				<table class="widefat striped">
+					<tbody>
+					<?php foreach ( $texty as $row ) : ?>
+						<tr>
+							<td><?php echo esc_html( $row[0] ); ?></td>
+							<td style="width:1%;white-space:nowrap">
+								<a class="button" href="<?php echo esc_url( $row[1] ); ?>"><?php esc_html_e( 'Upraviť', 'ideanet' ); ?></a>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+
+			<div style="flex:1 1 380px">
+				<h2><?php esc_html_e( 'Obsah', 'ideanet' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Položky, ktoré sa dajú pridávať a mazať.', 'ideanet' ); ?></p>
+				<table class="widefat striped">
+					<tbody>
+					<?php foreach ( $obsah as $row ) : ?>
+						<tr>
+							<td>
+								<strong><?php echo esc_html( $row[0] ); ?></strong>
+								<?php if ( $row[2] ) : ?>
+									<br><span class="description"><?php echo esc_html( $row[2] ); ?></span>
+								<?php endif; ?>
+							</td>
+							<td style="width:1%;white-space:nowrap">
+								<a class="button" href="<?php echo esc_url( $row[1] ); ?>"><?php esc_html_e( 'Otvoriť', 'ideanet' ); ?></a>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+
+				<h2><?php esc_html_e( 'Ostatné', 'ideanet' ); ?></h2>
+				<table class="widefat striped">
+					<tbody>
+					<?php foreach ( $ostatne as $row ) : ?>
+						<tr>
+							<td><?php echo esc_html( $row[0] ); ?></td>
+							<td style="width:1%;white-space:nowrap">
+								<a class="button" href="<?php echo esc_url( $row[1] ); ?>"><?php esc_html_e( 'Otvoriť', 'ideanet' ); ?></a>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 	<?php
 }

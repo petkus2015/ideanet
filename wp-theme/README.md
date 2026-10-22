@@ -25,7 +25,10 @@ zmažte v databáze možnosť `ideanet_seeded` a tému znovu aktivujte.
 
 ## Kde sa čo upravuje
 
-V administrácii je vľavo položka **IDEANET** a v nej rozcestník.
+V administrácii je vľavo položka **IDEANET**. Prvá podpoložka
+**Kde čo upraviť** je rozcestník — vypíše všetky sekcie aj typy obsahu
+a každý odkaz vedie rovno na miesto, kde sa to mení. Dve veci, ktoré sa
+hľadajú najčastejšie, sú hneď pod ňou: **Kontakt a siete** a **Formulár**.
 
 | Čo chcete zmeniť | Kde to je |
 |---|---|
@@ -40,6 +43,8 @@ V administrácii je vľavo položka **IDEANET** a v nej rozcestník.
 | Podmienky spolupráce | **Podmienky** |
 | Dopyty, ktoré prišli z formulára | **Prijaté dopyty** |
 | Fotku vedľa mena | Prispôsobiť → IDEANET → Značka a hlavička |
+| E-mail, telefón, prezývku, fakty pod kontaktom | IDEANET → **Kontakt a siete** |
+| Kam chodia dopyty, popisy polí, hlášky formulára | IDEANET → **Formulár** |
 
 ### Video v úvodnej obrazovke
 

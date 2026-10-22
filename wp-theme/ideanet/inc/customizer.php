@@ -197,7 +197,7 @@ function ideanet_customizer_map() {
 		),
 
 		'kontakt' => array(
-			'title'  => __( '9 · Kontakt', 'ideanet' ),
+			'title'  => __( '9 · Kontakt — e-mail, telefón, siete', 'ideanet' ),
 			'fields' => array(
 				'contact_email'      => array( __( 'E-mail', 'ideanet' ), 'email' ),
 				'contact_phone'      => array( __( 'Telefón', 'ideanet' ), 'text' ),
@@ -208,7 +208,7 @@ function ideanet_customizer_map() {
 		),
 
 		'formular' => array(
-			'title'  => __( '9a · Formulár', 'ideanet' ),
+			'title'  => __( '9a · Formulár — kam chodia dopyty', 'ideanet' ),
 			'fields' => array(
 				'form_to'      => array( __( 'Kam chodia dopyty', 'ideanet' ), 'email', __( 'Prázdne = e-mail z kontaktu vyššie.', 'ideanet' ) ),
 				'form_subject' => array( __( 'Predmet e-mailu', 'ideanet' ), 'text' ),
