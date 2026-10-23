@@ -120,12 +120,13 @@
     else { v.pause(); cards[i].classList.remove('is-playing'); }
   }
 
-  rail.addEventListener('click', (e) => {
-    if (rail.dataset.moved === '1') return;          // klik po ťahaní ignorujeme
-    const card = e.target.closest('.reel');
+  /* Čo sa má stať po ťuknutí alebo kliknutí na kartu. Volá sa to
+     z dvoch miest, preto je to funkcia. */
+  function obsluhaKarty(ciel) {
+    const card = ciel && ciel.closest ? ciel.closest('.reel') : null;
     if (!card) return;
     const i = +card.dataset.i;
-    const btn = e.target.closest('[data-act]');
+    const btn = ciel.closest('[data-act]');
     const act = btn ? btn.dataset.act : 'play';
 
     if (act === 'expand') { openLightbox(i); return; }
@@ -138,6 +139,43 @@
       return;
     }
     toggle(i);
+  }
+
+  /* Na dotyku sa nedá spoľahnúť na „click". Keď sa prst pri ťuknutí
+     posunie čo i len o pár desatín milimetra, prehliadač to na
+     vodorovnom páse vyhodnotí ako skrolovanie a klik vôbec nepošle —
+     ťuknutie na kartu potom nespustí nič. Na telefóne sa prst takmer
+     vždy trochu pohne, takže prehrávanie tam prakticky nefungovalo.
+     Ťuknutie si preto vyhodnocujeme sami: krátke a bez veľkého posunu
+     je ťuknutie, čokoľvek dlhšie je potiahnutie. */
+  const TAP_POSUN = 24, TAP_CAS = 600;
+  let tapX = 0, tapY = 0, tapOd = 0, tapCiel = null, tapVybavene = 0;
+
+  rail.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) { tapCiel = null; return; }
+    tapX = e.touches[0].clientX;
+    tapY = e.touches[0].clientY;
+    tapOd = performance.now();
+    tapCiel = e.target;
+  }, { passive: true });
+
+  rail.addEventListener('touchend', (e) => {
+    const ciel = tapCiel;
+    tapCiel = null;
+    if (!ciel || e.touches.length) return;
+    const t = e.changedTouches[0];
+    if (!t) return;
+    const posun = Math.hypot(t.clientX - tapX, t.clientY - tapY);
+    if (posun > TAP_POSUN || performance.now() - tapOd > TAP_CAS) return;
+    tapVybavene = performance.now();
+    obsluhaKarty(ciel);
+  }, { passive: true });
+
+  rail.addEventListener('click', (e) => {
+    if (rail.dataset.moved === '1') return;          // klik po ťahaní myšou ignorujeme
+    /* Keď prehliadač klik po ťuknutí predsa len pošle, už je vybavený. */
+    if (performance.now() - tapVybavene < 700) return;
+    obsluhaKarty(e.target);
   });
 
   /* ───────────────────────────────────────────
