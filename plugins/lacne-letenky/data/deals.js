@@ -15,8 +15,8 @@ window.LACNE_LETENKY_DATA = {
    "HUF": 366.73
   }
  },
- "updatedAt": "2026-10-24T09:48+02:00",
- "prevUpdatedAt": "2026-10-24T09:22+02:00",
+ "updatedAt": "2026-10-24T10:52+02:00",
+ "prevUpdatedAt": "2026-10-24T09:48+02:00",
  "slot": "obed",
  "nextUpdate": "2026-10-24T12:00+02:00",
  "schedule": [
@@ -308,15 +308,15 @@ window.LACNE_LETENKY_DATA = {
     "country": "Singapur",
     "countryCode": "SG",
     "region": "Ázia",
-    "price": 841,
+    "price": 751,
     "currency": "EUR",
     "depart": "2026-12-31",
     "return": "2027-01-15",
     "nights": 15,
-    "stops": 1,
+    "stops": 2,
     "url": "https://www.momondo.co.uk/flight-search/VIE-SIN/2026-12-31/2027-01-15?sort=price_a",
     "source": "momondo",
-    "priceOriginal": 704,
+    "priceOriginal": 629,
     "currencyOriginal": "GBP",
     "prevPrice": 841,
     "weather": {
@@ -678,30 +678,6 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
-   "origin": "BUD",
-   "dest": "SOF",
-   "city": "Sofia",
-   "country": "Bulharsko",
-   "countryCode": "BG",
-   "region": "Európa",
-   "price": 39,
-   "currency": "EUR",
-   "depart": "2027-01-07",
-   "return": "2027-01-10",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/SOF/2027-01-07/2027-01-10/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 14480,
-   "currencyOriginal": "HUF",
-   "prevPrice": null,
-   "weather": {
-    "t": 9,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
    "origin": "BTS",
    "dest": "CIA",
    "city": "Rím",
@@ -719,50 +695,6 @@ window.LACNE_LETENKY_DATA = {
    "prevPrice": null,
    "weather": {
     "t": 13,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
-   "dest": "BER",
-   "city": "Berlin",
-   "country": "Nemecko",
-   "countryCode": "DE",
-   "region": "Európa",
-   "price": 40,
-   "currency": "EUR",
-   "depart": "2026-12-03",
-   "return": "2026-12-06",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-03&dateIn=2026-12-06&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=BER",
-   "source": "ryanair",
-   "prevPrice": null,
-   "weather": {
-    "t": 5,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "RMO",
-   "city": "Kišinev",
-   "country": "Moldavsko",
-   "countryCode": "MD",
-   "region": "Európa",
-   "price": 40,
-   "currency": "EUR",
-   "depart": "2027-01-15",
-   "return": "2027-01-18",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/RMO/2027-01-15/2027-01-18/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": null,
-   "weather": {
-    "t": 1,
     "c": "cloud",
     "k": "c"
    }
@@ -790,23 +722,23 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
-   "origin": "BTS",
-   "dest": "VAR",
-   "city": "Varna",
-   "country": "Bulharsko",
-   "countryCode": "BG",
+   "origin": "BUD",
+   "dest": "BER",
+   "city": "Berlin",
+   "country": "Nemecko",
+   "countryCode": "DE",
    "region": "Európa",
-   "price": 40,
+   "price": 41,
    "currency": "EUR",
-   "depart": "2027-01-21",
-   "return": "2027-01-24",
+   "depart": "2026-12-03",
+   "return": "2026-12-06",
    "nights": 3,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2027-01-21/2027-01-24/1/0/0/null",
-   "source": "wizzair",
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-03&dateIn=2026-12-06&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=BER",
+   "source": "ryanair",
    "prevPrice": null,
    "weather": {
-    "t": 9,
+    "t": 5,
     "c": "cloud",
     "k": "c"
    }
@@ -859,30 +791,6 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BUD",
-   "dest": "TGM",
-   "city": "Targu Mures",
-   "country": "Rumunsko",
-   "countryCode": "RO",
-   "region": "Európa",
-   "price": 42,
-   "currency": "EUR",
-   "depart": "2027-01-07",
-   "return": "2027-01-10",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/TGM/2027-01-07/2027-01-10/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 15280,
-   "currencyOriginal": "HUF",
-   "prevPrice": null,
-   "weather": {
-    "t": 5,
-    "c": "snow",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
    "dest": "BRI",
    "city": "Bari",
    "country": "Taliansko",
@@ -900,28 +808,6 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 13,
     "c": "rain",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "PRN",
-   "city": "Priština",
-   "country": "Kosovo",
-   "countryCode": "XK",
-   "region": "Európa",
-   "price": 43,
-   "currency": "EUR",
-   "depart": "2027-01-15",
-   "return": "2027-01-18",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PRN/2027-01-15/2027-01-18/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": null,
-   "weather": {
-    "t": 5,
-    "c": "cloud",
     "k": "c"
    }
   },
@@ -946,30 +832,6 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 12,
     "c": "rain",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "KSC",
-   "city": "Košice",
-   "country": "Slovensko",
-   "countryCode": "SK",
-   "region": "Európa",
-   "price": 45,
-   "currency": "EUR",
-   "depart": "2026-12-17",
-   "return": "2026-12-20",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/BTS-KSC/2026-12-17/2026-12-20?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 38,
-   "currencyOriginal": "GBP",
-   "prevPrice": null,
-   "weather": {
-    "t": 4,
-    "c": "cloud",
     "k": "c"
    }
   },
@@ -1113,30 +975,6 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BUD",
-   "dest": "GHV",
-   "city": "Brasov",
-   "country": "Rumunsko",
-   "countryCode": "RO",
-   "region": "Európa",
-   "price": 47,
-   "currency": "EUR",
-   "depart": "2027-01-07",
-   "return": "2027-01-10",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/GHV/2027-01-07/2027-01-10/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 17280,
-   "currencyOriginal": "HUF",
-   "prevPrice": null,
-   "weather": {
-    "t": 4,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
    "dest": "TIA",
    "city": "Tirana",
    "country": "Albánsko",
@@ -1205,30 +1043,6 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BUD",
-   "dest": "BBU",
-   "city": "Bucharest Baneasa",
-   "country": "Rumunsko",
-   "countryCode": "RO",
-   "region": "Európa",
-   "price": 50,
-   "currency": "EUR",
-   "depart": "2027-01-14",
-   "return": "2027-01-17",
-   "nights": 3,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/BBU/2027-01-14/2027-01-17/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 18380,
-   "currencyOriginal": "HUF",
-   "prevPrice": null,
-   "weather": {
-    "t": 3,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
    "dest": "WAW",
    "city": "Varšava",
    "country": "Poľsko",
@@ -1248,6 +1062,186 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": -1,
     "c": "snow",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
+   "dest": "BER",
+   "city": "Berlín",
+   "country": "Nemecko",
+   "countryCode": "DE",
+   "region": "Európa",
+   "price": 52,
+   "currency": "EUR",
+   "depart": "2027-01-14",
+   "return": "2027-01-17",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BER/2027-01-14/2027-01-17/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null,
+   "weather": {
+    "t": 2,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "CRL",
+   "city": "Brussels Charleroi",
+   "country": "Belgicko",
+   "countryCode": "BE",
+   "region": "Európa",
+   "price": 52,
+   "currency": "EUR",
+   "depart": "2027-01-14",
+   "return": "2027-01-17",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/CRL/2027-01-14/2027-01-17/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 19180,
+   "currencyOriginal": "HUF",
+   "prevPrice": null,
+   "weather": {
+    "t": 4,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
+   "dest": "PMO",
+   "city": "Palermo",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 53,
+   "currency": "EUR",
+   "depart": "2027-01-14",
+   "return": "2027-01-17",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PMO/2027-01-14/2027-01-17/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null,
+   "weather": {
+    "t": 16,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "BLQ",
+   "city": "Bologna",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 54,
+   "currency": "EUR",
+   "depart": "2027-01-14",
+   "return": "2027-01-17",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-14&dateIn=2027-01-17&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BLQ",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 7,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "BLQ",
+   "city": "Bologna",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 55,
+   "currency": "EUR",
+   "depart": "2027-01-15",
+   "return": "2027-01-18",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-15&dateIn=2027-01-18&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=BLQ",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 7,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
+   "dest": "ATH",
+   "city": "Atény",
+   "country": "Grécko",
+   "countryCode": "GR",
+   "region": "Európa",
+   "price": 55,
+   "currency": "EUR",
+   "depart": "2027-01-22",
+   "return": "2027-01-25",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ATH/2027-01-22/2027-01-25/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null,
+   "weather": {
+    "t": 14,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "ATH",
+   "city": "Atény",
+   "country": "Grécko",
+   "countryCode": "GR",
+   "region": "Európa",
+   "price": 56,
+   "currency": "EUR",
+   "depart": "2026-12-11",
+   "return": "2026-12-14",
+   "nights": 3,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-11&dateIn=2026-12-14&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=ATH",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 16,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "FCO",
+   "city": "Rím",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 57,
+   "currency": "EUR",
+   "depart": "2027-01-21",
+   "return": "2027-01-25",
+   "nights": 4,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/FCO/2027-01-21/2027-01-25/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 21080,
+   "currencyOriginal": "HUF",
+   "prevPrice": null,
+   "weather": {
+    "t": 14,
+    "c": "rain",
     "k": "c"
    }
   }
@@ -1500,30 +1494,6 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
-   "origin": "BUD",
-   "dest": "SOF",
-   "city": "Sofia",
-   "country": "Bulharsko",
-   "countryCode": "BG",
-   "region": "Európa",
-   "price": 39,
-   "currency": "EUR",
-   "depart": "2027-01-07",
-   "return": "2027-01-16",
-   "nights": 9,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/SOF/2027-01-07/2027-01-16/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 14480,
-   "currencyOriginal": "HUF",
-   "prevPrice": 39,
-   "weather": {
-    "t": 9,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
    "origin": "BTS",
    "dest": "BRI",
    "city": "Bari",
@@ -1538,7 +1508,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-01&dateIn=2026-11-09&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BRI",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 14,
     "c": "rain",
@@ -1591,28 +1561,6 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BTS",
-   "dest": "RMO",
-   "city": "Kišinev",
-   "country": "Moldavsko",
-   "countryCode": "MD",
-   "region": "Európa",
-   "price": 40,
-   "currency": "EUR",
-   "depart": "2026-11-18",
-   "return": "2026-11-25",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/RMO/2026-11-18/2026-11-25/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 40,
-   "weather": {
-    "t": 10,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BTS",
    "dest": "SJJ",
    "city": "Sarajevo",
    "country": "Bosna a Hercegovina",
@@ -1656,52 +1604,6 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
-   "origin": "BTS",
-   "dest": "VAR",
-   "city": "Varna",
-   "country": "Bulharsko",
-   "countryCode": "BG",
-   "region": "Európa",
-   "price": 40,
-   "currency": "EUR",
-   "depart": "2027-01-14",
-   "return": "2027-01-21",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2027-01-14/2027-01-21/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 40,
-   "weather": {
-    "t": 5,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
-   "dest": "KRK",
-   "city": "Krakov",
-   "country": "Poľsko",
-   "countryCode": "PL",
-   "region": "Európa",
-   "price": 41,
-   "currency": "EUR",
-   "depart": "2026-12-07",
-   "return": "2026-12-14",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://www.momondo.co.uk/flight-search/BUD-KRK/2026-12-07/2026-12-14?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 34,
-   "currencyOriginal": "GBP",
-   "prevPrice": 41,
-   "weather": {
-    "t": 2,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
    "origin": "BUD",
    "dest": "ARN",
    "city": "Štokholm",
@@ -1725,24 +1627,24 @@ window.LACNE_LETENKY_DATA = {
   },
   {
    "origin": "BUD",
-   "dest": "TGM",
-   "city": "Targu Mures",
-   "country": "Rumunsko",
-   "countryCode": "RO",
+   "dest": "KRK",
+   "city": "Kraków",
+   "country": "Poľsko",
+   "countryCode": "PL",
    "region": "Európa",
    "price": 42,
    "currency": "EUR",
-   "depart": "2027-01-07",
-   "return": "2027-01-14",
-   "nights": 7,
+   "depart": "2027-01-06",
+   "return": "2027-01-11",
+   "nights": 5,
    "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/TGM/2027-01-07/2027-01-14/1/0/0/null",
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/KRK/2027-01-06/2027-01-11/1/0/0/null",
    "source": "wizzair",
-   "priceOriginal": 15280,
+   "priceOriginal": 15380,
    "currencyOriginal": "HUF",
-   "prevPrice": 42,
+   "prevPrice": null,
    "weather": {
-    "t": 5,
+    "t": 1,
     "c": "snow",
     "k": "c"
    }
@@ -1768,30 +1670,6 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 14,
     "c": "rain",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
-   "dest": "TRN",
-   "city": "Turín",
-   "country": "Taliansko",
-   "countryCode": "IT",
-   "region": "Európa",
-   "price": 42,
-   "currency": "EUR",
-   "depart": "2026-12-03",
-   "return": "2026-12-15",
-   "nights": 12,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/TRN/2026-12-03/2026-12-15/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 15380,
-   "currencyOriginal": "HUF",
-   "prevPrice": 42,
-   "weather": {
-    "t": 8,
-    "c": "cloud",
     "k": "c"
    }
   },
@@ -1840,28 +1718,6 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 7,
     "c": "rain",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "PRN",
-   "city": "Priština",
-   "country": "Kosovo",
-   "countryCode": "XK",
-   "region": "Európa",
-   "price": 43,
-   "currency": "EUR",
-   "depart": "2026-11-16",
-   "return": "2026-11-23",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PRN/2026-11-16/2026-11-23/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 43,
-   "weather": {
-    "t": 11,
-    "c": "cloud",
     "k": "c"
    }
   },
@@ -2022,54 +1878,6 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
-   "origin": "BUD",
-   "dest": "RMO",
-   "city": "Kišinev",
-   "country": "Moldavsko",
-   "countryCode": "MD",
-   "region": "Európa",
-   "price": 47,
-   "currency": "EUR",
-   "depart": "2027-01-16",
-   "return": "2027-01-30",
-   "nights": 14,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/RMO/2027-01-16/2027-01-30/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 17280,
-   "currencyOriginal": "HUF",
-   "prevPrice": 47,
-   "weather": {
-    "t": 1,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
-   "dest": "GHV",
-   "city": "Brasov",
-   "country": "Rumunsko",
-   "countryCode": "RO",
-   "region": "Európa",
-   "price": 47,
-   "currency": "EUR",
-   "depart": "2026-11-27",
-   "return": "2026-12-05",
-   "nights": 8,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/GHV/2026-11-27/2026-12-05/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 17280,
-   "currencyOriginal": "HUF",
-   "prevPrice": 47,
-   "weather": {
-    "t": 6,
-    "c": "rain",
-    "k": "c"
-   }
-  },
-  {
    "origin": "VIE",
    "dest": "AGA",
    "city": "Agadir",
@@ -2084,11 +1892,33 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-02&dateIn=2026-11-12&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": 45,
+   "prevPrice": 47,
    "weather": {
     "t": 32,
     "c": "rain",
     "k": "f"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "ATH",
+   "city": "Atény",
+   "country": "Grécko",
+   "countryCode": "GR",
+   "region": "Európa",
+   "price": 48,
+   "currency": "EUR",
+   "depart": "2026-11-14",
+   "return": "2026-11-28",
+   "nights": 14,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-14&dateIn=2026-11-28&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=ATH",
+   "source": "ryanair",
+   "prevPrice": 49,
+   "weather": {
+    "t": 19,
+    "c": "cloud",
+    "k": "c"
    }
   },
   {
@@ -2135,74 +1965,6 @@ window.LACNE_LETENKY_DATA = {
     "t": 16,
     "c": "rain",
     "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
-   "dest": "ATH",
-   "city": "Atény",
-   "country": "Grécko",
-   "countryCode": "GR",
-   "region": "Európa",
-   "price": 49,
-   "currency": "EUR",
-   "depart": "2026-11-14",
-   "return": "2026-11-28",
-   "nights": 14,
-   "stops": 0,
-   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-14&dateIn=2026-11-28&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=ATH",
-   "source": "ryanair",
-   "prevPrice": 49,
-   "weather": {
-    "t": 19,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BUD",
-   "dest": "BBU",
-   "city": "Bucharest Baneasa",
-   "country": "Rumunsko",
-   "countryCode": "RO",
-   "region": "Európa",
-   "price": 50,
-   "currency": "EUR",
-   "depart": "2027-01-14",
-   "return": "2027-01-21",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/BBU/2027-01-14/2027-01-21/1/0/0/null",
-   "source": "wizzair",
-   "priceOriginal": 18380,
-   "currencyOriginal": "HUF",
-   "prevPrice": 50,
-   "weather": {
-    "t": 3,
-    "c": "cloud",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "BTS",
-   "dest": "KSC",
-   "city": "Kosice",
-   "country": "Slovensko",
-   "countryCode": "SK",
-   "region": "Európa",
-   "price": 50,
-   "currency": "EUR",
-   "depart": "2026-10-31",
-   "return": "2026-11-07",
-   "nights": 7,
-   "stops": 0,
-   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/KSC/2026-10-31/2026-11-07/1/0/0/null",
-   "source": "wizzair",
-   "prevPrice": 50,
-   "weather": {
-    "t": 9,
-    "c": "rain",
-    "k": "f"
    }
   },
   {
@@ -2480,6 +2242,238 @@ window.LACNE_LETENKY_DATA = {
    "weather": {
     "t": 9,
     "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "BRI",
+   "city": "Bari",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 57,
+   "currency": "EUR",
+   "depart": "2027-01-15",
+   "return": "2027-01-23",
+   "nights": 8,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/BRI/2027-01-15/2027-01-23/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 21080,
+   "currencyOriginal": "HUF",
+   "prevPrice": null,
+   "weather": {
+    "t": 13,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "CTA",
+   "city": "Catania",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 57,
+   "currency": "EUR",
+   "depart": "2027-01-15",
+   "return": "2027-01-27",
+   "nights": 12,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/CTA/2027-01-15/2027-01-27/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 21080,
+   "currencyOriginal": "HUF",
+   "prevPrice": 57,
+   "weather": {
+    "t": 16,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "FCO",
+   "city": "Rím",
+   "country": "Taliansko",
+   "countryCode": "IT",
+   "region": "Európa",
+   "price": 57,
+   "currency": "EUR",
+   "depart": "2027-01-14",
+   "return": "2027-01-22",
+   "nights": 8,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/FCO/2027-01-14/2027-01-22/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 21080,
+   "currencyOriginal": "HUF",
+   "prevPrice": null,
+   "weather": {
+    "t": 14,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "MLA",
+   "city": "Malta",
+   "country": "Malta",
+   "countryCode": "MT",
+   "region": "Európa",
+   "price": 57,
+   "currency": "EUR",
+   "depart": "2027-01-17",
+   "return": "2027-01-24",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/MLA/2027-01-17/2027-01-24/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 21080,
+   "currencyOriginal": "HUF",
+   "prevPrice": 57,
+   "weather": {
+    "t": 16,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BTS",
+   "dest": "LCA",
+   "city": "Larnaka",
+   "country": "Cyprus",
+   "countryCode": "CY",
+   "region": "Európa",
+   "price": 60,
+   "currency": "EUR",
+   "depart": "2027-01-23",
+   "return": "2027-01-30",
+   "nights": 7,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LCA/2027-01-23/2027-01-30/1/0/0/null",
+   "source": "wizzair",
+   "prevPrice": null,
+   "weather": {
+    "t": 17,
+    "c": "rain",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "ALC",
+   "city": "Alicante",
+   "country": "Španielsko",
+   "countryCode": "ES",
+   "region": "Európa",
+   "price": 60,
+   "currency": "EUR",
+   "depart": "2026-12-05",
+   "return": "2026-12-13",
+   "nights": 8,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-05&dateIn=2026-12-13&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=ALC",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 19,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "AGP",
+   "city": "Málaga",
+   "country": "Španielsko",
+   "countryCode": "ES",
+   "region": "Európa",
+   "price": 61,
+   "currency": "EUR",
+   "depart": "2026-12-05",
+   "return": "2026-12-13",
+   "nights": 8,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-05&dateIn=2026-12-13&isConnectedFlight=false&isReturn=true&discount=0&originIata=BUD&destinationIata=AGP",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 18,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "VIE",
+   "dest": "BCN",
+   "city": "Barcelona",
+   "country": "Španielsko",
+   "countryCode": "ES",
+   "region": "Európa",
+   "price": 62,
+   "currency": "EUR",
+   "depart": "2027-01-13",
+   "return": "2027-01-27",
+   "nights": 14,
+   "stops": 0,
+   "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-13&dateIn=2027-01-27&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BCN",
+   "source": "ryanair",
+   "prevPrice": null,
+   "weather": {
+    "t": 14,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "BLL",
+   "city": "Billund",
+   "country": "Dánsko",
+   "countryCode": "DK",
+   "region": "Európa",
+   "price": 63,
+   "currency": "EUR",
+   "depart": "2026-12-23",
+   "return": "2027-01-06",
+   "nights": 14,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/BLL/2026-12-23/2027-01-06/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 22980,
+   "currencyOriginal": "HUF",
+   "prevPrice": null,
+   "weather": {
+    "t": 6,
+    "c": "cloud",
+    "k": "c"
+   }
+  },
+  {
+   "origin": "BUD",
+   "dest": "BSL",
+   "city": "Bazilej",
+   "country": "Švajčiarsko",
+   "countryCode": "CH",
+   "region": "Európa",
+   "price": 63,
+   "currency": "EUR",
+   "depart": "2027-01-12",
+   "return": "2027-01-17",
+   "nights": 5,
+   "stops": 0,
+   "url": "https://wizzair.com/en-gb/booking/select-flight/BUD/BSL/2027-01-12/2027-01-17/1/0/0/null",
+   "source": "wizzair",
+   "priceOriginal": 22980,
+   "currencyOriginal": "HUF",
+   "prevPrice": null,
+   "weather": {
+    "t": 4,
+    "c": "cloud",
     "k": "c"
    }
   },
@@ -3239,6 +3233,30 @@ window.LACNE_LETENKY_DATA = {
    }
   },
   {
+   "origin": "VIE",
+   "dest": "MBA",
+   "city": "Mombasa",
+   "country": "Keňa",
+   "countryCode": "KE",
+   "region": "Afrika",
+   "price": 430,
+   "currency": "EUR",
+   "depart": "2026-10-27",
+   "return": "2026-11-04",
+   "nights": 8,
+   "stops": 2,
+   "url": "https://www.momondo.co.uk/flight-search/VIE-MBA/2026-10-27/2026-11-04?sort=price_a",
+   "source": "momondo",
+   "priceOriginal": 360,
+   "currencyOriginal": "GBP",
+   "prevPrice": null,
+   "weather": {
+    "t": 29,
+    "c": "rain",
+    "k": "f"
+   }
+  },
+  {
    "origin": "BTS",
    "dest": "ALA",
    "city": "Almaty",
@@ -3546,30 +3564,6 @@ window.LACNE_LETENKY_DATA = {
    "prevPrice": 558,
    "weather": {
     "t": 28,
-    "c": "rain",
-    "k": "c"
-   }
-  },
-  {
-   "origin": "VIE",
-   "dest": "SGN",
-   "city": "Ho Či Minovo Mesto",
-   "country": "Vietnam",
-   "countryCode": "VN",
-   "region": "Ázia",
-   "price": 560,
-   "currency": "EUR",
-   "depart": "2026-12-06",
-   "return": "2026-12-13",
-   "nights": 7,
-   "stops": 2,
-   "url": "https://www.momondo.co.uk/flight-search/VIE-SGN/2026-12-06/2026-12-13?sort=price_a",
-   "source": "momondo",
-   "priceOriginal": 469,
-   "currencyOriginal": "GBP",
-   "prevPrice": 560,
-   "weather": {
-    "t": 31,
     "c": "rain",
     "k": "c"
    }
