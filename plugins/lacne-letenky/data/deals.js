@@ -14,8 +14,8 @@ window.LACNE_LETENKY_DATA = {
    "GBP": 0.83728
   }
  },
- "updatedAt": "2026-10-24T08:41+02:00",
- "prevUpdatedAt": "2026-09-30T14:57+02:00",
+ "updatedAt": "2026-10-24T08:56+02:00",
+ "prevUpdatedAt": "2026-10-24T08:41+02:00",
  "slot": "rano",
  "nextUpdate": "2026-10-24T12:00+02:00",
  "schedule": [
@@ -74,7 +74,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 414,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 494,
     "weather": {
      "t": 31,
      "c": "cloud",
@@ -111,7 +111,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 420,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 502,
     "weather": {
      "t": 31,
      "c": "rain",
@@ -146,7 +146,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 575,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 687,
     "weather": {
      "t": 30,
      "c": "rain",
@@ -195,7 +195,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 469,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 560,
     "weather": {
      "t": 31,
      "c": "rain",
@@ -252,7 +252,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 445,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 531,
     "weather": {
      "t": 16,
      "c": "cloud",
@@ -286,7 +286,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 704,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 841,
     "weather": {
      "t": 29,
      "c": "rain",
@@ -354,7 +354,7 @@ window.LACNE_LETENKY_DATA = {
     "stops": 0,
     "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ALC/2027-01-18/2027-02-01/1/0/0/null",
     "source": "wizzair",
-    "prevPrice": null,
+    "prevPrice": 45,
     "weather": {
      "t": 17,
      "c": "cloud",
@@ -388,7 +388,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 47,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 56,
     "weather": {
      "t": 21,
      "c": "sun",
@@ -420,7 +420,7 @@ window.LACNE_LETENKY_DATA = {
     "stops": 0,
     "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PMO/2027-01-17/2027-01-28/1/0/0/null",
     "source": "wizzair",
-    "prevPrice": null,
+    "prevPrice": 40,
     "weather": {
      "t": 16,
      "c": "rain",
@@ -476,7 +476,7 @@ window.LACNE_LETENKY_DATA = {
     "source": "momondo",
     "priceOriginal": 50,
     "currencyOriginal": "GBP",
-    "prevPrice": null,
+    "prevPrice": 60,
     "weather": {
      "t": 19,
      "c": "rain",
@@ -502,7 +502,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-11&dateIn=2026-12-14&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BNX",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 30,
    "weather": {
     "t": 8,
     "c": "cloud",
@@ -524,7 +524,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SKP/2027-01-21/2027-01-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 30,
    "weather": {
     "t": 7,
     "c": "cloud",
@@ -568,7 +568,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-14&dateIn=2027-01-18&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=CIA",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 13,
     "c": "cloud",
@@ -578,7 +578,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "RMO",
-   "city": "Chisinau",
+   "city": "Kišinev",
    "country": "Moldavsko",
    "countryCode": "MD",
    "region": "Európa",
@@ -590,7 +590,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/RMO/2027-01-15/2027-01-18/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 1,
     "c": "cloud",
@@ -612,7 +612,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SJJ/2027-01-07/2027-01-10/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 7,
     "c": "rain",
@@ -634,7 +634,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2027-01-21/2027-01-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 9,
     "c": "cloud",
@@ -656,7 +656,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-22&dateIn=2027-01-25&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BRI",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 42,
    "weather": {
     "t": 14,
     "c": "cloud",
@@ -666,7 +666,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "PRN",
-   "city": "Prishtina",
+   "city": "Priština",
    "country": "Kosovo",
    "countryCode": "XK",
    "region": "Európa",
@@ -678,7 +678,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PRN/2027-01-15/2027-01-18/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 43,
    "weather": {
     "t": 5,
     "c": "cloud",
@@ -702,7 +702,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 38,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 4,
     "c": "cloud",
@@ -712,7 +712,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "WAW",
-   "city": "Warsaw Chopin",
+   "city": "Varšava",
    "country": "Poľsko",
    "countryCode": "PL",
    "region": "Európa",
@@ -724,7 +724,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WAW/2027-01-01/2027-01-04/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 46,
    "weather": {
     "t": 0,
     "c": "snow",
@@ -734,7 +734,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "FCO",
-   "city": "Rome Fiumicino",
+   "city": "Rím",
    "country": "Taliansko",
    "countryCode": "IT",
    "region": "Európa",
@@ -756,7 +756,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "BCN",
-   "city": "Barcelona El Prat",
+   "city": "Barcelona",
    "country": "Španielsko",
    "countryCode": "ES",
    "region": "Európa",
@@ -778,7 +778,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "BER",
-   "city": "Berlin Brandenburg",
+   "city": "Berlín",
    "country": "Nemecko",
    "countryCode": "DE",
    "region": "Európa",
@@ -910,7 +910,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "LTN",
-   "city": "London Luton",
+   "city": "Londýn",
    "country": "Spojené kráľovstvo",
    "countryCode": "GB",
    "region": "Európa",
@@ -954,7 +954,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "BSL",
-   "city": "Basel-Mulhouse-Freiburg",
+   "city": "Bazilej",
    "country": "Švajčiarsko",
    "countryCode": "CH",
    "region": "Európa",
@@ -1010,7 +1010,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-21&dateIn=2027-01-25&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=CGN",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 69,
    "weather": {
     "t": 7,
     "c": "rain",
@@ -1032,7 +1032,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-19&dateIn=2026-11-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=DUB",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 70,
    "weather": {
     "t": 10,
     "c": "rain",
@@ -1078,7 +1078,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 61,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 73,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -1124,7 +1124,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 62,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 74,
    "weather": {
     "t": 18,
     "c": "rain",
@@ -1170,7 +1170,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-11&dateIn=2026-12-14&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BNX",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 30,
    "weather": {
     "t": 8,
     "c": "cloud",
@@ -1192,7 +1192,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TIA/2026-11-28/2026-12-01/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 30,
    "weather": {
     "t": 15,
     "c": "rain",
@@ -1214,7 +1214,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SKP/2027-01-21/2027-01-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 30,
    "weather": {
     "t": 7,
     "c": "cloud",
@@ -1236,7 +1236,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-01&dateIn=2026-11-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BLQ",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 32,
    "weather": {
     "t": 16,
     "c": "sun",
@@ -1258,7 +1258,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-06&dateIn=2026-12-16&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 33,
    "weather": {
     "t": 25,
     "c": "cloud",
@@ -1280,7 +1280,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-01&dateIn=2026-11-13&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BCN",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 35,
    "weather": {
     "t": 19,
     "c": "rain",
@@ -1302,7 +1302,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-11&dateIn=2027-01-18&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BGY",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 37,
    "weather": {
     "t": 7,
     "c": "cloud",
@@ -1324,7 +1324,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/NAP/2027-01-21/2027-01-28/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 38,
    "weather": {
     "t": 14,
     "c": "rain",
@@ -1346,7 +1346,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-14&dateIn=2027-01-18&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=CIA",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 13,
     "c": "cloud",
@@ -1356,7 +1356,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "BSL",
-   "city": "Basel-Mulhouse-Freiburg",
+   "city": "Bazilej",
    "country": "Švajčiarsko",
    "countryCode": "CH",
    "region": "Európa",
@@ -1368,7 +1368,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BSL/2027-01-15/2027-01-17/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 4,
     "c": "cloud",
@@ -1390,7 +1390,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PMO/2027-01-17/2027-01-28/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -1400,7 +1400,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "RMO",
-   "city": "Chisinau",
+   "city": "Kišinev",
    "country": "Moldavsko",
    "countryCode": "MD",
    "region": "Európa",
@@ -1412,7 +1412,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/RMO/2027-01-15/2027-01-18/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 1,
     "c": "cloud",
@@ -1434,7 +1434,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/SJJ/2027-01-07/2027-01-10/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 7,
     "c": "rain",
@@ -1456,7 +1456,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TZL/2026-11-17/2026-11-26/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 13,
     "c": "cloud",
@@ -1478,7 +1478,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/VAR/2027-01-21/2027-01-24/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 40,
    "weather": {
     "t": 9,
     "c": "cloud",
@@ -1500,7 +1500,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-10-27&dateIn=2026-11-09&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=BRI",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 41,
    "weather": {
     "t": 21,
     "c": "cloud",
@@ -1522,7 +1522,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-22&dateIn=2027-01-25&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BRI",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 42,
    "weather": {
     "t": 14,
     "c": "cloud",
@@ -1532,7 +1532,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "PRN",
-   "city": "Prishtina",
+   "city": "Priština",
    "country": "Kosovo",
    "countryCode": "XK",
    "region": "Európa",
@@ -1544,7 +1544,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/PRN/2027-01-15/2027-01-18/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 43,
    "weather": {
     "t": 5,
     "c": "cloud",
@@ -1566,7 +1566,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-04&dateIn=2026-12-13&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=ATH",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -1576,7 +1576,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "FCO",
-   "city": "Rome Fiumicino",
+   "city": "Rím",
    "country": "Taliansko",
    "countryCode": "IT",
    "region": "Európa",
@@ -1588,7 +1588,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/FCO/2027-01-09/2027-01-11/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 14,
     "c": "rain",
@@ -1610,7 +1610,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/ALC/2027-01-18/2027-02-01/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 17,
     "c": "cloud",
@@ -1634,7 +1634,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 38,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 4,
     "c": "cloud",
@@ -1644,7 +1644,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "BER",
-   "city": "Berlin Brandenburg",
+   "city": "Berlín",
    "country": "Nemecko",
    "countryCode": "DE",
    "region": "Európa",
@@ -1656,7 +1656,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/BER/2027-01-12/2027-01-14/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 2,
     "c": "cloud",
@@ -1678,7 +1678,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-02&dateIn=2026-11-12&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGA",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 45,
    "weather": {
     "t": 32,
     "c": "rain",
@@ -1700,7 +1700,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/OSL/2026-12-18/2027-01-01/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 46,
    "weather": {
     "t": 2,
     "c": "cloud",
@@ -1710,7 +1710,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "WAW",
-   "city": "Warsaw Chopin",
+   "city": "Varšava",
    "country": "Poľsko",
    "countryCode": "PL",
    "region": "Európa",
@@ -1722,7 +1722,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/WAW/2027-01-01/2027-01-04/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 46,
    "weather": {
     "t": 0,
     "c": "snow",
@@ -1746,7 +1746,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 40,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 48,
    "weather": {
     "t": 14,
     "c": "partly",
@@ -1768,7 +1768,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-11&dateIn=2027-01-18&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=AGP",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 49,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -1790,7 +1790,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/EVN/2027-01-14/2027-01-16/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 50,
    "weather": {
     "t": 6,
     "c": "cloud",
@@ -1812,7 +1812,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-11&dateIn=2027-01-17&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=AGP",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 51,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -1836,7 +1836,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 43,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 51,
    "weather": {
     "t": 7,
     "c": "rain",
@@ -1858,7 +1858,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-14&dateIn=2027-01-28&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ALC",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 51,
    "weather": {
     "t": 17,
     "c": "cloud",
@@ -1880,7 +1880,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-13&dateIn=2027-01-15&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=BCN",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 51,
    "weather": {
     "t": 14,
     "c": "cloud",
@@ -1904,7 +1904,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 46,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 55,
    "weather": {
     "t": 18,
     "c": "rain",
@@ -1914,7 +1914,7 @@ window.LACNE_LETENKY_DATA = {
   {
    "origin": "BTS",
    "dest": "LTN",
-   "city": "London Luton",
+   "city": "Londýn",
    "country": "Spojené kráľovstvo",
    "countryCode": "GB",
    "region": "Európa",
@@ -1926,7 +1926,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LTN/2027-01-23/2027-01-30/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 55,
    "weather": {
     "t": 9,
     "c": "rain",
@@ -1950,7 +1950,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 47,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 56,
    "weather": {
     "t": 21,
     "c": "sun",
@@ -1974,7 +1974,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 50,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 60,
    "weather": {
     "t": 19,
     "c": "rain",
@@ -1996,7 +1996,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/LCA/2027-01-23/2027-01-26/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 60,
    "weather": {
     "t": 17,
     "c": "rain",
@@ -2018,7 +2018,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-18&dateIn=2027-01-25&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=ARN",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 64,
    "weather": {
     "t": 0,
     "c": "cloud",
@@ -2042,7 +2042,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 55,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 66,
    "weather": {
     "t": 17,
     "c": "rain",
@@ -2066,7 +2066,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 58,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 69,
    "weather": {
     "t": 8,
     "c": "rain",
@@ -2088,7 +2088,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2027-01-21&dateIn=2027-01-25&isConnectedFlight=false&isReturn=true&discount=0&originIata=VIE&destinationIata=CGN",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 69,
    "weather": {
     "t": 7,
     "c": "rain",
@@ -2110,7 +2110,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-11-19&dateIn=2026-11-22&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=DUB",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 70,
    "weather": {
     "t": 10,
     "c": "rain",
@@ -2134,7 +2134,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 60,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 72,
    "weather": {
     "t": 9,
     "c": "rain",
@@ -2156,7 +2156,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/GYD/2027-01-16/2027-01-23/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 72,
    "weather": {
     "t": 8,
     "c": "cloud",
@@ -2180,7 +2180,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 61,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 73,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -2204,7 +2204,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 61,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 73,
    "weather": {
     "t": 10,
     "c": "rain",
@@ -2228,7 +2228,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 62,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 74,
    "weather": {
     "t": 18,
     "c": "rain",
@@ -2252,7 +2252,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 63,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 75,
    "weather": {
     "t": 19,
     "c": "rain",
@@ -2276,7 +2276,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 63,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 75,
    "weather": {
     "t": 22,
     "c": "cloud",
@@ -2300,7 +2300,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 64,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 76,
    "weather": {
     "t": 16,
     "c": "cloud",
@@ -2324,7 +2324,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 70,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 84,
    "weather": {
     "t": 23,
     "c": "rain",
@@ -2348,7 +2348,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 72,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 86,
    "weather": {
     "t": 17,
     "c": "cloud",
@@ -2370,7 +2370,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://www.ryanair.com/gb/en/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut=2026-12-10&dateIn=2026-12-24&isConnectedFlight=false&isReturn=true&discount=0&originIata=BTS&destinationIata=ACE",
    "source": "ryanair",
-   "prevPrice": null,
+   "prevPrice": 87,
    "weather": {
     "t": 24,
     "c": "cloud",
@@ -2392,7 +2392,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/KUT/2027-01-09/2027-01-14/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 92,
    "weather": {
     "t": 11,
     "c": "rain",
@@ -2414,7 +2414,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/HRG/2027-01-18/2027-01-27/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 106,
    "weather": {
     "t": 23,
     "c": "cloud",
@@ -2436,7 +2436,7 @@ window.LACNE_LETENKY_DATA = {
    "stops": 0,
    "url": "https://wizzair.com/en-gb/booking/select-flight/BTS/TLV/2026-11-12/2026-11-15/1/0/0/null",
    "source": "wizzair",
-   "prevPrice": null,
+   "prevPrice": 132,
    "weather": {
     "t": 25,
     "c": "rain",
@@ -2460,7 +2460,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 121,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 145,
    "weather": {
     "t": 22,
     "c": "cloud",
@@ -2484,7 +2484,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 146,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 174,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -2508,7 +2508,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 150,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 179,
    "weather": {
     "t": 25,
     "c": "cloud",
@@ -2532,7 +2532,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 153,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 183,
    "weather": {
     "t": 20,
     "c": "cloud",
@@ -2556,7 +2556,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 166,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 198,
    "weather": {
     "t": 16,
     "c": "rain",
@@ -2580,7 +2580,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 199,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 238,
    "weather": {
     "t": 15,
     "c": "cloud",
@@ -2604,7 +2604,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 202,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 241,
    "weather": {
     "t": 17,
     "c": "cloud",
@@ -2628,7 +2628,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 227,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 271,
    "weather": {
     "t": 21,
     "c": "cloud",
@@ -2652,7 +2652,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 229,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 274,
    "weather": {
     "t": 30,
     "c": "cloud",
@@ -2676,7 +2676,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 252,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 301,
    "weather": {
     "t": 12,
     "c": "rain",
@@ -2700,7 +2700,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 282,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 337,
    "weather": {
     "t": 25,
     "c": "cloud",
@@ -2724,7 +2724,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 288,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 344,
    "weather": {
     "t": 32,
     "c": "cloud",
@@ -2748,7 +2748,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 288,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 344,
    "weather": {
     "t": 0,
     "c": "snow",
@@ -2772,7 +2772,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 305,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 364,
    "weather": {
     "t": 0,
     "c": "snow",
@@ -2796,7 +2796,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 308,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 368,
    "weather": {
     "t": 30,
     "c": "sun",
@@ -2820,7 +2820,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 317,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 379,
    "weather": {
     "t": 12,
     "c": "rain",
@@ -2844,7 +2844,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 329,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 393,
    "weather": {
     "t": -8,
     "c": "snow",
@@ -2868,7 +2868,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 335,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 400,
    "weather": {
     "t": -8,
     "c": "snow",
@@ -2892,7 +2892,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 383,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 457,
    "weather": {
     "t": -3,
     "c": "cloud",
@@ -2916,7 +2916,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 400,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 478,
    "weather": {
     "t": 27,
     "c": "rain",
@@ -2940,7 +2940,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 414,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 494,
    "weather": {
     "t": 31,
     "c": "cloud",
@@ -2964,7 +2964,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 415,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 496,
    "weather": {
     "t": 11,
     "c": "cloud",
@@ -2988,7 +2988,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 420,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 502,
    "weather": {
     "t": 31,
     "c": "rain",
@@ -3012,7 +3012,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 433,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 517,
    "weather": {
     "t": 14,
     "c": "cloud",
@@ -3036,7 +3036,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 445,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 531,
    "weather": {
     "t": 16,
     "c": "cloud",
@@ -3060,7 +3060,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 445,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 531,
    "weather": {
     "t": 16,
     "c": "cloud",
@@ -3084,7 +3084,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 467,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 558,
    "weather": {
     "t": 28,
     "c": "rain",
@@ -3108,7 +3108,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 469,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 560,
    "weather": {
     "t": 31,
     "c": "rain",
@@ -3132,7 +3132,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 470,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 561,
    "weather": {
     "t": 27,
     "c": "rain",
@@ -3156,7 +3156,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 483,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 577,
    "weather": {
     "t": 25,
     "c": "cloud",
@@ -3180,7 +3180,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 486,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 580,
    "weather": {
     "t": 27,
     "c": "storm",
@@ -3204,7 +3204,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 507,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 606,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -3228,7 +3228,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 508,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 607,
    "weather": {
     "t": 31,
     "c": "cloud",
@@ -3252,7 +3252,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 512,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 612,
    "weather": {
     "t": 26,
     "c": "cloud",
@@ -3276,7 +3276,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 517,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 617,
    "weather": {
     "t": 9,
     "c": "partly",
@@ -3300,7 +3300,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 518,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 619,
    "weather": {
     "t": 26,
     "c": "rain",
@@ -3324,7 +3324,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 522,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 623,
    "weather": {
     "t": -4,
     "c": "cloud",
@@ -3348,7 +3348,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 537,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 641,
    "weather": {
     "t": 29,
     "c": "cloud",
@@ -3372,7 +3372,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 548,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 655,
    "weather": {
     "t": 23,
     "c": "sun",
@@ -3396,7 +3396,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 562,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 671,
    "weather": {
     "t": 31,
     "c": "rain",
@@ -3420,7 +3420,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 575,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 687,
    "weather": {
     "t": 30,
     "c": "rain",
@@ -3444,7 +3444,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 580,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 693,
    "weather": {
     "t": 31,
     "c": "rain",
@@ -3468,7 +3468,7 @@ window.LACNE_LETENKY_DATA = {
    "source": "momondo",
    "priceOriginal": 593,
    "currencyOriginal": "GBP",
-   "prevPrice": null,
+   "prevPrice": 708,
    "weather": {
     "t": 15,
     "c": "cloud",
