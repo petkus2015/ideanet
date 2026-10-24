@@ -192,7 +192,9 @@ CITY_SK = {
     "Porto": "Porto", "Yerevan": "Jerevan", "Tel-Aviv": "Tel Aviv", "Baku": "Baku",
     "Agadir": "Agadir", "Amman": "Ammán", "Muscat": "Maskat", "Doha": "Dauha", "Riyadh": "Rijád",
     "Jeddah": "Džidda", "Cairo": "Káhira", "Tashkent": "Taškent", "Almaty": "Almaty", "Faro": "Faro", "Bologna": "Bologna", "Bari": "Bari", "Catania": "Catania",
-    "Palermo": "Palermo", "Trapani": "Trapani", "Comiso": "Comiso", "Cagliari": "Cagliari", "Pisa": "Pisa", "Bergamo": "Bergamo",
+    "Rome Fiumicino": "Rím", "Warsaw Chopin": "Varšava", "London Luton": "Londýn", "Barcelona El Prat": "Barcelona",
+    "Berlin Brandenburg": "Berlín", "Basel-Mulhouse-Freiburg": "Bazilej", "Prishtina": "Priština", "Chisinau": "Kišinev",
+    "Varna": "Varna", "Palermo": "Palermo", "Trapani": "Trapani", "Comiso": "Comiso", "Cagliari": "Cagliari", "Pisa": "Pisa", "Bergamo": "Bergamo",
 }
 BY_EN_NAME.update({"usa": "US", "uk": "GB", "czechia": "CZ", "türkiye": "TR",
                    "turkiye": "TR", "uae": "AE", "korea, south": "KR"})

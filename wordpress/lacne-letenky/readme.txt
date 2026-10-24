@@ -3,7 +3,7 @@ Tags: letenky, lety, ryanair, wizzair, momondo
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.13.0
+Stable tag: 1.13.1
 License: GPL-2.0-or-later
 
 Blok s najlacnejšími letenkami z Viedne a Bratislavy: Bangkok, Dubaj, Abu Dhabí a ponuky kamkoľvek.
@@ -31,6 +31,9 @@ Nastavenia: Nastavenia → Lacné letenky (zdroj dát, cache, počet kariet, pí
 3. Vložte blok na stránku niektorým zo spôsobov vyššie.
 
 == Changelog ==
+
+= 1.13.1 =
+* Slovenské názvy miest aj pre letiská, ktoré Wizz Air a Ryanair pomenúvajú po anglicky (Rím, Varšava, Londýn, Priština…).
 
 = 1.13.0 =
 * Nová sekcia „Na predĺžený víkend“: najlacnejšie spiatočné letenky z Viedne a Bratislavy s odletom vo štvrtok alebo piatok a návratom v nedeľu alebo pondelok (3 až 4 noci), zo Wizz Air a Ryanairu. Posuvný pás kariet pod filtrom; ak sa nenájde žiadna ponuka, sekcia sa nezobrazí.
