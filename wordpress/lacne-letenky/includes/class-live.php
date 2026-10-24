@@ -225,7 +225,7 @@ class Lacne_Letenky_Live {
 			'outboundDepartureDateTo'   => $today->modify( "+$h days" )->format( 'Y-m-d' ),
 			'inboundDepartureDateFrom'  => $today->modify( '+3 days' )->format( 'Y-m-d' ),
 			'inboundDepartureDateTo'    => $today->modify( '+' . ( $h + 14 ) . ' days' )->format( 'Y-m-d' ),
-			'durationFrom' => 2, 'durationTo' => 14,
+			'durationFrom' => 5, 'durationTo' => 14,
 			'adultPaxCount' => 1, 'currency' => self::CURRENCY, 'market' => 'en-gb', 'searchMode' => 'ALL',
 		) );
 	}
@@ -423,8 +423,10 @@ class Lacne_Letenky_Live {
 			}
 		}
 
+		// dlhší pobyt: iba spiatočné lety s pobytom aspoň 5 nocí (kratšie patria do predĺženého víkendu)
 		$deals = array_filter( $deals, function ( $d ) use ( $from, $to ) {
-			return ! empty( $d['depart'] ) && $d['depart'] > $from && $d['depart'] <= $to;
+			return ! empty( $d['depart'] ) && $d['depart'] > $from && $d['depart'] <= $to
+				&& ! empty( $d['return'] ) && isset( $d['nights'] ) && (int) $d['nights'] >= 5;
 		} );
 
 		// najlacnejšia ponuka na každú trasu
@@ -511,7 +513,8 @@ class Lacne_Letenky_Live {
 
 		$origins = array();
 		foreach ( $geo['origins'] as $code => $city ) {
-			$origins[] = array( 'code' => $code, 'city' => $city );
+			$gen       = array( 'VIE' => 'Viedne', 'BTS' => 'Bratislavy', 'BUD' => 'Budapešti' );
+			$origins[] = array( 'code' => $code, 'city' => $city, 'from' => isset( $gen[ $code ] ) ? $gen[ $code ] : $city );
 		}
 		return array(
 			'source'      => 'live',

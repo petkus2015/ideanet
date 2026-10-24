@@ -194,7 +194,7 @@
       .concat(pinnedIn)          // …a k nim vždy sledované letiská (Alicante, Sicília, Malta)
       .sort(function (a, b) { return a.price - b.price; });
     var cities = {};
-    (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });
+    (data.origins || []).forEach(function (o) { cities[o.code] = o.from || o.city; });
     // predĺžený víkend: odlet štvrtok/piatok, návrat nedeľa/pondelok (zostavuje scripts/update_deals.py)
     var weekendDeals = fresh
       ? (data.weekend || []).filter(function (d) { return d['return'] && inWindow(d); })
@@ -287,10 +287,39 @@
 
     function weekendHtml() {
       if (!weekendDeals.length) return '';   // bez nájdenej letenky sekciu nezobrazujeme
-      return '<section class="ll-weekend" aria-label="Predĺžený víkend">' +
-        '<div><h3 class="ll-list-title">Na predĺžený víkend</h3>' +
+      return '<section class="ll-sect ll-weekend" aria-label="Predĺžený víkend">' +
+        '<div><h3 class="ll-sect-title">Na predĺžený víkend – najlacnejšie letenky</h3>' +
           '<p class="ll-sub">Odlet vo štvrtok alebo piatok, návrat v nedeľu alebo pondelok (3 až 4 noci).</p></div>' +
         railHtml(weekendDeals, 'Lacné letenky na predĺžený víkend') + '</section>';
+    }
+
+    // Kategória 2: najlacnejšie letenky na dlhší pobyt (5–14 nocí) s odletom do 3 mesiacov
+    function longHtml() {
+      return '<section class="ll-sect ll-long" aria-label="Dlhší pobyt">' +
+        '<div><h3 class="ll-sect-title">Najlacnejšie letenky na dlhší pobyt do 3 mesiacov</h3>' +
+          '<p class="ll-sub">Odlet do 3 mesiacov, pobyt 5 až 14 nocí.</p></div>' +
+        (hasAny
+          ? '<div class="ll-filter" role="group" aria-label="Oblasť">' + regions.map(function (r) {
+              return '<button type="button" data-region="' + r[0] + '" aria-pressed="' + (region === r[0]) + '">' + r[1] + '</button>';
+            }).join('') + '</div>'
+          : '') +
+        (deals.length
+          ? railHtml(deals, 'Lacné letenky na dlhší pobyt')
+          : hasAny
+            ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' som teraz nenašiel ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
+            : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
+        '</section>';
+    }
+
+    // Kategória 3: Ázia a Emiráty – veľká karta Bangkoku a zoznam krajín
+    function asiaHtml() {
+      var feature = watch.map(watchHtml).join('');
+      var list = fresh ? listHtml() : '';
+      if (!feature && !list) return '';
+      return '<section class="ll-sect ll-asia" aria-label="Ázia a Emiráty">' +
+        '<div><h3 class="ll-sect-title">Do Ázie a Emirátov – najlacnejšie letenky</h3>' +
+          '<p class="ll-sub">Spiatočné letenky do Ázie a Spojených arabských emirátov, odlet do 3 mesiacov.</p></div>' +
+        feature + list + '</section>';
     }
 
     function listHtml() {
@@ -325,7 +354,6 @@
       }).join('');
       var more = listed.length - LIST_PREVIEW;
       return '<section class="ll-list-wrap" aria-label="Ázia a SAE">' +
-        '<h3 class="ll-list-title">Ázia a SAE – najlacnejšie spiatočné letenky</h3>' +
         '<ul class="ll-list" id="' + listId + '">' + rows + '</ul>' +
         (more > 0
           ? '<button type="button" class="ll-list-toggle" data-list-toggle aria-controls="' + listId + '" aria-expanded="' + !!opts.listOpen + '">' +
@@ -342,25 +370,15 @@
     // Blok začína rovno ponukami; nadpis sa ukáže, len ak ho web zadá (data-title / Nadpis v nastaveniach).
     el.innerHTML =
       (opts.title ? '<h2 class="ll-title">' + esc(opts.title) + '</h2>' : '') +
-      watch.map(watchHtml).join('') +
-      (fresh ? listHtml() : '') +
-      (deals.length
-        ? railHtml(deals, 'Lacné letenky')
-        : hasAny
-          ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' som teraz nenašiel ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
-          : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
-      (hasAny
-        ? '<div class="ll-filter" role="group" aria-label="Oblasť">' + regions.map(function (r) {
-            return '<button type="button" data-region="' + r[0] + '" aria-pressed="' + (region === r[0]) + '">' + r[1] + '</button>';
-          }).join('') + '</div>'
-        : '') +
-      weekendHtml() +
+      weekendHtml() +   // 1. predĺžený víkend
+      longHtml() +      // 2. dlhší pobyt do 3 mesiacov
+      asiaHtml() +      // 3. Ázia a Emiráty
       '<div class="ll-actions">' +
         '<button type="button" class="ll-refresh" data-refresh>' + REFRESH + '<span>Vyhľadaj aktuálne lacné letenky</span></button>' +
         '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
       '</div>' +
       (hasAny
-        ? '<p class="ll-foot">Porovnávam momondo.co.uk, ryanair.com a wizzair.com a ukazujem najnižšiu cenu za osobu v eurách' +
+        ? '<p class="ll-foot">Porovnávam momondo.co.uk, ryanair.com a wizzair.com z Viedne, Bratislavy a Budapešti a ukazujem najnižšiu cenu za osobu v eurách' +
             (data.fx ? ', prepočítané kurzom ECB' + (data.fx.date ? ' z ' + esc(data.fx.date) : '') : '') +
             (fresh ? '. Hľadané ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) : '') +
             '. Ceny sa menia, pred nákupom ich overte.' +
@@ -429,11 +447,9 @@
     var done = function (next, msg) {
       // krátke čakanie, aby hľadanie nepôsobilo ako bliknutie
       setTimeout(function () {
-        var grid = el.querySelector('.ll-grid');
-        var left = grid ? grid.scrollLeft : 0;
+        var lefts = Array.prototype.map.call(el.querySelectorAll('.ll-grid'), function (g) { return g.scrollLeft; });
         render(el, next, opts, msg);
-        var g = el.querySelector('.ll-grid');
-        if (g && left) g.scrollLeft = left;
+        Array.prototype.forEach.call(el.querySelectorAll('.ll-grid'), function (g, i) { if (lefts[i]) g.scrollLeft = lefts[i]; });
         var b = el.querySelector('[data-refresh]');
         if (b && !auto) b.focus();
       }, auto ? 0 : Math.max(0, 700 - (Date.now() - started)));

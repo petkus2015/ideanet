@@ -50,9 +50,11 @@ CURRENCY = "EUR"  # ceny v bloku sú vždy v eurách
 ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
 EXPLORE_PATH = "/s/horizon/exploreapi/destinations"
 
+# Odlety: Viedeň, Bratislava, Budapešť (from = „z Viedne“ v 2. páde pre texty v bloku)
 ORIGINS = {
-    "VIE": {"city": "Viedeň", "name": "Vienna International"},
-    "BTS": {"city": "Bratislava", "name": "M. R. Štefánik"},
+    "VIE": {"city": "Viedeň", "from": "Viedne", "name": "Vienna International"},
+    "BTS": {"city": "Bratislava", "from": "Bratislavy", "name": "M. R. Štefánik"},
+    "BUD": {"city": "Budapešť", "from": "Budapešti", "name": "Liszt Ferenc"},
 }
 
 # Ďalšie letiská odletu pre vybrané destinácie: do SAE hľadáme vždy aj z Budapešti a ukážeme
@@ -60,7 +62,7 @@ ORIGINS = {
 # nie medzi karty „kamkoľvek“.
 FALLBACK_ORIGINS = {"BUD": "Budapešť"}
 FALLBACK_NOTE = {"BUD": "odlet z Budapešti"}
-FALLBACK_WATCH = {"SAE – Dubaj": ["BUD"], "SAE – Abu Dhabí": ["BUD"]}
+FALLBACK_WATCH: dict[str, list[str]] = {}  # Budapešť je medzi ORIGINS, takže sa hľadá štandardne
 
 # Hľadáme iba lety s odletom najviac 3 mesiace dopredu (blok používa rovnakú hranicu).
 HORIZON_DAYS = 92
@@ -75,6 +77,9 @@ WEEKEND_OUT_DAYS = (3, 4)
 WEEKEND_BACK_DAYS = (6, 0)
 WEEKEND_NIGHTS = (3, 4)
 MAX_WEEKEND = 30  # koľko najlacnejších víkendových ponúk sa uloží
+
+# Dlhší pobyt: spiatočná letenka s pobytom aspoň toľko nocí (a najviac 14), odlet do 3 mesiacov.
+LONG_STAY_MIN_NIGHTS = 5
 
 # Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
 # featured=True -> veľká karta na začiatku bloku (Bangkok).
@@ -398,14 +403,14 @@ RYANAIR_HEADERS = {**HEADERS, "Referer": "https://www.ryanair.com/", "Origin": "
 
 
 def ryanair_url(origin: str, today: dt.date, weekend: bool = False) -> str:
-    """Najlacnejšie spiatočné lety z letiska kamkoľvek, odlet do 3 mesiacov, pobyt 2–14 nocí."""
+    """Najlacnejšie spiatočné lety z letiska kamkoľvek, odlet do 3 mesiacov, pobyt 5–14 nocí."""
     params = {
         "departureAirportIataCode": origin,
         "outboundDepartureDateFrom": (today + dt.timedelta(days=1)).isoformat(),
         "outboundDepartureDateTo": (today + dt.timedelta(days=HORIZON_DAYS)).isoformat(),
         "inboundDepartureDateFrom": (today + dt.timedelta(days=3)).isoformat(),
         "inboundDepartureDateTo": (today + dt.timedelta(days=HORIZON_DAYS + 14)).isoformat(),
-        "durationFrom": 2, "durationTo": 14,
+        "durationFrom": LONG_STAY_MIN_NIGHTS, "durationTo": 14,
         "adultPaxCount": 1, "currency": CURRENCY, "market": "en-gb", "searchMode": "ALL",
     }
     if weekend:
@@ -644,7 +649,7 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
                 else:
                     print(f"Wizz Air {origin}-{dst['iata']}: linka nie je v predaji ({str(exc)[-40:]})")
                 continue
-            best = cheapest_round_trip(outs, rets)
+            best = cheapest_round_trip(outs, rets, min_n=LONG_STAY_MIN_NIGHTS)
             if dst.get("probe"):
                 print(f"Wizz Air {origin}-{dst['iata']}: {len(outs)} dní tam, {len(rets)} dní späť"
                       + (f", najlacnejšie {round(best[0])} {best[1]}" if best else ", bez spiatočnej kombinácie"))
@@ -756,6 +761,10 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         d["prevPrice"] = prev_prices.get(flight_key(d))
         weekend.append(d)
     weekend = weekend[:MAX_WEEKEND]
+
+    # Dlhší pobyt: iba spiatočné lety s pobytom aspoň LONG_STAY_MIN_NIGHTS nocí
+    # (kratšie lety patria do predĺženého víkendu).
+    deals = [d for d in deals if d["return"] and (d.get("nights") or 0) >= LONG_STAY_MIN_NIGHTS]
     print(f"Predĺžený víkend: {len(weekend)} ponúk"
           + (f", najlacnejšia {weekend[0]['price']} {weekend[0]['currency']} ({weekend[0]['city']})" if weekend else ""))
 

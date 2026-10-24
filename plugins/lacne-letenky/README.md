@@ -25,6 +25,18 @@ Náhľad: otvorte `plugins/lacne-letenky/index.html` (funguje aj bez servera).
 
 Alebo z JavaScriptu: `LacneLetenky.mount(element, { src, limit, title })`.
 
+## Poradie sekcií v bloku
+
+Odlet: **Viedeň, Bratislava a Budapešť**. Blok má tri sekcie v tomto poradí:
+
+1. **Na predĺžený víkend – najlacnejšie letenky**: odlet vo štvrtok alebo piatok, návrat v nedeľu alebo pondelok (3 až 4 noci).
+2. **Najlacnejšie letenky na dlhší pobyt do 3 mesiacov**: pobyt 5 až 14 nocí (`LONG_STAY_MIN_NIGHTS` v skripte),
+   s filtrom Všetky / Európa / Mimo Európy.
+3. **Do Ázie a Emirátov – najlacnejšie letenky**: veľká karta Bangkoku a zoznam krajín (Thajsko, Bali, Japonsko, Vietnam,
+   Malajzia, India, Južná Kórea, Singapur, Filipíny, SAE – Dubaj, SAE – Abu Dhabí).
+
+Sekcia bez nájdenej ponuky sa nezobrazí.
+
 ## Čo blok zobrazuje
 
 Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filtrov a bez vymyslených cien:

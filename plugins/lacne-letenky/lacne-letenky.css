@@ -217,7 +217,8 @@
 .ll.ll .ll-row-head .ll-wx svg { width: 16px; height: 16px; }
 .ll.ll .ll-feature .ll-wx { background: rgba(255, 255, 255, .14); color: inherit; font-size: 13px; }
 
-.ll-weekend { display: grid; gap: 4px; }
+.ll-sect { display: grid; gap: 14px; }
+.ll.ll .ll-sect-title { font: 700 clamp(19px, 1rem + 0.7vw, 24px)/1.2 var(--ll-font); letter-spacing: -.02em; color: var(--ll-ink); text-wrap: balance; }
 .ll.ll .ll-sub { font-size: 13px; color: var(--ll-ink-2); margin: 2px 0 0; }
 
 /* ---------- zoznam Ázia a SAE pod Bangkokom ---------- */
