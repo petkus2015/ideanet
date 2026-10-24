@@ -109,6 +109,22 @@ WATCH = {
     "Malta": {"countryCode": "MT", "airports": ["MLA"], "featured": False, "list": False},
 }
 
+# Európske destinácie, z ktorých sa vyberajú najlacnejšie letenky (IATA kódy letísk aj mestské kódy).
+# Európske ponuky mimo tohto zoznamu sa do bloku nedostanú; mimoeurópske sa nefiltrujú.
+EU_ALLOWED = set("""
+BCN MAD AGP VLC ALC SVQ PMI IBZ TFN TFS TCI LPA ACE FUE
+ROM FCO CIA MIL MXP LIN BGY NAP BRI BLQ VCE TSF PSA FLR PMO CTA CAG OLB TPS CIY
+ATH SKG HER CHQ RHO CFU ZTH JMK JTR KGS
+LIS OPO FAO FNC PDL
+PAR CDG ORY BVA BVE NCE MRS LYS BOD TLS NTE MPL
+MLA DBV SPU ZAD PUY LCA PFO TIA TGD TIV SJJ TZL BNX BEG SKP OHD
+KRK WAW WMI GDN WRO BUD VIE
+BER HAM CGN FRA DUS DTM AMS EIN BRU CRL CPH BLL
+STO ARN NYO VST GOT MMA MMX OSL TRF RYG BGO HEL DUB ORK
+LON LHR LGW STN LTN SEN LCY MAN EDI BRS PRG ZRH GVA BSL MLH
+IST SAW AYT ADB DLM
+""".split())
+
 # Časy aktualizácie (Europe/Vienna) – musia sedieť s .github/workflows/lacne-letenky.yml
 SCHEDULE = [("rano", "07:00"), ("obed", "12:00"), ("vecer", "18:00")]
 
@@ -739,6 +755,8 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     # do bloku idú len ponuky s odletom od zajtra do 3 mesiacov – bez dátumu ich nevieme overiť
     all_deals = deals
     deals = [d for d in deals if d["depart"] and today < d["depart"] <= horizon]
+    # v Európe len vybrané destinácie (EU_ALLOWED)
+    deals = [d for d in deals if d["region"] != "Európa" or d["dest"] in EU_ALLOWED]
     # odlety z náhradného letiska (Budapešť) nepatria medzi karty „kamkoľvek“
     fallback = [d for d in deals if d["origin"] not in ORIGINS]
     deals = [d for d in deals if d["origin"] in ORIGINS]

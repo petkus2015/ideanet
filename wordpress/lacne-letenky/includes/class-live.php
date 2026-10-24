@@ -423,6 +423,12 @@ class Lacne_Letenky_Live {
 			}
 		}
 
+		// v Európe len vybrané destinácie (rovnaký zoznam ako EU_ALLOWED v update_deals.py)
+		$allowed = array_flip( $geo['eu_allowed'] );
+		$deals   = array_filter( $deals, function ( $d ) use ( $allowed ) {
+			return 'Európa' !== $d['region'] || isset( $allowed[ $d['dest'] ] );
+		} );
+
 		// dlhší pobyt: iba spiatočné lety s pobytom aspoň 5 nocí (kratšie patria do predĺženého víkendu)
 		$deals = array_filter( $deals, function ( $d ) use ( $from, $to ) {
 			return ! empty( $d['depart'] ) && $d['depart'] > $from && $d['depart'] <= $to
