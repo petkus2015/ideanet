@@ -69,6 +69,13 @@ HORIZON_DAYS = 92
 # aby výber „Mimo Európy“ v bloku nebol prázdny (sledované mestá sa ukladajú zvlášť).
 MAX_PER_GROUP = 50
 
+# Predĺžený víkend: odlet vo štvrtok alebo piatok, návrat v nedeľu alebo pondelok, 3–4 noci
+# (štvrtok→nedeľa, piatok→pondelok, štvrtok→pondelok). Pondelok = 0 … nedeľa = 6.
+WEEKEND_OUT_DAYS = (3, 4)
+WEEKEND_BACK_DAYS = (6, 0)
+WEEKEND_NIGHTS = (3, 4)
+MAX_WEEKEND = 30  # koľko najlacnejších víkendových ponúk sa uloží
+
 # Destinácie, ktoré sledujeme vždy – najlacnejšia ponuka sa ukáže zvlášť nad ostatnými.
 # featured=True -> veľká karta na začiatku bloku (Bangkok).
 # list=True     -> riadok v zozname pod Bangkokom (Ázia a SAE); ich letiská sa v páse kariet neopakujú.
@@ -388,7 +395,7 @@ RYANAIR_API = "https://www.ryanair.com/api/farfnd/v4/roundTripFares"
 RYANAIR_HEADERS = {**HEADERS, "Referer": "https://www.ryanair.com/", "Origin": "https://www.ryanair.com"}
 
 
-def ryanair_url(origin: str, today: dt.date) -> str:
+def ryanair_url(origin: str, today: dt.date, weekend: bool = False) -> str:
     """Najlacnejšie spiatočné lety z letiska kamkoľvek, odlet do 3 mesiacov, pobyt 2–14 nocí."""
     params = {
         "departureAirportIataCode": origin,
@@ -399,6 +406,11 @@ def ryanair_url(origin: str, today: dt.date) -> str:
         "durationFrom": 2, "durationTo": 14,
         "adultPaxCount": 1, "currency": CURRENCY, "market": "en-gb", "searchMode": "ALL",
     }
+    if weekend:
+        # predĺžený víkend: odlet št/pi, návrat ne/po, 3–4 noci (výsledok sa aj tak overí podľa dátumov)
+        params.update({"durationFrom": 3, "durationTo": 4,
+                       "outboundDepartureDaysOfWeek": "THURSDAY,FRIDAY",
+                       "inboundDepartureDaysOfWeek": "SUNDAY,MONDAY"})
     return RYANAIR_API + "?" + urllib.parse.urlencode(params)
 
 
@@ -440,8 +452,9 @@ def parse_ryanair(payload: dict, origin: str) -> list[dict]:
     return deals
 
 
-def fetch_ryanair(origin: str, today: dt.date) -> list[dict]:
-    return parse_ryanair(fetch_json(ryanair_url(origin, today), headers=RYANAIR_HEADERS, label="Ryanair"), origin)
+def fetch_ryanair(origin: str, today: dt.date, weekend: bool = False) -> list[dict]:
+    found = parse_ryanair(fetch_json(ryanair_url(origin, today, weekend), headers=RYANAIR_HEADERS, label="Ryanair"), origin)
+    return [d for d in found if is_long_weekend_deal(d)] if weekend else found
 
 
 # --------------------------------------------------------------- Wizz Air ---
@@ -517,6 +530,33 @@ def wizz_prices(flights, dep: str | None = None, arr: str | None = None) -> dict
     return out
 
 
+def is_long_weekend(depart: dt.date, ret: dt.date | None) -> bool:
+    return bool(depart and ret and depart.weekday() in WEEKEND_OUT_DAYS
+                and ret.weekday() in WEEKEND_BACK_DAYS and (ret - depart).days in WEEKEND_NIGHTS)
+
+
+def is_long_weekend_deal(d: dict) -> bool:
+    try:
+        return is_long_weekend(dt.date.fromisoformat(d["depart"]), dt.date.fromisoformat(d["return"]))
+    except (TypeError, ValueError, KeyError):
+        return False
+
+
+def cheapest_long_weekend(outs: dict, rets: dict):
+    """Najlacnejšia kombinácia tam + späť na predĺžený víkend (v rovnakej mene)."""
+    best = None
+    for d_out, (p_out, cur) in outs.items():
+        if d_out.weekday() not in WEEKEND_OUT_DAYS:
+            continue
+        for n in WEEKEND_NIGHTS:
+            d_ret = d_out + dt.timedelta(days=n)
+            back = rets.get(d_ret)
+            if back and back[1] == cur and is_long_weekend(d_out, d_ret) \
+                    and (best is None or p_out + back[0] < best[0]):
+                best = (p_out + back[0], cur, d_out, d_ret)
+    return best
+
+
 def cheapest_round_trip(outs: dict, rets: dict, min_n: int = 2, max_n: int = 14):
     """Najlacnejšia kombinácia tam + späť s pobytom min_n–max_n nocí (v rovnakej mene)."""
     best = None
@@ -539,6 +579,19 @@ def wizz_timetable(base: str, body: dict, attempts: int = 4) -> dict:
                 raise
             time.sleep(15 * (attempt + 1))
     raise RuntimeError("Wizz Air: vyčerpané pokusy")
+
+
+def wizz_deal(origin: str, dst: dict, price: float, cur: str, d_out: dt.date, d_ret: dt.date) -> dict:
+    code, country, region = country_info(dst["countryCode"], None)
+    return {
+        "origin": origin, "dest": dst["iata"], "city": clean_city(dst["city"]),
+        "country": country, "countryCode": code, "region": region,
+        "price": round(price), "currency": cur,
+        "depart": d_out.isoformat(), "return": d_ret.isoformat(), "nights": (d_ret - d_out).days,
+        "stops": 0,
+        "url": f"{WIZZ_SITE}/en-gb/booking/select-flight/{origin}/{dst['iata']}/{d_out}/{d_ret}/1/0/0/null",
+        "source": "wizzair",
+    }
 
 
 def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
@@ -593,19 +646,14 @@ def fetch_wizz(origins, today: dt.date, pause: float = 1.5,
             if dst.get("probe"):
                 print(f"Wizz Air {origin}-{dst['iata']}: {len(outs)} dní tam, {len(rets)} dní späť"
                       + (f", najlacnejšie {round(best[0])} {best[1]}" if best else ", bez spiatočnej kombinácie"))
+            if not only:
+                # z rovnakých denných cien aj najlacnejší predĺžený víkend (bez ďalších požiadaviek)
+                wk = cheapest_long_weekend(outs, rets)
+                if wk:
+                    deals.append(wizz_deal(origin, dst, *wk))
             if not best:
                 continue
-            price, cur, d_out, d_ret = best
-            code, country, region = country_info(dst["countryCode"], None)
-            deals.append({
-                "origin": origin, "dest": dst["iata"], "city": clean_city(dst["city"]),
-                "country": country, "countryCode": code, "region": region,
-                "price": round(price), "currency": cur,
-                "depart": d_out.isoformat(), "return": d_ret.isoformat(), "nights": (d_ret - d_out).days,
-                "stops": 0,
-                "url": f"{WIZZ_SITE}/en-gb/booking/select-flight/{origin}/{dst['iata']}/{d_out}/{d_ret}/1/0/0/null",
-                "source": "wizzair",
-            })
+            deals.append(wizz_deal(origin, dst, *best))
     return deals, errors
 
 
@@ -688,6 +736,27 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
     fallback = [d for d in deals if d["origin"] not in ORIGINS]
     deals = [d for d in deals if d["origin"] in ORIGINS]
 
+    # Predĺžený víkend: najlacnejší spiatočný let na každú trasu s odletom št/pi a návratom ne/po.
+    wk_best: dict[tuple[str, str], dict] = {}
+    for d in deals:
+        if d["return"] and is_long_weekend_deal(d):
+            key = (d["origin"], d["dest"])
+            if key not in wk_best or d["price"] < wk_best[key]["price"]:
+                wk_best[key] = d
+    weekend, wk_seen = [], set()
+    for d in sorted(wk_best.values(), key=lambda x: x["price"]):
+        k = (d["origin"], d["city"], d["price"], d["depart"], d["return"])
+        if k in wk_seen:
+            continue
+        wk_seen.add(k)
+        d = dict(d)
+        d["city"] = CITY_SK.get(d["city"], d["city"])
+        d["prevPrice"] = prev_prices.get(flight_key(d))
+        weekend.append(d)
+    weekend = weekend[:MAX_WEEKEND]
+    print(f"Predĺžený víkend: {len(weekend)} ponúk"
+          + (f", najlacnejšia {weekend[0]['price']} {weekend[0]['currency']} ({weekend[0]['city']})" if weekend else ""))
+
     # Diagnostika sledovaných miest: čo zdroje vrátili a prečo to prípadne vypadlo.
     for name, w in WATCH.items():
         raw = [d for d in all_deals if d["dest"] in w["airports"]]
@@ -766,6 +835,7 @@ def build(deals: list[dict], now: dt.datetime, errors: list[str], fx: dict | Non
         "errors": errors,
         "horizonDays": HORIZON_DAYS,
         "watch": watch,
+        "weekend": weekend,
         "deals": out,
     }
 
@@ -809,6 +879,13 @@ def main() -> int:
                 except Exception as exc:
                     errors.append(f"Ryanair {origin}: {exc}")
                     print(f"Ryanair {origin}: CHYBA {exc}", file=sys.stderr)
+                try:
+                    wk = fetch_ryanair(origin, now.date(), weekend=True)
+                    print(f"Ryanair {origin} predĺžený víkend: {len(wk)} ponúk")
+                    deals += wk
+                except Exception as exc:
+                    errors.append(f"Ryanair {origin} víkend: {exc}")
+                    print(f"Ryanair {origin} predĺžený víkend: CHYBA {exc}", file=sys.stderr)
         if "wizzair" in use:
             try:
                 found, errs = fetch_wizz(list(ORIGINS), now.date())

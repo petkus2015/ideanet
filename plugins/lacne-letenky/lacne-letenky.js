@@ -195,6 +195,11 @@
       .sort(function (a, b) { return a.price - b.price; });
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.city; });
+    // predĺžený víkend: odlet štvrtok/piatok, návrat nedeľa/pondelok (zostavuje scripts/update_deals.py)
+    var weekendDeals = fresh
+      ? (data.weekend || []).filter(function (d) { return d['return'] && inWindow(d); })
+          .sort(function (a, b) { return a.price - b.price; }).slice(0, Math.max(limit, 8))
+      : [];
 
     function datesText(d) {
       return esc(day(d.depart)) + (d['return'] ? ' – ' + esc(day(d['return'])) : '') + ' · ' + nights(d.nights);
@@ -269,6 +274,25 @@
         '</div></a>';
     }
 
+    // posuvný pás kariet so šípkami (hlavný aj víkendový)
+    function railHtml(list, label) {
+      return '<div class="ll-rail">' +
+          '<ul class="ll-grid" tabindex="0" aria-label="' + esc(label) + '">' + list.map(cardHtml).join('') + '</ul>' +
+          '<div class="ll-navbar">' +
+            '<button type="button" class="ll-nav" data-nav="-1" aria-label="Predchádzajúce ponuky" disabled>' + ARROW + '</button>' +
+            '<button type="button" class="ll-nav" data-nav="1" aria-label="Ďalšie ponuky">' + ARROW + '</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    function weekendHtml() {
+      if (!weekendDeals.length) return '';   // bez nájdenej letenky sekciu nezobrazujeme
+      return '<section class="ll-weekend" aria-label="Predĺžený víkend">' +
+        '<div><h3 class="ll-list-title">Na predĺžený víkend</h3>' +
+          '<p class="ll-sub">Odlet vo štvrtok alebo piatok, návrat v nedeľu alebo pondelok (3 až 4 noci).</p></div>' +
+        railHtml(weekendDeals, 'Lacné letenky na predĺžený víkend') + '</section>';
+    }
+
     function listHtml() {
       if (!listed.length) return '';
       var rows = listed.slice().sort(function (a, b) {
@@ -312,7 +336,7 @@
 
     var regions = [['all', 'Všetky'], ['eu', 'Európa'], ['world', 'Mimo Európy']];
     var hasAny = allDeals.length > 0;
-    var hasWx = allDeals.concat(watch.map(function (w) { return w.deal; }), listed.map(function (w) { return w.deal; }))
+    var hasWx = allDeals.concat(weekendDeals, watch.map(function (w) { return w.deal; }), listed.map(function (w) { return w.deal; }))
       .some(function (d) { return d && d.weather; });
 
     // Blok začína rovno ponukami; nadpis sa ukáže, len ak ho web zadá (data-title / Nadpis v nastaveniach).
@@ -321,13 +345,7 @@
       watch.map(watchHtml).join('') +
       (fresh ? listHtml() : '') +
       (deals.length
-        ? '<div class="ll-rail">' +
-            '<ul class="ll-grid" tabindex="0" aria-label="Lacné letenky">' + deals.map(cardHtml).join('') + '</ul>' +
-            '<div class="ll-navbar">' +
-              '<button type="button" class="ll-nav" data-nav="-1" aria-label="Predchádzajúce ponuky" disabled>' + ARROW + '</button>' +
-              '<button type="button" class="ll-nav" data-nav="1" aria-label="Ďalšie ponuky">' + ARROW + '</button>' +
-            '</div>' +
-          '</div>'
+        ? railHtml(deals, 'Lacné letenky')
         : hasAny
           ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' som teraz nenašiel ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
           : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
@@ -336,6 +354,7 @@
             return '<button type="button" data-region="' + r[0] + '" aria-pressed="' + (region === r[0]) + '">' + r[1] + '</button>';
           }).join('') + '</div>'
         : '') +
+      weekendHtml() +
       '<div class="ll-actions">' +
         '<button type="button" class="ll-refresh" data-refresh>' + REFRESH + '<span>Vyhľadaj aktuálne lacné letenky</span></button>' +
         '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
@@ -373,11 +392,11 @@
       });
     });
 
-    // šípky posúvača (myš na počítači); prstom sa posúva priamo
-    var grid = el.querySelector('.ll-grid');
-    if (grid) {
-      var navs = el.querySelectorAll('[data-nav]');
-      var navbar = el.querySelector('.ll-navbar');
+    // šípky posúvača (myš na počítači); prstom sa posúva priamo – pre každý pás zvlášť
+    Array.prototype.forEach.call(el.querySelectorAll('.ll-rail'), function (rail) {
+      var grid = rail.querySelector('.ll-grid');
+      var navs = rail.querySelectorAll('[data-nav]');
+      var navbar = rail.querySelector('.ll-navbar');
       var syncNav = function () {
         var max = grid.scrollWidth - grid.clientWidth - 2;
         navs[0].disabled = grid.scrollLeft <= 2;
@@ -393,7 +412,7 @@
       });
       grid.addEventListener('scroll', syncNav, { passive: true });
       syncNav();
-    }
+    });
 
     var btn = el.querySelector('[data-refresh]');
     btn.addEventListener('click', function () { search(el, data, opts, false); });

@@ -50,6 +50,11 @@ Iba ponuky z **poslednej úspešnej aktualizácie** z momondo.co.uk – bez filt
 - **Európa – vždy sledované letiská**: Alicante, Catania, Palermo, Trapani, Comiso (Sicília) a Malta sa hľadajú
   vždy (momondo, Ryanair, Wizz Air) a majú v páse kariet vlastnú kartu, aj keď nie sú medzi najlacnejšími;
   zobrazia sa len ak sa našla spiatočná letenka (`WATCH` s `list=False` v skripte)
+- **Na predĺžený víkend**: samostatná sekcia pod filtrom (posuvný pás kariet) s najlacnejšími spiatočnými letenkami
+  s odletom vo **štvrtok alebo piatok** a návratom v **nedeľu alebo pondelok** (3 až 4 noci). Skript ich hľadá
+  z Wizz Air (z denných cien, bez ďalších požiadaviek) a z Ryanairu (filter dní v týždni), výsledok vždy overí podľa
+  skutočných dátumov (`WEEKEND_*` v skripte) a uloží do `weekend` v `deals.json` (najviac 30). Sekcia sa
+  nezobrazí, ak sa žiadna ponuka nenašla. Filter Európa / Mimo Európy sa jej netýka.
 - výber **Všetky / Európa / Mimo Európy** pod ponukami; ukladá sa až 50 najlacnejších v Európe a 50 mimo nej
 - karty v posuvnom páse (naraz 1,5 karty, na počítači so šípkami), zoradené od najlacnejšej (mesto, krajina, trasa VIE/BTS → cieľ, termín, počet nocí, cena v €)
 - štítok „Priamy“ a zmena ceny oproti predchádzajúcemu hľadaniu (▼ o X € lacnejšie / ▲ drahšie) – iba pri tom istom lete (letiská aj dátumy tam a späť)

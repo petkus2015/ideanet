@@ -460,6 +460,17 @@ class Lacne_Letenky_Live {
 		// a z tabuliek počasia pre každú destináciu a dátum (weather.json) – tie majú prednosť
 		$unique = Lacne_Letenky_Weather::apply( $unique );
 
+		// Predĺžený víkend (štvrtok/piatok → nedeľa/pondelok) sa hľadá pri aktualizácii na GitHube;
+		// živé hľadanie ho preberie z týchto dát (iba lety, ktoré ešte neodleteli) a doplní počasie.
+		$weekend = array();
+		$src_wk  = is_array( $base ) && isset( $base['weekend'] ) ? $base['weekend'] : ( is_array( $prev ) && isset( $prev['weekend'] ) ? $prev['weekend'] : array() );
+		foreach ( is_array( $src_wk ) ? $src_wk : array() as $d ) {
+			if ( ! empty( $d['depart'] ) && ! empty( $d['return'] ) && $d['depart'] > $from && $d['depart'] <= $to ) {
+				$weekend[] = $d;
+			}
+		}
+		$weekend = Lacne_Letenky_Weather::apply( $weekend );
+
 		// Bangkok, Dubaj, Abu Dhabí – iba spiatočné letenky
 		$prev_alt   = array(); // ponuky z ďalšieho letiska (SAE z Budapešti) – naživo sa nehľadajú, berú sa z GitHubu
 		foreach ( is_array( $prev ) && isset( $prev['watch'] ) ? $prev['watch'] : array() as $w ) {
@@ -513,6 +524,7 @@ class Lacne_Letenky_Live {
 			'origins'     => $origins,
 			'errors'      => array_slice( $errors, 0, 10 ),
 			'watch'       => $watch,
+			'weekend'     => $weekend,
 			'deals'       => self::per_group( $unique, $geo['max_per_group'] ),
 			'live'        => true,
 			'liveAt'      => time(),

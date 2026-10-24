@@ -234,7 +234,8 @@ def _read_json(path: Path) -> dict:
 def add_weather(data: dict, today: dt.date, data_dir: Path, pool: list[str] | None = None, log=print) -> None:
     """Doplní deal["weather"] = {"t": °C max, "c": ikona, "k": "f" predpoveď | "c" typické počasie}
     a zapíše data/weather.json + data/climate.json pre plugin."""
-    deals = list(data.get("deals") or []) + [w["deal"] for w in data.get("watch") or [] if w.get("deal")]
+    deals = (list(data.get("deals") or []) + list(data.get("weekend") or [])
+             + [w["deal"] for w in data.get("watch") or [] if w.get("deal")])
     deals = [d for d in deals if d.get("depart")]
     shown = list(dict.fromkeys(d["dest"] for d in deals))  # najprv to, čo sa v bloku zobrazí
     order = shown + [c for c in (pool or []) if c not in shown]
