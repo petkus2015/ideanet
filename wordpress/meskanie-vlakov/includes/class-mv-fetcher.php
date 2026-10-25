@@ -134,8 +134,9 @@ class MV_Fetcher {
 		$raw    = self::fetch_raw();
 		$trains = array_map( array( __CLASS__, 'normalize' ), $raw );
 		usort( $trains, fn( $a, $b ) => $b['delay'] <=> $a['delay'] );
-		$ts = gmdate( 'Y-m-d\TH:i:s+00:00' );
-		self::write_json( 'trains.json', array( 'updated' => $ts, 'source' => self::API, 'trains' => $trains ) );
+		$ts      = gmdate( 'Y-m-d\TH:i:s+00:00' );
+		$stats24 = self::update_ledger( $trains, time() );
+		self::write_json( 'trains.json', array( 'updated' => $ts, 'source' => self::API, 'trains' => $trains, 'stats24' => $stats24 ) );
 
 		$hist   = self::read_json( 'history.json' );
 		$hist   = is_array( $hist ) ? $hist : array();
@@ -144,6 +145,71 @@ class MV_Fetcher {
 
 		self::set_status( array( 'trains_ok' => time(), 'trains_count' => count( $trains ), 'trains_error' => '' ) );
 		return count( $trains );
+	}
+
+	/* ---------- evidencia jázd za posledných 24 h (štatistiky podľa druhu vlaku) ---------- */
+
+	const LEDGER_SECONDS = DAY_IN_SECONDS;
+	const NEW_RUN_GAP    = 6 * HOUR_IN_SECONDS; // vlak s rovnakým číslom po 6 h neprítomnosti = nová jazda (ďalší deň)
+
+	private static function run_stats( $runs ) {
+		$n    = count( $runs );
+		$cats = array( 0, 0, 0, 0, 0 );
+		$sum  = 0;
+		$on   = 0;
+		$max  = 0;
+		foreach ( $runs as $r ) {
+			$d = (int) $r['d'];
+			$sum += $d;
+			$on  += $d <= 5 ? 1 : 0;
+			$max  = max( $max, (int) $r['m'] );
+			$cats[ $d <= 5 ? 0 : ( $d <= 15 ? 1 : ( $d <= 30 ? 2 : ( $d <= 60 ? 3 : 4 ) ) ) ]++;
+		}
+		return array(
+			'n'      => $n,
+			'avg'    => $n ? round( $sum / $n, 1 ) : 0,
+			'onTime' => $n ? round( 100 * $on / $n, 1 ) : 0,
+			'max'    => $max,
+			'c'      => $cats,
+		);
+	}
+
+	/** Každá jazda vlaku: druh, posledné a najväčšie meškanie. Vráti štatistiky za posledných 24 h. */
+	private static function update_ledger( $trains, $now ) {
+		$runs   = self::read_json( 'ledger.json' );
+		$runs   = is_array( $runs ) ? $runs : array();
+		$active = array();
+		foreach ( $runs as $k => $r ) {
+			if ( $now - (int) $r['l'] <= self::NEW_RUN_GAP ) {
+				$active[ $r['id'] ] = $k;
+			}
+		}
+		foreach ( $trains as $t ) {
+			if ( '' === $t['id'] ) {
+				continue;
+			}
+			$key = $active[ $t['id'] ] ?? null;
+			if ( null === $key ) {
+				$key          = $t['id'] . '#' . $now;
+				$runs[ $key ] = array( 'id' => $t['id'], 'g' => self::group_of( $t ), 'f' => $now, 'm' => 0 );
+				$active[ $t['id'] ] = $key;
+			}
+			$runs[ $key ]['d'] = $t['delay'];
+			$runs[ $key ]['l'] = $now;
+			$runs[ $key ]['m'] = max( (int) $runs[ $key ]['m'], $t['delay'] );
+		}
+		$runs = array_filter( $runs, fn( $r ) => $now - (int) $r['l'] <= self::LEDGER_SECONDS );
+		self::write_json( 'ledger.json', $runs ? $runs : new stdClass() );
+		$since = $runs ? min( array_column( $runs, 'f' ) ) : $now;
+		$g     = array();
+		foreach ( array_keys( self::GROUPS ) as $grp ) {
+			$g[ $grp ] = self::run_stats( array_filter( $runs, fn( $r ) => $r['g'] === $grp ) );
+		}
+		return array(
+			'since' => gmdate( 'Y-m-d\TH:i:s+00:00', (int) $since ),
+			'all'   => self::run_stats( $runs ),
+			'g'     => $g,
+		);
 	}
 
 	private static function clean( $s ) {

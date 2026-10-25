@@ -794,3 +794,4 @@ html.big body { zoom: 1.18; }
   .via--tick { align-items: flex-start; white-space: normal; }
   .via__txt { white-space: normal; line-height: 1.35; min-height: 2.7em; }
 }
+.section-sub { font: 500 15px var(--f-body); color: var(--muted); letter-spacing: 0; }

@@ -64,7 +64,7 @@
     trains: [], history: [], prev: null, updated: null,
     mode: 'loading', cat: null, q: '', carrier: '', sort: 'fast',
     group: null, station: '', showPassed: false,
-    tt: null, boardMode: 'dep', boardShown: BOARD_PAGE,
+    tt: null, stats24: null, boardMode: 'dep', boardShown: BOARD_PAGE,
     shown: PAGE, active: null, nextAt: Date.now() + REFRESH_MS,
   };
   const store = {
@@ -175,6 +175,7 @@
       const data = await getJSON(DATA_URL);
       if (!Array.isArray(data.trains)) throw new Error('neplatný formát');
       state.trains = data.trains.map(t => ({ ...t, delay: Math.max(0, Number(t.delay) || 0), carrier: shortCarrier(t.carrier) }));
+      state.stats24 = data.stats24 && data.stats24.all ? data.stats24 : null;
       const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Bratislava' }).format(new Date());
       if (!state.tt || state.tt.date !== today) {
         try {
@@ -194,6 +195,7 @@
       } else {
         state.tt = demoTimetable();
         state.trains = demoTrains(state.tt);
+        state.stats24 = demoStats24(state.tt);
         state.history = demoHistory(summarizeAll(state.trains));
         state.updated = new Date();
         state.mode = 'demo';
@@ -682,6 +684,27 @@
 
   function renderGroups() {
     const fmtAvg = s => `ø ${fmtNum(s.avg, 1)} min`;
+    const typesOf = g => g.types.filter(t => state.trains.some(x => x.type === t)).join(' · ') || g.types.slice(0, 3).join(' · ');
+    const s24 = state.stats24;
+    if (s24) {
+      // za posledných 24 h celej siete (každá jazda vlaku raz, s posledným známym meškaním)
+      const since = new Date(s24.since);
+      const full = Date.now() - since > 23 * 3600e3;
+      $('grpSince').textContent = full ? '· posledných 24 hodín, celá sieť' : `· od ${fmtTime(since)}, celá sieť`;
+      const card24 = (id, label, types, s) => {
+        const on = state.group === id || (!state.group && id === '');
+        return `<button type="button" class="grp ${id ? '' : 'grp--all'}" data-group="${id}" aria-pressed="${on}" ${s && s.n ? '' : 'disabled'}>
+          <span class="grp__head"><span class="grp__name">${label}</span><span class="grp__types">${types}</span></span>
+          <span class="grp__v">${s && s.n ? fmtNum(s.onTime) + '<small>% načas</small>' : '<small>žiadne vlaky</small>'}</span>
+          <span class="grp__bar">${(s?.c || []).map((n, i) => (n ? `<span style="flex-grow:${n};background:var(--c${i})"></span>` : '')).join('')}</span>
+          <span class="grp__meta"><span><b>${fmtNum(s?.n || 0)}</b> jázd</span><span>${fmtAvg(s || { avg: 0 })}</span><span>max <b>${fmtMin(s?.max || 0)}</b></span></span>
+        </button>`;
+      };
+      $('groups').innerHTML = card24('', 'Všetky', 'všetky druhy', s24.all) +
+        GROUPS.map(g => card24(g.id, g.label, typesOf(g), s24.g?.[g.id])).join('');
+      return;
+    }
+    $('grpSince').textContent = '· teraz na trati';
     const card = (id, label, types, trains) => {
       const s = summarize(trains), c = CATS.map(() => 0);
       trains.forEach(t => c[catOf(t.delay)]++);
@@ -1174,6 +1197,24 @@
       });
     });
     return out;
+  }
+
+  // ukážkové štatistiky za 24 h: každý spoj cestovného poriadku raz (dnešné doteraz + včerajšie od tohto času)
+  function demoStats24(tt) {
+    const runs = tt.trips.map(([type, number]) => {
+      const r = rng(hash(type + number + 'day'));
+      let d = demoDelay(r);
+      if (['EC', 'EN'].includes(type) && r() < 0.5) d += 8 + Math.floor(r() * 20);
+      return { g: groupOf({ type }), d, m: d + (d > 5 ? Math.floor(r() * 6) : 0) };
+    });
+    const st = list => {
+      const n = list.length, c = [0, 0, 0, 0, 0];
+      list.forEach(x => c[catOf(x.d)]++);
+      return { n, avg: n ? list.reduce((a, x) => a + x.d, 0) / n : 0, onTime: n ? (100 * c[0]) / n : 0, max: list.reduce((a, x) => Math.max(a, x.m), 0), c };
+    };
+    const g = {};
+    GROUPS.forEach(gr => { g[gr.id] = st(runs.filter(x => x.g === gr.id)); });
+    return { since: new Date(Date.now() - 24 * 3600e3).toISOString(), all: st(runs), g };
   }
 
   function demoHistory(now) {

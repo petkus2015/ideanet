@@ -186,6 +186,56 @@ def stats(trains):
     }
 
 
+# ---------- evidencia jázd za posledných 24 h (štatistiky podľa druhu vlaku) ----------
+LEDGER_SECONDS = 24 * 3600
+NEW_RUN_GAP = 6 * 3600          # vlak s rovnakým číslom po 6 h neprítomnosti = nová jazda (ďalší deň)
+CAT_LIMITS = (5, 15, 30, 60)    # rovnaké kategórie meškania ako na stránke
+
+
+def run_stats(runs):
+    n = len(runs)
+    d = [r["d"] for r in runs]
+    cats = [0] * 5
+    for x in d:
+        cats[next((i for i, lim in enumerate(CAT_LIMITS) if x <= lim), 4)] += 1
+    return {
+        "n": n,
+        "avg": round(sum(d) / n, 1) if n else 0,
+        "onTime": round(100 * sum(1 for x in d if x <= 5) / n, 1) if n else 0,
+        "max": max((r["m"] for r in runs), default=0),
+        "c": cats,
+    }
+
+
+def update_ledger(out: Path, trains, now: int):
+    """Každá jazda vlaku: druh, posledné a najväčšie meškanie. Vráti štatistiky za posledných 24 h."""
+    path = out / "ledger.json"
+    try:
+        runs = json.loads(path.read_text("utf-8"))
+        if not isinstance(runs, dict):
+            runs = {}
+    except (OSError, ValueError):
+        runs = {}
+    active = {r["id"]: k for k, r in runs.items() if now - r["l"] <= NEW_RUN_GAP}
+    for t in trains:
+        if not t["id"]:
+            continue
+        key = active.get(t["id"])
+        if key is None:
+            key = f'{t["id"]}#{now}'
+            runs[key] = {"id": t["id"], "g": group_of(t), "f": now, "m": 0}
+        r = runs[key]
+        r.update(d=t["delay"], l=now, m=max(r["m"], t["delay"]))
+    runs = {k: r for k, r in runs.items() if now - r["l"] <= LEDGER_SECONDS}
+    write_json(path, runs)
+    since = min((r["f"] for r in runs.values()), default=now)
+    return {
+        "since": datetime.fromtimestamp(since, timezone.utc).isoformat(timespec="seconds"),
+        "all": run_stats(list(runs.values())),
+        "g": {g: run_stats([r for r in runs.values() if r["g"] == g]) for g in GROUPS},
+    }
+
+
 def summary(trains, ts):
     s = {"t": ts, **stats(trains)}
     s["g"] = {g: stats([t for t in trains if group_of(t) == g]) for g in GROUPS}
@@ -317,8 +367,10 @@ def run_once(out: Path):
     ensure_timetable(out)
     raw = fetch_raw()
     trains = sorted((normalize(t) for t in raw), key=lambda t: -t["delay"])
-    ts = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    write_json(out / "trains.json", {"updated": ts, "source": API, "trains": trains})
+    now = datetime.now(timezone.utc)
+    ts = now.isoformat(timespec="seconds")
+    stats24 = update_ledger(out, trains, int(now.timestamp()))
+    write_json(out / "trains.json", {"updated": ts, "source": API, "trains": trains, "stats24": stats24})
 
     hist_path = out / "history.json"
     try:
