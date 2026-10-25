@@ -44,10 +44,10 @@ button, input, select { font: inherit; }
 
 
 def container_queries(css: str) -> str:
-    """@media (max-width) -> @container: rozloženie sa riadi šírkou miesta na stránke, nie šírkou okna.
+    """@media (max/min-width) -> @container: rozloženie sa riadi šírkou miesta na stránke, nie šírkou okna.
     Výnimkou je detail vlaku (dialóg), ten sa zobrazuje cez celé okno."""
     out, i = [], 0
-    for m in re.finditer(r"@media \(max-width: (\d+)px\) \{", css):
+    for m in re.finditer(r"@media \((max|min)-width: (\d+)px\) \{", css):
         if m.start() < i:
             continue
         depth, j = 1, m.end()
@@ -56,7 +56,7 @@ def container_queries(css: str) -> str:
             j += 1
         block = css[m.start():j]
         if ".tdlg {" not in block:
-            block = block.replace(m.group(0), f"@container mv (max-width: {m.group(1)}px) {{", 1)
+            block = block.replace(m.group(0), f"@container mv ({m.group(1)}-width: {m.group(2)}px) {{", 1)
         out.append(css[i:m.start()] + block)
         i = j
     return "".join(out) + css[i:]

@@ -629,5 +629,86 @@ input[type="search"], select { font-size: 16px; min-height: 48px; }
 .colon { display: inline-block; padding: 0 1px; transition: opacity .15s; }
 .colon.is-off { opacity: .15; }
 
+/* ==========================================================================
+   Fluidný desktop: veľkosti, stĺpce a medzery rastú plynule so šírkou.
+   cqi = 1 % šírky kontajnera (vo WordPress plugine šírka tabule, na samostatnej stránke šírka okna).
+   Mobil (do 860 px) zostáva podľa pravidiel vyššie.
+   ========================================================================== */
+@container mv (min-width: 861px) {
+  .wrap {
+    max-width: 1760px;
+    padding-left: max(clamp(16px, 2.4cqi, 48px), env(safe-area-inset-left, 0px));
+    padding-right: max(clamp(16px, 2.4cqi, 48px), env(safe-area-inset-right, 0px));
+  }
+  body { font-size: clamp(16px, 0.5cqi + 10px, 19px); }
+  .main { gap: clamp(14px, 1.2cqi, 24px); }
+
+  /* hlavička */
+  .brand h1 { font-size: clamp(24px, 0.9cqi + 12px, 34px); }
+  .eyebrow { font-size: clamp(13px, 0.3cqi + 9px, 16px); }
+  .clock > span { font-size: clamp(26px, 1.1cqi + 11px, 40px); }
+
+  /* výber stanice */
+  .station { padding: clamp(18px, 1.6cqi, 32px) clamp(16px, 1.6cqi, 32px); }
+  .station__q { font-size: clamp(23px, 1cqi + 11px, 34px); }
+  .station__help { font-size: clamp(15.5px, 0.35cqi + 11px, 19px); }
+  .station__field { min-height: clamp(58px, 2.4cqi + 28px, 74px); }
+  .station__field input { height: clamp(56px, 2.4cqi + 26px, 72px); font-size: clamp(20px, 0.7cqi + 11px, 27px); }
+  .quick button { font-size: clamp(15.5px, 0.3cqi + 11px, 18px); min-height: clamp(44px, 1cqi + 32px, 54px); padding-inline: clamp(14px, 1cqi, 22px); }
+
+  /* nadpisy a súhrn */
+  .panel h2, .board h2, .section-title { font-size: clamp(20px, 0.7cqi + 11px, 28px); }
+  .kpi { padding: clamp(14px, 1.2cqi, 24px); }
+  .kpi__v { font-size: clamp(34px, 1.9cqi + 12px, 58px); }
+  .grp__v { font-size: clamp(28px, 1.3cqi + 12px, 44px); }
+  .groups, .kpis, .duo, .side { gap: clamp(12px, 1.1cqi, 22px); }
+
+  /* tabuľa odchodov: stĺpce v pomere namiesto pevných šírok */
+  .fids__cols, .fl {
+    grid-template-columns: minmax(124px, .95fr) minmax(88px, .65fr) minmax(160px, 1.3fr) minmax(0, 3fr) minmax(160px, 1.2fr);
+    gap: clamp(12px, 1.3cqi, 28px);
+    padding-inline: clamp(16px, 1.6cqi, 32px);
+  }
+  .fl { padding-block: clamp(12px, 1cqi, 20px); }
+  .fids__cols { font-size: clamp(13px, 0.3cqi + 9px, 16px); }
+  .fids__tabs button { font-size: clamp(17px, 0.5cqi + 11px, 22px); padding: clamp(11px, 0.6cqi + 5px, 15px) clamp(20px, 1.6cqi, 34px); }
+  #fidsNote { font-size: clamp(15px, 0.4cqi + 10px, 19px); }
+  .fl__time { gap: clamp(2px, 0.15cqi, 4px); }
+  .fl__time span { width: clamp(23px, 1.25cqi + 7px, 38px); height: clamp(34px, 1.8cqi + 10px, 54px); font-size: clamp(21px, 1.2cqi + 6px, 36px); }
+  .fl__time i { font-size: clamp(19px, 1cqi + 6px, 32px); }
+  .fl__exp { font-size: clamp(20px, 1cqi + 8px, 32px); }
+  .fl__num { font-size: clamp(18px, 0.7cqi + 9px, 27px); }
+  .tchip { font-size: clamp(13px, 0.3cqi + 9px, 16px); }
+  .fl__train small { font-size: clamp(13.5px, 0.3cqi + 9.5px, 17px); }
+  .fl__dir b { font-size: clamp(21px, 1.1cqi + 8px, 35px); }
+  .fl__dir small { font-size: clamp(14px, 0.35cqi + 9.5px, 18px); }
+  .st { font-size: clamp(15px, 0.4cqi + 9.5px, 20px); padding: clamp(8px, 0.4cqi + 3px, 12px) clamp(11px, 0.7cqi + 3px, 18px); }
+
+  /* zoznam vlakov na trati */
+  .thead, .row__main {
+    grid-template-columns: minmax(84px, .6fr) minmax(150px, 1fr) minmax(0, 1.7fr) minmax(0, 1.7fr) minmax(96px, .6fr);
+    gap: clamp(12px, 1.2cqi, 26px);
+    padding-inline: clamp(16px, 1.6cqi, 32px);
+  }
+  .cell { font-size: clamp(15px, 0.35cqi + 10px, 18px); }
+  .tr__id { font-size: clamp(16px, 0.45cqi + 10px, 21px); }
+  .dly { font-size: clamp(18px, 0.6cqi + 10px, 24px); }
+  .board__head, .board__bar, .fids__head { padding-inline: clamp(16px, 1.6cqi, 32px); }
+}
+
+/* široký desktop: otázka vľavo, výber stanice vpravo */
+@container mv (min-width: 1180px) {
+  .station {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    grid-template-areas: "q field" "help quick";
+    column-gap: clamp(24px, 3cqi, 72px);
+    align-items: center;
+  }
+  .station__q { grid-area: q; align-self: end; }
+  .station__help { grid-area: help; align-self: start; margin: 0; }
+  .station__field { grid-area: field; max-width: none; }
+  .quick { grid-area: quick; align-self: start; }
+}
+
 /* v rámci stránky WordPressu hlavička nepláva nad obsahom témy */
 .top { position: static; }
