@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Meškanie vlakov
  * Description:       Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku. Na stránku vložte shortcode [meskanie_vlakov].
- * Version:           1.1.8
+ * Version:           1.1.9
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MV_VERSION', '1.1.8' );
+define( 'MV_VERSION', '1.1.9' );
 define( 'MV_FILE', __FILE__ );
 define( 'MV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MV_URL', plugin_dir_url( __FILE__ ) );

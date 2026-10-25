@@ -1,5 +1,5 @@
 /* Vygenerované z vlaky/styles.css skriptom scripts/build_wp_plugin.py — needitovať ručne. */
-:host { all: initial; display: block; }
+:host { all: initial; display: block; margin-inline: auto; }
 [hidden] { display: none !important; }
 button, input, select { font: inherit; }
 .mv { container: mv / inline-size; border-radius: 18px; overflow: clip; text-align: left; }
@@ -637,7 +637,7 @@ input[type="search"], select { font-size: 16px; min-height: 48px; }
    ========================================================================== */
 @container mv (min-width: 861px) {
   .wrap {
-    max-width: 1760px;
+    max-width: 1280px;
     padding-left: max(clamp(16px, 2.4cqi, 48px), env(safe-area-inset-left, 0px));
     padding-right: max(clamp(16px, 2.4cqi, 48px), env(safe-area-inset-right, 0px));
   }
@@ -762,6 +762,12 @@ input[type="search"], select { font-size: 16px; min-height: 48px; }
   .notice, .kpis, .groups, .scope, .section-title { margin-inline: max(12px, env(safe-area-inset-left, 0px)); }
   .duo, .side { gap: 12px; }
   .foot { padding-inline: 16px; }
+}
+
+/* desktop: obsah v strednom stĺpci, vycentrovaný (pozadie ostáva cez celú šírku) */
+@container mv (min-width: 861px) {
+  .wrap { margin-inline: auto; }
+  .station__field { max-width: none; }
 }
 
 /* v rámci stránky WordPressu hlavička nepláva nad obsahom témy */

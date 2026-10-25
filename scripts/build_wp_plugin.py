@@ -30,7 +30,7 @@ def shadow_css(css: str) -> str:
     if re.search(r"(?m)^(html|body)\b|:root", css):
         raise SystemExit("styles.css obsahuje globálny selektor, ktorý build nevie previesť")
     head = """/* Vygenerované z vlaky/styles.css skriptom scripts/build_wp_plugin.py — needitovať ručne. */
-:host { all: initial; display: block; }
+:host { all: initial; display: block; margin-inline: auto; }
 [hidden] { display: none !important; }
 button, input, select { font: inherit; }
 .mv { container: mv / inline-size; border-radius: 18px; overflow: clip; text-align: left; }

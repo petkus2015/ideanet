@@ -633,7 +633,7 @@ html.big body { zoom: 1.18; }
    ========================================================================== */
 @media (min-width: 861px) {
   .wrap {
-    max-width: 1760px;
+    max-width: 1280px;
     padding-left: max(clamp(16px, 2.4cqi, 48px), env(safe-area-inset-left, 0px));
     padding-right: max(clamp(16px, 2.4cqi, 48px), env(safe-area-inset-right, 0px));
   }
@@ -758,4 +758,10 @@ html.big body { zoom: 1.18; }
   .notice, .kpis, .groups, .scope, .section-title { margin-inline: max(12px, env(safe-area-inset-left, 0px)); }
   .duo, .side { gap: 12px; }
   .foot { padding-inline: 16px; }
+}
+
+/* desktop: obsah v strednom stĺpci, vycentrovaný (pozadie ostáva cez celú šírku) */
+@media (min-width: 861px) {
+  .wrap { margin-inline: auto; }
+  .station__field { max-width: none; }
 }
