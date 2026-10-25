@@ -78,7 +78,11 @@ def main():
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(PLUGIN.rglob("*")):
             if f.is_file() and "__pycache__" not in f.parts:
-                z.write(f, f.relative_to(PLUGIN.parent))
+                # pevný dátum: rovnaký obsah = rovnaký zip (žiadne zbytočné zmeny v gite)
+                info = zipfile.ZipInfo(str(f.relative_to(PLUGIN.parent)), (2026, 1, 1, 0, 0, 0))
+                info.compress_type = zipfile.ZIP_DEFLATED
+                info.external_attr = 0o644 << 16
+                z.writestr(info, f.read_bytes())
     print(f"plugin: {out.relative_to(ROOT)} ({out.stat().st_size // 1024} kB)")
 
 
