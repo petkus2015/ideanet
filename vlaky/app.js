@@ -781,16 +781,22 @@
       // bez vlastného času hlásenia ukážeme, kedy sme polohu stiahli (údaje sa obnovujú každé 2 minúty)
       const dataTime = state.updated && !isNaN(state.updated) ? TZ_FMT.format(state.updated) : '--:--';
       const where = String(t.info || '').replace(TIME_RE, '').replace(/\s+/g, ' ').trim();
+      // udalosť hlásenia („Odchod Trenčín“) a pri meškaní pôvodný čas: CasPlan zo ŽSR, inak skutočný čas mínus meškanie
+      const event = time && where ? where.charAt(0).toLowerCase() + where.slice(1) : '';
+      const planned = time && t.delay > 5
+        ? (reportTime({ time: t.timePlan }) || hm(Number(time.slice(0, 2)) * 60 + Number(time.slice(3)) - t.delay)) : '';
       return `<li class="row ${sel ? 'sel' : ''}" data-id="${esc(t.id)}" tabindex="0" role="button" aria-expanded="${sel}"
           aria-label="${esc(trainLabel(t))}${to ? ' do ' + esc(to) : ''}, meškanie ${fmtMin(t.delay)}">
         <div class="row__air">
-          <span class="ra__time"><span class="fl__time">${flap(time || dataTime)}</span><small>${time ? 'posledné hlásenie' : 'poloha zistená'}</small></span>
+          <span class="ra__time"><span class="fl__time">${flap(time || dataTime)}</span>
+            <small>${time ? esc(event || 'posledné hlásenie') : 'poloha zistená'}</small>
+            ${planned ? `<small class="ra__plan">pôvodne <s>${planned}</s> · mešká ${fmtMin(t.delay)}</small>` : ''}</span>
           <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span></span>
           <span class="ra__train"><b class="tchip tchip--${groupOf(t)}">${esc(t.type || 'Vlak')}</b><span class="fl__num">${esc(t.number)}</span>
             <small>${esc([TYPE_LABEL[t.type], t.name].filter(Boolean).join(' · '))}</small></span>
           <span class="ra__dir">${to ? `<b class="fl__dest">${esc(to)}</b>` : '<b class="muted">Cieľ neznámy</b>'}
             ${from ? `<small>Ide z: ${esc(from)}</small>` : ''}
-            <small>${relBadge(t)}${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next ? ` · ďalej ${esc(t.next)}` : ''}</small></span>
+            <small>${relBadge(t)}${event ? (t.next ? `Ďalej: ${esc(t.next)}` : '') : `${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next ? ` · ďalej ${esc(t.next)}` : ''}`}</small></span>
           <span class="carrier">${esc(t.carrier || '—')}</span>
         </div>
         ${more ? `<div class="row__more">${more}</div>` : ''}

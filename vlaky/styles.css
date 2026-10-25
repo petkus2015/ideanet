@@ -765,3 +765,7 @@ html.big body { zoom: 1.18; }
   .wrap { margin-inline: auto; }
   .station__field { max-width: none; }
 }
+
+/* pôvodný čas pri meškajúcom vlaku v zozname */
+.ra__plan { color: var(--c2) !important; font-weight: 600; }
+.ra__plan s { color: var(--muted); font-weight: 500; }

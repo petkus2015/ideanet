@@ -770,5 +770,9 @@ input[type="search"], select { font-size: 16px; min-height: 48px; }
   .station__field { max-width: none; }
 }
 
+/* pôvodný čas pri meškajúcom vlaku v zozname */
+.ra__plan { color: var(--c2) !important; font-weight: 600; }
+.ra__plan s { color: var(--muted); font-weight: 500; }
+
 /* v rámci stránky WordPressu hlavička nepláva nad obsahom témy */
 .top { position: static; }
