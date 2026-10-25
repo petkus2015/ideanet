@@ -3,16 +3,20 @@
 (() => {
   'use strict';
 
-  const DATA_URL = 'data/trains.json';
-  const HISTORY_URL = 'data/history.json';
-  const TIMETABLE_URL = 'data/timetable.json';   // cestovný poriadok na dnes (z GTFS ŽSR)
+  // nastavenia: samostatná stránka používa predvolené cesty, WordPress plugin ich podá cez window.VLAKY_CONFIG
+  const CFG = window.VLAKY_CONFIG || {};
+  const ROOT = CFG.root || document;   // v plugine Shadow DOM, aby sa štýly témy a aplikácie nemiešali
+  const HOST = CFG.root ? CFG.root.host : document.documentElement;
+  const DATA_URL = CFG.trainsUrl || 'data/trains.json';
+  const HISTORY_URL = CFG.historyUrl || 'data/history.json';
+  const TIMETABLE_URL = CFG.timetableUrl || 'data/timetable.json';   // cestovný poriadok na dnes (z GTFS ŽSR)
   const BOARD_PAGE = 20;
   const BOARD_AHEAD = 240;   // minúty dopredu na tabuli odchodov
   const REFRESH_MS = 5 * 60 * 1000;
   const STALE_MS = 15 * 60 * 1000;
   const PAGE = 15;
   const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)');
-  const PREVIEW = !!window.VLAKY_DEMO;   // samostatný náhľad bez dátového súboru
+  const PREVIEW = !!(window.VLAKY_DEMO || CFG.demo);   // náhľad s vymyslenými dátami
   const FORCE_DEMO = PREVIEW || new URLSearchParams(location.search).has('demo');
 
   const CATS = [
@@ -33,11 +37,12 @@
   ];
   // poradie „rýchliky a expresy prvé“
   const FAST_RANK = { r: 0, ex: 0, int: 1, reg: 2, other: 3 };
-  const QUICK_STATIONS = ['Bratislava', 'Žilina', 'Košice', 'Banská Bystrica', 'Poprad-Tatry', 'Nové Zámky'];
+  const QUICK_STATIONS = CFG.quickStations?.length ? CFG.quickStations : ['Bratislava', 'Žilina', 'Košice', 'Banská Bystrica', 'Poprad-Tatry', 'Nové Zámky'];
   const TYPE_GROUP = new Map(GROUPS.flatMap(g => g.types.map(t => [t.toUpperCase(), g.id])));
   const groupOf = t => TYPE_GROUP.get(String(t.type || '').toUpperCase()) || 'other';
 
-  const $ = id => document.getElementById(id);
+  const $ = id => ROOT.getElementById(id);
+  const $q = sel => ROOT.querySelector(sel);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const fmtMin = m => (m >= 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min` : `${m} min`);
   const fmtTime = d => d.toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit' });
@@ -254,7 +259,7 @@
   function renderBoard() {
     const mode = state.boardMode, now = nowMin();
     const items = boardFiltered(mode);
-    document.querySelectorAll('.fids__tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
+    ROOT.querySelectorAll('.fids__tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
     $('fidsTime').textContent = mode === 'dep' ? 'Odchod' : 'Príchod';
     $('fidsDir').textContent = mode === 'dep' ? 'Kam ide' : 'Odkiaľ prichádza';
     const ahead = items.filter(e => !['gone', 'arrived'].includes(e.status));
@@ -429,7 +434,7 @@
     const msg = {
       demo: PREVIEW
         ? '<b>Ukážka rozhrania.</b> Vlaky a meškania sú vymyslené, ale realistické. Naostro stránka každých 5 minút načíta dáta z mapy polohy vlakov ŽSR.'
-        : '<b>Ukážkové dáta.</b> Súbor <code>data/trains.json</code> zatiaľ neexistuje. Spustite <code>python3 scripts/fetch_zsr.py --loop</code> alebo GitHub Action „Meškanie vlakov“.',
+        : CFG.noDataNotice || '<b>Ukážkové dáta.</b> Súbor <code>data/trains.json</code> zatiaľ neexistuje. Spustite <code>python3 scripts/fetch_zsr.py --loop</code> alebo GitHub Action „Meškanie vlakov“.',
       stale: `Posledné dáta sú z ${state.updated && fmtTime(state.updated)}. Zdroj ŽSR sa pravdepodobne neaktualizuje.`,
       error: 'Nové dáta sa nepodarilo načítať. Zobrazujem posledný platný stav, ďalší pokus o 5 minút.',
     }[state.mode];
@@ -481,7 +486,7 @@
         <span class="mini"><span style="width:${(100 * c[i]) / max}%;background:var(--c${i})"></span></span>
         <b>${c[i]}</b><small>${Math.round((100 * c[i]) / total)} %</small>
       </button>`).join('');
-    document.querySelector('.side').classList.toggle('has-cat', state.cat !== null);
+    $q('.side').classList.toggle('has-cat', state.cat !== null);
     $('clearCat').hidden = state.cat === null;
   }
 
@@ -575,7 +580,7 @@
       ? 'Tabuľa ukazuje vlaky na najbližšie 4 hodiny. Inú stanicu vyberiete nižšie alebo napíšete do poľa.'
       : 'Vyberte stanicu a uvidíte, kedy z nej vlaky odchádzajú a koľko meškajú.';
     const board = boardActive();
-    document.querySelector('.board').classList.toggle('is-fids', board);
+    $q('.board').classList.toggle('is-fids', board);
     $('fids').hidden = !board;
     const bar = $('stbar');
     bar.hidden = !st || board;
@@ -769,9 +774,9 @@
     }
     renderList(); renderDots();
     if (from === 'map') {
-      document.querySelector(`.row[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      $q(`.row[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     } else if (state.active) {
-      const dot = document.querySelector(`.dot[data-id="${CSS.escape(id)}"]`);
+      const dot = $q(`.dot[data-id="${CSS.escape(id)}"]`);
       const t = state.trains.find(x => x.id === id);
       if (dot && t) showTip(t, dot);
     } else {
@@ -809,7 +814,7 @@
     $('stbar').addEventListener('change', e => {
       if (e.target.id === 'showPassed') { state.showPassed = e.target.checked; refreshAll(); }
     });
-    document.querySelector('.fids__tabs').addEventListener('click', e => {
+    $q('.fids__tabs').addEventListener('click', e => {
       const b = e.target.closest('[data-mode]');
       if (!b) return;
       state.boardMode = b.dataset.mode;
@@ -834,7 +839,7 @@
         state.active = m.dataset.map;
         renderDots();
         $('map').scrollIntoView({ block: 'center', behavior: 'smooth' });
-        const dot = document.querySelector(`.dot[data-id="${CSS.escape(m.dataset.map)}"]`);
+        const dot = $q(`.dot[data-id="${CSS.escape(m.dataset.map)}"]`);
         if (dot && t) setTimeout(() => showTip(t, dot), 400);
       }
     });
@@ -850,7 +855,7 @@
     $('sort').addEventListener('change', e => { state.sort = e.target.value; renderList(); });
     $('more').addEventListener('click', () => { state.shown += PAGE; renderList(); });
     $('refresh').addEventListener('click', load);
-    $('bigText').addEventListener('click', () => setBig(!document.documentElement.classList.contains('big')));
+    $('bigText').addEventListener('click', () => setBig(!HOST.classList.contains('big')));
     const openById = id => { const t = state.trains.find(x => x.id === id); if (t) openTrain(t.type, t.number); };
     $('rows').addEventListener('click', e => { const li = e.target.closest('.row'); if (li) openById(li.dataset.id); });
     $('rows').addEventListener('keydown', e => {
@@ -1014,7 +1019,7 @@
   state.station = store.get('station');   // overí sa po načítaní zoznamu staníc
   state.group = GROUPS.some(g => g.id === store.get('group')) ? store.get('group') : null;
   function setBig(on) {
-    document.documentElement.classList.toggle('big', on);
+    HOST.classList.toggle('big', on);
     $('bigText').setAttribute('aria-pressed', String(on));
     store.set('big', on ? '1' : '');
   }

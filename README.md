@@ -153,3 +153,27 @@ z poslednej nasadenej verzie, takže sa necommituje do gitu.
 Poznámka: GitHub plánované behy niekedy oneskorí o pár minút. Ak by ŽSR
 blokovalo IP adresy GitHubu, spustite `fetch_zsr.py --loop` na vlastnom serveri
 a priečinok `vlaky/` servírujte odtiaľ.
+
+---
+
+# WordPress plugin — `wordpress/meskanie-vlakov/`
+
+Celý prehľad ako plugin pre podstránku na WordPresse. Hotový balík na nahratie:
+**`wordpress/meskanie-vlakov.zip`**.
+
+1. WordPress → Pluginy → Pridať nový → Nahrať plugin → `meskanie-vlakov.zip` → Aktivovať.
+2. Na stránku vložte shortcode `[meskanie_vlakov]` (blok *Shortcode*).
+   Voliteľne `sirka="plna"` (na celú šírku) a `stanice="Žilina, Vrútky"` (tlačidlá častých staníc).
+3. Nastavenia a stav sťahovania: Nastavenia → Meškanie vlakov.
+
+Dáta sťahuje server (PHP verzia `scripts/fetch_zsr.py`): polohu vlakov každých 5 minút
+cez WP-Cron, cestovný poriadok GTFS raz denne. Ukladajú sa do
+`wp-content/uploads/meskanie-vlakov/`. Aplikácia beží v Shadow DOM, takže sa nebije so
+štýlmi témy, a rozloženie sa prispôsobuje šírke miesta na stránke (container queries).
+
+Úpravy vzhľadu a správania sa robia vo `vlaky/` a do pluginu sa prenesú príkazom:
+
+```bash
+python3 scripts/build_wp_plugin.py
+```
+

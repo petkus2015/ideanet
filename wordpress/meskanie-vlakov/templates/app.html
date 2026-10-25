@@ -1,0 +1,155 @@
+<!-- Vygenerované z vlaky/index.html skriptom scripts/build_wp_plugin.py — needitovať ručne. -->
+<header class="top">
+  <div class="wrap top__in">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+      <div>
+        <h1>Meškanie vlakov</h1>
+        <p class="eyebrow">Slovensko · aktualizuje sa každých 5 minút</p>
+      </div>
+    </div>
+    <div class="status">
+      <span class="pill" id="pill" data-state="loading"><i></i><span id="pillText">Načítavam…</span></span>
+      <div class="clock"><small class="clock__lbl">Aktuálny čas</small><span id="clock" role="timer" aria-live="off"><span id="clockH">--</span><span class="colon" id="colon">:</span><span id="clockM">--</span></span><small><span id="updated">—</span> · ďalšie o <b id="countdown">5:00</b></small></div>
+      <button class="btn" id="refresh" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5"/></svg>
+        Obnoviť
+      </button>
+      <button class="btn btn--ghost" id="bigText" type="button" aria-pressed="false" title="Zväčšiť písmo">
+        <span aria-hidden="true" class="aa">A<b>A</b></span>
+        <span class="bigtxt">Väčšie písmo</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap main">
+  <div class="notice" id="notice" hidden></div>
+
+  <section class="panel board" aria-labelledby="boardTitle">
+    <div class="station">
+      <label class="station__q" for="station">Z ktorej stanice cestujete?</label>
+      <p class="station__help" id="stationHelp">Vyberte stanicu a uvidíte, kedy z nej vlaky odchádzajú a koľko meškajú.</p>
+      <div class="station__field">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        <input id="station" size="8" list="stationList" placeholder="Napíšte názov stanice" autocomplete="off">
+        <button class="station__clear" id="stationClear" type="button" hidden>Zrušiť</button>
+      </div>
+      <datalist id="stationList"></datalist>
+      <div class="quick" id="quick" role="group" aria-label="Časté stanice"></div>
+    </div>
+
+    <div class="board__head">
+      <div class="board__title">
+        <h2 id="boardTitle">Vlaky na trati</h2>
+        <p class="muted small" id="count"></p>
+      </div>
+    </div>
+
+    <div class="board__bar">
+      <div class="seg" id="groupSeg" role="group" aria-label="Druh vlaku"></div>
+      <div class="filters">
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="q" type="search" placeholder="Hľadať vlak (číslo alebo cieľ)" autocomplete="off" aria-label="Hľadať vlak podľa čísla alebo cieľa">
+        </label>
+        <select id="carrier" aria-label="Dopravca"><option value="">Všetci dopravcovia</option></select>
+        <select id="sort" aria-label="Zoradiť">
+          <option value="fast">Rýchliky a expresy prvé</option>
+          <option value="delay">Najväčšie meškanie</option>
+          <option value="number">Číslo vlaku</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="stbar" id="stbar" hidden></div>
+
+    <div class="fids" id="fids" hidden>
+      <div class="fids__head">
+        <div class="fids__tabs" role="tablist" aria-label="Odchody alebo príchody">
+          <button type="button" role="tab" data-mode="dep" aria-selected="true">Odchody</button>
+          <button type="button" role="tab" data-mode="arr" aria-selected="false">Príchody</button>
+        </div>
+        <span class="muted small" id="fidsNote"></span>
+      </div>
+      <div class="fids__cols" aria-hidden="true">
+        <span id="fidsTime">Odchod</span><span>Nový čas</span><span>Vlak</span><span id="fidsDir">Kam ide</span><span>Stav</span>
+      </div>
+      <ol class="fids__rows" id="fidsRows"></ol>
+      <button class="more" id="fidsMore" type="button" hidden>Zobraziť ďalšie spoje</button>
+    </div>
+
+    <div class="thead" aria-hidden="true">
+      <span>Meškanie</span><span>Vlak</span><span>Trasa</span><span id="thPos">Posledná poloha</span><span>Dopravca</span>
+    </div>
+    <ul class="rows" id="rows"></ul>
+    <button class="more" id="more" type="button" hidden>Zobraziť ďalšie</button>
+  </section>
+
+  <h2 class="section-title">Štatistiky podľa druhu vlaku</h2>
+  <section class="groups" id="groups" role="group" aria-label="Filtrovať podľa druhu vlaku"></section>
+
+  <h2 class="scope">Súhrn · <span id="kScope">Všetky vlaky</span></h2>
+  <section class="kpis" aria-label="Súhrn">
+    <article class="kpi">
+      <h2>V prevádzke</h2>
+      <p class="kpi__v" id="kTotal">—</p>
+      <p class="kpi__h" id="kTotalHint">&nbsp;</p>
+    </article>
+    <article class="kpi">
+      <h2>Načas <small>≤ 5 min</small></h2>
+      <p class="kpi__v" id="kOnTime">—</p>
+      <span class="meter" aria-hidden="true"><span id="kOnTimeBar"></span></span>
+      <p class="kpi__h" id="kOnTimeHint">&nbsp;</p>
+    </article>
+    <article class="kpi">
+      <h2>Priemerné meškanie</h2>
+      <p class="kpi__v" id="kAvg">—</p>
+      <p class="kpi__h" id="kAvgHint">&nbsp;</p>
+    </article>
+    <article class="kpi">
+      <h2>Mešká &gt; 15 min</h2>
+      <p class="kpi__v" id="kOver">—</p>
+      <p class="kpi__h" id="kOverHint">&nbsp;</p>
+    </article>
+    <article class="kpi kpi--hot">
+      <h2>Najväčšie meškanie</h2>
+      <p class="kpi__v" id="kMax">—</p>
+      <p class="kpi__h" id="kMaxHint">&nbsp;</p>
+    </article>
+  </section>
+
+  <section class="duo">
+    <div class="panel mapp">
+      <div class="panel__head">
+        <h2>Poloha vlakov</h2>
+        <span class="muted small">bod = posledná hlásená stanica</span>
+      </div>
+      <div class="map" id="map">
+        <svg id="mapSvg" viewBox="0 0 1000 515" role="img" aria-label="Schéma železničnej siete Slovenska s polohou vlakov"></svg>
+        <div class="tip" id="tip" hidden></div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <div class="panel__head"><h2>Rozdelenie meškania</h2><button class="link" id="clearCat" type="button" hidden>Zrušiť filter</button></div>
+        <div class="bar" id="distBar" role="img"></div>
+        <div class="cats" id="cats" role="group" aria-label="Filtrovať podľa meškania"></div>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h2>Načas za 24 h</h2><span class="muted small" id="trendNow"></span></div>
+        <svg class="trend" id="trendSvg" viewBox="0 0 600 150" aria-hidden="true"></svg>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<dialog class="tdlg" id="trainDlg" aria-labelledby="tdTitle">
+  <div class="tdlg__in" id="trainBody"></div>
+</dialog>
+
+<footer class="wrap foot">
+  Zdroj dát: ŽSR, <a href="https://mapa.zsr.sk/" target="_blank" rel="noopener">mapa.zsr.sk</a> (neoficiálne, bez záruky). Obnovuje sa každých 5 minút.
+</footer>
