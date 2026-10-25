@@ -1,4 +1,4 @@
-/* Staničná tabuľa v noci: atramentovo modrý podklad, akcenty vo farbách ZSSK. */
+/* Staničná tabuľa v noci: atramentovo modrý podklad, akcent v oranžovej ZSSK. */
 :root {
   color-scheme: dark;
   --bg: #0a0f1c;
@@ -9,10 +9,10 @@
   --fg: #e7ecf7;
   --muted: #8a96b2;
   --dim: #5b6684;
-  --brand: #de5a43;           /* červeno-oranžová ZSSK (plochy s bielym textom) */
-  --accent: #f19e38;          /* oranžová ZSSK (tlačidlo „Hľadať“): text a čiary na tmavom podklade */
-  --led: #f5ad55;             /* svietiace číslice hodín a tabule */
-  --on-brand: #ffffff;
+  --brand: #f19e38;           /* oranžová ZSSK (tlačidlo „Hľadať“): plochy */
+  --accent: #f19e38;          /* tá istá oranžová pre text a čiary na tmavom podklade */
+  --led: #f19e38;             /* svietiace číslice hodín a tabule */
+  --on-brand: #0a0f1c;        /* tmavý text na oranžovej, kvôli čitateľnosti */
 
   /* meškanie: načas → extrémne */
   --c0: #34d399;
