@@ -72,3 +72,50 @@ z obrazovky sa prehrávanie zastaví.
 - Ovládanie klávesnicou, `aria` popisy, viditeľný focus, respektuje
   `prefers-reduced-motion`.
 - Videá sa načítavajú až pri prehratí (`preload="none"`), obrázky lazy-load.
+
+---
+
+# Meškanie vlakov — `vlaky/`
+
+Prehľad aktuálneho meškania vlakov na Slovensku, obnovovaný **každých 5 minút**.
+Dáta pochádzajú z mapy polohy vlakov ŽSR ([mapa.zsr.sk](https://mapa.zsr.sk/),
+nedokumentované API — bez záruky).
+
+**Čo stránka ukazuje:** počet vlakov v prevádzke, podiel vlakov načas (≤ 5 min),
+priemerné a najväčšie meškanie so zmenou za posledných 5 min, rozdelenie meškania
+po kategóriách, trend za 24 h, filtrovateľný zoznam (hľadanie, dopravca, kategória,
+zoradenie) a mapu s farebnými značkami. Odpočet do ďalšej aktualizácie je v hlavičke.
+
+## Ako to funguje
+
+Prehliadač nemôže volať API ŽSR priamo (CORS + session cookies), preto dáta
+sťahuje skript a stránka číta statický súbor:
+
+```
+scripts/fetch_zsr.py   ──►  vlaky/data/trains.json   (aktuálny stav)
+                            vlaky/data/history.json  (KPI za 24 h)
+vlaky/index.html       ──►  číta JSON, každých 5 min ho znova načíta
+```
+
+## Lokálne spustenie
+
+```bash
+python3 scripts/fetch_zsr.py --loop &   # sťahuje dáta každých 5 min
+python3 -m http.server 8000             # http://localhost:8000/vlaky/
+```
+
+Kým `trains.json` neexistuje, stránka zobrazí jasne označené **ukážkové dáta**
+(vynútiť ich možno aj cez `?demo`).
+
+## Nasadenie na GitHub Pages
+
+Workflow `.github/workflows/vlaky.yml` beží každých 5 minút: stiahne dáta
+a nasadí celý web (vrátane `vlaky/`) na GitHub Pages. Históriu KPI si preberá
+z poslednej nasadenej verzie, takže sa necommituje do gitu.
+
+1. V repozitári: **Settings → Pages → Source: GitHub Actions**.
+2. Workflow beží z vetvy `main` (cron spúšťa len predvolenú vetvu).
+
+Poznámka: GitHub plánované behy niekedy oneskorí o pár minút. Ak by ŽSR
+blokovalo IP adresy GitHubu, spustite `fetch_zsr.py --loop` na vlastnom serveri
+a priečinok `vlaky/` servírujte odtiaľ.
