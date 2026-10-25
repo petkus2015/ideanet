@@ -141,7 +141,7 @@ class MV_Admin {
 			</p>
 			<p class="description" style="max-width:760px">
 				Sťahovanie beží cez WP-Cron, ktorý WordPress spúšťa pri návštevách webu. Ak má web málo návštev,
-				nastavte na hostingu systémový cron, ktorý každých 5 minút otvorí <code><?php echo esc_html( site_url( 'wp-cron.php' ) ); ?></code>.
+				nastavte na hostingu systémový cron, ktorý každé 2 minúty otvorí <code><?php echo esc_html( site_url( 'wp-cron.php' ) ); ?></code>.
 			</p>
 
 			<h2>Nastavenia</h2>

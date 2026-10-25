@@ -1,5 +1,5 @@
 /* Meškanie vlakov SK — prehľad z dát mapa.zsr.sk (vlaky/data/trains.json),
-   ktoré každých 5 minút obnovuje scripts/fetch_zsr.py. */
+   ktoré každé 2 minúty obnovuje scripts/fetch_zsr.py. */
 (() => {
   'use strict';
 
@@ -12,8 +12,9 @@
   const TIMETABLE_URL = CFG.timetableUrl || 'data/timetable.json';   // cestovný poriadok na dnes (z GTFS ŽSR)
   const BOARD_PAGE = 20;
   const BOARD_AHEAD = 240;   // minúty dopredu na tabuli odchodov
-  const REFRESH_MS = 5 * 60 * 1000;
-  const STALE_MS = 15 * 60 * 1000;
+  const REFRESH_MS = 2 * 60 * 1000;
+  const STALE_MS = 10 * 60 * 1000;
+  const STEP = `${REFRESH_MS / 60000} min`;   // „za 2 min“ pri zmenách súhrnu
   const PAGE = 15;
   const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)');
   const PREVIEW = !!(window.VLAKY_DEMO || CFG.demo);   // náhľad s vymyslenými dátami
@@ -169,6 +170,7 @@
     else if (state.station) state.station = findStation(state.station)[0];
     const h = state.history;
     state.prev = h.length > 1 ? h[h.length - 2] : before;
+    state.trains.forEach(t => { t.next = resolveNext(t); });
     state.nextAt = Date.now() + REFRESH_MS;
     setTimeout(() => $('refresh').classList.remove('is-busy'), 400);
     render();
@@ -291,6 +293,40 @@
     const rest = items.length - state.boardShown;
     $('fidsMore').hidden = rest <= 0;
     $('fidsMore').textContent = `Zobraziť ďalšie spoje (${rest})`;
+  }
+
+  /* ---------------- ďalšia stanica ---------------- */
+
+  // kódy staníc z cestovného poriadku (GTFS stop_id / stop_code) -> názov
+  let codeIdx = null, codeIdxFor = null;
+  function codeIndex() {
+    if (codeIdxFor !== state.tt) {
+      codeIdxFor = state.tt;
+      codeIdx = new Map();
+      (state.tt?.stations || []).forEach(([name, , , codes]) =>
+        (codes || []).forEach(c => codeIdx.set(String(c).replace(/^0+/, ''), name)));
+    }
+    return codeIdx;
+  }
+
+  // ŽSR niekedy namiesto názvu ďalšej stanice pošle len jej číslo: preložíme ho na názov,
+  // inak ďalšiu stanicu určíme z polohy vlaku a jeho trasy; keď to nejde, nezobrazíme nič
+  function resolveNext(t) {
+    const v = String(t.next || '').trim();
+    if (v && !/^\d+$/.test(v)) return v;
+    if (v) {
+      const hit = codeIndex().get(v.replace(/^0+/, ''));
+      if (hit) return hit;
+    }
+    const tt = state.tt, num = digits(t.number);
+    const trip = tt && num && (tt.trips.find(x => digits(x[1]) === num && x[0] === t.type) || tt.trips.find(x => digits(x[1]) === num));
+    if (trip) {
+      const stops = trip[3].map(([si]) => { const [name, lat, lon] = tt.stations[si]; return { name, lat, lon }; });
+      const w = trainWhere(t, stops);
+      if (w?.at != null) return stops[w.at + 1]?.name || '';
+      if (w?.between != null) return stops[w.between + 1].name;
+    }
+    return '';
   }
 
   /* ---------------- detail vlaku ---------------- */
@@ -433,10 +469,10 @@
     $('updated').textContent = state.updated ? `údaje z ${fmtTime(state.updated)}` : 'načítavam';
     const msg = {
       demo: PREVIEW
-        ? '<b>Ukážka rozhrania.</b> Vlaky a meškania sú vymyslené, ale realistické. Naostro stránka každých 5 minút načíta dáta z mapy polohy vlakov ŽSR.'
+        ? '<b>Ukážka rozhrania.</b> Vlaky a meškania sú vymyslené, ale realistické. Naostro stránka každé 2 minúty načíta dáta z mapy polohy vlakov ŽSR.'
         : CFG.noDataNotice || '<b>Ukážkové dáta.</b> Súbor <code>data/trains.json</code> zatiaľ neexistuje. Spustite <code>python3 scripts/fetch_zsr.py --loop</code> alebo GitHub Action „Meškanie vlakov“.',
       stale: `Posledné dáta sú z ${state.updated && fmtTime(state.updated)}. Zdroj ŽSR sa pravdepodobne neaktualizuje.`,
-      error: 'Nové dáta sa nepodarilo načítať. Zobrazujem posledný platný stav, ďalší pokus o 5 minút.',
+      error: 'Nové dáta sa nepodarilo načítať. Zobrazujem posledný platný stav, ďalší pokus o 2 minúty.',
     }[state.mode];
     const n = $('notice');
     n.hidden = !msg;
@@ -446,9 +482,9 @@
   function delta(cur, prev, { unit = '', dp = 0, upIsGood = false } = {}) {
     if (prev == null) return '&nbsp;';
     const d = cur - prev;
-    if (Math.abs(d) < (dp ? 0.05 : 0.5)) return 'bez zmeny za 5 min';
+    if (Math.abs(d) < (dp ? 0.05 : 0.5)) return `bez zmeny za ${STEP}`;
     const good = upIsGood ? d > 0 : d < 0;
-    return `<span class="${good ? 'good' : 'bad'}">${d > 0 ? '▲' : '▼'} ${fmtNum(Math.abs(d), dp)}${unit}</span> za 5 min`;
+    return `<span class="${good ? 'good' : 'bad'}">${d > 0 ? '▲' : '▼'} ${fmtNum(Math.abs(d), dp)}${unit}</span> za ${STEP}`;
   }
 
   function renderKpis() {
@@ -1001,8 +1037,8 @@
 
   function demoHistory(now) {
     const r = rng(11), end = Date.now(), pts = [];
-    for (let i = 287; i >= 0; i--) {
-      const t = new Date(end - i * 5 * 60000), hr = t.getHours() + t.getMinutes() / 60;
+    for (let i = 719; i >= 0; i--) {
+      const t = new Date(end - i * 2 * 60000), hr = t.getHours() + t.getMinutes() / 60;
       const rush = Math.exp(-((hr - 7.5) ** 2) / 1.5) + Math.exp(-((hr - 16.5) ** 2) / 2);
       const wave = Math.sin(i / 9) * 1.5 + Math.sin(i / 23 + 1) * 2;
       const on = i === 0 ? now.onTime : Math.min(95, now.onTime - rush * 12 + wave + (r() - 0.5) * 1.5);

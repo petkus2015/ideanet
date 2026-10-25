@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Meškanie vlakov
  * Description:       Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku. Na stránku vložte shortcode [meskanie_vlakov].
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MV_VERSION', '1.0.0' );
+define( 'MV_VERSION', '1.1.0' );
 define( 'MV_FILE', __FILE__ );
 define( 'MV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MV_URL', plugin_dir_url( __FILE__ ) );
@@ -33,22 +33,26 @@ function mv_settings() {
 	return wp_parse_args( (array) get_option( 'mv_settings', array() ), $defaults );
 }
 
-/* ---------- plánovač: poloha vlakov každých 5 minút, cestovný poriadok raz denne ---------- */
+/* ---------- plánovač: poloha vlakov každé 2 minúty, cestovný poriadok raz denne ---------- */
 
 add_filter(
 	'cron_schedules',
 	function ( $schedules ) {
-		$schedules['mv_5min'] = array(
-			'interval' => 5 * MINUTE_IN_SECONDS,
-			'display'  => 'Každých 5 minút (Meškanie vlakov)',
+		$schedules['mv_2min'] = array(
+			'interval' => 2 * MINUTE_IN_SECONDS,
+			'display'  => 'Každé 2 minúty (Meškanie vlakov)',
 		);
 		return $schedules;
 	}
 );
 
 function mv_schedule_events() {
+	// staršia verzia pluginu plánovala každých 5 minút: prenastavíme na 2 minúty
+	if ( wp_next_scheduled( 'mv_fetch_trains' ) && 'mv_2min' !== wp_get_schedule( 'mv_fetch_trains' ) ) {
+		wp_clear_scheduled_hook( 'mv_fetch_trains' );
+	}
 	if ( ! wp_next_scheduled( 'mv_fetch_trains' ) ) {
-		wp_schedule_event( time(), 'mv_5min', 'mv_fetch_trains' );
+		wp_schedule_event( time(), 'mv_2min', 'mv_fetch_trains' );
 	}
 }
 
@@ -120,7 +124,7 @@ function mv_shortcode( $atts ) {
 		'cssUrl'        => MV_URL . 'assets/app.css?ver=' . MV_VERSION,
 		'demo'          => (bool) $settings['demo'],
 		'quickStations' => array_values( array_filter( array_map( 'trim', explode( ',', $stations ) ) ) ),
-		'noDataNotice'  => '<b>Ukážkové dáta.</b> Údaje zo ŽSR sa ešte nestiahli. Prvé stiahnutie prebehne do 5 minút po aktivácii pluginu.',
+		'noDataNotice'  => '<b>Ukážkové dáta.</b> Údaje zo ŽSR sa ešte nestiahli. Prvé stiahnutie prebehne do 2 minút po aktivácii pluginu.',
 	);
 
 	if ( $settings['google_fonts'] ) {

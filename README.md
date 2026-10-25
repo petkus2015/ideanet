@@ -77,12 +77,12 @@ z obrazovky sa prehrávanie zastaví.
 
 # Meškanie vlakov — `vlaky/`
 
-Prehľad aktuálneho meškania vlakov na Slovensku, obnovovaný **každých 5 minút**.
+Prehľad aktuálneho meškania vlakov na Slovensku, obnovovaný **každé 2 minúty**.
 Dáta pochádzajú z mapy polohy vlakov ŽSR ([mapa.zsr.sk](https://mapa.zsr.sk/),
 nedokumentované API — bez záruky).
 
 **Čo stránka ukazuje:** počet vlakov v prevádzke, podiel vlakov načas (≤ 5 min),
-priemerné a najväčšie meškanie so zmenou za posledných 5 min, rozdelenie meškania
+priemerné a najväčšie meškanie so zmenou za posledné 2 minúty, rozdelenie meškania
 po kategóriách, trend za 24 h, filtrovateľný zoznam (hľadanie, dopravca, kategória,
 zoradenie), schému železničnej siete s polohou vlakov a tabuľu vlakov v štýle
 staničnej tabule (tmavý dizajn).
@@ -128,13 +128,13 @@ sťahuje skript a stránka číta statický súbor:
 ```
 scripts/fetch_zsr.py   ──►  vlaky/data/trains.json   (aktuálny stav)
                             vlaky/data/history.json  (KPI za 24 h)
-vlaky/index.html       ──►  číta JSON, každých 5 min ho znova načíta
+vlaky/index.html       ──►  číta JSON, každé 2 min ho znova načíta
 ```
 
 ## Lokálne spustenie
 
 ```bash
-python3 scripts/fetch_zsr.py --loop &   # sťahuje dáta každých 5 min
+python3 scripts/fetch_zsr.py --loop &   # sťahuje dáta každé 2 minúty
 python3 -m http.server 8000             # http://localhost:8000/vlaky/
 ```
 
@@ -143,7 +143,7 @@ Kým `trains.json` neexistuje, stránka zobrazí jasne označené **ukážkové 
 
 ## Nasadenie na GitHub Pages
 
-Workflow `.github/workflows/vlaky.yml` beží každých 5 minút: stiahne dáta
+Workflow `.github/workflows/vlaky.yml` beží každých 5 minút (častejšie GitHub nedovolí; na 2 minúty použite WordPress plugin alebo `fetch_zsr.py --loop`): stiahne dáta
 a nasadí celý web (vrátane `vlaky/`) na GitHub Pages. Históriu KPI si preberá
 z poslednej nasadenej verzie, takže sa necommituje do gitu.
 
@@ -166,7 +166,7 @@ Celý prehľad ako plugin pre podstránku na WordPresse. Hotový balík na nahra
    Voliteľne `sirka="plna"` (na celú šírku) a `stanice="Žilina, Vrútky"` (tlačidlá častých staníc).
 3. Nastavenia a stav sťahovania: Nastavenia → Meškanie vlakov.
 
-Dáta sťahuje server (PHP verzia `scripts/fetch_zsr.py`): polohu vlakov každých 5 minút
+Dáta sťahuje server (PHP verzia `scripts/fetch_zsr.py`): polohu vlakov každé 2 minúty
 cez WP-Cron, cestovný poriadok GTFS raz denne. Ukladajú sa do
 `wp-content/uploads/meskanie-vlakov/`. Aplikácia beží v Shadow DOM, takže sa nebije so
 štýlmi témy, a rozloženie sa prispôsobuje šírke miesta na stránke (container queries).

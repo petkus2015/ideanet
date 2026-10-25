@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Meškanie vlakov SK</title>
-<meta name="description" content="Prehľad aktuálneho meškania vlakov na Slovensku, aktualizovaný každých 5 minút.">
+<meta name="description" content="Prehľad aktuálneho meškania vlakov na Slovensku, aktualizovaný každé 2 minúty.">
 <meta name="theme-color" content="#0a0f1c">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23f19e38'/><circle cx='16' cy='16' r='9' fill='none' stroke='%230a0f1c' stroke-width='3'/><path d='M16 11v5l3 2' stroke='%230a0f1c' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,12 +19,12 @@
       <span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
       <div>
         <h1>Meškanie vlakov</h1>
-        <p class="eyebrow">Slovensko · aktualizuje sa každých 5 minút</p>
+        <p class="eyebrow">Slovensko · aktualizuje sa každé 2 minúty</p>
       </div>
     </div>
     <div class="status">
       <span class="pill" id="pill" data-state="loading"><i></i><span id="pillText">Načítavam…</span></span>
-      <div class="clock"><small class="clock__lbl">Aktuálny čas</small><span id="clock" role="timer" aria-live="off"><span id="clockH">--</span><span class="colon" id="colon">:</span><span id="clockM">--</span></span><small><span id="updated">—</span> · ďalšie o <b id="countdown">5:00</b></small></div>
+      <div class="clock"><small class="clock__lbl">Aktuálny čas</small><span id="clock" role="timer" aria-live="off"><span id="clockH">--</span><span class="colon" id="colon">:</span><span id="clockM">--</span></span><small><span id="updated">—</span> · ďalšie o <b id="countdown">2 min</b></small></div>
       <button class="btn" id="refresh" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5"/></svg>
         Obnoviť
@@ -165,7 +165,7 @@
 </dialog>
 
 <footer class="wrap foot">
-  Zdroj dát: ŽSR, <a href="https://mapa.zsr.sk/" target="_blank" rel="noopener">mapa.zsr.sk</a> (neoficiálne, bez záruky). Obnovuje sa každých 5 minút.
+  Zdroj dát: ŽSR, <a href="https://mapa.zsr.sk/" target="_blank" rel="noopener">mapa.zsr.sk</a> (neoficiálne, bez záruky). Obnovuje sa každé 2 minúty.
 </footer>
 
 <script src="app.js"></script>

@@ -4,7 +4,7 @@ do vlaky/data/trains.json (+ 24 h históriu KPI do history.json).
 
 Použitie:
   python3 scripts/fetch_zsr.py            # jedno stiahnutie
-  python3 scripts/fetch_zsr.py --loop     # opakuje každých 5 minút
+  python3 scripts/fetch_zsr.py --loop     # opakuje každé 2 minúty
   python3 scripts/fetch_zsr.py --out DIR  # iný výstupný priečinok
 
 Raz denne zostaví aj cestovný poriadok na dnes (vlaky/data/timetable.json)
@@ -33,8 +33,9 @@ BASE = "https://mapa.zsr.sk"
 API = BASE + "/api/action"
 GTFS_URL = "https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip"
 TZ = ZoneInfo("Europe/Bratislava")
-INTERVAL = 300
-HISTORY_LEN = 288  # 24 h po 5 min
+INTERVAL = 120
+HISTORY_LEN = 720  # 24 h po 2 min
+TIMETABLE_FORMAT = 2  # 2 = stanice s kódmi
 # druhy vlakov — rovnaké členenie ako vo vlaky/app.js
 GROUPS = {
     "reg": {"OS", "REX", "ZR", "SP", "MOS"},
@@ -206,7 +207,7 @@ def train_ident(trip, route):
 
 def build_timetable(out_path, url=GTFS_URL):
     """Cestovný poriadok na dnes vo formáte, ktorý číta vlaky/app.js:
-    {"date", "stations": [[názov, lat, lon]], "trips": [[typ, číslo, názov, [[stanica, príchod, odchod]], dopravca]]}
+    {"date", "stations": [[názov, lat, lon, [kódy]]], "trips": [[typ, číslo, názov, [[stanica, príchod, odchod]], dopravca]]}
     """
     today = datetime.now(TZ).date()
     req = urllib.request.Request(url, headers={"User-Agent": UA})
@@ -242,8 +243,13 @@ def build_timetable(out_path, url=GTFS_URL):
             except (KeyError, ValueError):
                 lat = lon = None
             st_index[name] = len(stations)
-            stations.append([name, lat, lon])
+            stations.append([name, lat, lon, []])
         stop_station[r["stop_id"]] = st_index[name]
+        # číselné kódy stanice: ŽSR ich niekedy posiela namiesto názvu ďalšej stanice
+        codes = stations[st_index[name]][3]
+        for code in re.findall(r"\d{3,}", f'{r.get("stop_id", "")} {r.get("stop_code", "")}'):
+            if code.lstrip("0") not in codes:
+                codes.append(code.lstrip("0"))
 
     times = {}
     for r in rows("stop_times.txt"):
@@ -264,14 +270,15 @@ def build_timetable(out_path, url=GTFS_URL):
         out.append([typ, num, name, stops, agencies.get(route.get("agency_id", ""), "")])
     out.sort(key=lambda t: t[3][0][2] or 0)
 
-    write_json(out_path, {"date": today.isoformat(), "source": url, "stations": stations, "trips": out})
+    write_json(out_path, {"date": today.isoformat(), "v": TIMETABLE_FORMAT, "source": url, "stations": stations, "trips": out})
     print(f"cestovný poriadok {today}: {len(out)} spojov, {len(stations)} staníc")
 
 
 def ensure_timetable(out: Path):
     path = out / "timetable.json"
     try:
-        if json.loads(path.read_text("utf-8")).get("date") == datetime.now(TZ).date().isoformat():
+        tt = json.loads(path.read_text("utf-8"))
+        if tt.get("date") == datetime.now(TZ).date().isoformat() and tt.get("v", 1) >= TIMETABLE_FORMAT:
             return
     except (OSError, ValueError, AttributeError):
         pass

@@ -1,5 +1,8 @@
 name: Meškanie vlakov (každých 5 min)
 
+# GitHub Actions nedovolí plánovať častejšie ako raz za 5 minút.
+# Aktualizáciu každé 2 minúty zabezpečí WordPress plugin alebo `fetch_zsr.py --loop` na vlastnom serveri.
+
 on:
   schedule:
     - cron: "*/5 * * * *"

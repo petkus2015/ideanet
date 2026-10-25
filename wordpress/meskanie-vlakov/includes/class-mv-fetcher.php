@@ -2,7 +2,7 @@
 /**
  * Sťahovanie dát na serveri (PHP verzia scripts/fetch_zsr.py).
  *
- * - poloha a meškanie vlakov z mapa.zsr.sk (nedokumentované API) každých 5 minút
+ * - poloha a meškanie vlakov z mapa.zsr.sk (nedokumentované API) každé 2 minúty
  * - história súhrnu za 24 h
  * - cestovný poriadok na dnes z otvorených GTFS dát ŽSR (CC0) raz denne
  *
@@ -16,7 +16,8 @@ class MV_Fetcher {
 	const BASE         = 'https://mapa.zsr.sk';
 	const API          = 'https://mapa.zsr.sk/api/action';
 	const GTFS_URL     = 'https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip';
-	const HISTORY_LEN  = 288; // 24 h po 5 min
+	const HISTORY_LEN  = 720; // 24 h po 2 min
+	const TT_FORMAT    = 2;   // 2 = stanice s kódmi
 	const UA           = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36';
 	const GROUPS       = array(
 		'reg' => array( 'OS', 'REX', 'ZR', 'SP', 'MOS' ),
@@ -67,7 +68,7 @@ class MV_Fetcher {
 
 	/* ---------- poloha vlakov ---------- */
 
-	/** Úloha plánovača každých 5 minút. */
+	/** Úloha plánovača každé 2 minúty. */
 	public static function cron_trains() {
 		if ( mv_settings()['demo'] ) {
 			return;
@@ -79,7 +80,7 @@ class MV_Fetcher {
 		}
 		// cestovný poriadok je na každý deň iný: po polnoci sa zostaví nový
 		$tt = self::read_json( 'timetable.json' );
-		if ( ( ! $tt || ( $tt['date'] ?? '' ) !== self::today()->format( 'Y-m-d' ) )
+		if ( ( ! $tt || ( $tt['date'] ?? '' ) !== self::today()->format( 'Y-m-d' ) || ( $tt['v'] ?? 1 ) < self::TT_FORMAT )
 			&& ! get_transient( 'mv_tt_running' ) && ! wp_next_scheduled( 'mv_build_timetable' ) ) {
 			wp_schedule_single_event( time(), 'mv_build_timetable' );
 		}
@@ -303,7 +304,7 @@ class MV_Fetcher {
 
 	/**
 	 * Cestovný poriadok na dnes vo formáte, ktorý číta assets/app.js:
-	 * {"date", "stations": [[názov, lat, lon]], "trips": [[typ, číslo, názov, [[stanica, príchod, odchod]], dopravca]]}
+	 * {"date", "stations": [[názov, lat, lon, [kódy]]], "trips": [[typ, číslo, názov, [[stanica, príchod, odchod]], dopravca]]}
 	 */
 	public static function build_timetable() {
 		if ( get_transient( 'mv_tt_running' ) ) {
@@ -390,9 +391,19 @@ class MV_Fetcher {
 					$lat                = is_numeric( $r['stop_lat'] ?? '' ) ? round( (float) $r['stop_lat'], 4 ) : null;
 					$lon                = is_numeric( $r['stop_lon'] ?? '' ) ? round( (float) $r['stop_lon'], 4 ) : null;
 					$st_index[ $name ] = count( $stations );
-					$stations[]         = array( $name, $lat, $lon );
+					$stations[]         = array( $name, $lat, $lon, array() );
 				}
-				$stop_st[ $r['stop_id'] ] = $st_index[ $name ];
+				$idx                      = $st_index[ $name ];
+				$stop_st[ $r['stop_id'] ] = $idx;
+				// číselné kódy stanice: ŽSR ich niekedy posiela namiesto názvu ďalšej stanice
+				if ( preg_match_all( '/\d{3,}/', ( $r['stop_id'] ?? '' ) . ' ' . ( $r['stop_code'] ?? '' ), $m ) ) {
+					foreach ( $m[0] as $code ) {
+						$code = ltrim( $code, '0' );
+						if ( ! in_array( $code, $stations[ $idx ][3], true ) ) {
+							$stations[ $idx ][3][] = $code;
+						}
+					}
+				}
 			}
 
 			$times = array();
@@ -434,6 +445,7 @@ class MV_Fetcher {
 			'timetable.json',
 			array(
 				'date'     => self::today()->format( 'Y-m-d' ),
+				'v'        => self::TT_FORMAT,
 				'source'   => $url,
 				'stations' => $stations,
 				'trips'    => $out,
