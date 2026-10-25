@@ -166,6 +166,7 @@
     state.nextAt = Date.now() + REFRESH_MS;
     setTimeout(() => $('refresh').classList.remove('is-busy'), 400);
     render();
+    renderTrain();
   }
 
   /* ---------------- tabuľa odchodov ---------------- */
@@ -271,7 +272,7 @@
         ? (mode === 'dep' ? 'Začína v tejto stanici' : 'Končí v tejto stanici')
         : (mode === 'dep' ? `Ide z: ${e.origin}` : `Pokračuje do: ${e.dest}`);
       const via = e.via.length ? `${mode === 'dep' ? 'Zastavuje' : 'Predtým'}: ${e.via.join(', ')}` : '';
-      return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" ${e.train ? `data-id="${esc(e.train.id)}" tabindex="0" role="button"` : ''}
+      return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" data-type="${esc(e.type)}" data-num="${esc(e.number)}" tabindex="0" role="button" title="Zobraziť trasu a polohu vlaku"
           style="--k:var(--c${c})" aria-label="${esc(e.type)} ${esc(e.number)} ${mode === 'dep' ? 'do' : 'z'} ${esc(big)}, ${hm(e.plan)}, ${esc(stText)}">
         <span class="fl__time">${flap(hm(e.plan))}</span>
         <span class="fl__exp">${late ? `<span class="fl__lbl">nový čas</span>${hm(e.exp)}` : ''}</span>
@@ -284,6 +285,133 @@
     const rest = items.length - state.boardShown;
     $('fidsMore').hidden = rest <= 0;
     $('fidsMore').textContent = `Zobraziť ďalšie spoje (${rest})`;
+  }
+
+  /* ---------------- detail vlaku ---------------- */
+
+  let openKey = null;
+
+  function openTrain(type, number) {
+    openKey = { type, number };
+    renderTrain();
+    const d = $('trainDlg');
+    if (!d.open) d.showModal();
+    d.querySelector('.td-close')?.focus();
+    // zoznam zastávok posunieme tak, aby bolo vidno, kde je vlak
+    const list = d.querySelector('.td-stops'), here = d.querySelector('.td-run, .td-stop.is-cur');
+    if (list && here) list.scrollTop = here.offsetTop - list.clientHeight / 2 + here.offsetHeight / 2;
+  }
+
+  // kde je vlak: { at: index stanice } alebo { between: index stanice pred vlakom }
+  function trainWhere(t, stops) {
+    if (!t || t.lat == null || stops.length < 2 || stops.some(s => s.lat == null)) return null;
+    const pos = [t.lat, t.lon];
+    const near = stops.findIndex(s => km(pos, [s.lat, s.lon]) < 1.5);
+    if (near >= 0) return { at: near };
+    const a = along(stops.map(s => [s.lat, s.lon]), pos);
+    return { between: Math.min(Math.floor(a.s), stops.length - 2) };
+  }
+
+  function renderTrain() {
+    if (!openKey) return;
+    const num = digits(openKey.number);
+    const t = state.trains.find(x => digits(x.number) === num && x.type === openKey.type) || state.trains.find(x => digits(x.number) === num) || null;
+    const tt = state.tt;
+    const trip = tt && (tt.trips.find(x => digits(x[1]) === num && x[0] === openKey.type) || tt.trips.find(x => digits(x[1]) === num));
+    const type = trip?.[0] || t?.type || openKey.type, name = trip?.[2] || t?.name || '';
+    const carrier = t?.carrier || trip?.[4] || '';
+    const stops = trip ? trip[3].map(([si, arr, dep]) => {
+      const [nm, lat, lon] = tt.stations[si];
+      return { name: nm, lat, lon, arr, dep };
+    }) : [];
+    const delay = t ? t.delay : null;
+    const now = nowMin();
+    const where = trainWhere(t, stops);
+    const last = stops.length - 1;
+    const passedIdx = !where ? (t ? -1 : stops.length && now > (stops[last].arr ?? 0) + 2 ? last : -1)
+      : where.at != null ? where.at - 1 : where.between;
+    const c = delay != null ? catOf(delay) : 0;
+
+    // hlavná veta: kde je vlak
+    let headline, detail = '';
+    if (where?.at != null) {
+      const st = stops[where.at].name;
+      headline = where.at === 0 ? `Vlak stojí vo východiskovej stanici ${st}.`
+        : where.at === last ? `Vlak dorazil do cieľovej stanice ${st}.`
+        : `Vlak práve stojí v stanici ${st}.`;
+      if (where.at < last) detail = `Ďalšia zastávka: ${stops[where.at + 1].name}, príchod asi o ${hm(stops[where.at + 1].arr + (delay || 0))}.`;
+    } else if (where?.between != null) {
+      const a = stops[where.between], b = stops[where.between + 1];
+      headline = `Vlak práve prechádza úsekom ${a.name} → ${b.name}.`;
+      detail = `Ďalšia zastávka: ${b.name}, príchod asi o ${hm(b.arr + (delay || 0))}.`;
+    } else if (t) {
+      headline = t.info ? `Posledná hlásená poloha: ${t.info}.` : 'Vlak je na trati, presná poloha nie je známa.';
+      if (t.next) detail = `Ďalšia stanica: ${t.next}.`;
+    } else if (stops.length && now < stops[0].dep) {
+      headline = 'Vlak ešte nevyrazil.';
+      detail = `Odchod z východiskovej stanice ${stops[0].name} o ${hm(stops[0].dep)}.`;
+    } else if (stops.length) {
+      headline = `Vlak už dorazil do cieľovej stanice ${stops[last].name}.`;
+    } else {
+      headline = 'O tomto vlaku teraz nemáme údaje.';
+    }
+
+    // vybraná stanica cestujúceho
+    const mine = state.station ? stops.findIndex(s => norm(s.name) === norm(state.station)) : -1;
+    let mineText = '';
+    if (mine >= 0) {
+      const s = stops[mine], plan = mine === last ? s.arr : (s.dep ?? s.arr);
+      mineText = mine <= passedIdx
+        ? `Stanicou ${s.name} už prešiel.`
+        : where?.at === mine ? `Vlak je práve vo vašej stanici ${s.name}.`
+        : `${mine === last ? `Do stanice ${s.name} príde` : `Zo stanice ${s.name} odchádza`} ${delay > 5 ? `asi o <b>${hm(plan + delay)}</b> (podľa cestovného poriadku ${hm(plan)})` : `o <b>${hm(plan)}</b>`}.`;
+    }
+
+    const delayBadge = delay == null ? '<span class="td-delay td-delay--none">Meškanie zatiaľ nie je známe</span>'
+      : delay > 5 ? `<span class="td-delay" style="--k:var(--c${c})">⚠ Mešká ${fmtMin(delay)}</span>`
+      : '<span class="td-delay td-delay--ok">✓ Ide načas</span>';
+
+    const trainSvg = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 10h14M9 20l-2 2m8-2 2 2M8.5 13.5h.01M15.5 13.5h.01"/></svg>';
+    const rows = stops.map((s, k) => {
+      const plan = k === last ? s.arr : (s.dep ?? s.arr);
+      const done = k <= passedIdx, cur = where?.at === k;
+      const future = !done && !cur;
+      const time = future && delay > 5 ? `<s>${hm(plan)}</s><b style="color:var(--c${c})">${hm(plan + delay)}</b>` : `<b>${hm(plan)}</b>`;
+      const what = k === 0 ? 'odchod' : k === last ? 'príchod' : (s.dep != null && s.arr != null && s.dep - s.arr >= 5 ? `stojí ${s.dep - s.arr} min, príchod ${hm(s.arr)}` : '');
+      const li = `<li class="td-stop ${done ? 'is-done' : ''} ${cur ? 'is-cur' : ''} ${k === mine ? 'is-mine' : ''}">
+          <span class="td-dot" aria-hidden="true">${done ? '✓' : ''}</span>
+          <span class="td-name">${esc(s.name)}${k === mine ? ' <em>vaša stanica</em>' : ''}${cur ? ' <em class="td-here-tag">vlak je tu</em>' : ''}${what ? `<small>${what}</small>` : ''}</span>
+          <span class="td-time">${time}</span>
+        </li>`;
+      const marker = where?.between === k
+        ? `<li class="td-run">${trainSvg}<span>Vlak je tu, na trati do stanice ${esc(stops[k + 1].name)}</span></li>` : '';
+      return li + marker;
+    }).join('');
+
+    $('trainBody').innerHTML = `
+      <div class="td-head">
+        <div>
+          <p class="td-kind"><b class="tchip tchip--${groupOf({ type })}">${esc(type)}</b> ${esc([TYPE_LABEL[type], carrier].filter(Boolean).join(' · '))}</p>
+          <h2 id="tdTitle" class="td-title">${esc(type)} ${esc(openKey.number)}${name ? ` <span>${esc(name)}</span>` : ''}</h2>
+          ${stops.length ? `<p class="td-route">${esc(stops[0].name)} → ${esc(stops[last].name)}</p>` : t?.route ? `<p class="td-route">${esc(t.route)}</p>` : ''}
+        </div>
+        <button type="button" class="btn td-close" data-close>Zavrieť</button>
+      </div>
+      <div class="td-now">
+        ${delayBadge}
+        <p class="td-headline">${esc(headline)}</p>
+        ${detail ? `<p class="td-detail">${esc(detail)}</p>` : ''}
+        ${mineText ? `<p class="td-mine">${mineText}</p>` : ''}
+        ${t?.disruption ? `<p class="td-warn">Mimoriadnosť: ${esc(t.disruption)}</p>` : ''}
+        ${t?.nad?.length ? `<p class="td-warn">Náhradná autobusová doprava: ${esc(t.nad.join(' – '))}</p>` : ''}
+      </div>
+      ${stops.length ? `<div><h3 class="td-h3 td-stops-h"><span>Trasa vlaku</span><span class="muted small">odchod</span></h3><ol class="td-stops">${rows}</ol></div>`
+        : '<p class="muted">Zastávky vlaku nie sú k dispozícii, chýba cestovný poriadok.</p>'}
+      <div class="td-actions">
+        ${t && t.lat != null ? `<button type="button" class="btn" data-map="${esc(t.id)}">Ukázať na mape</button>` : ''}
+        <button type="button" class="btn btn--primary" data-close>Zavrieť</button>
+      </div>
+      <p class="muted small">Poloha podľa posledného hlásenia ŽSR (${state.updated ? fmtTime(state.updated) : '—'}). Časy príchodov sú odhad: čas z cestovného poriadku + aktuálne meškanie.</p>`;
   }
 
   /* ---------------- render ---------------- */
@@ -689,14 +817,27 @@
     });
     $('fidsMore').addEventListener('click', () => { state.boardShown += BOARD_PAGE; renderBoard(); });
     $('fidsRows').addEventListener('click', e => {
-      const li = e.target.closest('.fl[data-id]');
-      if (!li) return;
-      state.active = li.dataset.id;
-      renderDots();
-      const dot = document.querySelector(`.dot[data-id="${CSS.escape(li.dataset.id)}"]`);
-      const t = state.trains.find(x => x.id === li.dataset.id);
-      if (dot && t) { showTip(t, dot); $('map').scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+      const li = e.target.closest('.fl[data-num]');
+      if (li) openTrain(li.dataset.type, li.dataset.num);
     });
+    $('fidsRows').addEventListener('keydown', e => {
+      const li = e.target.closest('.fl[data-num]');
+      if (li && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openTrain(li.dataset.type, li.dataset.num); }
+    });
+    $('trainDlg').addEventListener('click', e => {
+      if (e.target === $('trainDlg') || e.target.closest('[data-close]')) $('trainDlg').close();
+      const m = e.target.closest('[data-map]');
+      if (m) {
+        $('trainDlg').close();
+        const t = state.trains.find(x => x.id === m.dataset.map);
+        state.active = m.dataset.map;
+        renderDots();
+        $('map').scrollIntoView({ block: 'center', behavior: 'smooth' });
+        const dot = document.querySelector(`.dot[data-id="${CSS.escape(m.dataset.map)}"]`);
+        if (dot && t) setTimeout(() => showTip(t, dot), 400);
+      }
+    });
+    $('trainDlg').addEventListener('close', () => { openKey = null; });
     $('cats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (b) setCat(b.dataset.cat); });
     $('clearCat').addEventListener('click', () => setCat(null));
     let tq;
@@ -709,9 +850,10 @@
     $('more').addEventListener('click', () => { state.shown += PAGE; renderList(); });
     $('refresh').addEventListener('click', load);
     $('bigText').addEventListener('click', () => setBig(!document.documentElement.classList.contains('big')));
-    $('rows').addEventListener('click', e => { const li = e.target.closest('.row'); if (li) select(li.dataset.id, 'list'); });
+    const openById = id => { const t = state.trains.find(x => x.id === id); if (t) openTrain(t.type, t.number); };
+    $('rows').addEventListener('click', e => { const li = e.target.closest('.row'); if (li) openById(li.dataset.id); });
     $('rows').addEventListener('keydown', e => {
-      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('row')) { e.preventDefault(); select(e.target.dataset.id, 'list'); }
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('row')) { e.preventDefault(); openById(e.target.dataset.id); }
     });
     const svg = $('mapSvg');
     svg.addEventListener('mouseover', e => {
@@ -722,10 +864,7 @@
     svg.addEventListener('click', e => {
       const d = e.target.closest('.dot');
       if (!d) { state.active = null; $('tip').hidden = true; renderList(); renderDots(); return; }
-      select(d.dataset.id, 'map');
-      const nd = document.querySelector(`.dot[data-id="${CSS.escape(d.dataset.id)}"]`);
-      const t = state.trains.find(x => x.id === d.dataset.id);
-      if (nd && t) showTip(t, nd);
+      openById(d.dataset.id);
     });
     document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() >= state.nextAt) load(); });
   }

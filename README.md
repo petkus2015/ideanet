@@ -112,6 +112,12 @@ Meškanie sa k spojom pripája z polohy vlakov podľa čísla vlaku, takže na t
 sú aj vlaky, ktoré ešte len vyrazia (stav „Podľa CP“). Bez cestovného poriadku
 stránka po výbere stanice ukáže vlaky na trati, ktoré do nej prídu.
 Výber stanice a druhu vlaku si prehliadač zapamätá.
+
+**Detail vlaku:** kliknutím na vlak (na tabuli, v zozname alebo na mape) sa otvorí
+okno s jeho trasou. Hore je jednou vetou napísané, kde vlak práve je („stojí
+v stanici…“ alebo „prechádza úsekom A → B“), aké má meškanie a kedy príde do
+ďalšej zastávky. Pod tým je zoznam zastávok: prejdené sú odškrtnuté, poloha
+vlaku je vyznačená a pri ďalších zastávkach je pôvodný aj nový (odhadovaný) čas.
 Členenie je v `GROUPS` vo `vlaky/app.js` a v `scripts/fetch_zsr.py`. Odpočet do ďalšej aktualizácie je v hlavičke.
 
 ## Ako to funguje
