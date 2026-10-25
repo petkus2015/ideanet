@@ -92,6 +92,39 @@ def coords(pos):
     return None, None
 
 
+def route_path(trasa, limit=60):
+    """Trasa vlaku ako zoznam [lat, lon] v poradí jazdy (zjednodušená na max. `limit` bodov).
+
+    Formát poľa Trasa nie je zdokumentovaný, preto berieme všetky dvojice čísel,
+    ktoré vyzerajú ako súradnice na Slovensku, v poradí, v akom prídu.
+    """
+    pts = []
+
+    def walk(x):
+        if isinstance(x, str) and x[:1] in "[{":
+            try:
+                x = json.loads(x)
+            except ValueError:
+                return
+        if isinstance(x, dict):
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, (list, tuple)):
+            if len(x) == 2 and all(isinstance(v, (int, float)) for v in x):
+                lat, lon = coords(x)
+                if lat is not None and (not pts or pts[-1] != [round(lat, 3), round(lon, 3)]):
+                    pts.append([round(lat, 3), round(lon, 3)])
+            else:
+                for v in x:
+                    walk(v)
+
+    walk(trasa)
+    if len(pts) > limit:
+        step = (len(pts) - 1) / (limit - 1)
+        pts = [pts[round(i * step)] for i in range(limit)]
+    return pts
+
+
 def clean(s):
     return re.sub(r"\s+", " ", str(s)).strip() if s not in (None, "") else ""
 
@@ -118,6 +151,7 @@ def normalize(t):
         "disruption": clean(t.get("Narusenie")),
         "note": clean(t.get("Poznamka")),
         "nad": [x for x in (clean(t.get("NadOd")), clean(t.get("NadDo"))) if x],
+        "path": route_path(t.get("Trasa")),
     }
 
 

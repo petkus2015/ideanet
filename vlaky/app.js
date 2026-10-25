@@ -7,7 +7,7 @@
   const HISTORY_URL = 'data/history.json';
   const REFRESH_MS = 5 * 60 * 1000;
   const STALE_MS = 15 * 60 * 1000;
-  const PAGE = 40;
+  const PAGE = 15;
   const PREVIEW = !!window.VLAKY_DEMO;   // samostatný náhľad bez dátového súboru
   const FORCE_DEMO = PREVIEW || new URLSearchParams(location.search).has('demo');
 
@@ -22,11 +22,14 @@
 
   // druhy vlakov podľa označenia ŽSR (TypVlaku)
   const GROUPS = [
-    { id: 'reg', label: 'Regionálne', types: ['Os', 'REX', 'Zr', 'Sp', 'MOs'] },
     { id: 'r', label: 'Rýchliky', types: ['R'] },
     { id: 'ex', label: 'Expresy a IC', types: ['Ex', 'IC', 'SC', 'RJ', 'LE'] },
     { id: 'int', label: 'Medzinárodné', types: ['EC', 'EN', 'RJX', 'ICE', 'NJ'] },
+    { id: 'reg', label: 'Regionálne', types: ['Os', 'REX', 'Zr', 'Sp', 'MOs'] },
   ];
+  // poradie „rýchliky a expresy prvé“
+  const FAST_RANK = { r: 0, ex: 0, int: 1, reg: 2, other: 3 };
+  const QUICK_STATIONS = ['Bratislava', 'Žilina', 'Košice', 'Banská Bystrica', 'Poprad-Tatry', 'Nové Zámky'];
   const TYPE_GROUP = new Map(GROUPS.flatMap(g => g.types.map(t => [t.toUpperCase(), g.id])));
   const groupOf = t => TYPE_GROUP.get(String(t.type || '').toUpperCase()) || 'other';
 
@@ -40,8 +43,13 @@
 
   const state = {
     trains: [], history: [], prev: null, updated: null,
-    mode: 'loading', cat: null, q: '', carrier: '', sort: 'delay',
-    group: null, shown: PAGE, active: null, nextAt: Date.now() + REFRESH_MS,
+    mode: 'loading', cat: null, q: '', carrier: '', sort: 'fast',
+    group: null, station: '', showPassed: false,
+    shown: PAGE, active: null, nextAt: Date.now() + REFRESH_MS,
+  };
+  const store = {
+    get(k) { try { return localStorage.getItem(`vlaky.${k}`) || ''; } catch { return ''; } },
+    set(k, v) { try { localStorage.setItem(`vlaky.${k}`, v || ''); } catch { /* bez úložiska */ } },
   };
 
   /* ---------------- dáta ---------------- */
@@ -52,7 +60,51 @@
     return res.json();
   }
 
-  const scope = () => (state.group ? state.trains.filter(t => groupOf(t) === state.group) : state.trains);
+  /* ---------------- stanica ---------------- */
+
+  const km = (a, b) => Math.hypot((a[1] - b[1]) * 73.4, (a[0] - b[0]) * 111.2);
+  const stationCoords = name => {
+    const s = Object.values(ST).find(x => norm(x[0]) === norm(name));
+    return s ? [s[1], s[2]] : null;
+  };
+  const sameStation = (field, st) => !!field && norm(field).includes(norm(st));
+
+  // poloha bodu pozdĺž trasy: index úseku + podiel (s) a vzdialenosť od trasy v km (d)
+  function along(path, p) {
+    let best = { s: 0, d: Infinity };
+    for (let i = 0; i < path.length - 1; i++) {
+      const [ay, ax0] = path[i], [by, bx0] = path[i + 1];
+      const ax = ax0 * 0.66, bx = bx0 * 0.66, px = p[1] * 0.66, py = p[0];
+      const vx = bx - ax, vy = by - ay, l2 = vx * vx + vy * vy || 1e-12;
+      const u = Math.max(0, Math.min(1, ((px - ax) * vx + (py - ay) * vy) / l2));
+      const d = km(p, [ay + u * vy, (ax + u * vx) / 0.66]);
+      if (d < best.d) best = { s: i + u, d };
+    }
+    return best;
+  }
+
+  // vzťah vlaku k vybranej stanici: here | upcoming | passed | null
+  function relation(t) {
+    const st = state.station;
+    if (!st) return null;
+    const c = stationCoords(st), pos = t.lat != null ? [t.lat, t.lon] : null;
+    if (c && pos && km(c, pos) < 2) return 'here';
+    if (c && t.path?.length > 1) {
+      const S = along(t.path, c);
+      if (S.d <= 3) return pos ? (S.s > along(t.path, pos).s ? 'upcoming' : 'passed') : 'upcoming';
+    }
+    const [from, to] = String(t.route || '').split(/\s+[-–]\s+/);
+    if (sameStation(t.next, st) || sameStation(to, st)) return 'upcoming';
+    if (sameStation(t.info, st) || sameStation(from, st)) return 'passed';
+    return null;
+  }
+
+  const atStation = t => {
+    const r = relation(t);
+    return r === 'here' || r === 'upcoming' || (state.showPassed && r === 'passed');
+  };
+  const stationScope = () => (state.station ? state.trains.filter(atStation) : state.trains);
+  const scope = () => (state.group ? stationScope().filter(t => groupOf(t) === state.group) : stationScope());
   const pickGroup = snap => (snap && state.group ? snap.g?.[state.group] : snap);
 
   function summarizeAll(trains) {
@@ -102,7 +154,7 @@
   /* ---------------- render ---------------- */
 
   function render() {
-    renderStatus(); renderGroups(); renderKpis(); renderDist(); renderTrend(); renderCarriers(); renderList(); renderDots();
+    renderStatus(); renderStation(); renderSeg(); renderGroups(); renderKpis(); renderDist(); renderTrend(); renderCarriers(); renderList(); renderDots();
   }
 
   function renderStatus() {
@@ -131,10 +183,10 @@
   }
 
   function renderKpis() {
-    const s = summarize(scope()), p = pickGroup(state.prev);
+    const s = summarize(scope()), p = state.station ? null : pickGroup(state.prev);
     $('kTotal').textContent = fmtNum(s.n);
     $('kTotalHint').textContent = `${fmtNum(scope().filter(t => t.delay > 5).length)} mešká viac ako 5 min`;
-    $('kScope').textContent = state.group ? GROUPS.find(g => g.id === state.group).label : 'Všetky vlaky';
+    $('kScope').textContent = [state.group ? GROUPS.find(g => g.id === state.group).label : 'Všetky vlaky', state.station && `stanica ${state.station}`].filter(Boolean).join(' · ');
     $('kOnTime').innerHTML = `${fmtNum(s.onTime)}<small>%</small>`;
     $('kOnTimeBar').style.width = `${s.onTime}%`;
     $('kOnTimeHint').innerHTML = delta(s.onTime, p?.onTime, { unit: ' p. b.', upIsGood: true });
@@ -223,17 +275,58 @@
         <span class="grp__meta"><span><b>${s.n}</b> vlakov</span><span>${fmtAvg(s)}</span><span>max <b>${fmtMin(max)}</b></span></span>
       </button>`;
     };
-    $('groups').innerHTML = card('', 'Všetky', 'všetky druhy', state.trains) +
+    const base = stationScope();
+    $('groups').innerHTML = card('', 'Všetky', 'všetky druhy', base) +
       GROUPS.map(g => card(g.id, g.label, g.types.filter(t => state.trains.some(x => x.type === t)).join(' · ') || g.types.slice(0, 3).join(' · '),
-        state.trains.filter(t => groupOf(t) === g.id))).join('');
+        base.filter(t => groupOf(t) === g.id))).join('');
+  }
+
+  function renderSeg() {
+    const base = stationScope();
+    const btn = (id, label, n) => `<button type="button" data-group="${id}" aria-pressed="${(state.group || '') === id}">${label}<span>${n}</span></button>`;
+    $('groupSeg').innerHTML = btn('', 'Všetky', base.length) +
+      GROUPS.map(g => btn(g.id, g.label, base.filter(t => groupOf(t) === g.id).length)).join('');
+  }
+
+  function renderStation() {
+    const st = state.station;
+    $('station').value = st;
+    $('stationClear').hidden = !st;
+    $('quick').innerHTML = QUICK_STATIONS.map(n =>
+      `<button type="button" data-station="${esc(n)}" aria-pressed="${norm(n) === norm(st)}">${esc(n)}</button>`).join('');
+    $('thPos').textContent = st ? `Poloha voči stanici ${st}` : 'Posledná poloha';
+    const bar = $('stbar');
+    bar.hidden = !st;
+    if (!st) return;
+    const rel = { here: 0, upcoming: 0, passed: 0 };
+    state.trains.forEach(t => { const r = relation(t); if (r) rel[r]++; });
+    bar.innerHTML = `
+      <span class="stbar__name"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${esc(st)}</span>
+      <span class="stbar__stat"><b>${rel.upcoming}</b> príde</span>
+      <span class="stbar__stat"><b>${rel.here}</b> v stanici</span>
+      <span class="stbar__stat muted"><b>${rel.passed}</b> už prešlo</span>
+      <label class="toggle"><input type="checkbox" id="showPassed" ${state.showPassed ? 'checked' : ''}><span></span>Zobraziť aj vlaky, ktoré už prešli</label>`;
+  }
+
+  function refreshAll() {
+    state.shown = PAGE;
+    state.active = null;
+    $('tip').hidden = true;
+    renderStation(); renderSeg(); renderGroups(); renderKpis(); renderDist(); renderList(); renderDots();
   }
 
   function setGroup(id) {
     state.group = id || null;
-    state.shown = PAGE;
-    state.active = null;
-    $('tip').hidden = true;
-    renderGroups(); renderKpis(); renderDist(); renderTrend(); renderList(); renderDots();
+    store.set('group', state.group);
+    refreshAll();
+    renderTrend();
+  }
+
+  function setStation(name) {
+    const match = Object.values(ST).find(x => norm(x[0]) === norm(name));
+    state.station = match ? match[0] : '';
+    store.set('station', state.station);
+    refreshAll();
   }
 
   function renderCarriers() {
@@ -247,20 +340,28 @@
     const q = norm(state.q);
     const byNum = (a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0);
     const sorters = {
+      fast: (a, b) => FAST_RANK[groupOf(a)] - FAST_RANK[groupOf(b)] || b.delay - a.delay || byNum(a, b),
       delay: (a, b) => b.delay - a.delay || byNum(a, b),
       number: byNum,
-      type: (a, b) => a.type.localeCompare(b.type, 'sk') || byNum(a, b),
     };
+    const passedLast = (a, b) => (relation(a) === 'passed') - (relation(b) === 'passed');
     return scope().filter(t =>
       (state.cat === null || catOf(t.delay) === state.cat) &&
       (!state.carrier || t.carrier === state.carrier) &&
       (!q || norm(`${t.type} ${t.number} ${t.type}${t.number} ${t.name} ${t.route} ${t.info} ${t.next}`).includes(q)))
-      .sort(sorters[state.sort]);
+      .sort((a, b) => (state.station && passedLast(a, b)) || sorters[state.sort](a, b));
+  }
+
+  const REL = { upcoming: ['up', 'príde'], here: ['here', 'v stanici'], passed: ['past', 'prešiel'] };
+  function relBadge(t) {
+    const r = state.station && REL[relation(t)];
+    return r ? `<span class="rel rel--${r[0]}">${r[1]}</span>` : '';
   }
 
   function renderList() {
     const items = filtered();
-    const all = scope().length, grp = state.group ? ` · ${GROUPS.find(g => g.id === state.group).label.toLowerCase()}` : '';
+    const all = scope().length;
+    const grp = (state.group ? ` · ${GROUPS.find(g => g.id === state.group).label.toLowerCase()}` : '') + (state.station ? ` · ${state.station}` : '');
     $('count').textContent = items.length === all
       ? `${items.length} vlakov${grp}, zoradené: ${$('sort').selectedOptions[0].textContent.toLowerCase()}`
       : `${items.length} z ${all} vlakov${grp}`;
@@ -279,7 +380,7 @@
           <span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span>
           <span class="tr"><span class="tr__id">${esc(trainLabel(t))}</span>${t.name ? `<span class="tr__name">${esc(t.name)}</span>` : ''}</span>
           <span class="cell">${esc(t.route) || '—'}</span>
-          <span class="cell">${t.info ? esc(t.info) : '<span class="muted">neznáma</span>'}${t.next ? `<small>ďalej ${esc(t.next)}</small>` : ''}</span>
+          <span class="cell">${relBadge(t)}${t.info ? esc(t.info) : '<span class="muted">neznáma</span>'}${t.next ? `<small>ďalej ${esc(t.next)}</small>` : ''}</span>
           <span class="carrier">${esc(t.carrier || '—')}</span>
         </div>
         ${more ? `<div class="row__more">${more}</div>` : ''}
@@ -348,7 +449,13 @@
     const g = $('dots');
     if (!g) return;
     const items = filtered().filter(t => t.lat != null && t.lon != null).sort((a, b) => a.delay - b.delay);
-    g.innerHTML = items.map(t => {
+    const sc = state.station && stationCoords(state.station);
+    const stMark = sc ? (() => {
+      const [x, y] = proj(sc[0], sc[1]);
+      return `<circle class="st-sel" cx="${x}" cy="${y}" r="14"/><circle class="st-sel__dot" cx="${x}" cy="${y}" r="5"/>` +
+        `<text class="st-sel__lbl" x="${x}" y="${y - 22}" text-anchor="middle">${esc(state.station)}</text>`;
+    })() : '';
+    g.innerHTML = stMark + items.map(t => {
       const c = catOf(t.delay), [x, y] = proj(t.lat, t.lon), r = 5 + c * 1.6, sel = state.active === t.id;
       return (c >= 3 ? `<circle class="halo" cx="${x}" cy="${y}" r="${r}" stroke="var(--c${c})"/>` : '') +
         `<circle class="dot ${sel ? 'sel' : ''}" data-id="${esc(t.id)}" cx="${x}" cy="${y}" r="${r}" fill="var(--c${c})"/>` +
@@ -398,6 +505,26 @@
 
   function bind() {
     $('groups').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) setGroup(b.dataset.group); });
+    $('groupSeg').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) setGroup(b.dataset.group); });
+    $('quick').addEventListener('click', e => {
+      const b = e.target.closest('[data-station]');
+      if (b) setStation(norm(b.dataset.station) === norm(state.station) ? '' : b.dataset.station);
+    });
+    $('station').addEventListener('input', e => {
+      const v = e.target.value.trim();
+      if (!v && state.station) setStation('');
+      else if (Object.values(ST).some(x => norm(x[0]) === norm(v))) setStation(v);
+    });
+    $('station').addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      const v = norm(e.target.value.trim());
+      const hit = v && Object.values(ST).find(x => norm(x[0]).startsWith(v));
+      if (hit) { setStation(hit[0]); e.target.blur(); }
+    });
+    $('stationClear').addEventListener('click', () => { setStation(''); $('station').focus(); });
+    $('stbar').addEventListener('change', e => {
+      if (e.target.id === 'showPassed') { state.showPassed = e.target.checked; refreshAll(); }
+    });
     $('cats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (b) setCat(b.dataset.cat); });
     $('clearCat').addEventListener('click', () => setCat(null));
     let tq;
@@ -488,16 +615,18 @@
       if (['EC', 'EN'].includes(type) && base() < 0.55) delay += 8 + Math.floor(base() * 22);   // prípoje zo zahraničia
       if (['Ex', 'IC'].includes(type) && delay > 30) delay = Math.round(delay / 2);
       const dep = new Date(Date.now() - (2 + f * 18) * 60000);
-      const named = sv.names && !['Os', 'REX'].includes(type);
+      const named = sv.names && !['Os', 'REX', 'RJ', 'LE'].includes(type);
+      const arrived = f > 0.9;   // tesne pred stanicou b hlási ŽSR už príchod do nej
       out.push({
         id: type + number, type, number,
         name: named ? sv.names[Math.floor(base() * sv.names.length)] : '',
         route: `${ST[seq[0]][0]} – ${ST[seq[seq.length - 1]][0]}`,
         carrier: CARRIER[type] || 'ZSSK',
         delay, delayText: '',
-        info: `${f < 0.08 ? 'Príchod' : 'Odchod'} ${a[0]} ${fmtTime(dep)}`,
-        next: b[0],
+        info: arrived ? `Príchod ${b[0]} ${fmtTime(new Date())}` : `${f < 0.08 ? 'Príchod' : 'Odchod'} ${a[0]} ${fmtTime(dep)}`,
+        next: arrived ? (ST[seq[seg + 2]]?.[0] || '') : b[0],
         lat: +(a[1] + (b[1] - a[1]) * f).toFixed(4), lon: +(a[2] + (b[2] - a[2]) * f).toFixed(4),
+        path: seq.map(k => [ST[k][1], ST[k][2]]),
         disruption: delay > 30 ? ISSUES[Math.floor(base() * ISSUES.length)] : '',
         note: '', nad: delay > 45 && base() < 0.3 ? [a[0], b[0]] : [],
       });
@@ -522,6 +651,10 @@
     return pts;
   }
 
+  $('stationList').innerHTML = Object.values(ST).map(x => x[0]).sort((a, b) => a.localeCompare(b, 'sk'))
+    .map(n => `<option value="${esc(n)}"></option>`).join('');
+  state.station = stationCoords(store.get('station')) ? Object.values(ST).find(x => norm(x[0]) === norm(store.get('station')))[0] : '';
+  state.group = GROUPS.some(g => g.id === store.get('group')) ? store.get('group') : null;
   drawBase();
   bind();
   load();

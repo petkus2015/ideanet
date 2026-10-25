@@ -36,6 +36,50 @@
 <main class="wrap main">
   <div class="notice" id="notice" hidden></div>
 
+  <section class="panel board" aria-labelledby="boardTitle">
+    <div class="board__head">
+      <div class="board__title">
+        <h2 id="boardTitle">Tabuľa vlakov</h2>
+        <p class="muted small" id="count"></p>
+      </div>
+      <div class="station">
+        <label class="station__field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <span class="station__lbl">Stanica</span>
+          <input id="station" size="8" list="stationList" placeholder="Vyberte stanicu, napr. Žilina" autocomplete="off" aria-label="Stanica, pre ktorú zobraziť meškania">
+          <button class="station__clear" id="stationClear" type="button" aria-label="Zrušiť výber stanice" hidden>×</button>
+        </label>
+        <datalist id="stationList"></datalist>
+        <div class="quick" id="quick" aria-label="Rýchly výber stanice"></div>
+      </div>
+    </div>
+
+    <div class="board__bar">
+      <div class="seg" id="groupSeg" role="group" aria-label="Druh vlaku"></div>
+      <div class="filters">
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="q" type="search" placeholder="Číslo alebo názov vlaku" autocomplete="off" aria-label="Hľadať vlak">
+        </label>
+        <select id="carrier" aria-label="Dopravca"><option value="">Všetci dopravcovia</option></select>
+        <select id="sort" aria-label="Zoradiť">
+          <option value="fast">Rýchliky a expresy prvé</option>
+          <option value="delay">Najväčšie meškanie</option>
+          <option value="number">Číslo vlaku</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="stbar" id="stbar" hidden></div>
+
+    <div class="thead" aria-hidden="true">
+      <span>Meškanie</span><span>Vlak</span><span>Trasa</span><span id="thPos">Posledná poloha</span><span>Dopravca</span>
+    </div>
+    <ul class="rows" id="rows"></ul>
+    <button class="more" id="more" type="button" hidden>Zobraziť ďalšie</button>
+  </section>
+
+  <h2 class="section-title">Štatistiky podľa druhu vlaku</h2>
   <section class="groups" id="groups" role="group" aria-label="Filtrovať podľa druhu vlaku"></section>
 
   <h2 class="scope">Súhrn · <span id="kScope">Všetky vlaky</span></h2>
@@ -93,31 +137,6 @@
     </div>
   </section>
 
-  <section class="panel board" aria-labelledby="boardTitle">
-    <div class="board__head">
-      <div>
-        <h2 id="boardTitle">Tabuľa vlakov</h2>
-        <p class="muted small" id="count"></p>
-      </div>
-      <div class="filters">
-        <label class="search">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input id="q" type="search" placeholder="Vlak, číslo alebo stanica" autocomplete="off" aria-label="Hľadať vlak alebo stanicu">
-        </label>
-        <select id="carrier" aria-label="Dopravca"><option value="">Všetci dopravcovia</option></select>
-        <select id="sort" aria-label="Zoradiť">
-          <option value="delay">Najväčšie meškanie</option>
-          <option value="number">Číslo vlaku</option>
-          <option value="type">Typ vlaku</option>
-        </select>
-      </div>
-    </div>
-    <div class="thead" aria-hidden="true">
-      <span>Meškanie</span><span>Vlak</span><span>Trasa</span><span>Posledná poloha</span><span>Dopravca</span>
-    </div>
-    <ul class="rows" id="rows"></ul>
-    <button class="more" id="more" type="button" hidden>Zobraziť ďalšie</button>
-  </section>
 </main>
 
 <footer class="wrap foot">

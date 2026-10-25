@@ -97,6 +97,15 @@ priemerné a maximálne meškanie, rozdelenie):
 | Medzinárodné | EC, EN, RJX, ICE, NJ |
 
 Vybraná skupina filtruje súhrn, rozdelenie, graf za 24 h, mapu aj tabuľu.
+
+**Tabuľa vlakov je hneď na začiatku.** Predvolene sú hore rýchliky a expresy
+(zoradené podľa meškania), potom medzinárodné a regionálne vlaky.
+
+**Výber stanice** (pole „Stanica“ alebo rýchle tlačidlá) zobrazí vlaky, ktoré do
+stanice ešte prídu alebo v nej práve stoja, s meškaním. Vlaky, ktoré už prešli, sa
+dajú zapnúť prepínačom. Smer sa určuje z trasy vlaku (`Trasa` z ŽSR, v dátach ako
+`path`). Keď trasa chýba, použije sa cieľová a ďalšia stanica. Výber stanice
+a druhu vlaku si prehliadač zapamätá. Zoznam staníc je v `ST` vo `vlaky/app.js`.
 Členenie je v `GROUPS` vo `vlaky/app.js` a v `scripts/fetch_zsr.py`. Odpočet do ďalšej aktualizácie je v hlavičke.
 
 ## Ako to funguje
