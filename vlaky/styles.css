@@ -1,4 +1,4 @@
-/* Staničná tabuľa v noci: atramentovo modrý podklad, akcent v modrej ŽSR. */
+/* Staničná tabuľa v noci: atramentovo modrý podklad, akcenty vo farbách ZSSK. */
 :root {
   color-scheme: dark;
   --bg: #0a0f1c;
@@ -9,9 +9,9 @@
   --fg: #e7ecf7;
   --muted: #8a96b2;
   --dim: #5b6684;
-  --brand: #005baa;           /* modrá ŽSR (plochy, tlačidlá s bielym textom) */
-  --accent: #3d8ee6;          /* modrá ŽSR zosvetlená pre text a čiary na tmavom podklade */
-  --led: #7ab8ff;             /* svietiace číslice hodín a tabule */
+  --brand: #de5a43;           /* červeno-oranžová ZSSK (plochy s bielym textom) */
+  --accent: #f19e38;          /* oranžová ZSSK (tlačidlo „Hľadať“): text a čiary na tmavom podklade */
+  --led: #f5ad55;             /* svietiace číslice hodín a tabule */
   --on-brand: #ffffff;
 
   /* meškanie: načas → extrémne */
@@ -174,7 +174,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 
 /* tabuľa odchodov / príchodov (štýl letiskovej tabule) */
 .board.is-fids .thead, .board.is-fids .rows, .board.is-fids #more, .board.is-fids #sort { display: none; }
-.fids { --tile: #0b1222; --g-r: #e2e8f0; --g-ex: var(--accent); --g-int: #2dd4bf; --g-reg: #94a3b8; --g-other: var(--dim);
+.fids { --tile: #0b1222; --g-r: #e2e8f0; --g-ex: var(--brand); --g-int: #2dd4bf; --g-reg: #94a3b8; --g-other: var(--dim);
   background: linear-gradient(180deg, #070b16, var(--bg-2)); border-top: 1px solid var(--line); }
 .fids[hidden] { display: none; }
 .fids__head { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; padding: 14px 16px; }
@@ -209,7 +209,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 .fl__train { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 7px; min-width: 0; }
 .tchip { display: inline-block; min-width: 34px; padding: 3px 6px; border-radius: 6px; text-align: center; font: 700 12px/1.2 var(--f-mono); color: #0a0f1c; background: var(--g-other); }
 .tchip--r { background: var(--g-r); }
-.tchip--ex { background: var(--g-ex); }
+.tchip--ex { background: var(--g-ex); color: var(--on-brand); }
 .tchip--int { background: var(--g-int); }
 .tchip--reg { background: var(--g-reg); }
 .fl__num { font: 700 17px var(--f-mono); }
@@ -353,7 +353,7 @@ select:hover, input[type="search"]:hover { border-color: var(--dim); }
 .k3 { color: var(--c3); background: color-mix(in srgb, var(--c3) 15%, transparent); }
 .k4 { color: var(--c4); background: color-mix(in srgb, var(--c4) 15%, transparent); }
 .tr { min-width: 0; }
-.tr__id { font: 700 15px var(--f-mono); color: var(--led); white-space: nowrap; }
+.tr__id { font: 700 15px var(--f-mono); color: var(--fg); white-space: nowrap; }
 .tr__name { display: block; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell { min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell small { display: block; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
