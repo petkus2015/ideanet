@@ -17,13 +17,13 @@ class MV_Fetcher {
 	const API          = 'https://mapa.zsr.sk/api/action';
 	const GTFS_URL     = 'https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip';
 	const HISTORY_LEN  = 720; // 24 h po 2 min
-	const TT_FORMAT    = 2;   // 2 = stanice s kódmi
+	const TT_FORMAT    = 3;   // 2 = stanice s kódmi, 3 = názvy vlakov z route_long_name
 	const UA           = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36';
 	const GROUPS       = array(
-		'reg' => array( 'OS', 'REX', 'ZR', 'SP', 'MOS' ),
+		'reg' => array( 'OS', 'REX', 'ZR', 'SP', 'MOS', 'RRR' ),
 		'r'   => array( 'R' ),
 		'ex'  => array( 'EX', 'IC', 'SC', 'RJ', 'LE' ),
-		'int' => array( 'EC', 'EN', 'RJX', 'ICE', 'NJ' ),
+		'int' => array( 'EC', 'EN', 'RJX', 'ICE', 'NJ' ), // + malé rj/rjx, pozri group_of()
 	);
 
 	/* ---------- súbory ---------- */
@@ -239,6 +239,9 @@ class MV_Fetcher {
 	}
 
 	private static function group_of( $t ) {
+		if ( in_array( $t['type'], array( 'rj', 'rjx' ), true ) ) {
+			return 'int'; // railjety ÖBB (malými písmenami), nie RegioJet
+		}
 		$typ = strtoupper( $t['type'] );
 		foreach ( self::GROUPS as $g => $types ) {
 			if ( in_array( $typ, $types, true ) ) {
@@ -273,11 +276,28 @@ class MV_Fetcher {
 		return preg_match( '/^\s*(\d+):(\d\d)/', (string) $value, $m ) ? (int) $m[1] * 60 + (int) $m[2] : null;
 	}
 
-	/** Typ, číslo a názov vlaku z GTFS (napr. „Ex 612 Spiš“). */
+	/** Názov vlaku z route_long_name: ŽSR ho píše veľkými písmenami („POVAŽAN“ -> „Považan“). */
+	private static function train_name( $route ) {
+		$name  = self::clean( $route['route_long_name'] ?? '' );
+		$upper = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $name, 'UTF-8' ) : strtoupper( $name );
+		if ( '' === $name || in_array( $upper, array( 'REGIOJET', 'LEO EXPRESS', 'RAILJET XPRESS' ), true ) ) {
+			return '';
+		}
+		if ( 'NAD' === $upper ) {
+			return 'Náhradná autobusová doprava';
+		}
+		if ( $name === $upper && function_exists( 'mb_convert_case' ) ) {
+			return mb_convert_case( $name, MB_CASE_TITLE, 'UTF-8' );
+		}
+		return $name;
+	}
+
+	/** Typ, číslo a názov vlaku z GTFS (ŽSR: route_short_name „Ex 612“, route_long_name „SPIŠ“). */
 	private static function train_ident( $trip, $route ) {
 		foreach ( array( $trip['trip_short_name'] ?? '', $route['route_short_name'] ?? '', $trip['trip_headsign'] ?? '' ) as $text ) {
 			if ( preg_match( '/^\s*([A-Za-z]{1,4})\s*(\d{1,5})\b\s*(.*)$/u', (string) $text, $m ) ) {
-				return array( $m[1], $m[2], self::clean( $m[3] ) );
+				$name = self::clean( $m[3] );
+				return array( $m[1], $m[2], '' !== $name ? $name : self::train_name( $route ) );
 			}
 		}
 		$num = preg_match( '/\d+/', (string) ( $trip['trip_short_name'] ?? '' ), $m ) ? $m[0] : '';

@@ -41,14 +41,16 @@
   const GROUPS = [
     { id: 'r', label: 'Rýchliky', types: ['R'] },
     { id: 'ex', label: 'Expresy a IC', types: ['Ex', 'IC', 'SC', 'RJ', 'LE'] },
-    { id: 'int', label: 'Medzinárodné', types: ['EC', 'EN', 'RJX', 'ICE', 'NJ'] },
-    { id: 'reg', label: 'Regionálne', types: ['Os', 'REX', 'Zr', 'Sp', 'MOs'] },
+    { id: 'int', label: 'Medzinárodné', types: ['EC', 'EN', 'RJX', 'ICE', 'NJ', 'rj', 'rjx'] },
+    { id: 'reg', label: 'Regionálne', types: ['Os', 'REX', 'Zr', 'Sp', 'MOs', 'RRR'] },
   ];
   // poradie „rýchliky a expresy prvé“
   const FAST_RANK = { r: 0, ex: 0, int: 1, reg: 2, other: 3 };
   const QUICK_STATIONS = CFG.quickStations?.length ? CFG.quickStations : ['Bratislava', 'Žilina', 'Košice', 'Banská Bystrica', 'Poprad-Tatry', 'Nové Zámky'];
-  const TYPE_GROUP = new Map(GROUPS.flatMap(g => g.types.map(t => [t.toUpperCase(), g.id])));
-  const groupOf = t => TYPE_GROUP.get(String(t.type || '').toUpperCase()) || 'other';
+  // malé „rj“/„rjx“ sú railjety ÖBB (medzinárodné), veľké „RJ“ je RegioJet: preto sa porovnáva aj presný tvar
+  const TYPE_EXACT = new Map(GROUPS.flatMap(g => g.types.filter(t => t === t.toLowerCase()).map(t => [t, g.id])));
+  const TYPE_GROUP = new Map(GROUPS.flatMap(g => g.types.filter(t => t !== t.toLowerCase()).map(t => [t.toUpperCase(), g.id])));
+  const groupOf = t => TYPE_EXACT.get(String(t.type || '')) || TYPE_GROUP.get(String(t.type || '').toUpperCase()) || 'other';
 
   const $ = id => ROOT.getElementById(id);
   const $q = sel => ROOT.querySelector(sel);
@@ -270,7 +272,7 @@
         group: groupOf({ type }),
         origin: tt.stations[stops[0][0]][0],
         dest: tt.stations[stops[stops.length - 1][0]][0],
-        via: rest.slice(0, 3),
+        via: rest,
       });
     });
     return out.sort((a, b) => a.plan - b.plan || a.exp - b.exp);
@@ -292,7 +294,8 @@
   // celé názvy druhov vlakov — skratky nie každý pozná
   const TYPE_LABEL = {
     Os: 'Osobný vlak', REX: 'Regionálny expres', Zr: 'Zrýchlený vlak', Sp: 'Spešný vlak', R: 'Rýchlik', Ex: 'Expres',
-    IC: 'InterCity', SC: 'SuperCity', EC: 'EuroCity', EN: 'Nočný EuroNight', RJ: 'RegioJet', LE: 'Leo Express', RJX: 'Railjet',
+    IC: 'InterCity', SC: 'SuperCity', EC: 'EuroCity', EN: 'Nočný EuroNight', RJ: 'RegioJet', LE: 'Leo Express', RJX: 'Railjet xpress',
+    rj: 'Railjet', rjx: 'Railjet xpress', RRR: 'Regionálny vlak',
   };
   const flap = txt => [...txt].map(ch => (ch === ':' ? '<i>:</i>' : `<span>${ch}</span>`)).join('');
   // čas posledného hlásenia polohy: pole Cas zo ŽSR, inak čas v texte hlásenia („Odchod Žilina 12:31“)
@@ -333,15 +336,15 @@
       const sub = norm(ends) === norm(state.station)
         ? (mode === 'dep' ? 'Začína v tejto stanici' : 'Končí v tejto stanici')
         : (mode === 'dep' ? `Ide z: ${e.origin}` : `Pokračuje do: ${e.dest}`);
-      const via = e.via.length ? `${mode === 'dep' ? 'Zastavuje' : 'Predtým'}: ${e.via.join(', ')}` : '';
+      const via = viaTicker(mode === 'dep' ? 'Zastavuje' : 'Predtým', e.via);
       return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" data-type="${esc(e.type)}" data-num="${esc(e.number)}" tabindex="0" role="button" title="Zobraziť trasu a polohu vlaku"
           style="--k:var(--c${c})" aria-label="${esc(e.type)} ${esc(e.number)} ${mode === 'dep' ? 'do' : 'z'} ${esc(big)}, ${hm(e.plan)}, ${esc(stText)}">
         <span class="fl__time">${flap(hm(e.plan))}</span>
         <span class="fl__exp">${late ? `<span class="fl__lbl">nový čas</span>${hm(e.exp)}` : ''}</span>
         <span class="fl__train"><b class="tchip tchip--${e.group}">${esc(e.type)}</b><span class="fl__num">${esc(e.number)}</span>
           <small>${esc([TYPE_LABEL[e.type], e.name].filter(Boolean).join(' · '))}</small></span>
-        <span class="fl__dir"><b class="fl__dest">${esc(big)}</b><small>${esc(sub)}</small>${via ? `<small>${esc(via)}</small>` : ''}</span>
-        <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${e.carrier && e.carrier !== 'ZSSK' ? `<small>${esc(e.carrier)}</small>` : ''}</span>
+        <span class="fl__dir"><b class="fl__dest">${esc(big)}</b><small>${esc(sub)}</small>${via}</span>
+        <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${late ? `<small class="st__new">nový čas <b>${hm(e.exp)}</b></small>` : ''}${e.carrier && e.carrier !== 'ZSSK' ? `<small>${esc(e.carrier)}</small>` : ''}</span>
       </li>`;
     }).join('') : `<li class="empty">V najbližších ${BOARD_AHEAD / 60} hodinách tu podľa filtra nič ${mode === 'dep' ? 'neodchádza' : 'neprichádza'}.</li>`;
     const rest = items.length - state.boardShown;
@@ -382,6 +385,51 @@
       if (w?.between != null) return stops[w.between + 1].name;
     }
     return '';
+  }
+
+  /* ---------------- zastávky, ktoré sa striedajú ako na staničnej tabuli ---------------- */
+
+  const VIA_PAGE = 3;          // zastávok naraz
+  const VIA_MS = 4000;         // ako dlho je jedna skupina zastávok na tabuli
+
+  // riadok „Zastavuje: A, B, C…“; dlhší zoznam sa po skupinách strieda (čítačka dostane celý zoznam)
+  function viaTicker(label, names) {
+    if (!names || !names.length) return '';
+    const pages = [];
+    for (let i = 0; i < names.length; i += VIA_PAGE) pages.push(names.slice(i, i + VIA_PAGE).join(', '));
+    const full = `${label}: ${names.join(', ')}`;
+    if (pages.length === 1 || REDUCED_MOTION.matches) return `<small class="via">${esc(full)}</small>`;
+    return `<small class="via via--tick" aria-label="${esc(full)}" data-pages="${esc(JSON.stringify(pages))}" data-i="0">`
+      + `${esc(label)}: <span class="via__txt" aria-hidden="true">${esc(pages[0])}</span>`
+      + `<span class="via__pg" aria-hidden="true">1/${pages.length}</span></small>`;
+  }
+
+  function tickVia() {
+    ROOT.querySelectorAll('.via--tick').forEach(el => {
+      let pages;
+      try { pages = JSON.parse(el.dataset.pages); } catch { return; }
+      const i = (Number(el.dataset.i) + 1) % pages.length;
+      el.dataset.i = String(i);
+      const txt = el.querySelector('.via__txt'), pg = el.querySelector('.via__pg');
+      txt.classList.add('is-out');
+      setTimeout(() => {
+        txt.textContent = pages[i];
+        pg.textContent = `${i + 1}/${pages.length}`;
+        txt.classList.remove('is-out');
+      }, 250);
+    });
+  }
+
+  // zastávky vlaku na trati od ďalšej stanice po cieľ (bez cieľa), podľa cestovného poriadku
+  function upcomingStops(t) {
+    const tt = state.tt, num = digits(t.number);
+    if (!tt || !num) return [];
+    const trip = tt.trips.find(x => digits(x[1]) === num && x[0] === t.type) || tt.trips.find(x => digits(x[1]) === num);
+    if (!trip) return [];
+    const stops = trip[3].map(([si]) => { const [name, lat, lon] = tt.stations[si]; return { name, lat, lon }; });
+    const w = trainWhere(t, stops);
+    const from = w ? (w.at != null ? w.at + 1 : w.between + 1) : 1;
+    return stops.slice(from, -1).map(s => s.name);
   }
 
   /* ---------------- detail vlaku ---------------- */
@@ -785,6 +833,7 @@
         t.lat == null && '<span>Poloha vlaku nie je k dispozícii.</span>',
       ].filter(Boolean).join('');
       const [from, to] = routeEnds(t.route);
+      const stops = upcomingStops(t);
       const time = reportTime(t);
       // bez vlastného času hlásenia ukážeme, kedy sme polohu stiahli (údaje sa obnovujú každé 2 minúty)
       const dataTime = state.updated && !isNaN(state.updated) ? TZ_FMT.format(state.updated) : '--:--';
@@ -796,15 +845,16 @@
       return `<li class="row ${sel ? 'sel' : ''}" data-id="${esc(t.id)}" tabindex="0" role="button" aria-expanded="${sel}"
           aria-label="${esc(trainLabel(t))}${to ? ' do ' + esc(to) : ''}, meškanie ${fmtMin(t.delay)}">
         <div class="row__air">
-          <span class="ra__time"><span class="fl__time">${flap(time || dataTime)}</span>
+          <span class="ra__time"><span class="fl__time">${flap(planned || time || dataTime)}</span>
             <small>${time ? esc(event || 'posledné hlásenie') : 'poloha zistená'}</small>
-            ${planned ? `<small class="ra__plan">pôvodne <s>${planned}</s> · mešká ${fmtMin(t.delay)}</small>` : ''}</span>
-          <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span></span>
+            ${planned ? '<small>podľa cestovného poriadku</small>' : ''}</span>
+          <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span>${planned ? `<small class="ra__new">nový čas <b>${time}</b></small>` : ''}</span>
           <span class="ra__train"><b class="tchip tchip--${groupOf(t)}">${esc(t.type || 'Vlak')}</b><span class="fl__num">${esc(t.number)}</span>
             <small>${esc([TYPE_LABEL[t.type], t.name].filter(Boolean).join(' · '))}</small></span>
           <span class="ra__dir">${to ? `<b class="fl__dest">${esc(to)}</b>` : '<b class="muted">Cieľ neznámy</b>'}
             ${from ? `<small>Ide z: ${esc(from)}</small>` : ''}
-            <small>${relBadge(t)}${event ? (t.next ? `Ďalej: ${esc(t.next)}` : '') : `${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next ? ` · ďalej ${esc(t.next)}` : ''}`}</small></span>
+            <small>${relBadge(t)}${event ? (t.next && !stops.length ? `Ďalej: ${esc(t.next)}` : '') : `${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next && !stops.length ? ` · ďalej ${esc(t.next)}` : ''}`}</small>
+            ${viaTicker('Zastavuje', stops)}</span>
           <span class="carrier">${esc(t.carrier || '—')}</span>
         </div>
         ${more ? `<div class="row__more">${more}</div>` : ''}
@@ -1163,6 +1213,7 @@
   bind();
   load();
   setInterval(tick, 1000);
+  setInterval(() => safe('zastávky', tickVia), VIA_MS);
   tick();
 })();
   }

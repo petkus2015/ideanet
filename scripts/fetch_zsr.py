@@ -35,10 +35,10 @@ GTFS_URL = "https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs
 TZ = ZoneInfo("Europe/Bratislava")
 INTERVAL = 120
 HISTORY_LEN = 720  # 24 h po 2 min
-TIMETABLE_FORMAT = 2  # 2 = stanice s kódmi
+TIMETABLE_FORMAT = 3  # 2 = stanice s kódmi, 3 = názvy vlakov z route_long_name
 # druhy vlakov — rovnaké členenie ako vo vlaky/app.js
 GROUPS = {
-    "reg": {"OS", "REX", "ZR", "SP", "MOS"},
+    "reg": {"OS", "REX", "ZR", "SP", "MOS", "RRR"},
     "r": {"R"},
     "ex": {"EX", "IC", "SC", "RJ", "LE"},
     "int": {"EC", "EN", "RJX", "ICE", "NJ"},
@@ -169,6 +169,8 @@ def normalize(t):
 
 
 def group_of(t):
+    if t["type"] in ("rj", "rjx"):  # railjety ÖBB (malými písmenami), nie RegioJet
+        return "int"
     typ = t["type"].upper()
     return next((g for g, types in GROUPS.items() if typ in types), "other")
 
@@ -196,12 +198,22 @@ def gtfs_minutes(value):
     return int(m.group(1)) * 60 + int(m.group(2)) if m else None
 
 
+def train_name(route):
+    """Názov vlaku z route_long_name: ŽSR ho píše veľkými písmenami („POVAŽAN“ -> „Považan“)."""
+    name = clean(route.get("route_long_name"))
+    if not name or name.upper() in ("REGIOJET", "LEO EXPRESS", "RAILJET XPRESS"):
+        return ""
+    if name.upper() == "NAD":
+        return "Náhradná autobusová doprava"
+    return name.title() if name == name.upper() else name
+
+
 def train_ident(trip, route):
-    """Typ, číslo a názov vlaku z GTFS (napr. 'Ex 612 Spiš')."""
+    """Typ, číslo a názov vlaku z GTFS (ŽSR: route_short_name „Ex 612“, route_long_name „SPIŠ“)."""
     for text in (trip.get("trip_short_name"), route.get("route_short_name"), trip.get("trip_headsign")):
         m = re.match(r"\s*([A-Za-z]{1,4})\s*(\d{1,5})\b\s*(.*)", text or "")
         if m:
-            return m.group(1), m.group(2), clean(m.group(3))
+            return m.group(1), m.group(2), clean(m.group(3)) or train_name(route)
     num = re.search(r"\d+", trip.get("trip_short_name") or "")
     typ = re.sub(r"[^A-Za-z]", "", route.get("route_short_name") or "")[:4]
     return typ, num.group() if num else "", ""

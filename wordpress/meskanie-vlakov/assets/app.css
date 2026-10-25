@@ -774,5 +774,30 @@ input[type="search"], select { font-size: 16px; min-height: 48px; }
 .ra__plan { color: var(--c2) !important; font-weight: 600; }
 .ra__plan s { color: var(--muted); font-weight: 500; }
 
+/* nový čas menším pod meškaním (tabuľa odchodov aj zoznam); samostatný stĺpec „Nový čas“ odpadá */
+.fl__exp, .fids__cols > span:nth-child(2) { display: none; }
+.fids__cols, .fl { grid-template-columns: minmax(124px, .95fr) minmax(150px, 1.2fr) minmax(0, 3fr) minmax(170px, 1.2fr); }
+.st__new, .ra__new { display: block; font: 600 14px/1.3 var(--f-body); color: var(--muted); white-space: nowrap; }
+.st__new b, .ra__new b { font: 700 17px var(--f-mono); color: var(--k, var(--c2)); margin-left: 2px; }
+.ra__delay { display: grid; gap: 5px; justify-items: start; }
+.ra__new b { color: var(--c2); }
+@container mv (max-width: 860px) {
+  .fl { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "time st" "dir dir" "train train"; }
+  .ra__delay { justify-items: end; }
+}
+
+/* zastávky, ktoré sa striedajú ako na staničnej tabuli */
+.via { display: block; }
+.via--tick { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; overflow: hidden; }
+.via__txt { display: inline-block; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--fg); font-weight: 500;
+  transition: opacity .25s, transform .25s; }
+.via__txt.is-out { opacity: 0; transform: translateY(-4px); }
+.via__pg { flex: none; font: 600 11.5px var(--f-mono); color: var(--dim); padding: 1px 6px; border: 1px solid var(--line); border-radius: 6px; }
+@container mv (max-width: 860px) {
+  /* na úzkej obrazovke sa zastávky zalomia; miesto na dva riadky, aby zoznam pri striedaní neposkakoval */
+  .via--tick { align-items: flex-start; white-space: normal; }
+  .via__txt { white-space: normal; line-height: 1.35; min-height: 2.7em; }
+}
+
 /* v rámci stránky WordPressu hlavička nepláva nad obsahom témy */
 .top { position: static; }

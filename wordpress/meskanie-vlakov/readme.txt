@@ -3,7 +3,7 @@ Tags: vlaky, meškanie, odchody, ŽSR, cestovný poriadok
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.1.11
+Stable tag: 1.2.0
 License: GPLv2 or later
 
 Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku.
@@ -53,6 +53,11 @@ Vymažte cache optimalizačného pluginu a Cloudflare. Ak to nepomôže, v nasta
 Písma z Google Fonts sa dajú vypnúť v nastaveniach. Plugin nič neukladá o návštevníkoch; v prehliadači si pamätá len vybranú stanicu a veľkosť písma.
 
 == Changelog ==
+
+= 1.2.0 =
+* Zastávky vlaku sa na tabuli striedajú po skupinách ako na staničnej tabuli („Zastavuje: …“), aj v zozname vlakov na trati.
+* Veľké číslice ukazujú pôvodný čas; nový čas je menším písmom pod meškaním.
+* Cestovný poriadok ŽSR: názvy vlakov (Tatran, Považan…), náhradná autobusová doprava, railjety ÖBB (rj, rjx) medzi medzinárodnými, RRR medzi regionálnymi.
 
 = 1.1.11 =
 * Pri meškajúcom vlaku v zozname: skutočný čas posledného odchodu a pôvodný čas podľa cestovného poriadku.
