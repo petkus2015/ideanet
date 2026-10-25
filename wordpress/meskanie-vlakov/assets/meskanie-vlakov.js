@@ -193,11 +193,10 @@
     else if (state.station) state.station = findStation(state.station)[0];
     const h = state.history;
     state.prev = h.length > 1 ? h[h.length - 2] : before;
-    state.trains.forEach(t => { t.next = resolveNext(t); });
+    state.trains.forEach(t => { try { t.next = resolveNext(t); } catch { t.next = ''; } });
     state.nextAt = Date.now() + REFRESH_MS;
     setTimeout(() => $('refresh').classList.remove('is-busy'), 400);
     render();
-    renderTrain();
   }
 
   /* ---------------- tabuľa odchodov ---------------- */
@@ -280,6 +279,11 @@
     IC: 'InterCity', SC: 'SuperCity', EC: 'EuroCity', EN: 'Nočný EuroNight', RJ: 'RegioJet', LE: 'Leo Express', RJX: 'Railjet',
   };
   const flap = txt => [...txt].map(ch => (ch === ':' ? '<i>:</i>' : `<span>${ch}</span>`)).join('');
+  // cieľ ako preklápacia tabuľa: písmeno = dlaždica, slová sa môžu zalomiť; čítačka dostane celý názov
+  const flapWords = txt => `<span class="sr">${esc(txt)}</span><span class="flapw" aria-hidden="true">${
+    txt.toLocaleUpperCase('sk').split(/\s+/).filter(Boolean)
+      .map(w => `<span class="fw">${[...w].map(ch => `<span>${esc(ch)}</span>`).join('')}</span>`).join('')
+  }</span>`;
 
   function renderBoard() {
     const mode = state.boardMode, now = nowMin();
@@ -309,7 +313,7 @@
         <span class="fl__exp">${late ? `<span class="fl__lbl">nový čas</span>${hm(e.exp)}` : ''}</span>
         <span class="fl__train"><b class="tchip tchip--${e.group}">${esc(e.type)}</b><span class="fl__num">${esc(e.number)}</span>
           <small>${esc([TYPE_LABEL[e.type], e.name].filter(Boolean).join(' · '))}</small></span>
-        <span class="fl__dir"><b>${esc(big)}</b><small>${esc(sub)}</small>${via ? `<small>${esc(via)}</small>` : ''}</span>
+        <span class="fl__dir"><b class="fl__dest">${flapWords(big)}</b><small>${esc(sub)}</small>${via ? `<small>${esc(via)}</small>` : ''}</span>
         <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${e.carrier && e.carrier !== 'ZSSK' ? `<small>${esc(e.carrier)}</small>` : ''}</span>
       </li>`;
     }).join('') : `<li class="empty">V najbližších ${BOARD_AHEAD / 60} hodinách tu podľa filtra nič ${mode === 'dep' ? 'neodchádza' : 'neprichádza'}.</li>`;
@@ -481,8 +485,27 @@
 
   /* ---------------- render ---------------- */
 
+  // každá časť stránky sa vykreslí samostatne: chyba v jednej (napr. v grafe) nezastaví ostatné
+  const failed = [];
+  function safe(part, fn) {
+    try { fn(); } catch (err) {
+      console.error(`Meškanie vlakov – ${part}:`, err);
+      failed.push(`${part}: ${(err && err.message) || err}`);
+    }
+  }
+
   function render() {
-    renderStatus(); fillStations(); renderStation(); renderSeg(); renderGroups(); renderKpis(); renderDist(); renderTrend(); renderCarriers(); renderList(); renderDots();
+    failed.length = 0;
+    [['stav', renderStatus], ['zoznam staníc', fillStations], ['výber stanice', renderStation], ['filter druhov', renderSeg],
+      ['štatistiky druhov', renderGroups], ['súhrn', renderKpis], ['rozdelenie', renderDist], ['graf', renderTrend],
+      ['dopravcovia', renderCarriers], ['tabuľa', renderList], ['mapa', renderDots], ['detail vlaku', renderTrain]]
+      .forEach(([part, fn]) => safe(part, fn));
+    if (failed.length) {
+      const n = $('notice');
+      n.hidden = false;
+      n.dataset.kind = 'error';
+      n.textContent = `Časť stránky sa nepodarilo zobraziť (${failed.join('; ')}). Ostatné údaje sú v poriadku. Pošlite prosím tento text správcovi webu.`;
+    }
   }
 
   function renderStatus() {
@@ -944,7 +967,7 @@
     $('countdown').textContent = s > 60 ? `${Math.ceil(s / 60)} min` : `${s} s`;
     if (left === 0 && !document.hidden) { state.nextAt = Date.now() + REFRESH_MS; load(); }
     const minute = Math.floor(Date.now() / 60000);
-    if (minute !== lastMinute) { lastMinute = minute; if (boardActive()) renderBoard(); }
+    if (minute !== lastMinute) { lastMinute = minute; if (boardActive()) safe('tabuľa', renderBoard); }
   }
   let lastMinute = Math.floor(Date.now() / 60000);
 

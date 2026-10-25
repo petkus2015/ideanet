@@ -706,3 +706,16 @@ html.big body { zoom: 1.18; }
   .station__field { grid-area: field; max-width: none; }
   .quick { grid-area: quick; align-self: start; }
 }
+
+/* ---------- cieľová stanica ako preklápacia tabuľa (biele písmená) ---------- */
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.fl__dest { display: block; }
+.flapw { display: flex; flex-wrap: wrap; gap: .22em .5em; }
+.fw { display: inline-flex; gap: .09em; }
+.fw span {
+  position: relative; display: grid; place-items: center; width: .82em; height: 1.32em; border-radius: .14em;
+  background: linear-gradient(180deg, #151d31 50%, #0b1222 50%); color: #f4f6fb;
+  font: 700 .86em/1 var(--f-mono); box-shadow: inset 0 0 0 1px #1c2640, 0 1px 0 rgba(0, 0, 0, .5);
+}
+.fw span::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, .55); opacity: .5; }
+.fl--gone .fw span { color: var(--muted); }
