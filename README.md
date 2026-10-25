@@ -85,7 +85,19 @@ nedokumentované API — bez záruky).
 priemerné a najväčšie meškanie so zmenou za posledných 5 min, rozdelenie meškania
 po kategóriách, trend za 24 h, filtrovateľný zoznam (hľadanie, dopravca, kategória,
 zoradenie), schému železničnej siete s polohou vlakov a tabuľu vlakov v štýle
-staničnej tabule (tmavý dizajn). Odpočet do ďalšej aktualizácie je v hlavičke.
+staničnej tabule (tmavý dizajn).
+Hore sa dá prepínať druh vlaku a každá karta ukazuje jeho štatistiky (podiel načas,
+priemerné a maximálne meškanie, rozdelenie):
+
+| Skupina | Označenia ŽSR |
+|---|---|
+| Regionálne | Os, REX, Zr, Sp, MOs |
+| Rýchliky | R |
+| Expresy a IC | Ex, IC, SC, RJ, LE |
+| Medzinárodné | EC, EN, RJX, ICE, NJ |
+
+Vybraná skupina filtruje súhrn, rozdelenie, graf za 24 h, mapu aj tabuľu.
+Členenie je v `GROUPS` vo `vlaky/app.js` a v `scripts/fetch_zsr.py`. Odpočet do ďalšej aktualizácie je v hlavičke.
 
 ## Ako to funguje
 

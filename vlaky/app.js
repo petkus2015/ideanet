@@ -20,6 +20,16 @@
   ];
   const catOf = d => CATS.findIndex(c => d <= c.max);
 
+  // druhy vlakov podľa označenia ŽSR (TypVlaku)
+  const GROUPS = [
+    { id: 'reg', label: 'Regionálne', types: ['Os', 'REX', 'Zr', 'Sp', 'MOs'] },
+    { id: 'r', label: 'Rýchliky', types: ['R'] },
+    { id: 'ex', label: 'Expresy a IC', types: ['Ex', 'IC', 'SC', 'RJ', 'LE'] },
+    { id: 'int', label: 'Medzinárodné', types: ['EC', 'EN', 'RJX', 'ICE', 'NJ'] },
+  ];
+  const TYPE_GROUP = new Map(GROUPS.flatMap(g => g.types.map(t => [t.toUpperCase(), g.id])));
+  const groupOf = t => TYPE_GROUP.get(String(t.type || '').toUpperCase()) || 'other';
+
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const fmtMin = m => (m >= 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min` : `${m} min`);
@@ -31,7 +41,7 @@
   const state = {
     trains: [], history: [], prev: null, updated: null,
     mode: 'loading', cat: null, q: '', carrier: '', sort: 'delay',
-    shown: PAGE, active: null, nextAt: Date.now() + REFRESH_MS,
+    group: null, shown: PAGE, active: null, nextAt: Date.now() + REFRESH_MS,
   };
 
   /* ---------------- dáta ---------------- */
@@ -40,6 +50,15 @@
     const res = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
+  }
+
+  const scope = () => (state.group ? state.trains.filter(t => groupOf(t) === state.group) : state.trains);
+  const pickGroup = snap => (snap && state.group ? snap.g?.[state.group] : snap);
+
+  function summarizeAll(trains) {
+    const g = {};
+    GROUPS.forEach(gr => { g[gr.id] = summarize(trains.filter(t => groupOf(t) === gr.id)); });
+    return { ...summarize(trains), g };
   }
 
   function summarize(trains) {
@@ -54,7 +73,7 @@
 
   async function load() {
     $('refresh').classList.add('is-busy');
-    const before = state.trains.length ? summarize(state.trains) : null;
+    const before = state.trains.length ? summarizeAll(state.trains) : null;
     try {
       if (FORCE_DEMO) throw new Error('demo');
       const data = await getJSON(DATA_URL);
@@ -68,7 +87,7 @@
         state.mode = 'error';   // ponecháme posledné platné dáta
       } else {
         state.trains = demoTrains();
-        state.history = demoHistory(summarize(state.trains));
+        state.history = demoHistory(summarizeAll(state.trains));
         state.updated = new Date();
         state.mode = 'demo';
       }
@@ -83,7 +102,7 @@
   /* ---------------- render ---------------- */
 
   function render() {
-    renderStatus(); renderKpis(); renderDist(); renderTrend(); renderCarriers(); renderList(); renderDots();
+    renderStatus(); renderGroups(); renderKpis(); renderDist(); renderTrend(); renderCarriers(); renderList(); renderDots();
   }
 
   function renderStatus() {
@@ -112,9 +131,10 @@
   }
 
   function renderKpis() {
-    const s = summarize(state.trains), p = state.prev;
+    const s = summarize(scope()), p = pickGroup(state.prev);
     $('kTotal').textContent = fmtNum(s.n);
-    $('kTotalHint').textContent = `${fmtNum(state.trains.filter(t => t.delay > 5).length)} mešká viac ako 5 min`;
+    $('kTotalHint').textContent = `${fmtNum(scope().filter(t => t.delay > 5).length)} mešká viac ako 5 min`;
+    $('kScope').textContent = state.group ? GROUPS.find(g => g.id === state.group).label : 'Všetky vlaky';
     $('kOnTime').innerHTML = `${fmtNum(s.onTime)}<small>%</small>`;
     $('kOnTimeBar').style.width = `${s.onTime}%`;
     $('kOnTimeHint').innerHTML = delta(s.onTime, p?.onTime, { unit: ' p. b.', upIsGood: true });
@@ -122,19 +142,19 @@
     $('kAvgHint').innerHTML = delta(s.avg, p?.avg, { unit: ' min', dp: 1 });
     $('kOver').textContent = fmtNum(s.over15);
     $('kOverHint').innerHTML = delta(s.over15, p?.over15);
-    const top = state.trains.reduce((a, t) => (!a || t.delay > a.delay ? t : a), null);
+    const top = scope().reduce((a, t) => (!a || t.delay > a.delay ? t : a), null);
     $('kMax').innerHTML = top ? (top.delay >= 60 ? `${Math.floor(top.delay / 60)}<small>h</small>&nbsp;${String(top.delay % 60).padStart(2, '0')}<small>min</small>` : `${top.delay}<small>min</small>`) : '—';
     $('kMaxHint').textContent = top ? `${trainLabel(top)}${top.name ? ' ' + top.name : ''} · ${top.route || ''}` : '';
   }
 
   function counts() {
     const c = CATS.map(() => 0);
-    state.trains.forEach(t => c[catOf(t.delay)]++);
+    scope().forEach(t => c[catOf(t.delay)]++);
     return c;
   }
 
   function renderDist() {
-    const c = counts(), total = state.trains.length || 1, max = Math.max(...c, 1);
+    const c = counts(), total = scope().length || 1, max = Math.max(...c, 1);
     $('distBar').setAttribute('aria-label', CATS.map((k, i) => `${k.label}: ${c[i]}`).join(', '));
     $('distBar').innerHTML = CATS.map((k, i) => c[i]
       ? `<span class="${state.cat === i ? 'on' : ''}" style="flex-grow:${c[i]};background:var(--c${i})" title="${k.label}: ${c[i]}"></span>` : '').join('');
@@ -151,9 +171,12 @@
 
   function renderTrend() {
     const svg = $('trendSvg');
-    const h = state.history.filter(x => typeof x.onTime === 'number');
+    const h = state.history.map(x => {
+      const v = pickGroup(x);
+      return v && typeof v.onTime === 'number' && v.n ? { t: x.t, onTime: v.onTime } : null;
+    }).filter(Boolean);
     if (h.length < 3) {
-      svg.innerHTML = '<text class="t-lbl" x="300" y="80" text-anchor="middle">História sa zbiera — graf sa zobrazí po pár aktualizáciách.</text>';
+      svg.innerHTML = '<text class="t-lbl" x="300" y="80" text-anchor="middle">História sa zbiera, graf sa zobrazí po pár aktualizáciách.</text>';
       $('trendNow').textContent = '';
       return;
     }
@@ -186,6 +209,33 @@
     $('trendNow').textContent = `teraz ${fmtNum(last.onTime)} %`;
   }
 
+  function renderGroups() {
+    const fmtAvg = s => `ø ${fmtNum(s.avg, 1)} min`;
+    const card = (id, label, types, trains) => {
+      const s = summarize(trains), c = CATS.map(() => 0);
+      trains.forEach(t => c[catOf(t.delay)]++);
+      const max = trains.reduce((m, t) => Math.max(m, t.delay), 0);
+      const on = state.group === id || (!state.group && id === '');
+      return `<button type="button" class="grp ${id ? '' : 'grp--all'}" data-group="${id}" aria-pressed="${on}" ${s.n ? '' : 'disabled'}>
+        <span class="grp__head"><span class="grp__name">${label}</span><span class="grp__types">${types}</span></span>
+        <span class="grp__v">${s.n ? fmtNum(s.onTime) + '<small>% načas</small>' : '<small>žiadne vlaky</small>'}</span>
+        <span class="grp__bar">${c.map((n, i) => (n ? `<span style="flex-grow:${n};background:var(--c${i})"></span>` : '')).join('')}</span>
+        <span class="grp__meta"><span><b>${s.n}</b> vlakov</span><span>${fmtAvg(s)}</span><span>max <b>${fmtMin(max)}</b></span></span>
+      </button>`;
+    };
+    $('groups').innerHTML = card('', 'Všetky', 'všetky druhy', state.trains) +
+      GROUPS.map(g => card(g.id, g.label, g.types.filter(t => state.trains.some(x => x.type === t)).join(' · ') || g.types.slice(0, 3).join(' · '),
+        state.trains.filter(t => groupOf(t) === g.id))).join('');
+  }
+
+  function setGroup(id) {
+    state.group = id || null;
+    state.shown = PAGE;
+    state.active = null;
+    $('tip').hidden = true;
+    renderGroups(); renderKpis(); renderDist(); renderTrend(); renderList(); renderDots();
+  }
+
   function renderCarriers() {
     const list = [...new Set(state.trains.map(t => t.carrier).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sk'));
     if (state.carrier && !list.includes(state.carrier)) state.carrier = '';
@@ -201,7 +251,7 @@
       number: byNum,
       type: (a, b) => a.type.localeCompare(b.type, 'sk') || byNum(a, b),
     };
-    return state.trains.filter(t =>
+    return scope().filter(t =>
       (state.cat === null || catOf(t.delay) === state.cat) &&
       (!state.carrier || t.carrier === state.carrier) &&
       (!q || norm(`${t.type} ${t.number} ${t.type}${t.number} ${t.name} ${t.route} ${t.info} ${t.next}`).includes(q)))
@@ -210,9 +260,10 @@
 
   function renderList() {
     const items = filtered();
-    $('count').textContent = items.length === state.trains.length
-      ? `${items.length} vlakov, zoradené: ${$('sort').selectedOptions[0].textContent.toLowerCase()}`
-      : `${items.length} z ${state.trains.length} vlakov`;
+    const all = scope().length, grp = state.group ? ` · ${GROUPS.find(g => g.id === state.group).label.toLowerCase()}` : '';
+    $('count').textContent = items.length === all
+      ? `${items.length} vlakov${grp}, zoradené: ${$('sort').selectedOptions[0].textContent.toLowerCase()}`
+      : `${items.length} z ${all} vlakov${grp}`;
     $('rows').innerHTML = items.length ? items.slice(0, state.shown).map(t => {
       const c = catOf(t.delay), sel = state.active === t.id;
       const more = [
@@ -264,7 +315,7 @@
     BA: [10, 18, 'start', 1], TN: [-10, 4, 'end', 1], ZA: [0, -14, 'middle', 1], BB: [10, -4, 'start', 1],
     ZV: [-10, 14, 'end', 0], PP: [0, -14, 'middle', 1], KE: [10, 18, 'start', 1], PO: [10, 0, 'start', 1],
     NZ: [-10, 4, 'end', 0], NI: [-10, 4, 'end', 0], HE: [10, 4, 'start', 0], LC: [8, 18, 'start', 0],
-    KN: [10, 4, 'start', 0], CA: [0, -12, 'middle', 0], RV: [0, -12, 'middle', 0], TT: [10, 14, 'start', 0],
+    KN: [10, 4, 'start', 0], CA: [0, -12, 'middle', 0], RV: [0, -12, 'middle', 0], TT: [-8, -8, 'end', 0],
   };
   const BORDER = [
     [16.95, 48.62], [17.2, 48.87], [17.42, 48.83], [17.7, 48.87], [17.93, 49.02], [18.1, 49.08], [18.16, 49.27],
@@ -346,6 +397,7 @@
   }
 
   function bind() {
+    $('groups').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) setGroup(b.dataset.group); });
     $('cats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (b) setCat(b.dataset.cat); });
     $('clearCat').addEventListener('click', () => setCat(null));
     let tq;
@@ -395,8 +447,8 @@
     { l: 'NZ LV ZV BB', types: ['R', 'Os'], names: ['Hron', 'Sitno', 'Vepor'] }, { l: 'BB VR', types: ['Os', 'R'], names: ['Turiec'] },
     { l: 'ZV LC RS RV KE', types: ['R', 'Os'], names: ['Rimava', 'Gemeran', 'Novohrad'] },
     { l: 'BA SE KU', types: ['Os', 'REX', 'EC'], names: ['Slovan', 'Pannonia'] }, { l: 'KE KY PO', types: ['Os', 'REX'] },
-    { l: 'PO BJ', types: ['Os'] }, { l: 'KE MI HE', types: ['R', 'Os'], names: ['Zemplín', 'Laborec'] }, { l: 'KE CT', types: ['Os'] },
-    { l: 'ZA CA', types: ['Os', 'EC'], names: ['Beskydy', 'Praha'] }, { l: 'LE NI', types: ['Os', 'R'], names: ['Zobor'] },
+    { l: 'PO BJ', types: ['Os'] }, { l: 'KE MI HE', types: ['R', 'Os'], names: ['Zemplín', 'Laborec'] }, { l: 'KE CT', types: ['Os', 'Os', 'EN'], names: ['Kyiv Express'] },
+    { l: 'ZA CA', types: ['Os', 'EC', 'EC', 'EN'], names: ['Beskydy', 'Praha', 'Košičan'] }, { l: 'LE NI', types: ['Os', 'R'], names: ['Zobor'] },
     { l: 'NZ KN', types: ['Os'] }, { l: 'NI TO PD', types: ['Os', 'R'], names: ['Ponitrie', 'Bojnice'] }, { l: 'PO VK HE', types: ['Os'] },
   ];
   const CARRIER = { RJ: 'RegioJet', LE: 'Leo Express' };
@@ -432,7 +484,9 @@
       const segF = prog * (seq.length - 1), seg = Math.floor(segF), f = segF - seg;
       const a = ST[seq[seg]], b = ST[seq[seg + 1]];
       const baseDelay = demoDelay(base);
-      const delay = baseDelay > 5 ? Math.max(6, baseDelay + Math.round((drift() - 0.45) * 6)) : baseDelay;
+      let delay = baseDelay > 5 ? Math.max(6, baseDelay + Math.round((drift() - 0.45) * 6)) : baseDelay;
+      if (['EC', 'EN'].includes(type) && base() < 0.55) delay += 8 + Math.floor(base() * 22);   // prípoje zo zahraničia
+      if (['Ex', 'IC'].includes(type) && delay > 30) delay = Math.round(delay / 2);
       const dep = new Date(Date.now() - (2 + f * 18) * 60000);
       const named = sv.names && !['Os', 'REX'].includes(type);
       out.push({
@@ -456,8 +510,14 @@
     for (let i = 287; i >= 0; i--) {
       const t = new Date(end - i * 5 * 60000), hr = t.getHours() + t.getMinutes() / 60;
       const rush = Math.exp(-((hr - 7.5) ** 2) / 1.5) + Math.exp(-((hr - 16.5) ** 2) / 2);
-      const on = i === 0 ? now.onTime : Math.min(95, now.onTime - rush * 12 + (r() - 0.5) * 4);
-      pts.push({ t: t.toISOString(), n: now.n, onTime: on, avg: i === 0 ? now.avg : 5 + rush * 4 + r() * 2, over15: i === 0 ? now.over15 : Math.round(14 + rush * 12 + r() * 6) });
+      const wave = Math.sin(i / 9) * 1.5 + Math.sin(i / 23 + 1) * 2;
+      const on = i === 0 ? now.onTime : Math.min(95, now.onTime - rush * 12 + wave + (r() - 0.5) * 1.5);
+      const g = {};
+      Object.entries(now.g).forEach(([id, s]) => {
+        const k = { reg: 8, r: 14, ex: 10, int: 18 }[id] || 10;
+        g[id] = { n: s.n, onTime: i === 0 ? s.onTime : Math.max(0, Math.min(100, s.onTime - rush * k + wave * 1.4 + (r() - 0.5) * 2)), avg: s.avg, over15: s.over15 };
+      });
+      pts.push({ t: t.toISOString(), n: now.n, onTime: on, avg: i === 0 ? now.avg : 5 + rush * 4 + r() * 2, over15: i === 0 ? now.over15 : Math.round(14 + rush * 12 + r() * 6), g });
     }
     return pts;
   }

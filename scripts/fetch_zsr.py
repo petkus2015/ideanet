@@ -25,6 +25,13 @@ BASE = "https://mapa.zsr.sk"
 API = BASE + "/api/action"
 INTERVAL = 300
 HISTORY_LEN = 288  # 24 h po 5 min
+# druhy vlakov — rovnaké členenie ako vo vlaky/app.js
+GROUPS = {
+    "reg": {"OS", "REX", "ZR", "SP", "MOS"},
+    "r": {"R"},
+    "ex": {"EX", "IC", "SC", "RJ", "LE"},
+    "int": {"EC", "EN", "RJX", "ICE", "NJ"},
+}
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36"
 
 
@@ -114,16 +121,26 @@ def normalize(t):
     }
 
 
-def summary(trains, ts):
+def group_of(t):
+    typ = t["type"].upper()
+    return next((g for g, types in GROUPS.items() if typ in types), "other")
+
+
+def stats(trains):
     n = len(trains)
     d = [t["delay"] for t in trains]
     return {
-        "t": ts,
         "n": n,
         "avg": round(sum(d) / n, 1) if n else 0,
         "onTime": round(100 * sum(1 for x in d if x <= 5) / n, 1) if n else 0,
         "over15": sum(1 for x in d if x > 15),
     }
+
+
+def summary(trains, ts):
+    s = {"t": ts, **stats(trains)}
+    s["g"] = {g: stats([t for t in trains if group_of(t) == g]) for g in GROUPS}
+    return s
 
 
 def write_json(path, obj):
