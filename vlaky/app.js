@@ -616,8 +616,21 @@
     $('kOver').textContent = fmtNum(s.over15);
     $('kOverHint').innerHTML = delta(s.over15, p?.over15);
     const top = scope().reduce((a, t) => (!a || t.delay > a.delay ? t : a), null);
-    $('kMax').innerHTML = top ? (top.delay >= 60 ? `${Math.floor(top.delay / 60)}<small>h</small>&nbsp;${String(top.delay % 60).padStart(2, '0')}<small>min</small>` : `${top.delay}<small>min</small>`) : '—';
-    $('kMaxHint').textContent = top ? `${trainLabel(top)}${top.name ? ' ' + top.name : ''} · ${top.route || ''}` : '';
+    const big = m => (m >= 60 ? `${Math.floor(m / 60)}<small>h</small>&nbsp;${String(m % 60).padStart(2, '0')}<small>min</small>` : `${m}<small>min</small>`);
+    // najväčšie meškanie za posledných 24 h (z evidencie jázd), pri vybranom druhu vlaku za ten druh
+    const s24 = state.stats24, t24 = s24 && (state.group ? s24.g?.[state.group]?.top : s24.all?.top);
+    if (s24) {
+      const since = new Date(s24.since), full = Date.now() - since > 23 * 3600e3;
+      $('kMaxTitle').innerHTML = `Najväčšie meškanie <small>${full ? 'za 24 h' : `od ${fmtTime(since)}`}</small>`;
+      $('kMax').innerHTML = t24 ? big(t24.max) : '—';
+      $('kMaxHint').textContent = t24
+        ? `${t24.id}${t24.name ? ' ' + t24.name : ''} · ${t24.route ? t24.route + ' · ' : ''}${fmtTime(new Date(t24.at))}`
+        : 'za posledných 24 h bez meškania';
+    } else {
+      $('kMaxTitle').textContent = 'Najväčšie meškanie';
+      $('kMax').innerHTML = top ? big(top.delay) : '—';
+      $('kMaxHint').textContent = top ? `${trainLabel(top)}${top.name ? ' ' + top.name : ''} · ${top.route || ''}` : '';
+    }
   }
 
   function counts() {
@@ -1201,16 +1214,21 @@
 
   // ukážkové štatistiky za 24 h: každý spoj cestovného poriadku raz (dnešné doteraz + včerajšie od tohto času)
   function demoStats24(tt) {
-    const runs = tt.trips.map(([type, number]) => {
+    const runs = tt.trips.map(([type, number, name, stops]) => {
       const r = rng(hash(type + number + 'day'));
       let d = demoDelay(r);
       if (['EC', 'EN'].includes(type) && r() < 0.5) d += 8 + Math.floor(r() * 20);
-      return { g: groupOf({ type }), d, m: d + (d > 5 ? Math.floor(r() * 6) : 0) };
+      const ends = `${tt.stations[stops[0][0]][0]} – ${tt.stations[stops[stops.length - 1][0]][0]}`;
+      return { g: groupOf({ type }), d, m: d + (d > 5 ? Math.floor(r() * 6) : 0), id: `${type} ${number}`, name, route: ends, at: Date.now() - r() * 20 * 3600e3 };
     });
+    const topOf = list => {
+      const t = list.reduce((a, x) => (!a || x.m > a.m ? x : a), null);
+      return t && t.m ? { id: t.id, name: t.name, route: t.route, max: t.m, at: new Date(t.at).toISOString() } : null;
+    };
     const st = list => {
       const n = list.length, c = [0, 0, 0, 0, 0];
       list.forEach(x => c[catOf(x.d)]++);
-      return { n, avg: n ? list.reduce((a, x) => a + x.d, 0) / n : 0, onTime: n ? (100 * c[0]) / n : 0, max: list.reduce((a, x) => Math.max(a, x.m), 0), c };
+      return { n, avg: n ? list.reduce((a, x) => a + x.d, 0) / n : 0, onTime: n ? (100 * c[0]) / n : 0, max: list.reduce((a, x) => Math.max(a, x.m), 0), c, top: topOf(list) };
     };
     const g = {};
     GROUPS.forEach(gr => { g[gr.id] = st(runs.filter(x => x.g === gr.id)); });

@@ -171,6 +171,27 @@ class MV_Fetcher {
 			'onTime' => $n ? round( 100 * $on / $n, 1 ) : 0,
 			'max'    => $max,
 			'c'      => $cats,
+			'top'    => self::top_run( $runs ),
+		);
+	}
+
+	/** Jazda s najväčším meškaním: ktorý vlak, kde jazdil a kedy meškal najviac. */
+	private static function top_run( $runs ) {
+		$top = null;
+		foreach ( $runs as $r ) {
+			if ( ! $top || (int) $r['m'] > (int) $top['m'] ) {
+				$top = $r;
+			}
+		}
+		if ( ! $top || ! (int) $top['m'] ) {
+			return null;
+		}
+		return array(
+			'id'    => ! empty( $top['lb'] ) ? $top['lb'] : $top['id'],
+			'name'  => $top['nm'] ?? '',
+			'route' => $top['rt'] ?? '',
+			'max'   => (int) $top['m'],
+			'at'    => gmdate( 'Y-m-d\TH:i:s+00:00', (int) ( $top['mt'] ?? $top['l'] ) ),
 		);
 	}
 
@@ -194,9 +215,15 @@ class MV_Fetcher {
 				$runs[ $key ] = array( 'id' => $t['id'], 'g' => self::group_of( $t ), 'f' => $now, 'm' => 0 );
 				$active[ $t['id'] ] = $key;
 			}
-			$runs[ $key ]['d'] = $t['delay'];
-			$runs[ $key ]['l'] = $now;
-			$runs[ $key ]['m'] = max( (int) $runs[ $key ]['m'], $t['delay'] );
+			if ( $t['delay'] > (int) $runs[ $key ]['m'] || ! isset( $runs[ $key ]['mt'] ) ) {
+				$runs[ $key ]['mt'] = $now;
+			}
+			$runs[ $key ]['d']  = $t['delay'];
+			$runs[ $key ]['l']  = $now;
+			$runs[ $key ]['m']  = max( (int) $runs[ $key ]['m'], $t['delay'] );
+			$runs[ $key ]['lb'] = trim( $t['type'] . ' ' . $t['number'] );
+			$runs[ $key ]['nm'] = $t['name'];
+			$runs[ $key ]['rt'] = $t['route'];
 		}
 		$runs = array_filter( $runs, fn( $r ) => $now - (int) $r['l'] <= self::LEDGER_SECONDS );
 		self::write_json( 'ledger.json', $runs ? $runs : new stdClass() );

@@ -204,7 +204,17 @@ def run_stats(runs):
         "onTime": round(100 * sum(1 for x in d if x <= 5) / n, 1) if n else 0,
         "max": max((r["m"] for r in runs), default=0),
         "c": cats,
+        "top": top_run(runs),
     }
+
+
+def top_run(runs):
+    """Jazda s najväčším meškaním: ktorý vlak, kde jazdil a kedy meškal najviac."""
+    r = max(runs, key=lambda x: x["m"], default=None)
+    if not r or not r["m"]:
+        return None
+    return {"id": r.get("lb") or r["id"], "name": r.get("nm", ""), "route": r.get("rt", ""), "max": r["m"],
+            "at": datetime.fromtimestamp(r.get("mt", r["l"]), timezone.utc).isoformat(timespec="seconds")}
 
 
 def update_ledger(out: Path, trains, now: int):
@@ -225,7 +235,10 @@ def update_ledger(out: Path, trains, now: int):
             key = f'{t["id"]}#{now}'
             runs[key] = {"id": t["id"], "g": group_of(t), "f": now, "m": 0}
         r = runs[key]
-        r.update(d=t["delay"], l=now, m=max(r["m"], t["delay"]))
+        if t["delay"] > r["m"] or "mt" not in r:
+            r["mt"] = now
+        r.update(d=t["delay"], l=now, m=max(r["m"], t["delay"]),
+                 lb=f'{t["type"]} {t["number"]}'.strip(), nm=t.get("name", ""), rt=t.get("route", ""))
     runs = {k: r for k, r in runs.items() if now - r["l"] <= LEDGER_SECONDS}
     write_json(path, runs)
     since = min((r["f"] for r in runs.values()), default=now)
