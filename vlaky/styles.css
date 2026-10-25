@@ -1,4 +1,4 @@
-/* Staničná tabuľa v noci: atramentovo modrý podklad, jantárové LED akcenty. */
+/* Staničná tabuľa v noci: atramentovo modrý podklad, akcent v modrej ŽSR. */
 :root {
   color-scheme: dark;
   --bg: #0a0f1c;
@@ -9,7 +9,10 @@
   --fg: #e7ecf7;
   --muted: #8a96b2;
   --dim: #5b6684;
-  --accent: #ffb547;          /* LED jantár */
+  --brand: #005baa;           /* modrá ŽSR (plochy, tlačidlá s bielym textom) */
+  --accent: #3d8ee6;          /* modrá ŽSR zosvetlená pre text a čiary na tmavom podklade */
+  --led: #7ab8ff;             /* svietiace číslice hodín a tabule */
+  --on-brand: #ffffff;
 
   /* meškanie: načas → extrémne */
   --c0: #34d399;
@@ -59,7 +62,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 }
 .top__in { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; padding-block: 12px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand__mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); color: var(--accent); }
+.brand__mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--brand); border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--brand)); color: var(--on-brand); }
 .brand__mark svg { width: 24px; height: 24px; }
 .eyebrow { font: 600 11px/1 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
 .brand h1 { font: 700 26px/1 var(--f-display); letter-spacing: .01em; text-transform: uppercase; }
@@ -79,7 +82,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 @keyframes pulse-demo { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c4) 60%, transparent); } 70%, 100% { box-shadow: 0 0 0 8px transparent; } }
 
 .clock { display: grid; text-align: right; line-height: 1.15; }
-.clock span { font: 700 22px/1 var(--f-mono); color: var(--accent); letter-spacing: .04em; text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent); font-variant-numeric: tabular-nums; }
+.clock span { font: 700 22px/1 var(--f-mono); color: var(--led); letter-spacing: .04em; text-shadow: 0 0 12px color-mix(in srgb, var(--led) 45%, transparent); font-variant-numeric: tabular-nums; }
 .clock small { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
 
 .ring { position: relative; width: 48px; height: 48px; padding: 0; border: 0; background: none; color: var(--fg); cursor: pointer; border-radius: 50%; }
@@ -128,7 +131,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
   background: none; color: var(--muted); border: 1px solid var(--line);
 }
 .quick button:hover { color: var(--fg); border-color: var(--dim); }
-.quick button[aria-pressed="true"] { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+.quick button[aria-pressed="true"] { color: var(--on-brand); background: var(--brand); border-color: var(--accent); font-weight: 600; }
 
 .board__bar { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; padding: 0 16px 12px; }
 .seg { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); }
@@ -171,7 +174,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 
 /* tabuľa odchodov / príchodov (štýl letiskovej tabule) */
 .board.is-fids .thead, .board.is-fids .rows, .board.is-fids #more, .board.is-fids #sort { display: none; }
-.fids { --tile: #0b1222; --g-r: #5b9dff; --g-ex: var(--accent); --g-int: #2dd4bf; --g-reg: #94a3b8; --g-other: var(--dim);
+.fids { --tile: #0b1222; --g-r: #e2e8f0; --g-ex: var(--accent); --g-int: #2dd4bf; --g-reg: #94a3b8; --g-other: var(--dim);
   background: linear-gradient(180deg, #070b16, var(--bg-2)); border-top: 1px solid var(--line); }
 .fids[hidden] { display: none; }
 .fids__head { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; padding: 14px 16px; }
@@ -180,7 +183,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
   padding: 8px 18px; border-radius: 9px; border: 0; background: none; cursor: pointer; color: var(--muted);
   font: 700 17px/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase;
 }
-.fids__tabs button[aria-selected="true"] { background: var(--accent); color: #1a1205; }
+.fids__tabs button[aria-selected="true"] { background: var(--brand); color: var(--on-brand); box-shadow: inset 0 0 0 1px var(--accent); }
 .fids__cols, .fl { display: grid; grid-template-columns: 118px 92px 170px minmax(0, 1fr) 180px; gap: 16px; align-items: center; }
 .fids__cols { padding: 8px 16px; font: 600 11px var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); border-block: 1px solid var(--line); }
 .fids__cols span:last-child { text-align: right; }
@@ -195,12 +198,12 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 .fl__time { display: inline-flex; gap: 2px; align-items: center; }
 .fl__time span {
   position: relative; display: grid; place-items: center; width: 22px; height: 32px; border-radius: 4px;
-  background: linear-gradient(180deg, #151d31 50%, var(--tile) 50%); color: var(--accent);
+  background: linear-gradient(180deg, #151d31 50%, var(--tile) 50%); color: var(--led);
   font: 700 21px/1 var(--f-mono); box-shadow: inset 0 0 0 1px #1c2640, 0 1px 0 rgba(0, 0, 0, .5);
-  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--led) 45%, transparent);
 }
 .fl__time span::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, .55); }
-.fl__time i { font: 700 20px/1 var(--f-mono); color: var(--accent); font-style: normal; padding: 0 1px; }
+.fl__time i { font: 700 20px/1 var(--f-mono); color: var(--led); font-style: normal; padding: 0 1px; }
 .fl__exp { font: 700 19px/1 var(--f-mono); color: var(--k); font-variant-numeric: tabular-nums; }
 .fl__ok { font: 600 12.5px var(--f-body); color: var(--c0); }
 .fl__train { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 7px; min-width: 0; }
@@ -219,7 +222,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 .st { display: inline-block; padding: 5px 10px; border-radius: 7px; font: 700 13px/1 var(--f-body); letter-spacing: .02em; white-space: nowrap; }
 .st--ok { color: var(--c0); background: color-mix(in srgb, var(--c0) 13%, transparent); }
 .st--late { color: var(--k); background: color-mix(in srgb, var(--k) 15%, transparent); }
-.st--now { color: #1a1205; background: var(--accent); animation: blink 1.2s steps(2, start) infinite; }
+.st--now { color: var(--on-brand); background: var(--brand); box-shadow: inset 0 0 0 1px var(--accent); animation: blink 1.2s steps(2, start) infinite; }
 .st--here { color: var(--c0); background: color-mix(in srgb, var(--c0) 13%, transparent); box-shadow: inset 0 0 0 1px var(--c0); }
 .st--gone { color: var(--muted); background: var(--panel-2); }
 .st--plan { color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
@@ -350,7 +353,7 @@ select:hover, input[type="search"]:hover { border-color: var(--dim); }
 .k3 { color: var(--c3); background: color-mix(in srgb, var(--c3) 15%, transparent); }
 .k4 { color: var(--c4); background: color-mix(in srgb, var(--c4) 15%, transparent); }
 .tr { min-width: 0; }
-.tr__id { font: 700 15px var(--f-mono); color: var(--accent); white-space: nowrap; }
+.tr__id { font: 700 15px var(--f-mono); color: var(--led); white-space: nowrap; }
 .tr__name { display: block; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell { min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell small { display: block; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
