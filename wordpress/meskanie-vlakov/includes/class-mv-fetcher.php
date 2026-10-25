@@ -226,6 +226,8 @@ class MV_Fetcher {
 			'delay'      => max( 0, $delay ),
 			'delayText'  => self::clean( $t['MeskaText'] ?? '' ),
 			'info'       => self::clean( $t['InfoZoStanice'] ?? '' ),
+			'time'       => self::clean( $t['Cas'] ?? '' ),     // čas posledného hlásenia (formát ŽSR nie je zdokumentovaný)
+			'timePlan'   => self::clean( $t['CasPlan'] ?? '' ),
 			'next'       => self::clean( $t['NextStation'] ?? '' ),
 			'lat'        => $lat,
 			'lon'        => $lon,

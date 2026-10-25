@@ -284,6 +284,22 @@
     IC: 'InterCity', SC: 'SuperCity', EC: 'EuroCity', EN: 'Nočný EuroNight', RJ: 'RegioJet', LE: 'Leo Express', RJX: 'Railjet',
   };
   const flap = txt => [...txt].map(ch => (ch === ':' ? '<i>:</i>' : `<span>${ch}</span>`)).join('');
+  // čas posledného hlásenia polohy: pole Cas zo ŽSR, inak čas v texte hlásenia („Odchod Žilina 12:31“)
+  const TIME_RE = /\b([01]?\d|2[0-3])[:.]([0-5]\d)\b/;
+  function reportTime(t) {
+    for (const v of [t.time, t.info]) {
+      const str = String(v || '');
+      const ms = str.match(/Date\((\d{10,})/) || (/^\d{4}-\d\d-\d\dT/.test(str) ? [0, Date.parse(str)] : null);
+      if (ms && Number(ms[1])) return TZ_FMT.format(new Date(Number(ms[1])));
+      const m = str.match(TIME_RE);
+      if (m) return `${m[1].padStart(2, '0')}:${m[2]}`;
+    }
+    return '';
+  }
+  const routeEnds = route => {
+    const parts = String(route || '').split(/\s+[-–—]\s+/).map(x => x.trim()).filter(Boolean);
+    return parts.length > 1 ? [parts[0], parts[parts.length - 1]] : ['', parts[0] || ''];
+  };
   // cieľ ako preklápacia tabuľa: písmeno = dlaždica, slová sa môžu zalomiť; čítačka dostane celý názov
   const flapWords = txt => `<span class="sr">${esc(txt)}</span><span class="flapw" aria-hidden="true">${
     txt.toLocaleUpperCase('sk').split(/\s+/).filter(Boolean)
@@ -662,7 +678,7 @@
     $('stationClear').hidden = !st;
     $('quick').innerHTML = QUICK_STATIONS.map(n =>
       `<button type="button" data-station="${esc(n)}" aria-pressed="${!!st && findStation(n)?.[0] === st}">${esc(n)}</button>`).join('');
-    $('thPos').textContent = st ? `Poloha voči stanici ${st}` : 'Posledná poloha';
+    $('thPos').textContent = 'Kam ide';
     $('boardTitle').textContent = st ? `Stanica ${st}` : 'Vlaky na trati';
     $('stationHelp').textContent = st
       ? 'Tabuľa ukazuje vlaky na najbližšie 4 hodiny. Inú stanicu vyberiete nižšie alebo napíšete do poľa.'
@@ -751,13 +767,19 @@
         t.delayText && `<span>Hlásenie ŽSR: ${esc(t.delayText)}</span>`,
         t.lat == null && '<span>Poloha vlaku nie je k dispozícii.</span>',
       ].filter(Boolean).join('');
+      const [from, to] = routeEnds(t.route);
+      const time = reportTime(t);
+      const where = String(t.info || '').replace(TIME_RE, '').replace(/\s+/g, ' ').trim();
       return `<li class="row ${sel ? 'sel' : ''}" data-id="${esc(t.id)}" tabindex="0" role="button" aria-expanded="${sel}"
-          aria-label="${esc(trainLabel(t))}, meškanie ${fmtMin(t.delay)}">
-        <div class="row__main">
-          <span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span>
-          <span class="tr"><span class="tr__id">${esc(trainLabel(t))}</span>${t.name ? `<span class="tr__name">${esc(t.name)}</span>` : ''}</span>
-          <span class="cell">${esc(t.route) || '—'}</span>
-          <span class="cell">${relBadge(t)}${t.info ? esc(t.info) : '<span class="muted">neznáma</span>'}${t.next ? `<small>ďalej ${esc(t.next)}</small>` : ''}</span>
+          aria-label="${esc(trainLabel(t))}${to ? ' do ' + esc(to) : ''}, meškanie ${fmtMin(t.delay)}">
+        <div class="row__air">
+          <span class="ra__time"><span class="fl__time">${flap(time || '--:--')}</span><small>${time ? 'posledné hlásenie' : 'čas neznámy'}</small></span>
+          <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span></span>
+          <span class="ra__train"><b class="tchip tchip--${groupOf(t)}">${esc(t.type || 'Vlak')}</b><span class="fl__num">${esc(t.number)}</span>
+            <small>${esc([TYPE_LABEL[t.type], t.name].filter(Boolean).join(' · '))}</small></span>
+          <span class="ra__dir">${to ? `<b class="fl__dest">${flapWords(to)}</b>` : '<b class="muted">Cieľ neznámy</b>'}
+            ${from ? `<small>Ide z: ${esc(from)}</small>` : ''}
+            <small>${relBadge(t)}${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next ? ` · ďalej ${esc(t.next)}` : ''}</small></span>
           <span class="carrier">${esc(t.carrier || '—')}</span>
         </div>
         ${more ? `<div class="row__more">${more}</div>` : ''}

@@ -156,6 +156,8 @@ def normalize(t):
         "delay": max(delay, 0) if delay is not None else 0,
         "delayText": clean(t.get("MeskaText")),
         "info": clean(t.get("InfoZoStanice")),
+        "time": clean(t.get("Cas")),          # čas posledného hlásenia (formát ŽSR nie je zdokumentovaný)
+        "timePlan": clean(t.get("CasPlan")),
         "next": clean(t.get("NextStation")),
         "lat": lat,
         "lon": lon,
