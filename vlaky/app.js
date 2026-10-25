@@ -230,8 +230,8 @@
   }
 
   const STATUS = {
-    ok: ['ok', 'Načas'], late: ['late', ''], now: ['now', 'Odchádza'], here: ['here', 'V stanici'],
-    gone: ['gone', 'Odišiel'], arrived: ['gone', 'Prišiel'], plan: ['plan', 'Podľa CP'],
+    ok: ['ok', '✓ Načas'], late: ['late', ''], now: ['now', 'Odchádza teraz'], here: ['here', 'Stojí v stanici'],
+    gone: ['gone', 'Odišiel'], arrived: ['gone', 'Prišiel'], plan: ['plan', 'Ešte nevyrazil'],
   };
 
   function boardFiltered(mode) {
@@ -242,6 +242,11 @@
       (!q || norm(`${e.type} ${e.number} ${e.type}${e.number} ${e.name} ${e.origin} ${e.dest} ${e.via.join(' ')}`).includes(q)));
   }
 
+  // celé názvy druhov vlakov — skratky nie každý pozná
+  const TYPE_LABEL = {
+    Os: 'Osobný vlak', REX: 'Regionálny expres', Zr: 'Zrýchlený vlak', Sp: 'Spešný vlak', R: 'Rýchlik', Ex: 'Expres',
+    IC: 'InterCity', SC: 'SuperCity', EC: 'EuroCity', EN: 'Nočný EuroNight', RJ: 'RegioJet', LE: 'Leo Express', RJX: 'Railjet',
+  };
   const flap = txt => [...txt].map(ch => (ch === ':' ? '<i>:</i>' : `<span>${ch}</span>`)).join('');
 
   function renderBoard() {
@@ -249,26 +254,30 @@
     const items = boardFiltered(mode);
     document.querySelectorAll('.fids__tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
     $('fidsTime').textContent = mode === 'dep' ? 'Odchod' : 'Príchod';
-    $('fidsDir').textContent = mode === 'dep' ? 'Smer' : 'Z ktorej stanice';
+    $('fidsDir').textContent = mode === 'dep' ? 'Kam ide' : 'Odkiaľ prichádza';
     const ahead = items.filter(e => !['gone', 'arrived'].includes(e.status));
-    $('fidsNote').textContent = `${ahead.length} ${mode === 'dep' ? 'odchodov' : 'príchodov'} do ${hm(now + BOARD_AHEAD)} · ${ahead.filter(e => e.delay > 5).length} mešká`;
-    $('count').textContent = `${state.station} · ${mode === 'dep' ? 'odchody' : 'príchody'} podľa cestovného poriadku s aktuálnym meškaním`;
+    const lateN = ahead.filter(e => e.delay > 5).length;
+    $('fidsNote').textContent = `Do ${hm(now + BOARD_AHEAD)}: ${ahead.length} vlakov, ${lateN ? `${lateN} mešká` : 'všetky načas'}`;
+    $('count').textContent = 'Časy podľa cestovného poriadku, meškanie podľa skutočnej polohy vlaku.';
     $('fidsRows').innerHTML = items.length ? items.slice(0, state.boardShown).map(e => {
       const [cls, label] = STATUS[e.status];
       const c = e.delay != null ? catOf(e.delay) : 0;
       const late = e.delay > 5 && !['gone', 'arrived'].includes(e.status);
-      const stText = e.status === 'late' ? `Mešká ${fmtMin(e.delay)}` : label;
+      const stText = e.status === 'late' ? `⚠ Mešká ${fmtMin(e.delay)}`
+        : e.status === 'now' && mode === 'arr' ? 'Prichádza teraz' : label;
       const big = mode === 'dep' ? e.dest : e.origin;
       const ends = mode === 'dep' ? e.origin : e.dest;
       const sub = norm(ends) === norm(state.station)
-        ? (mode === 'dep' ? 'začína tu' : 'končí tu')
-        : (mode === 'dep' ? `z ${e.origin}` : `do ${e.dest}`);
+        ? (mode === 'dep' ? 'Začína v tejto stanici' : 'Končí v tejto stanici')
+        : (mode === 'dep' ? `Ide z: ${e.origin}` : `Pokračuje do: ${e.dest}`);
+      const via = e.via.length ? `${mode === 'dep' ? 'Zastavuje' : 'Predtým'}: ${e.via.join(', ')}` : '';
       return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" ${e.train ? `data-id="${esc(e.train.id)}" tabindex="0" role="button"` : ''}
           style="--k:var(--c${c})" aria-label="${esc(e.type)} ${esc(e.number)} ${mode === 'dep' ? 'do' : 'z'} ${esc(big)}, ${hm(e.plan)}, ${esc(stText)}">
         <span class="fl__time">${flap(hm(e.plan))}</span>
-        <span class="fl__exp">${late ? hm(e.exp) : e.delay != null && !['gone', 'arrived'].includes(e.status) ? '<span class="fl__ok">načas</span>' : ''}</span>
-        <span class="fl__train"><b class="tchip tchip--${e.group}">${esc(e.type)}</b><span class="fl__num">${esc(e.number)}</span>${e.name ? `<small>${esc(e.name)}</small>` : ''}</span>
-        <span class="fl__dir"><b>${esc(big)}</b><small>${esc(sub)}${e.via.length ? ` · cez ${esc(e.via.join(', '))}` : ''}</small></span>
+        <span class="fl__exp">${late ? `<span class="fl__lbl">nový čas</span>${hm(e.exp)}` : ''}</span>
+        <span class="fl__train"><b class="tchip tchip--${e.group}">${esc(e.type)}</b><span class="fl__num">${esc(e.number)}</span>
+          <small>${esc([TYPE_LABEL[e.type], e.name].filter(Boolean).join(' · '))}</small></span>
+        <span class="fl__dir"><b>${esc(big)}</b><small>${esc(sub)}</small>${via ? `<small>${esc(via)}</small>` : ''}</span>
         <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${e.carrier && e.carrier !== 'ZSSK' ? `<small>${esc(e.carrier)}</small>` : ''}</span>
       </li>`;
     }).join('') : `<li class="empty">V najbližších ${BOARD_AHEAD / 60} hodinách tu podľa filtra nič ${mode === 'dep' ? 'neodchádza' : 'neprichádza'}.</li>`;
@@ -287,7 +296,7 @@
     const labels = { live: 'Živé dáta', stale: 'Oneskorené dáta', demo: 'Ukážkové dáta', error: 'Výpadok spojenia', loading: 'Načítavam…' };
     $('pill').dataset.state = state.mode;
     $('pillText').textContent = labels[state.mode];
-    $('updated').textContent = state.updated ? `aktualizované ${fmtTime(state.updated)}` : '—';
+    $('updated').textContent = state.updated ? `údaje z ${fmtTime(state.updated)}` : 'načítavam';
     const msg = {
       demo: PREVIEW
         ? '<b>Ukážka rozhrania.</b> Vlaky a meškania sú vymyslené, ale realistické. Naostro stránka každých 5 minút načíta dáta z mapy polohy vlakov ŽSR.'
@@ -432,6 +441,10 @@
     $('quick').innerHTML = QUICK_STATIONS.map(n =>
       `<button type="button" data-station="${esc(n)}" aria-pressed="${!!st && findStation(n)?.[0] === st}">${esc(n)}</button>`).join('');
     $('thPos').textContent = st ? `Poloha voči stanici ${st}` : 'Posledná poloha';
+    $('boardTitle').textContent = st ? `Stanica ${st}` : 'Vlaky na trati';
+    $('stationHelp').textContent = st
+      ? 'Tabuľa ukazuje vlaky na najbližšie 4 hodiny. Inú stanicu vyberiete nižšie alebo napíšete do poľa.'
+      : 'Vyberte stanicu a uvidíte, kedy z nej vlaky odchádzajú a koľko meškajú.';
     const board = boardActive();
     document.querySelector('.board').classList.toggle('is-fids', board);
     $('fids').hidden = !board;
@@ -695,6 +708,7 @@
     $('sort').addEventListener('change', e => { state.sort = e.target.value; renderList(); });
     $('more').addEventListener('click', () => { state.shown += PAGE; renderList(); });
     $('refresh').addEventListener('click', load);
+    $('bigText').addEventListener('click', () => setBig(!document.documentElement.classList.contains('big')));
     $('rows').addEventListener('click', e => { const li = e.target.closest('.row'); if (li) select(li.dataset.id, 'list'); });
     $('rows').addEventListener('keydown', e => {
       if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('row')) { e.preventDefault(); select(e.target.dataset.id, 'list'); }
@@ -718,9 +732,8 @@
 
   function tick() {
     const left = Math.max(0, state.nextAt - Date.now()), s = Math.ceil(left / 1000);
-    $('clock').textContent = new Date().toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    $('countdown').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-    $('ringFg').style.strokeDashoffset = String(100.53 * (left / REFRESH_MS));
+    $('clock').textContent = hm(nowMin());
+    $('countdown').textContent = s > 60 ? `${Math.ceil(s / 60)} min` : `${s} s`;
     if (left === 0 && !document.hidden) { state.nextAt = Date.now() + REFRESH_MS; load(); }
     const minute = Math.floor(Date.now() / 60000);
     if (minute !== lastMinute) { lastMinute = minute; if (boardActive()) renderBoard(); }
@@ -856,6 +869,12 @@
 
   state.station = store.get('station');   // overí sa po načítaní zoznamu staníc
   state.group = GROUPS.some(g => g.id === store.get('group')) ? store.get('group') : null;
+  function setBig(on) {
+    document.documentElement.classList.toggle('big', on);
+    $('bigText').setAttribute('aria-pressed', String(on));
+    store.set('big', on ? '1' : '');
+  }
+  setBig(store.get('big') === '1');
   drawBase();
   bind();
   load();
