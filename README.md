@@ -84,7 +84,8 @@ nedokumentované API — bez záruky).
 **Čo stránka ukazuje:** počet vlakov v prevádzke, podiel vlakov načas (≤ 5 min),
 priemerné a najväčšie meškanie so zmenou za posledných 5 min, rozdelenie meškania
 po kategóriách, trend za 24 h, filtrovateľný zoznam (hľadanie, dopravca, kategória,
-zoradenie) a mapu s farebnými značkami. Odpočet do ďalšej aktualizácie je v hlavičke.
+zoradenie), schému železničnej siete s polohou vlakov a tabuľu vlakov v štýle
+staničnej tabule (tmavý dizajn). Odpočet do ďalšej aktualizácie je v hlavičke.
 
 ## Ako to funguje
 
