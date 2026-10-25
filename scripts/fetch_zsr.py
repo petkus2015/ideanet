@@ -212,7 +212,11 @@ def build_timetable(out_path, url=GTFS_URL):
     today = datetime.now(TZ).date()
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=180) as r:
-        z = zipfile.ZipFile(io.BytesIO(r.read()))
+        data, ctype = r.read(), r.headers.get("Content-Type", "neznámy typ")
+    if not data.startswith(b"PK\x03\x04"):
+        text = re.sub(r"<[^>]+>|\s+", " ", data[:2000].decode("utf-8", "replace")).strip()[:160]
+        raise RuntimeError(f"server nevrátil ZIP s cestovným poriadkom ({ctype}, {len(data)} B): {text!r}")
+    z = zipfile.ZipFile(io.BytesIO(data))
 
     def rows(name):
         if name not in z.namelist():

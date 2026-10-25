@@ -80,8 +80,11 @@ class MV_Fetcher {
 		}
 		// cestovný poriadok je na každý deň iný: po polnoci sa zostaví nový
 		$tt = self::read_json( 'timetable.json' );
+		// po neúspechu ďalší pokus až o hodinu, aby sme server ŽSR nezahlcovali veľkým súborom každé 2 minúty
+		$st     = (array) get_option( 'mv_status', array() );
+		$failed = ! empty( $st['tt_error'] ) && time() - (int) ( $st['tt_error_at'] ?? 0 ) < HOUR_IN_SECONDS;
 		if ( ( ! $tt || ( $tt['date'] ?? '' ) !== self::today()->format( 'Y-m-d' ) || ( $tt['v'] ?? 1 ) < self::TT_FORMAT )
-			&& ! get_transient( 'mv_tt_running' ) && ! wp_next_scheduled( 'mv_build_timetable' ) ) {
+			&& ! $failed && ! get_transient( 'mv_tt_running' ) && ! wp_next_scheduled( 'mv_build_timetable' ) ) {
 			wp_schedule_single_event( time(), 'mv_build_timetable' );
 		}
 	}
@@ -306,14 +309,14 @@ class MV_Fetcher {
 	 * Cestovný poriadok na dnes vo formáte, ktorý číta assets/app.js:
 	 * {"date", "stations": [[názov, lat, lon, [kódy]]], "trips": [[typ, číslo, názov, [[stanica, príchod, odchod]], dopravca]]}
 	 */
-	public static function build_timetable() {
+	public static function build_timetable( $local_only = false ) {
 		if ( get_transient( 'mv_tt_running' ) ) {
 			return;
 		}
 		set_transient( 'mv_tt_running', 1, 15 * MINUTE_IN_SECONDS );
 		try {
-			$count = self::build_timetable_unlocked();
-			self::set_status( array( 'tt_ok' => time(), 'tt_count' => $count, 'tt_error' => '' ) );
+			list( $count, $note ) = self::build_timetable_unlocked( $local_only );
+			self::set_status( array( 'tt_ok' => time(), 'tt_count' => $count, 'tt_error' => '', 'tt_note' => $note ) );
 		} catch ( Exception $e ) {
 			self::set_status( array( 'tt_error' => $e->getMessage(), 'tt_error_at' => time() ) );
 		} finally {
@@ -321,7 +324,61 @@ class MV_Fetcher {
 		}
 	}
 
-	private static function build_timetable_unlocked() {
+	/** Uložená kópia GTFS (posledné úspešné stiahnutie alebo ručne nahratý súbor). */
+	public static function gtfs_copy() {
+		return self::dir() . 'gtfs.zip';
+	}
+
+	/** Je to ZIP? (ZIP začína bajtmi „PK\x03\x04“) */
+	public static function is_zip( $path ) {
+		return is_readable( $path ) && "PK\x03\x04" === (string) file_get_contents( $path, false, null, 0, 4 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	}
+
+	/**
+	 * Stiahne GTFS ako prehliadač (niektoré servery odmietajú WordPress) a overí, že prišiel naozaj ZIP.
+	 * Pri chybe vysvetlí, čo server namiesto neho vrátil.
+	 */
+	private static function download_gtfs( $url ) {
+		$tmp = wp_tempnam( 'mv-gtfs' );
+		$res = wp_safe_remote_get(
+			$url,
+			array(
+				'timeout'     => 300,
+				'redirection' => 5,
+				'stream'      => true,
+				'filename'    => $tmp,
+				'user-agent'  => self::UA,
+				'headers'     => array(
+					'Accept'          => 'application/zip,application/octet-stream,*/*;q=0.8',
+					'Accept-Language' => 'sk,en;q=0.8',
+				),
+			)
+		);
+		if ( is_wp_error( $res ) ) {
+			wp_delete_file( $tmp );
+			throw new RuntimeException( 'GTFS sa nepodarilo stiahnuť: ' . $res->get_error_message() );
+		}
+		$code = (int) wp_remote_retrieve_response_code( $res );
+		if ( 200 !== $code || ! self::is_zip( $tmp ) ) {
+			$type = wp_remote_retrieve_header( $res, 'content-type' );
+			$size = is_readable( $tmp ) ? (int) filesize( $tmp ) : 0;
+			$head = is_readable( $tmp ) ? (string) file_get_contents( $tmp, false, null, 0, 2000 ) : ''; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			wp_delete_file( $tmp );
+			$text = trim( preg_replace( '/\s+/u', ' ', wp_strip_all_tags( preg_replace( '/<[^>]*>/', ' ', $head ) ) ) );
+			throw new RuntimeException(
+				sprintf(
+					'Server nevrátil ZIP s cestovným poriadkom (HTTP %d, %s, %s B)%s. Stiahnite súbor v prehliadači a nahrajte ho nižšie.',
+					$code,
+					$type ? $type : 'neznámy typ',
+					number_format_i18n( $size ),
+					'' !== $text ? '. Začiatok odpovede: „' . mb_substr( $text, 0, 160 ) . '“' : ''
+				)
+			);
+		}
+		return $tmp;
+	}
+
+	private static function build_timetable_unlocked( $local_only = false ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			throw new RuntimeException( 'Na serveri chýba PHP rozšírenie zip (ZipArchive).' );
 		}
@@ -331,15 +388,42 @@ class MV_Fetcher {
 			set_time_limit( 300 ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 		}
 
-		$url = mv_settings()['gtfs_url'];
-		$tmp = download_url( $url, 300 );
-		if ( is_wp_error( $tmp ) ) {
-			throw new RuntimeException( 'GTFS sa nepodarilo stiahnuť: ' . $tmp->get_error_message() );
+		wp_mkdir_p( self::dir() );
+		$url    = mv_settings()['gtfs_url'];
+		$copy   = self::gtfs_copy();
+		$tmp    = null;
+		$note   = '';
+		$source = $url;
+		if ( ! $local_only ) {
+			try {
+				$tmp = self::download_gtfs( $url );
+			} catch ( RuntimeException $e ) {
+				if ( ! self::is_zip( $copy ) ) {
+					throw $e;
+				}
+				// sťahovanie zlyhalo, ale máme uloženú kópiu: cestovný poriadok platí celý rok
+				$note = 'Sťahovanie zlyhalo, použil sa uložený súbor. ' . $e->getMessage();
+			}
+		} elseif ( ! self::is_zip( $copy ) ) {
+			throw new RuntimeException( 'Nahratý súbor GTFS chýba.' );
 		}
+		if ( ! $tmp ) {
+			$source = 'gtfs.zip (uložená kópia z ' . wp_date( 'j. n. Y', (int) filemtime( $copy ) ) . ')';
+		}
+
 		$zip = new ZipArchive();
-		if ( true !== $zip->open( $tmp ) ) {
-			wp_delete_file( $tmp );
-			throw new RuntimeException( 'Stiahnutý súbor nie je platný ZIP archív GTFS.' );
+		if ( true !== $zip->open( $tmp ? $tmp : $copy ) ) {
+			if ( $tmp ) {
+				wp_delete_file( $tmp );
+			}
+			throw new RuntimeException( 'Súbor GTFS je poškodený alebo neúplný (napr. hosting prerušil sťahovanie). Stiahnite ho v prehliadači a nahrajte ho nižšie.' );
+		}
+		if ( ! $zip->locateName( 'stop_times.txt' ) || ! $zip->locateName( 'trips.txt' ) ) {
+			$zip->close();
+			if ( $tmp ) {
+				wp_delete_file( $tmp );
+			}
+			throw new RuntimeException( 'ZIP neobsahuje cestovný poriadok GTFS (chýba stop_times.txt alebo trips.txt).' );
 		}
 
 		try {
@@ -420,7 +504,13 @@ class MV_Fetcher {
 			}
 		} finally {
 			$zip->close();
-			wp_delete_file( $tmp );
+			if ( $tmp ) {
+				// platný čerstvý súbor si necháme ako zálohu pre prípad, že ďalšie sťahovanie zlyhá
+				if ( ! @copy( $tmp, $copy ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+					$note = trim( $note . ' Zálohu GTFS sa nepodarilo uložiť.' );
+				}
+				wp_delete_file( $tmp );
+			}
 		}
 
 		$out = array();
@@ -446,12 +536,12 @@ class MV_Fetcher {
 			array(
 				'date'     => self::today()->format( 'Y-m-d' ),
 				'v'        => self::TT_FORMAT,
-				'source'   => $url,
+				'source'   => $source,
 				'stations' => $stations,
 				'trips'    => $out,
 			)
 		);
-		return count( $out );
+		return array( count( $out ), $note );
 	}
 }
 

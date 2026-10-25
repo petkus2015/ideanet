@@ -11,6 +11,7 @@ class MV_Admin {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ) );
 		add_action( 'admin_init', array( __CLASS__, 'register' ) );
 		add_action( 'admin_post_mv_run', array( __CLASS__, 'run' ) );
+		add_action( 'admin_post_mv_upload_gtfs', array( __CLASS__, 'upload' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( MV_FILE ), array( __CLASS__, 'links' ) );
 	}
 
@@ -69,6 +70,36 @@ class MV_Admin {
 		exit;
 	}
 
+	/** Ručné nahratie GTFS (keď ho server nevie stiahnuť sám). */
+	public static function upload() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( 'Nemáte oprávnenie.' );
+		}
+		check_admin_referer( 'mv_upload_gtfs' );
+		$file = $_FILES['gtfs'] ?? null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- súbor sa overuje nižšie
+		$msg  = '';
+		if ( ! $file || UPLOAD_ERR_OK !== (int) $file['error'] ) {
+			$err = $file ? (int) $file['error'] : UPLOAD_ERR_NO_FILE;
+			$msg = in_array( $err, array( UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE ), true )
+				? 'Súbor je väčší, ako hosting dovoľuje nahrať (' . size_format( wp_max_upload_size() ) . '). Požiadajte hosting o zvýšenie limitu upload_max_filesize.'
+				: 'Súbor sa nepodarilo nahrať (kód chyby ' . $err . ').';
+		} elseif ( ! is_uploaded_file( $file['tmp_name'] ) || ! MV_Fetcher::is_zip( $file['tmp_name'] ) ) {
+			$msg = 'Nahratý súbor nie je ZIP. Vyberte súbor gtfs.zip.';
+		} else {
+			wp_mkdir_p( MV_Fetcher::dir() );
+			if ( ! move_uploaded_file( $file['tmp_name'], MV_Fetcher::gtfs_copy() ) ) {
+				$msg = 'Súbor sa nepodarilo uložiť do ' . MV_Fetcher::dir() . '.';
+			} else {
+				MV_Fetcher::build_timetable( true );
+				$st  = (array) get_option( 'mv_status', array() );
+				$msg = empty( $st['tt_error'] ) ? 'Súbor nahratý, cestovný poriadok zostavený: ' . (int) ( $st['tt_count'] ?? 0 ) . ' spojov na dnes.' : 'Chyba: ' . $st['tt_error'];
+			}
+		}
+		set_transient( 'mv_notice', $msg, 60 );
+		wp_safe_redirect( admin_url( 'options-general.php?page=meskanie-vlakov' ) );
+		exit;
+	}
+
 	private static function when( $ts ) {
 		return $ts ? esc_html( wp_date( 'j. n. Y H:i', (int) $ts ) ) : '—';
 	}
@@ -119,7 +150,13 @@ class MV_Admin {
 								(<?php echo (int) $st['tt_count']; ?> spojov na dnes)
 							<?php endif; ?>
 							<?php if ( ! empty( $st['tt_error'] ) ) : ?>
-								<br><strong style="color:#b32d2e">Posledná chyba: <?php echo esc_html( $st['tt_error'] ); ?></strong>
+								<br><strong style="color:#b32d2e">Posledná chyba (<?php echo self::when( $st['tt_error_at'] ?? 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>): <?php echo esc_html( $st['tt_error'] ); ?></strong>
+							<?php endif; ?>
+							<?php if ( ! empty( $st['tt_note'] ) ) : ?>
+								<br><span style="color:#996800"><?php echo esc_html( $st['tt_note'] ); ?></span>
+							<?php endif; ?>
+							<?php if ( MV_Fetcher::is_zip( MV_Fetcher::gtfs_copy() ) ) : ?>
+								<br>Uložená kópia GTFS: <?php echo esc_html( size_format( filesize( MV_Fetcher::gtfs_copy() ) ) ); ?> z <?php echo self::when( filemtime( MV_Fetcher::gtfs_copy() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -139,6 +176,18 @@ class MV_Admin {
 					</form>
 				<?php endforeach; ?>
 			</p>
+			<h3>Nahrať cestovný poriadok ručne</h3>
+			<p style="max-width:760px">Ak server nevie súbor stiahnuť sám (chyba vyššie), stiahnite ho v prehliadači
+				z <a href="<?php echo esc_url( $s['gtfs_url'] ); ?>"><?php echo esc_html( $s['gtfs_url'] ); ?></a>
+				a nahrajte ho sem. Plugin si ho uloží a každý deň z neho zostaví cestovný poriadok, kým sa nepodarí stiahnuť novší.
+				Najväčšia veľkosť nahrávaného súboru na tomto hostingu: <strong><?php echo esc_html( size_format( wp_max_upload_size() ) ); ?></strong>.</p>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
+				<?php wp_nonce_field( 'mv_upload_gtfs' ); ?>
+				<input type="hidden" name="action" value="mv_upload_gtfs">
+				<input type="file" name="gtfs" accept=".zip,application/zip" required>
+				<?php submit_button( 'Nahrať a zostaviť', 'secondary', 'mv_upload', false ); ?>
+			</form>
+
 			<p class="description" style="max-width:760px">
 				Sťahovanie beží cez WP-Cron, ktorý WordPress spúšťa pri návštevách webu. Ak má web málo návštev,
 				nastavte na hostingu systémový cron, ktorý každé 2 minúty otvorí <code><?php echo esc_html( site_url( 'wp-cron.php' ) ); ?></code>.
