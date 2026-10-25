@@ -101,11 +101,17 @@ Vybraná skupina filtruje súhrn, rozdelenie, graf za 24 h, mapu aj tabuľu.
 **Tabuľa vlakov je hneď na začiatku.** Predvolene sú hore rýchliky a expresy
 (zoradené podľa meškania), potom medzinárodné a regionálne vlaky.
 
-**Výber stanice** (pole „Stanica“ alebo rýchle tlačidlá) zobrazí vlaky, ktoré do
-stanice ešte prídu alebo v nej práve stoja, s meškaním. Vlaky, ktoré už prešli, sa
-dajú zapnúť prepínačom. Smer sa určuje z trasy vlaku (`Trasa` z ŽSR, v dátach ako
-`path`). Keď trasa chýba, použije sa cieľová a ďalšia stanica. Výber stanice
-a druhu vlaku si prehliadač zapamätá. Zoznam staníc je v `ST` vo `vlaky/app.js`.
+**Výber stanice** (pole „Stanica“ alebo rýchle tlačidlá) prepne tabuľu na
+**tabuľu odchodov a príchodov** v štýle letiska: plánovaný čas, očakávaný čas,
+vlak, cieľ (alebo východisková stanica) s trasou „cez…“ a stav (Načas, Mešká X min,
+Odchádza, V stanici, Odišiel, Podľa CP). Tabuľa ukazuje najbližšie 4 hodiny.
+
+Časy pochádzajú z cestovného poriadku ŽSR v otvorenom formáte GTFS (CC0,
+`GTFS_URL` v skripte), ktorý skript raz denne prevedie do `vlaky/data/timetable.json`.
+Meškanie sa k spojom pripája z polohy vlakov podľa čísla vlaku, takže na tabuli
+sú aj vlaky, ktoré ešte len vyrazia (stav „Podľa CP“). Bez cestovného poriadku
+stránka po výbere stanice ukáže vlaky na trati, ktoré do nej prídu.
+Výber stanice a druhu vlaku si prehliadač zapamätá.
 Členenie je v `GROUPS` vo `vlaky/app.js` a v `scripts/fetch_zsr.py`. Odpočet do ďalšej aktualizácie je v hlavičke.
 
 ## Ako to funguje

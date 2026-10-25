@@ -28,9 +28,11 @@ jobs:
       - uses: actions/configure-pages@v5
         id: pages
 
-      # História KPI sa nedrží v gite — stiahne sa z poslednej nasadenej verzie.
-      - name: Predošlá história
-        run: curl -fsSL "${{ steps.pages.outputs.base_url }}/vlaky/data/history.json" -o vlaky/data/history.json || true
+      # História KPI a dnešný cestovný poriadok sa nedržia v gite — prevezmú sa z poslednej nasadenej verzie.
+      - name: Predošlá história a cestovný poriadok
+        run: |
+          curl -fsSL "${{ steps.pages.outputs.base_url }}/vlaky/data/history.json" -o vlaky/data/history.json || true
+          curl -fsSL "${{ steps.pages.outputs.base_url }}/vlaky/data/timetable.json" -o vlaky/data/timetable.json || true
 
       - name: Stiahnuť dáta z ŽSR
         run: python3 scripts/fetch_zsr.py

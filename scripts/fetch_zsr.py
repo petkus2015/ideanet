@@ -7,22 +7,32 @@ Použitie:
   python3 scripts/fetch_zsr.py --loop     # opakuje každých 5 minút
   python3 scripts/fetch_zsr.py --out DIR  # iný výstupný priečinok
 
-Zdroj je nedokumentované API ŽSR — volajte ho rozumne (max. raz za pár minút).
+Raz denne zostaví aj cestovný poriadok na dnes (vlaky/data/timetable.json)
+z otvorených GTFS dát ŽSR (CC0). Z neho stránka skladá tabuľu odchodov a príchodov
+stanice a pridáva k spojom aktuálne meškanie podľa čísla vlaku.
+
+Zdroj polohy je nedokumentované API ŽSR — volajte ho rozumne (max. raz za pár minút).
 Iba štandardná knižnica Pythonu.
 """
 import argparse
+import csv
 import http.cookiejar
+import io
 import json
 import re
+import zipfile
 import sys
 import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 BASE = "https://mapa.zsr.sk"
 API = BASE + "/api/action"
+GTFS_URL = "https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip"
+TZ = ZoneInfo("Europe/Bratislava")
 INTERVAL = 300
 HISTORY_LEN = 288  # 24 h po 5 min
 # druhy vlakov — rovnaké členenie ako vo vlaky/app.js
@@ -177,6 +187,100 @@ def summary(trains, ts):
     return s
 
 
+def gtfs_minutes(value):
+    """'HH:MM:SS' (aj 25:10:00 po polnoci) -> minúty od polnoci."""
+    m = re.match(r"\s*(\d+):(\d\d)", value or "")
+    return int(m.group(1)) * 60 + int(m.group(2)) if m else None
+
+
+def train_ident(trip, route):
+    """Typ, číslo a názov vlaku z GTFS (napr. 'Ex 612 Spiš')."""
+    for text in (trip.get("trip_short_name"), route.get("route_short_name"), trip.get("trip_headsign")):
+        m = re.match(r"\s*([A-Za-z]{1,4})\s*(\d{1,5})\b\s*(.*)", text or "")
+        if m:
+            return m.group(1), m.group(2), clean(m.group(3))
+    num = re.search(r"\d+", trip.get("trip_short_name") or "")
+    typ = re.sub(r"[^A-Za-z]", "", route.get("route_short_name") or "")[:4]
+    return typ, num.group() if num else "", ""
+
+
+def build_timetable(out_path, url=GTFS_URL):
+    """Cestovný poriadok na dnes vo formáte, ktorý číta vlaky/app.js:
+    {"date", "stations": [[názov, lat, lon]], "trips": [[typ, číslo, názov, [[stanica, príchod, odchod]], dopravca]]}
+    """
+    today = datetime.now(TZ).date()
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=180) as r:
+        z = zipfile.ZipFile(io.BytesIO(r.read()))
+
+    def rows(name):
+        if name not in z.namelist():
+            return
+        with z.open(name) as f:
+            yield from csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
+
+    ymd, wd = today.strftime("%Y%m%d"), today.strftime("%A").lower()
+    services = {r["service_id"] for r in rows("calendar.txt")
+                if r.get("start_date", "") <= ymd <= r.get("end_date", "") and r.get(wd) == "1"}
+    for r in rows("calendar_dates.txt"):
+        if r.get("date") == ymd:
+            (services.add if r.get("exception_type") == "1" else services.discard)(r["service_id"])
+
+    agencies = {r.get("agency_id", ""): clean(r.get("agency_name")) for r in rows("agency.txt")}
+    routes = {r["route_id"]: r for r in rows("routes.txt")}
+    trips = {r["trip_id"]: r for r in rows("trips.txt") if r.get("service_id") in services}
+
+    # nástupištia jednej stanice zlúčime podľa názvu
+    stations, st_index, stop_station = [], {}, {}
+    for r in rows("stops.txt"):
+        name = clean(r.get("stop_name"))
+        if not name:
+            continue
+        if name not in st_index:
+            try:
+                lat, lon = round(float(r["stop_lat"]), 4), round(float(r["stop_lon"]), 4)
+            except (KeyError, ValueError):
+                lat = lon = None
+            st_index[name] = len(stations)
+            stations.append([name, lat, lon])
+        stop_station[r["stop_id"]] = st_index[name]
+
+    times = {}
+    for r in rows("stop_times.txt"):
+        if r["trip_id"] in trips and r["stop_id"] in stop_station:
+            times.setdefault(r["trip_id"], []).append((
+                int(r.get("stop_sequence") or 0), stop_station[r["stop_id"]],
+                gtfs_minutes(r.get("arrival_time")), gtfs_minutes(r.get("departure_time"))))
+
+    out = []
+    for trip_id, st in times.items():
+        if len(st) < 2:
+            continue
+        st.sort()
+        trip = trips[trip_id]
+        route = routes.get(trip.get("route_id"), {})
+        typ, num, name = train_ident(trip, route)
+        stops = [[s, a if i else None, d if i < len(st) - 1 else None] for i, (_, s, a, d) in enumerate(st)]
+        out.append([typ, num, name, stops, agencies.get(route.get("agency_id", ""), "")])
+    out.sort(key=lambda t: t[3][0][2] or 0)
+
+    write_json(out_path, {"date": today.isoformat(), "source": url, "stations": stations, "trips": out})
+    print(f"cestovný poriadok {today}: {len(out)} spojov, {len(stations)} staníc")
+
+
+def ensure_timetable(out: Path):
+    path = out / "timetable.json"
+    try:
+        if json.loads(path.read_text("utf-8")).get("date") == datetime.now(TZ).date().isoformat():
+            return
+    except (OSError, ValueError, AttributeError):
+        pass
+    try:
+        build_timetable(path)
+    except Exception as e:  # bez cestovného poriadku stránka ukáže len polohy vlakov
+        print(f"varovanie: cestovný poriadok sa nepodarilo zostaviť: {e}", file=sys.stderr)
+
+
 def write_json(path, obj):
     tmp = path.with_suffix(".tmp")
     tmp.write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":")), "utf-8")
@@ -185,6 +289,7 @@ def write_json(path, obj):
 
 def run_once(out: Path):
     out.mkdir(parents=True, exist_ok=True)
+    ensure_timetable(out)
     raw = fetch_raw()
     trains = sorted((normalize(t) for t in raw), key=lambda t: -t["delay"])
     ts = datetime.now(timezone.utc).isoformat(timespec="seconds")

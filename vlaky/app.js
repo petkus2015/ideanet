@@ -5,6 +5,9 @@
 
   const DATA_URL = 'data/trains.json';
   const HISTORY_URL = 'data/history.json';
+  const TIMETABLE_URL = 'data/timetable.json';   // cestovný poriadok na dnes (z GTFS ŽSR)
+  const BOARD_PAGE = 20;
+  const BOARD_AHEAD = 240;   // minúty dopredu na tabuli odchodov
   const REFRESH_MS = 5 * 60 * 1000;
   const STALE_MS = 15 * 60 * 1000;
   const PAGE = 15;
@@ -45,6 +48,7 @@
     trains: [], history: [], prev: null, updated: null,
     mode: 'loading', cat: null, q: '', carrier: '', sort: 'fast',
     group: null, station: '', showPassed: false,
+    tt: null, boardMode: 'dep', boardShown: BOARD_PAGE,
     shown: PAGE, active: null, nextAt: Date.now() + REFRESH_MS,
   };
   const store = {
@@ -63,9 +67,15 @@
   /* ---------------- stanica ---------------- */
 
   const km = (a, b) => Math.hypot((a[1] - b[1]) * 73.4, (a[0] - b[0]) * 111.2);
+  // stanice: z cestovného poriadku, inak z vlastného zoznamu ST
+  const stationRows = () => (state.tt?.stations?.length ? state.tt.stations : Object.values(ST));
+  const findStation = name => {
+    const n = norm(name).trim();
+    return n ? stationRows().find(x => norm(x[0]) === n) || stationRows().find(x => norm(x[0]).startsWith(n)) : undefined;
+  };
   const stationCoords = name => {
-    const s = Object.values(ST).find(x => norm(x[0]) === norm(name));
-    return s ? [s[1], s[2]] : null;
+    const s = findStation(name);
+    return s && s[1] != null ? [s[1], s[2]] : null;
   };
   const sameStation = (field, st) => !!field && norm(field).includes(norm(st));
 
@@ -131,6 +141,10 @@
       const data = await getJSON(DATA_URL);
       if (!Array.isArray(data.trains)) throw new Error('neplatný formát');
       state.trains = data.trains.map(t => ({ ...t, delay: Math.max(0, Number(t.delay) || 0) }));
+      const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Bratislava' }).format(new Date());
+      if (!state.tt || state.tt.date !== today) {
+        try { const tt = await getJSON(TIMETABLE_URL); if (Array.isArray(tt.trips)) state.tt = tt; } catch { /* bez cestovného poriadku */ }
+      }
       state.updated = new Date(data.updated);
       state.mode = Date.now() - state.updated > STALE_MS ? 'stale' : 'live';
       try { state.history = await getJSON(HISTORY_URL); } catch { state.history = []; }
@@ -138,12 +152,15 @@
       if (state.trains.length && state.mode !== 'demo') {
         state.mode = 'error';   // ponecháme posledné platné dáta
       } else {
-        state.trains = demoTrains();
+        state.tt = demoTimetable();
+        state.trains = demoTrains(state.tt);
         state.history = demoHistory(summarizeAll(state.trains));
         state.updated = new Date();
         state.mode = 'demo';
       }
     }
+    if (state.station && !findStation(state.station)) state.station = '';
+    else if (state.station) state.station = findStation(state.station)[0];
     const h = state.history;
     state.prev = h.length > 1 ? h[h.length - 2] : before;
     state.nextAt = Date.now() + REFRESH_MS;
@@ -151,10 +168,119 @@
     render();
   }
 
+  /* ---------------- tabuľa odchodov ---------------- */
+
+  const TZ_FMT = new Intl.DateTimeFormat('sk-SK', { timeZone: 'Europe/Bratislava', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const nowMin = () => {
+    const p = Object.fromEntries(TZ_FMT.formatToParts(new Date()).map(x => [x.type, x.value]));
+    return Number(p.hour) * 60 + Number(p.minute) + new Date().getSeconds() / 60;
+  };
+  const hm = m => { const v = ((Math.round(m) % 1440) + 1440) % 1440; return `${String(Math.floor(v / 60)).padStart(2, '0')}:${String(v % 60).padStart(2, '0')}`; };
+  const digits = s => String(s || '').replace(/\D/g, '');
+
+  const boardActive = () => !!(state.station && state.tt && state.tt.stations.some(x => norm(x[0]) === norm(state.station)));
+
+  // spoje vybranej stanice z cestovného poriadku + aktuálne meškanie podľa čísla vlaku
+  function boardEntries(mode) {
+    const tt = state.tt, now = nowMin();
+    const si = tt.stations.findIndex(x => norm(x[0]) === norm(state.station));
+    const live = new Map(state.trains.map(t => [digits(t.number), t]));
+    const sc = tt.stations[si];
+    const out = [];
+    tt.trips.forEach(([type, number, name, stops, carrier]) => {
+      const i = stops.findIndex(x => x[0] === si);
+      if (i < 0 || (mode === 'dep' && i === stops.length - 1) || (mode === 'arr' && i === 0)) return;
+      const plan = mode === 'dep' ? (stops[i][2] ?? stops[i][1]) : (stops[i][1] ?? stops[i][2]);
+      const t = live.get(digits(number)) || null;
+      const delay = t ? t.delay : null;
+      const exp = plan + (delay || 0);
+      if (exp < now - 10 || plan > now + BOARD_AHEAD) return;
+
+      // kde je vlak voči stanici
+      let status;
+      if (t && t.lat != null) {
+        const path = stops.map(x => tt.stations[x[0]].slice(1)).filter(c => c[0] != null);
+        const pos = [t.lat, t.lon];
+        const here = sc[1] != null && km(pos, [sc[1], sc[2]]) < 1.5;
+        const passed = !here && sc[1] != null && path.length > 1 && along(path, pos).s > along(path, [sc[1], sc[2]]).s;
+        if (passed) status = mode === 'dep' ? 'gone' : 'arrived';
+        else if (here) status = mode === 'dep' ? 'here' : 'arrived';
+        else if (exp - now <= 2) status = 'now';
+        else status = delay > 5 ? 'late' : 'ok';
+      } else if (exp < now - 2) {
+        status = mode === 'dep' ? 'gone' : 'arrived';
+      } else {
+        status = 'plan';
+      }
+      if ((status === 'gone' || status === 'arrived') && exp < now - 10) return;
+
+      const names = idx => idx.map(k => tt.stations[stops[k][0]][0]);
+      const rest = mode === 'dep'
+        ? names(stops.slice(i + 1, -1).map((_, k) => i + 1 + k))
+        : names(stops.slice(1, i).map((_, k) => 1 + k)).reverse();
+      out.push({
+        type, number, name, carrier: t?.carrier || carrier || '', plan, exp, delay, status, train: t,
+        group: groupOf({ type }),
+        origin: tt.stations[stops[0][0]][0],
+        dest: tt.stations[stops[stops.length - 1][0]][0],
+        via: rest.slice(0, 3),
+      });
+    });
+    return out.sort((a, b) => a.plan - b.plan || a.exp - b.exp);
+  }
+
+  const STATUS = {
+    ok: ['ok', 'Načas'], late: ['late', ''], now: ['now', 'Odchádza'], here: ['here', 'V stanici'],
+    gone: ['gone', 'Odišiel'], arrived: ['gone', 'Prišiel'], plan: ['plan', 'Podľa CP'],
+  };
+
+  function boardFiltered(mode) {
+    const q = norm(state.q);
+    return boardEntries(mode).filter(e =>
+      (!state.group || e.group === state.group) &&
+      (!state.carrier || e.carrier === state.carrier) &&
+      (!q || norm(`${e.type} ${e.number} ${e.type}${e.number} ${e.name} ${e.origin} ${e.dest} ${e.via.join(' ')}`).includes(q)));
+  }
+
+  const flap = txt => [...txt].map(ch => (ch === ':' ? '<i>:</i>' : `<span>${ch}</span>`)).join('');
+
+  function renderBoard() {
+    const mode = state.boardMode, now = nowMin();
+    const items = boardFiltered(mode);
+    document.querySelectorAll('.fids__tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
+    $('fidsTime').textContent = mode === 'dep' ? 'Odchod' : 'Príchod';
+    $('fidsDir').textContent = mode === 'dep' ? 'Smer' : 'Z ktorej stanice';
+    const ahead = items.filter(e => !['gone', 'arrived'].includes(e.status));
+    $('fidsNote').textContent = `${ahead.length} ${mode === 'dep' ? 'odchodov' : 'príchodov'} do ${hm(now + BOARD_AHEAD)} · ${ahead.filter(e => e.delay > 5).length} mešká`;
+    $('count').textContent = `${state.station} · ${mode === 'dep' ? 'odchody' : 'príchody'} podľa cestovného poriadku s aktuálnym meškaním`;
+    $('fidsRows').innerHTML = items.length ? items.slice(0, state.boardShown).map(e => {
+      const [cls, label] = STATUS[e.status];
+      const c = e.delay != null ? catOf(e.delay) : 0;
+      const late = e.delay > 5 && !['gone', 'arrived'].includes(e.status);
+      const stText = e.status === 'late' ? `Mešká ${fmtMin(e.delay)}` : label;
+      const big = mode === 'dep' ? e.dest : e.origin;
+      const ends = mode === 'dep' ? e.origin : e.dest;
+      const sub = norm(ends) === norm(state.station)
+        ? (mode === 'dep' ? 'začína tu' : 'končí tu')
+        : (mode === 'dep' ? `z ${e.origin}` : `do ${e.dest}`);
+      return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" ${e.train ? `data-id="${esc(e.train.id)}" tabindex="0" role="button"` : ''}
+          style="--k:var(--c${c})" aria-label="${esc(e.type)} ${esc(e.number)} ${mode === 'dep' ? 'do' : 'z'} ${esc(big)}, ${hm(e.plan)}, ${esc(stText)}">
+        <span class="fl__time">${flap(hm(e.plan))}</span>
+        <span class="fl__exp">${late ? hm(e.exp) : e.delay != null && !['gone', 'arrived'].includes(e.status) ? '<span class="fl__ok">načas</span>' : ''}</span>
+        <span class="fl__train"><b class="tchip tchip--${e.group}">${esc(e.type)}</b><span class="fl__num">${esc(e.number)}</span>${e.name ? `<small>${esc(e.name)}</small>` : ''}</span>
+        <span class="fl__dir"><b>${esc(big)}</b><small>${esc(sub)}${e.via.length ? ` · cez ${esc(e.via.join(', '))}` : ''}</small></span>
+        <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${e.carrier && e.carrier !== 'ZSSK' ? `<small>${esc(e.carrier)}</small>` : ''}</span>
+      </li>`;
+    }).join('') : `<li class="empty">V najbližších ${BOARD_AHEAD / 60} hodinách tu podľa filtra nič ${mode === 'dep' ? 'neodchádza' : 'neprichádza'}.</li>`;
+    const rest = items.length - state.boardShown;
+    $('fidsMore').hidden = rest <= 0;
+    $('fidsMore').textContent = `Zobraziť ďalšie spoje (${rest})`;
+  }
+
   /* ---------------- render ---------------- */
 
   function render() {
-    renderStatus(); renderStation(); renderSeg(); renderGroups(); renderKpis(); renderDist(); renderTrend(); renderCarriers(); renderList(); renderDots();
+    renderStatus(); fillStations(); renderStation(); renderSeg(); renderGroups(); renderKpis(); renderDist(); renderTrend(); renderCarriers(); renderList(); renderDots();
   }
 
   function renderStatus() {
@@ -282,10 +408,21 @@
   }
 
   function renderSeg() {
-    const base = stationScope();
+    const base = boardActive()
+      ? boardEntries(state.boardMode).filter(e => !['gone', 'arrived'].includes(e.status)).map(e => ({ type: e.type }))
+      : stationScope();
     const btn = (id, label, n) => `<button type="button" data-group="${id}" aria-pressed="${(state.group || '') === id}">${label}<span>${n}</span></button>`;
     $('groupSeg').innerHTML = btn('', 'Všetky', base.length) +
       GROUPS.map(g => btn(g.id, g.label, base.filter(t => groupOf(t) === g.id).length)).join('');
+  }
+
+  let stationsFilled = null;
+  function fillStations() {
+    const rows = stationRows();
+    if (stationsFilled === rows) return;
+    stationsFilled = rows;
+    $('stationList').innerHTML = rows.map(x => x[0]).sort((a, b) => a.localeCompare(b, 'sk'))
+      .map(n => `<option value="${esc(n)}"></option>`).join('');
   }
 
   function renderStation() {
@@ -293,11 +430,14 @@
     $('station').value = st;
     $('stationClear').hidden = !st;
     $('quick').innerHTML = QUICK_STATIONS.map(n =>
-      `<button type="button" data-station="${esc(n)}" aria-pressed="${norm(n) === norm(st)}">${esc(n)}</button>`).join('');
+      `<button type="button" data-station="${esc(n)}" aria-pressed="${!!st && findStation(n)?.[0] === st}">${esc(n)}</button>`).join('');
     $('thPos').textContent = st ? `Poloha voči stanici ${st}` : 'Posledná poloha';
+    const board = boardActive();
+    document.querySelector('.board').classList.toggle('is-fids', board);
+    $('fids').hidden = !board;
     const bar = $('stbar');
-    bar.hidden = !st;
-    if (!st) return;
+    bar.hidden = !st || board;
+    if (!st || board) return;
     const rel = { here: 0, upcoming: 0, passed: 0 };
     state.trains.forEach(t => { const r = relation(t); if (r) rel[r]++; });
     bar.innerHTML = `
@@ -323,8 +463,9 @@
   }
 
   function setStation(name) {
-    const match = Object.values(ST).find(x => norm(x[0]) === norm(name));
+    const match = findStation(name);
     state.station = match ? match[0] : '';
+    state.boardShown = BOARD_PAGE;
     store.set('station', state.station);
     refreshAll();
   }
@@ -359,6 +500,7 @@
   }
 
   function renderList() {
+    if (boardActive()) { renderBoard(); return; }
     const items = filtered();
     const all = scope().length;
     const grp = (state.group ? ` · ${GROUPS.find(g => g.id === state.group).label.toLowerCase()}` : '') + (state.station ? ` · ${state.station}` : '');
@@ -508,22 +650,39 @@
     $('groupSeg').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) setGroup(b.dataset.group); });
     $('quick').addEventListener('click', e => {
       const b = e.target.closest('[data-station]');
-      if (b) setStation(norm(b.dataset.station) === norm(state.station) ? '' : b.dataset.station);
+      if (b) setStation(findStation(b.dataset.station)?.[0] === state.station ? '' : b.dataset.station);
     });
     $('station').addEventListener('input', e => {
       const v = e.target.value.trim();
       if (!v && state.station) setStation('');
-      else if (Object.values(ST).some(x => norm(x[0]) === norm(v))) setStation(v);
+      else if (stationRows().some(x => norm(x[0]) === norm(v))) setStation(v);
     });
     $('station').addEventListener('keydown', e => {
       if (e.key !== 'Enter') return;
       const v = norm(e.target.value.trim());
-      const hit = v && Object.values(ST).find(x => norm(x[0]).startsWith(v));
+      const hit = v && (stationRows().find(x => norm(x[0]) === v) || stationRows().find(x => norm(x[0]).startsWith(v)));
       if (hit) { setStation(hit[0]); e.target.blur(); }
     });
     $('stationClear').addEventListener('click', () => { setStation(''); $('station').focus(); });
     $('stbar').addEventListener('change', e => {
       if (e.target.id === 'showPassed') { state.showPassed = e.target.checked; refreshAll(); }
+    });
+    document.querySelector('.fids__tabs').addEventListener('click', e => {
+      const b = e.target.closest('[data-mode]');
+      if (!b) return;
+      state.boardMode = b.dataset.mode;
+      state.boardShown = BOARD_PAGE;
+      renderSeg(); renderBoard();
+    });
+    $('fidsMore').addEventListener('click', () => { state.boardShown += BOARD_PAGE; renderBoard(); });
+    $('fidsRows').addEventListener('click', e => {
+      const li = e.target.closest('.fl[data-id]');
+      if (!li) return;
+      state.active = li.dataset.id;
+      renderDots();
+      const dot = document.querySelector(`.dot[data-id="${CSS.escape(li.dataset.id)}"]`);
+      const t = state.trains.find(x => x.id === li.dataset.id);
+      if (dot && t) { showTip(t, dot); $('map').scrollIntoView({ block: 'center', behavior: 'smooth' }); }
     });
     $('cats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (b) setCat(b.dataset.cat); });
     $('clearCat').addEventListener('click', () => setCat(null));
@@ -563,25 +722,47 @@
     $('countdown').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
     $('ringFg').style.strokeDashoffset = String(100.53 * (left / REFRESH_MS));
     if (left === 0 && !document.hidden) { state.nextAt = Date.now() + REFRESH_MS; load(); }
+    const minute = Math.floor(Date.now() / 60000);
+    if (minute !== lastMinute) { lastMinute = minute; if (boardActive()) renderBoard(); }
   }
+  let lastMinute = Math.floor(Date.now() / 60000);
 
   /* ---------------- ukážkové dáta ---------------- */
 
-  const SERVICES = [
-    { l: 'BA TT LE TN PU PB ZA VR RK LM PP SN KY KE', types: ['R', 'R', 'Ex', 'IC', 'RJ', 'LE'], names: ['Tatran', 'Kriváň', 'Šarišan', 'Chopok', 'Gerlach', 'Hornád', 'Spiš', 'Rysy'] },
-    { l: 'BA TT LE TN', types: ['Os', 'REX'] }, { l: 'ZA VR RK LM PP', types: ['Os'] },
-    { l: 'BA GA NZ ST', types: ['Os', 'REX', 'EC'], names: ['Hungaria', 'Metropolitan', 'Avala'] },
-    { l: 'NZ LV ZV BB', types: ['R', 'Os'], names: ['Hron', 'Sitno', 'Vepor'] }, { l: 'BB VR', types: ['Os', 'R'], names: ['Turiec'] },
-    { l: 'ZV LC RS RV KE', types: ['R', 'Os'], names: ['Rimava', 'Gemeran', 'Novohrad'] },
-    { l: 'BA SE KU', types: ['Os', 'REX', 'EC'], names: ['Slovan', 'Pannonia'] }, { l: 'KE KY PO', types: ['Os', 'REX'] },
-    { l: 'PO BJ', types: ['Os'] }, { l: 'KE MI HE', types: ['R', 'Os'], names: ['Zemplín', 'Laborec'] }, { l: 'KE CT', types: ['Os', 'Os', 'EN'], names: ['Kyiv Express'] },
-    { l: 'ZA CA', types: ['Os', 'EC', 'EC', 'EN'], names: ['Beskydy', 'Praha', 'Košičan'] }, { l: 'LE NI', types: ['Os', 'R'], names: ['Zobor'] },
-    { l: 'NZ KN', types: ['Os'] }, { l: 'NI TO PD', types: ['Os', 'R'], names: ['Ponitrie', 'Bojnice'] }, { l: 'PO VK HE', types: ['Os'] },
+  // ukážkový cestovný poriadok: linky, takt a číslovanie spojov
+  const MAIN = 'BA TT LE TN PU PB ZA VR RK LM PP SN KY KE';
+  const MAIN_NAMES = ['Tatran', 'Kriváň', 'Šarišan', 'Chopok', 'Gerlach', 'Hornád', 'Spiš', 'Rysy', 'Dunaj', 'Torysa', 'Ďumbier', 'Poľana', 'Javorina', 'Inovec'];
+  const DEMO_SERVICES = [
+    // Bratislava – Košice: striedanie Ex / R / IC každú hodinu
+    { l: MAIN, from: 305, to: 1085, every: 60, kind: i => ['Ex', 'R', 'IC'][i % 3], speed: k => (k === 'R' ? 72 : 82), dwell: 2,
+      num: (i, back, k) => (k === 'IC' ? 500 : 600) + 2 * i + (back ? 0 : 1), name: (i, k) => (k === 'IC' ? '' : MAIN_NAMES[i % MAIN_NAMES.length]) },
+    { l: MAIN, from: 350, to: 1060, every: 240, kind: () => 'RJ', speed: () => 82, dwell: 2, num: (i, back) => 1010 + 2 * i + (back ? 0 : 1), carrier: 'RegioJet' },
+    { l: MAIN, from: 460, to: 1000, every: 480, kind: () => 'LE', speed: () => 82, dwell: 2, num: (i, back) => 1350 + 2 * i + (back ? 0 : 1), carrier: 'Leo Express' },
+    { l: 'BA TT LE TN', from: 300, to: 1320, every: 60, kind: () => 'REX', speed: () => 62, dwell: 1, num: (i, back) => 1800 + 2 * i + (back ? 0 : 1) },
+    { l: 'ZA VR RK LM PP', from: 290, to: 1290, every: 60, kind: () => 'Os', speed: () => 52, dwell: 1, num: (i, back) => 3300 + 2 * i + (back ? 0 : 1) },
+    { l: 'BA GA NZ ST', from: 400, to: 1160, every: 120, kind: () => 'EC', speed: () => 80, dwell: 2, num: (i, back) => 270 + 2 * i + (back ? 0 : 1),
+      name: i => ['Hungaria', 'Metropolitan', 'Avala', 'Jaroslav Hašek', 'Slovan', 'Pannonia', 'Bathory'][i % 7] },
+    { l: 'BA GA NZ', from: 290, to: 1330, every: 30, kind: () => 'Os', speed: () => 55, dwell: 1, num: (i, back) => 2000 + 2 * i + (back ? 0 : 1) },
+    { l: 'NZ LV ZV BB', from: 330, to: 1170, every: 120, kind: () => 'R', speed: () => 66, dwell: 2, num: (i, back) => 830 + 2 * i + (back ? 0 : 1), name: i => ['Hron', 'Sitno', 'Vepor'][i % 3] },
+    { l: 'ZV LC RS RV KE', from: 310, to: 1150, every: 180, kind: () => 'R', speed: () => 62, dwell: 2, num: (i, back) => 930 + 2 * i + (back ? 0 : 1), name: i => ['Rimava', 'Gemeran', 'Novohrad'][i % 3] },
+    { l: 'BA SE KU', from: 300, to: 1320, every: 30, kind: () => 'Os', speed: () => 52, dwell: 1, num: (i, back) => 2500 + 2 * i + (back ? 0 : 1) },
+    { l: 'ZA CA', from: 380, to: 1200, every: 180, kind: () => 'EC', speed: () => 70, dwell: 2, num: (i, back) => 120 + 2 * i + (back ? 0 : 1), name: i => ['Beskydy', 'Praha', 'Košičan', 'Ostravan', 'Morava'][i % 5] },
+    { l: 'ZA CA', from: 300, to: 1320, every: 30, kind: () => 'Os', speed: () => 48, dwell: 1, num: (i, back) => 3400 + 2 * i + (back ? 0 : 1) },
+    { l: 'KE MI HE', from: 320, to: 1250, every: 120, kind: () => 'R', speed: () => 64, dwell: 2, num: (i, back) => 1940 + 2 * i + (back ? 0 : 1), name: i => ['Zemplín', 'Laborec'][i % 2] },
+    { l: 'KE KY PO BJ', from: 300, to: 1320, every: 30, kind: i => (i % 2 ? 'Os' : 'REX'), speed: k => (k === 'REX' ? 60 : 50), dwell: 1, num: (i, back, k) => (k === 'REX' ? 1700 : 8400) + 2 * i + (back ? 0 : 1) },
+    { l: 'KE CT', from: 330, to: 1290, every: 60, kind: () => 'Os', speed: () => 55, dwell: 1, num: (i, back) => 8600 + 2 * i + (back ? 0 : 1) },
+    { l: 'KE CT', from: 560, to: 1000, every: 440, kind: () => 'EN', speed: () => 60, dwell: 3, num: (i, back) => 144 + 2 * i + (back ? 0 : 1), name: () => 'Kyiv Express' },
+    { l: 'LE NI', from: 300, to: 1320, every: 30, kind: () => 'Os', speed: () => 48, dwell: 1, num: (i, back) => 4100 + 2 * i + (back ? 0 : 1) },
+    { l: 'NI TO PD', from: 330, to: 1230, every: 180, kind: () => 'R', speed: () => 58, dwell: 2, num: (i, back) => 1630 + 2 * i + (back ? 0 : 1), name: i => ['Ponitrie', 'Bojnice'][i % 2] },
+    { l: 'NZ KN', from: 300, to: 1320, every: 60, kind: () => 'Os', speed: () => 48, dwell: 1, num: (i, back) => 4400 + 2 * i + (back ? 0 : 1) },
+    { l: 'PO VK HE', from: 300, to: 1260, every: 60, kind: () => 'Os', speed: () => 48, dwell: 1, num: (i, back) => 8700 + 2 * i + (back ? 0 : 1) },
+    { l: 'BB VR', from: 310, to: 1250, every: 120, kind: i => (i % 2 ? 'Os' : 'R'), speed: k => (k === 'R' ? 58 : 48), dwell: 1, num: (i, back, k) => (k === 'R' ? 1750 : 5300) + 2 * i + (back ? 0 : 1), name: (i, k) => (k === 'R' ? 'Turiec' : '') },
   ];
   const CARRIER = { RJ: 'RegioJet', LE: 'Leo Express' };
   const ISSUES = ['Porucha rušňa', 'Obmedzenie rýchlosti na trati', 'Čakanie na prípoj', 'Porucha zabezpečovacieho zariadenia', 'Mimoriadna udalosť na trati', 'Neskorý príchod súpravy'];
 
   function rng(seed) { return () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296); }
+  const hash = str => [...str].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7);
 
   function demoDelay(r) {
     const x = r();
@@ -592,45 +773,67 @@
     return 61 + Math.floor(r() * 75);
   }
 
-  function demoTrains() {
-    const slot = Math.floor(Date.now() / REFRESH_MS);
-    const base = rng(20261025), drift = rng(slot);
-    const out = [], used = new Set();
-    for (let i = 0; i < 172; i++) {
-      const sv = SERVICES[Math.floor(base() * SERVICES.length)];
-      let seq = sv.l.split(' ');
-      if (base() < 0.5) seq = seq.reverse();
-      const type = sv.types[Math.floor(base() * sv.types.length)];
-      let number;
-      do {
-        number = String(type === 'Os' ? 2000 + Math.floor(base() * 6000) : type === 'REX' ? 1700 + Math.floor(base() * 300) : 200 + Math.floor(base() * 1400));
-      } while (used.has(type + number));
-      used.add(type + number);
-      // poloha sa posúva po trati s každou aktualizáciou
-      const prog = (base() + slot * 0.012) % 1;
-      const segF = prog * (seq.length - 1), seg = Math.floor(segF), f = segF - seg;
-      const a = ST[seq[seg]], b = ST[seq[seg + 1]];
-      const baseDelay = demoDelay(base);
-      let delay = baseDelay > 5 ? Math.max(6, baseDelay + Math.round((drift() - 0.45) * 6)) : baseDelay;
-      if (['EC', 'EN'].includes(type) && base() < 0.55) delay += 8 + Math.floor(base() * 22);   // prípoje zo zahraničia
-      if (['Ex', 'IC'].includes(type) && delay > 30) delay = Math.round(delay / 2);
-      const dep = new Date(Date.now() - (2 + f * 18) * 60000);
-      const named = sv.names && !['Os', 'REX', 'RJ', 'LE'].includes(type);
-      const arrived = f > 0.9;   // tesne pred stanicou b hlási ŽSR už príchod do nej
-      out.push({
-        id: type + number, type, number,
-        name: named ? sv.names[Math.floor(base() * sv.names.length)] : '',
-        route: `${ST[seq[0]][0]} – ${ST[seq[seq.length - 1]][0]}`,
-        carrier: CARRIER[type] || 'ZSSK',
-        delay, delayText: '',
-        info: arrived ? `Príchod ${b[0]} ${fmtTime(new Date())}` : `${f < 0.08 ? 'Príchod' : 'Odchod'} ${a[0]} ${fmtTime(dep)}`,
-        next: arrived ? (ST[seq[seg + 2]]?.[0] || '') : b[0],
-        lat: +(a[1] + (b[1] - a[1]) * f).toFixed(4), lon: +(a[2] + (b[2] - a[2]) * f).toFixed(4),
-        path: seq.map(k => [ST[k][1], ST[k][2]]),
-        disruption: delay > 30 ? ISSUES[Math.floor(base() * ISSUES.length)] : '',
-        note: '', nad: delay > 45 && base() < 0.3 ? [a[0], b[0]] : [],
+  // rovnaký formát ako data/timetable.json zo skriptu
+  function demoTimetable() {
+    const keys = Object.keys(ST), idx = Object.fromEntries(keys.map((k, i) => [k, i]));
+    const trips = [];
+    DEMO_SERVICES.forEach(sv => {
+      const line = sv.l.split(' ');
+      [false, true].forEach(back => {
+        const seq = back ? line.slice().reverse() : line;
+        for (let i = 0, t0 = sv.from + (back ? 7 : 0); t0 <= sv.to; i++, t0 += sv.every) {
+          const kind = sv.kind(i), speed = sv.speed(kind);
+          let t = t0;
+          const stops = seq.map((k, j) => {
+            if (j > 0) t += Math.max(3, Math.round((km(ST[seq[j - 1]].slice(1), ST[k].slice(1)) * 1.25 / speed) * 60));
+            const arr = j === 0 ? null : t;
+            if (j > 0 && j < seq.length - 1) t += sv.dwell;
+            return [idx[k], arr, j === seq.length - 1 ? null : t];
+          });
+          trips.push([kind, String(sv.num(i, back, kind)), sv.name ? sv.name(i, kind) : '', stops, sv.carrier || CARRIER[kind] || 'ZSSK']);
+        }
       });
-    }
+    });
+    return { date: 'demo', stations: keys.map(k => ST[k].slice()), trips };
+  }
+
+  // vlaky práve na trati podľa cestovného poriadku a vymysleného meškania
+  function demoTrains(tt) {
+    const now = nowMin(), slot = Math.floor(Date.now() / REFRESH_MS);
+    const out = [];
+    tt.trips.forEach(([type, number, name, stops, carrier]) => {
+      const r = rng(hash(type + number));
+      const base = demoDelay(r);
+      let delay = base > 5 ? Math.max(6, base + Math.round(Math.sin(slot * 0.7 + hash(number)) * 3)) : base;
+      if (['EC', 'EN'].includes(type) && r() < 0.55) delay += 8 + Math.floor(r() * 22);   // prípoje zo zahraničia
+      if (['Ex', 'IC'].includes(type) && delay > 30) delay = Math.round(delay / 2);
+      const te = now - delay;
+      const first = stops[0][2], last = stops[stops.length - 1][1];
+      if (te < first || te > last) return;
+      const st = k => tt.stations[stops[k][0]];
+      let lat, lon, info, next;
+      for (let k = 0; k < stops.length - 1; k++) {
+        const arr = stops[k][1] ?? stops[k][2], dep = stops[k][2], nextArr = stops[k + 1][1];
+        if (te >= arr && te <= dep) {
+          [, lat, lon] = st(k); info = `Príchod ${st(k)[0]} ${hm(arr + delay)}`; next = st(k + 1)[0]; break;
+        }
+        if (te > dep && te < nextArr) {
+          const f = (te - dep) / (nextArr - dep), a = st(k), b = st(k + 1);
+          lat = a[1] + (b[1] - a[1]) * f; lon = a[2] + (b[2] - a[2]) * f;
+          info = `Odchod ${a[0]} ${hm(dep + delay)}`; next = b[0]; break;
+        }
+      }
+      if (lat == null) { const z = st(stops.length - 1); [, lat, lon] = z; info = `Príchod ${z[0]} ${hm(last + delay)}`; next = ''; }
+      out.push({
+        id: type + number, type, number, name,
+        route: `${st(0)[0]} – ${st(stops.length - 1)[0]}`,
+        carrier, delay, delayText: '', info, next,
+        lat: +lat.toFixed(4), lon: +lon.toFixed(4),
+        path: stops.map((_, k) => st(k).slice(1)),
+        disruption: delay > 30 ? ISSUES[hash(number) % ISSUES.length] : '',
+        note: '', nad: [],
+      });
+    });
     return out;
   }
 
@@ -651,9 +854,7 @@
     return pts;
   }
 
-  $('stationList').innerHTML = Object.values(ST).map(x => x[0]).sort((a, b) => a.localeCompare(b, 'sk'))
-    .map(n => `<option value="${esc(n)}"></option>`).join('');
-  state.station = stationCoords(store.get('station')) ? Object.values(ST).find(x => norm(x[0]) === norm(store.get('station')))[0] : '';
+  state.station = store.get('station');   // overí sa po načítaní zoznamu staníc
   state.group = GROUPS.some(g => g.id === store.get('group')) ? store.get('group') : null;
   drawBase();
   bind();

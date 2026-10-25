@@ -169,6 +169,62 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 
 .section-title { font: 600 19px/1.1 var(--f-display); letter-spacing: .04em; text-transform: uppercase; margin-top: 10px; }
 
+/* tabuľa odchodov / príchodov (štýl letiskovej tabule) */
+.board.is-fids .thead, .board.is-fids .rows, .board.is-fids #more, .board.is-fids #sort { display: none; }
+.fids { --tile: #0b1222; --g-r: #5b9dff; --g-ex: var(--accent); --g-int: #2dd4bf; --g-reg: #94a3b8; --g-other: var(--dim);
+  background: linear-gradient(180deg, #070b16, var(--bg-2)); border-top: 1px solid var(--line); }
+.fids[hidden] { display: none; }
+.fids__head { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; padding: 14px 16px; }
+.fids__tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); }
+.fids__tabs button {
+  padding: 8px 18px; border-radius: 9px; border: 0; background: none; cursor: pointer; color: var(--muted);
+  font: 700 17px/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase;
+}
+.fids__tabs button[aria-selected="true"] { background: var(--accent); color: #1a1205; }
+.fids__cols, .fl { display: grid; grid-template-columns: 118px 92px 170px minmax(0, 1fr) 180px; gap: 16px; align-items: center; }
+.fids__cols { padding: 8px 16px; font: 600 11px var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); border-block: 1px solid var(--line); }
+.fids__cols span:last-child { text-align: right; }
+.fids__rows { list-style: none; margin: 0; padding: 0; }
+.fl { position: relative; padding: 11px 16px; border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.fl:nth-child(even) { background: color-mix(in srgb, var(--panel) 45%, transparent); }
+.fl[data-id] { cursor: pointer; }
+.fl[data-id]:hover { background: color-mix(in srgb, var(--panel-2) 80%, transparent); }
+.fl.is-late { box-shadow: inset 3px 0 0 var(--k); }
+.fl--gone { opacity: .42; }
+
+.fl__time { display: inline-flex; gap: 2px; align-items: center; }
+.fl__time span {
+  position: relative; display: grid; place-items: center; width: 22px; height: 32px; border-radius: 4px;
+  background: linear-gradient(180deg, #151d31 50%, var(--tile) 50%); color: var(--accent);
+  font: 700 21px/1 var(--f-mono); box-shadow: inset 0 0 0 1px #1c2640, 0 1px 0 rgba(0, 0, 0, .5);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.fl__time span::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, .55); }
+.fl__time i { font: 700 20px/1 var(--f-mono); color: var(--accent); font-style: normal; padding: 0 1px; }
+.fl__exp { font: 700 19px/1 var(--f-mono); color: var(--k); font-variant-numeric: tabular-nums; }
+.fl__ok { font: 600 12.5px var(--f-body); color: var(--c0); }
+.fl__train { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 7px; min-width: 0; }
+.tchip { display: inline-block; min-width: 34px; padding: 3px 6px; border-radius: 6px; text-align: center; font: 700 12px/1.2 var(--f-mono); color: #0a0f1c; background: var(--g-other); }
+.tchip--r { background: var(--g-r); }
+.tchip--ex { background: var(--g-ex); }
+.tchip--int { background: var(--g-int); }
+.tchip--reg { background: var(--g-reg); }
+.fl__num { font: 700 17px var(--f-mono); }
+.fl__train small { flex-basis: 100%; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fl__dir { min-width: 0; display: grid; gap: 2px; }
+.fl__dir b { font: 700 23px/1.05 var(--f-display); letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fl__dir small { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fl__st { display: grid; justify-items: end; gap: 3px; text-align: right; }
+.fl__st small { font: 600 11.5px var(--f-mono); color: var(--muted); }
+.st { display: inline-block; padding: 5px 10px; border-radius: 7px; font: 700 13px/1 var(--f-body); letter-spacing: .02em; white-space: nowrap; }
+.st--ok { color: var(--c0); background: color-mix(in srgb, var(--c0) 13%, transparent); }
+.st--late { color: var(--k); background: color-mix(in srgb, var(--k) 15%, transparent); }
+.st--now { color: #1a1205; background: var(--accent); animation: blink 1.2s steps(2, start) infinite; }
+.st--here { color: var(--c0); background: color-mix(in srgb, var(--c0) 13%, transparent); box-shadow: inset 0 0 0 1px var(--c0); }
+.st--gone { color: var(--muted); background: var(--panel-2); }
+.st--plan { color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
+@keyframes blink { 50% { opacity: .55; } }
+
 /* druhy vlakov */
 .groups { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .grp {
@@ -320,6 +376,15 @@ select:hover, input[type="search"]:hover { border-color: var(--dim); }
   .grp--all { grid-column: 1 / -1; }
 }
 @media (max-width: 860px) {
+  .fids__cols { display: none; }
+  .fl { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "time train st" "exp dir dir"; gap: 6px 12px; padding: 12px; }
+  .fl__time { grid-area: time; }
+  .fl__exp { grid-area: exp; font-size: 15px; }
+  .fl__train { grid-area: train; }
+  .fl__dir { grid-area: dir; }
+  .fl__st { grid-area: st; }
+  .fl__dir b { font-size: 20px; }
+  .fl__time span { width: 19px; height: 28px; font-size: 18px; }
   .station { flex-basis: 100%; }
   .toggle { margin-left: 0; }
   .thead { display: none; }

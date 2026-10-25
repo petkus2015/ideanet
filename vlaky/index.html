@@ -72,6 +72,21 @@
 
     <div class="stbar" id="stbar" hidden></div>
 
+    <div class="fids" id="fids" hidden>
+      <div class="fids__head">
+        <div class="fids__tabs" role="tablist" aria-label="Odchody alebo príchody">
+          <button type="button" role="tab" data-mode="dep" aria-selected="true">Odchody</button>
+          <button type="button" role="tab" data-mode="arr" aria-selected="false">Príchody</button>
+        </div>
+        <span class="muted small" id="fidsNote"></span>
+      </div>
+      <div class="fids__cols" aria-hidden="true">
+        <span id="fidsTime">Odchod</span><span>Očakávaný</span><span>Vlak</span><span id="fidsDir">Smer</span><span>Stav</span>
+      </div>
+      <ol class="fids__rows" id="fidsRows"></ol>
+      <button class="more" id="fidsMore" type="button" hidden>Zobraziť ďalšie spoje</button>
+    </div>
+
     <div class="thead" aria-hidden="true">
       <span>Meškanie</span><span>Vlak</span><span>Trasa</span><span id="thPos">Posledná poloha</span><span>Dopravca</span>
     </div>
