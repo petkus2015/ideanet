@@ -778,11 +778,13 @@
       ].filter(Boolean).join('');
       const [from, to] = routeEnds(t.route);
       const time = reportTime(t);
+      // bez vlastného času hlásenia ukážeme, kedy sme polohu stiahli (údaje sa obnovujú každé 2 minúty)
+      const dataTime = state.updated && !isNaN(state.updated) ? TZ_FMT.format(state.updated) : '--:--';
       const where = String(t.info || '').replace(TIME_RE, '').replace(/\s+/g, ' ').trim();
       return `<li class="row ${sel ? 'sel' : ''}" data-id="${esc(t.id)}" tabindex="0" role="button" aria-expanded="${sel}"
           aria-label="${esc(trainLabel(t))}${to ? ' do ' + esc(to) : ''}, meškanie ${fmtMin(t.delay)}">
         <div class="row__air">
-          <span class="ra__time"><span class="fl__time">${flap(time || '--:--')}</span><small>${time ? 'posledné hlásenie' : 'čas neznámy'}</small></span>
+          <span class="ra__time"><span class="fl__time">${flap(time || dataTime)}</span><small>${time ? 'posledné hlásenie' : 'poloha zistená'}</small></span>
           <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span></span>
           <span class="ra__train"><b class="tchip tchip--${groupOf(t)}">${esc(t.type || 'Vlak')}</b><span class="fl__num">${esc(t.number)}</span>
             <small>${esc([TYPE_LABEL[t.type], t.name].filter(Boolean).join(' · '))}</small></span>
