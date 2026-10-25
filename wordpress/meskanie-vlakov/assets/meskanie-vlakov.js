@@ -308,11 +308,6 @@
     const parts = String(route || '').split(/\s+[-–—]\s+/).map(x => x.trim()).filter(Boolean);
     return parts.length > 1 ? [parts[0], parts[parts.length - 1]] : ['', parts[0] || ''];
   };
-  // cieľ ako preklápacia tabuľa: písmeno = dlaždica, slová sa môžu zalomiť; čítačka dostane celý názov
-  const flapWords = txt => `<span class="sr">${esc(txt)}</span><span class="flapw" aria-hidden="true">${
-    txt.toLocaleUpperCase('sk').split(/\s+/).filter(Boolean)
-      .map(w => `<span class="fw">${[...w].map(ch => `<span>${esc(ch)}</span>`).join('')}</span>`).join('')
-  }</span>`;
 
   function renderBoard() {
     const mode = state.boardMode, now = nowMin();
@@ -342,7 +337,7 @@
         <span class="fl__exp">${late ? `<span class="fl__lbl">nový čas</span>${hm(e.exp)}` : ''}</span>
         <span class="fl__train"><b class="tchip tchip--${e.group}">${esc(e.type)}</b><span class="fl__num">${esc(e.number)}</span>
           <small>${esc([TYPE_LABEL[e.type], e.name].filter(Boolean).join(' · '))}</small></span>
-        <span class="fl__dir"><b class="fl__dest">${flapWords(big)}</b><small>${esc(sub)}</small>${via ? `<small>${esc(via)}</small>` : ''}</span>
+        <span class="fl__dir"><b class="fl__dest">${esc(big)}</b><small>${esc(sub)}</small>${via ? `<small>${esc(via)}</small>` : ''}</span>
         <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${e.carrier && e.carrier !== 'ZSSK' ? `<small>${esc(e.carrier)}</small>` : ''}</span>
       </li>`;
     }).join('') : `<li class="empty">V najbližších ${BOARD_AHEAD / 60} hodinách tu podľa filtra nič ${mode === 'dep' ? 'neodchádza' : 'neprichádza'}.</li>`;
@@ -785,7 +780,7 @@
           <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span></span>
           <span class="ra__train"><b class="tchip tchip--${groupOf(t)}">${esc(t.type || 'Vlak')}</b><span class="fl__num">${esc(t.number)}</span>
             <small>${esc([TYPE_LABEL[t.type], t.name].filter(Boolean).join(' · '))}</small></span>
-          <span class="ra__dir">${to ? `<b class="fl__dest">${flapWords(to)}</b>` : '<b class="muted">Cieľ neznámy</b>'}
+          <span class="ra__dir">${to ? `<b class="fl__dest">${esc(to)}</b>` : '<b class="muted">Cieľ neznámy</b>'}
             ${from ? `<small>Ide z: ${esc(from)}</small>` : ''}
             <small>${relBadge(t)}${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next ? ` · ďalej ${esc(t.next)}` : ''}</small></span>
           <span class="carrier">${esc(t.carrier || '—')}</span>
