@@ -317,9 +317,10 @@
   /* ---------------- ďalšia stanica ---------------- */
 
   // kódy staníc z cestovného poriadku (GTFS stop_id / stop_code) -> názov
-  let codeIdx = null, codeIdxFor = null;
+  // index sa zostaví vždy aj bez cestovného poriadku (vtedy prázdny); predtým tu bez neho zostal null
+  let codeIdx = null, codeIdxFor;
   function codeIndex() {
-    if (codeIdxFor !== state.tt) {
+    if (!codeIdx || codeIdxFor !== state.tt) {
       codeIdxFor = state.tt;
       codeIdx = new Map();
       (state.tt?.stations || []).forEach(([name, , , codes]) =>
