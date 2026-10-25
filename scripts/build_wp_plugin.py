@@ -3,7 +3,7 @@
 
   python3 scripts/build_wp_plugin.py
 
-- vlaky/app.js      -> wordpress/meskanie-vlakov/assets/app.js (bez zmeny)
+- wordpress/src/boot.js + vlaky/app.js -> wordpress/meskanie-vlakov/assets/meskanie-vlakov.js (jeden súbor)
 - vlaky/styles.css  -> wordpress/meskanie-vlakov/assets/app.css (upravené pre Shadow DOM)
 - vlaky/index.html  -> wordpress/meskanie-vlakov/templates/app.html (len obsah stránky)
 - celý plugin       -> wordpress/meskanie-vlakov.zip (na nahratie do WordPressu)
@@ -70,7 +70,15 @@ def template(html: str) -> str:
 def main():
     (PLUGIN / "assets").mkdir(parents=True, exist_ok=True)
     (PLUGIN / "templates").mkdir(parents=True, exist_ok=True)
-    (PLUGIN / "assets" / "app.js").write_text((SRC / "app.js").read_text("utf-8"), "utf-8")
+    boot = (ROOT / "wordpress" / "src" / "boot.js").read_text("utf-8")
+    app = (SRC / "app.js").read_text("utf-8")
+    js = boot.replace("  /* @APP@ */", "  function mvApp() {\n" + app + "  }")
+    if js == boot:
+        raise SystemExit("v boot.js chýba značka /* @APP@ */")
+    (PLUGIN / "assets" / "meskanie-vlakov.js").write_text(
+        "/* Vygenerované z wordpress/src/boot.js a vlaky/app.js skriptom scripts/build_wp_plugin.py — needitovať ručne. */\n" + js, "utf-8")
+    for old in ("app.js", "boot.js"):   # súbory zo starších verzií
+        (PLUGIN / "assets" / old).unlink(missing_ok=True)
     (PLUGIN / "assets" / "app.css").write_text(shadow_css((SRC / "styles.css").read_text("utf-8")), "utf-8")
     (PLUGIN / "templates" / "app.html").write_text(template((SRC / "index.html").read_text("utf-8")), "utf-8")
 

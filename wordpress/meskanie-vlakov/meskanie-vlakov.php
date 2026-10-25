@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Meškanie vlakov
  * Description:       Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku. Na stránku vložte shortcode [meskanie_vlakov].
- * Version:           1.1.1
+ * Version:           1.1.2
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MV_VERSION', '1.1.1' );
+define( 'MV_VERSION', '1.1.2' );
 define( 'MV_FILE', __FILE__ );
 define( 'MV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MV_URL', plugin_dir_url( __FILE__ ) );
@@ -83,14 +83,61 @@ add_action( 'mv_build_timetable', array( 'MV_Fetcher', 'build_timetable' ) );
 add_action(
 	'init',
 	function () {
-		wp_register_script( 'mv-boot', MV_URL . 'assets/boot.js', array(), MV_VERSION, true );
-		wp_register_script( 'mv-app', MV_URL . 'assets/app.js', array( 'mv-boot' ), MV_VERSION, true );
+		wp_register_script( 'mv-app', MV_URL . 'assets/meskanie-vlakov.js', array(), MV_VERSION, true );
 		wp_register_style(
 			'mv-fonts',
 			'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap',
 			array(),
 			null
 		);
+	}
+);
+
+/* ---------- optimalizačné pluginy: skript tabule neodkladať, nezlučovať, neupravovať ---------- */
+
+// atribúty, ktoré rešpektujú Cloudflare Rocket Loader, WP Rocket, LiteSpeed Cache, Jetpack Boost a ďalšie
+add_filter(
+	'script_loader_tag',
+	function ( $tag, $handle ) {
+		if ( 'mv-app' !== $handle ) {
+			return $tag;
+		}
+		return str_replace( ' src=', ' data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-no-minify="1" data-noptimize="1" data-jetpack-boost="ignore" nowprocket src=', $tag );
+	},
+	10,
+	2
+);
+
+function mv_exclude_list( $list ) {
+	$list   = is_array( $list ) ? $list : array();
+	$list[] = 'meskanie-vlakov/assets/';
+	return $list;
+}
+foreach ( array(
+	'rocket_delay_js_exclusions',      // WP Rocket: oneskorenie JS
+	'rocket_exclude_defer_js',         // WP Rocket: defer
+	'rocket_exclude_js',               // WP Rocket: minifikácia/zlučovanie
+	'litespeed_optm_js_defer_exc',     // LiteSpeed Cache: defer/delay
+	'litespeed_optimize_js_excludes',  // LiteSpeed Cache: minifikácia/zlučovanie
+	'perfmatters_delay_js_exclusions', // Perfmatters
+) as $mv_filter ) {
+	add_filter( $mv_filter, 'mv_exclude_list' );
+}
+foreach ( array( 'sgo_js_minify_exclude', 'sgo_javascript_combine_exclude', 'sgo_js_async_exclude' ) as $mv_filter ) {
+	// SiteGround Optimizer: zoznam handle-ov
+	add_filter(
+		$mv_filter,
+		function ( $list ) {
+			$list   = is_array( $list ) ? $list : array();
+			$list[] = 'mv-app';
+			return $list;
+		}
+	);
+}
+add_filter(
+	'autoptimize_filter_js_exclude',
+	function ( $exclude ) {
+		return ( is_string( $exclude ) && '' !== $exclude ? $exclude . ', ' : '' ) . 'meskanie-vlakov/assets/';
 	}
 );
 
@@ -137,7 +184,9 @@ function mv_shortcode( $atts ) {
 	$full = 'plna' === $atts['sirka'];
 	$width = $full ? ' data-width="plna"' : '';
 
-	return '<div id="meskanie-vlakov" class="mv-host' . ( $full ? ' alignfull' : '' ) . '"' . $width . ' data-config="' . esc_attr( wp_json_encode( $config ) ) . '"></div>'
+	// text vo vnútri sa ukazuje len kým sa tabuľa nespustí (potom ho prekryje Shadow DOM)
+	return '<div id="meskanie-vlakov" class="mv-host' . ( $full ? ' alignfull' : '' ) . '"' . $width . ' data-config="' . esc_attr( wp_json_encode( $config ) ) . '">'
+		. '<p style="padding:24px;border-radius:14px;background:#0a0f1c;color:#e7ecf7;font:17px/1.5 system-ui,sans-serif">Načítavam meškanie vlakov…</p></div>'
 		. '<template id="mv-template">' . $template . '</template>'
 		. '<noscript><p>Na zobrazenie meškania vlakov je potrebný zapnutý JavaScript.</p></noscript>';
 }

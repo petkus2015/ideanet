@@ -3,7 +3,7 @@ Tags: vlaky, meškanie, odchody, ŽSR, cestovný poriadok
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 
 Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku.
@@ -44,11 +44,20 @@ WP-Cron sa spúšťa pri návštevách webu. Pri malej návštevnosti nastavte n
 
 Ak server ŽSR súbor hostingu nevydá, stiahnite gtfs.zip v prehliadači a nahrajte ho v Nastavenia → Meškanie vlakov. Na serveri musí byť PHP rozšírenie zip a dostatok pamäte (aspoň 256 MB). Chyba sa zobrazí v Nastavenia → Meškanie vlakov.
 
+= Tabuľa sa nezobrazí alebo stále píše „Načítavam…“ =
+
+Vymažte cache optimalizačného pluginu a Cloudflare. Ak to nepomôže, v nastaveniach optimalizačného pluginu vylúčte z odkladania, zlučovania a minifikácie súbor `meskanie-vlakov/assets/meskanie-vlakov.js`.
+
 = Ochrana súkromia =
 
 Písma z Google Fonts sa dajú vypnúť v nastaveniach. Plugin nič neukladá o návštevníkoch; v prehliadači si pamätá len vybranú stanicu a veľkosť písma.
 
 == Changelog ==
+
+= 1.1.2 =
+* Tabuľa sa spustí aj s optimalizačnými pluginmi (WP Rocket, LiteSpeed Cache, Autoptimize, SiteGround Optimizer, Jetpack Boost, Cloudflare Rocket Loader).
+* Jeden skript namiesto dvoch; spustenie až po načítaní obsahu stránky.
+* Pri chybe sa zobrazí jej popis namiesto trvalého „Načítavam…“.
 
 = 1.1.1 =
 * Cestovný poriadok sa sťahuje ako z prehliadača a pred spracovaním sa overí, že ide o ZIP; chyba ukáže, čo server vrátil.

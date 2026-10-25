@@ -140,7 +140,22 @@
     };
   }
 
-  async function load() {
+  // chyba pri zobrazení nesmie nechať stránku navždy na „Načítavam…“: ukážeme ju, aby sa dala nahlásiť
+  function showFatal(err) {
+    console.error('Meškanie vlakov:', err);
+    try {
+      $('pill').dataset.state = 'error';
+      $('pillText').textContent = 'Chyba zobrazenia';
+      const n = $('notice');
+      n.hidden = false;
+      n.dataset.kind = 'error';
+      n.textContent = `Tabuľu sa nepodarilo zobraziť (${(err && err.message) || err}). Skúste obnoviť stránku. Ak chyba pretrváva, pošlite tento text správcovi webu.`;
+    } catch { /* stránka nemá ani základné prvky */ }
+  }
+
+  function load() { return loadData().catch(showFatal); }
+
+  async function loadData() {
     $('refresh').classList.add('is-busy');
     const before = state.trains.length ? summarizeAll(state.trains) : null;
     try {
