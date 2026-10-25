@@ -35,6 +35,7 @@ def shadow_css(css: str) -> str:
 button, input, select { font: inherit; }
 .mv { container: mv / inline-size; border-radius: 18px; overflow: clip; text-align: left; }
 :host([data-width="plna"]) .mv { border-radius: 0; }
+@media (max-width: 860px) { .mv { border-radius: 0; } }
 """
     tail = """
 /* v rámci stránky WordPressu hlavička nepláva nad obsahom témy */

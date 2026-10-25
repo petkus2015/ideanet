@@ -4,6 +4,7 @@
 button, input, select { font: inherit; }
 .mv { container: mv / inline-size; border-radius: 18px; overflow: clip; text-align: left; }
 :host([data-width="plna"]) .mv { border-radius: 0; }
+@media (max-width: 860px) { .mv { border-radius: 0; } }
 /* Staničná tabuľa v noci: atramentovo modrý podklad, akcent v oranžovej ZSSK. */
 :host {
   color-scheme: dark;
@@ -744,6 +745,23 @@ input[type="search"], select { font-size: 16px; min-height: 48px; }
   .ra__train small { flex-basis: auto; }
   .row__air .carrier { grid-area: carrier; align-self: center; }
   .ra__dir > b { font-size: 20px; }
+}
+
+/* ---------- záložky Odchody / Príchody aj bez cestovného poriadku ---------- */
+[hidden] { display: none !important; }
+.board > .fids__head { border-top: 1px solid var(--line); }
+.mode-hint { margin: 0; padding: 0 16px 14px; font-size: 15px; color: var(--muted); max-width: 90ch; }
+.mode-hint a { color: var(--accent); font-weight: 600; }
+
+/* ---------- mobil: od kraja po kraj, bez okrajov ---------- */
+@container mv (max-width: 640px) {
+  .main.wrap { padding-left: 0; padding-right: 0; gap: 12px; }
+  .main > .panel, .duo > .panel, .side > .panel, .board {
+    border-radius: 0; border-left: 0; border-right: 0;
+  }
+  .notice, .kpis, .groups, .scope, .section-title { margin-inline: max(12px, env(safe-area-inset-left, 0px)); }
+  .duo, .side { gap: 12px; }
+  .foot { padding-inline: 16px; }
 }
 
 /* v rámci stránky WordPressu hlavička nepláva nad obsahom témy */

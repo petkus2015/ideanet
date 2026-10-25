@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Meškanie vlakov
  * Description:       Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku. Na stránku vložte shortcode [meskanie_vlakov].
- * Version:           1.1.7
+ * Version:           1.1.8
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MV_VERSION', '1.1.7' );
+define( 'MV_VERSION', '1.1.8' );
 define( 'MV_FILE', __FILE__ );
 define( 'MV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MV_URL', plugin_dir_url( __FILE__ ) );
@@ -171,6 +171,8 @@ function mv_shortcode( $atts ) {
 		'cssUrl'        => MV_URL . 'assets/app.css?ver=' . MV_VERSION,
 		'demo'          => (bool) $settings['demo'],
 		'quickStations' => array_values( array_filter( array_map( 'trim', explode( ',', $stations ) ) ) ),
+		// odkaz na nahratie cestovného poriadku vidí len správca (keď chýba)
+		'adminUrl'      => current_user_can( 'manage_options' ) ? admin_url( 'options-general.php?page=meskanie-vlakov' ) : '',
 		'noDataNotice'  => '<b>Ukážkové dáta.</b> Údaje zo ŽSR sa ešte nestiahli. Prvé stiahnutie prebehne do 2 minút po aktivácii pluginu.',
 	);
 
@@ -184,8 +186,12 @@ function mv_shortcode( $atts ) {
 	$full = 'plna' === $atts['sirka'];
 	$width = $full ? ' data-width="plna"' : '';
 
+	// na mobile od kraja po kraj: téma obsah odsadzuje, tak tabuľu roztiahneme na šírku okna
+	$css = '<style>@media (max-width: 860px){#meskanie-vlakov.mv-host{width:100vw!important;max-width:100vw!important;'
+		. 'margin-left:calc(50% - 50vw)!important;margin-right:calc(50% - 50vw)!important;border-radius:0!important}}</style>';
+
 	// text vo vnútri sa ukazuje len kým sa tabuľa nespustí (potom ho prekryje Shadow DOM)
-	return '<div id="meskanie-vlakov" class="mv-host' . ( $full ? ' alignfull' : '' ) . '"' . $width . ' data-config="' . esc_attr( wp_json_encode( $config ) ) . '">'
+	return $css . '<div id="meskanie-vlakov" class="mv-host' . ( $full ? ' alignfull' : '' ) . '"' . $width . ' data-config="' . esc_attr( wp_json_encode( $config ) ) . '">'
 		. '<p style="padding:24px;border-radius:14px;background:#0a0f1c;color:#e7ecf7;font:17px/1.5 system-ui,sans-serif">Načítavam meškanie vlakov…</p></div>'
 		. '<template id="mv-template">' . $template . '</template>'
 		. '<noscript><p>Na zobrazenie meškania vlakov je potrebný zapnutý JavaScript.</p></noscript>';

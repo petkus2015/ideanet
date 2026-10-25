@@ -131,9 +131,12 @@
     return null;
   }
 
+  // bez cestovného poriadku: Príchody = vlaky smerom do stanice, Odchody = vlaky, ktoré stanicou pokračujú ďalej
   const atStation = t => {
     const r = relation(t);
-    return r === 'here' || r === 'upcoming' || (state.showPassed && r === 'passed');
+    if (!(r === 'here' || r === 'upcoming' || (state.showPassed && r === 'passed'))) return false;
+    const [from, to] = routeEnds(t.route);
+    return state.boardMode === 'dep' ? !sameStation(to, state.station) : !sameStation(from, state.station);
   };
   const stationScope = () => (state.station ? state.trains.filter(atStation) : state.trains);
   const scope = () => (state.group ? stationScope().filter(t => groupOf(t) === state.group) : stationScope());
@@ -689,6 +692,17 @@
     const board = boardActive();
     $q('.board').classList.toggle('is-fids', board);
     $('fids').hidden = !board;
+    $('modeBar').hidden = !st;
+    ROOT.querySelectorAll('.fids__tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === state.boardMode)));
+    const hint = $('modeHint');
+    hint.hidden = !st || board;
+    if (st && !board) {
+      hint.innerHTML = 'Presné časy odchodov a príchodov ukáže až cestovný poriadok, ktorý sa zatiaľ nenačítal. Zatiaľ vidíte vlaky na trati '
+        + (state.boardMode === 'dep' ? 'smerom k stanici, ktoré budú pokračovať ďalej' : 'smerom do stanice')
+        + '. Rýchliky nemusia v každej stanici zastaviť.'
+        + (CFG.adminUrl ? ` <a href="${esc(CFG.adminUrl)}" target="_top">Nahrať cestovný poriadok (vidí len správca webu)</a>` : '');
+      $('fidsNote').textContent = '';
+    }
     const bar = $('stbar');
     bar.hidden = !st || board;
     if (!st || board) return;
@@ -932,7 +946,7 @@
       if (!b) return;
       state.boardMode = b.dataset.mode;
       state.boardShown = BOARD_PAGE;
-      renderSeg(); renderBoard();
+      refreshAll();
     });
     $('fidsMore').addEventListener('click', () => { state.boardShown += BOARD_PAGE; renderBoard(); });
     $('fidsRows').addEventListener('click', e => {
