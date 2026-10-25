@@ -56,6 +56,13 @@
   const fmtMin = m => (m >= 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min` : `${m} min`);
   const fmtTime = d => d.toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit' });
   const fmtNum = (n, dp = 0) => n.toLocaleString('sk-SK', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+  // krátke názvy dopravcov: skratka ZSSK a bez právnej formy (a.s., s.r.o.)
+  const CARRIER_SHORT = [[/železničná\s+spoločnosť\s+slovensko/i, 'ZSSK'], [/^regiojet/i, 'RegioJet'], [/^leo\s*express/i, 'Leo Express']];
+  const shortCarrier = name => {
+    const n = String(name || '').trim();
+    const hit = CARRIER_SHORT.find(([re]) => re.test(n));
+    return hit ? hit[1] : n.replace(/,?\s*(a\.\s?s\.|s\.\s?r\.\s?o\.|spol\.\s*s\s*r\.\s?o\.)$/i, '').trim();
+  };
   const trainLabel = t => [t.type, t.number].filter(Boolean).join(' ') || t.id || 'Vlak';
   const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
@@ -170,10 +177,16 @@
       if (FORCE_DEMO) throw new Error('demo');
       const data = await getJSON(DATA_URL);
       if (!Array.isArray(data.trains)) throw new Error('neplatný formát');
-      state.trains = data.trains.map(t => ({ ...t, delay: Math.max(0, Number(t.delay) || 0) }));
+      state.trains = data.trains.map(t => ({ ...t, delay: Math.max(0, Number(t.delay) || 0), carrier: shortCarrier(t.carrier) }));
       const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Bratislava' }).format(new Date());
       if (!state.tt || state.tt.date !== today) {
-        try { const tt = await getJSON(TIMETABLE_URL); if (Array.isArray(tt.trips)) state.tt = tt; } catch { /* bez cestovného poriadku */ }
+        try {
+          const tt = await getJSON(TIMETABLE_URL);
+          if (Array.isArray(tt.trips)) {
+            tt.trips.forEach(x => { x[4] = shortCarrier(x[4]); });
+            state.tt = tt;
+          }
+        } catch { /* bez cestovného poriadku */ }
       }
       state.updated = new Date(data.updated);
       state.mode = Date.now() - state.updated > STALE_MS ? 'stale' : 'live';
