@@ -189,16 +189,23 @@
     };
     var pinnedIn = pinnedDeals.filter(inRegion);
     var allDeals = freshDeals(data);
-    var deals = allDeals.filter(function (d) { return !watched[d.dest] && inRegion(d); })
+    // odkiaľ (Viedeň / Bratislava / Budapešť) a zoradenie platia pre víkendové aj dlhšie pobyty
+    var origin = opts.origin || 'all';
+    var sortBy = opts.sort === 'date' ? 'date' : 'price';
+    var fromOrigin = function (d) { return origin === 'all' || d.origin === origin; };
+    var order = function (a, b) {
+      return sortBy === 'date' ? (a.depart < b.depart ? -1 : a.depart > b.depart ? 1 : a.price - b.price) : a.price - b.price;
+    };
+    var deals = allDeals.filter(function (d) { return !watched[d.dest] && inRegion(d) && fromOrigin(d); })
       .slice(0, limit)           // najlacnejšie ponuky…
-      .concat(pinnedIn)          // …a k nim vždy sledované letiská (Alicante, Sicília, Malta)
-      .sort(function (a, b) { return a.price - b.price; });
+      .concat(pinnedIn.filter(fromOrigin))   // …a k nim vždy sledované letiská (Alicante, Sicília, Malta)
+      .sort(order);
     var cities = {};
     (data.origins || []).forEach(function (o) { cities[o.code] = o.from || o.city; });
     // predĺžený víkend: odlet štvrtok/piatok, návrat nedeľa/pondelok (zostavuje scripts/update_deals.py)
     var weekendDeals = fresh
-      ? (data.weekend || []).filter(function (d) { return d['return'] && inWindow(d); })
-          .sort(function (a, b) { return a.price - b.price; }).slice(0, Math.max(limit, 8))
+      ? (data.weekend || []).filter(function (d) { return d['return'] && inWindow(d) && fromOrigin(d); })
+          .sort(function (a, b) { return a.price - b.price; }).slice(0, Math.max(limit, 8)).sort(order)
       : [];
 
     function datesText(d) {
@@ -233,16 +240,17 @@
       return 'href="' + esc(aff || d.url) + '" target="_blank" rel="' + (aff ? 'sponsored nofollow noopener' : 'noopener') + '"';
     }
 
-    function cardHtml(d) {
+    function cardHtml(d, best) {
       var from = cities[d.origin] || d.origin;
       var drop = changeHtml(d, false);
       return '<li><a class="ll-card" ' + linkAttrs(d) + ' aria-label="' +
           esc(d.city + ', ' + d.country + ', let z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
-        '<div class="ll-card-top"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
+        '<div class="ll-card-top"><span class="ll-card-id"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
+          '</span>' +
           (stopsLabel(d.stops) ? '<span class="ll-chip">' + stopsLabel(d.stops) + '</span>' : '') + '</div>' +
         '<div><div class="ll-city-row"><p class="ll-city">' + esc(d.city) + '</p>' + wxHtml(d) + '</div><p class="ll-country">' + esc(d.country) + ' · z ' + esc(from) + '</p></div>' +
         '<p class="ll-dates">' + CAL + '<span>' + datesText(d) + '</span></p>' +
-        '<div class="ll-card-bottom"><div class="ll-price"><span class="ll-price-label"><small>' + (d['return'] ? 'spiatočná od' : 'od') + '</small>' + drop + '</span>' +
+        '<div class="ll-card-bottom"><div class="ll-price"><span class="ll-price-label"><small>' + (d['return'] ? 'spiatočná od' : 'od') + '</small>' + drop + (best && !drop ? '<span class="ll-best">Najlacnejšie</span>' : '') + '</span>' +
           '<strong>' + money(d.price, d.currency) + '</strong>' +
           '<span class="ll-source" data-src="' + esc(d.source || 'momondo') + '">cez ' + esc(sourceName(d)) + '</span></div>' +
           '<span class="ll-go" aria-hidden="true">' + ARROW + '</span></div>' +
@@ -277,7 +285,7 @@
     // posuvný pás kariet so šípkami (hlavný aj víkendový)
     function railHtml(list, label) {
       return '<div class="ll-rail">' +
-          '<ul class="ll-grid" tabindex="0" aria-label="' + esc(label) + '">' + list.map(cardHtml).join('') + '</ul>' +
+          '<ul class="ll-grid" tabindex="0" aria-label="' + esc(label) + '">' + list.map(function (d, i) { return cardHtml(d, i === 0 && sortBy === 'price' && list.length > 1); }).join('') + '</ul>' +
           '<div class="ll-navbar">' +
             '<button type="button" class="ll-nav" data-nav="-1" aria-label="Predchádzajúce ponuky" disabled>' + ARROW + '</button>' +
             '<button type="button" class="ll-nav" data-nav="1" aria-label="Ďalšie ponuky">' + ARROW + '</button>' +
@@ -285,19 +293,44 @@
         '</div>';
     }
 
+    function countHtml(n) {
+      return n ? '<span class="ll-count">' + n + (n === 1 ? ' ponuka' : n < 5 ? ' ponuky' : ' ponúk') + '</span>' : '';
+    }
+
+    // Panel nad ponukami: odkiaľ letím, zoradenie a kedy som ceny vyhľadal
+    function toolbarHtml() {
+      var counts = {};
+      (data.weekend || []).concat(allDeals).forEach(function (d) { counts[d.origin] = (counts[d.origin] || 0) + 1; });
+      var origins = [['all', 'Všetky letiská']].concat((data.origins || []).filter(function (o) { return counts[o.code]; })
+        .map(function (o) { return [o.code, o.city || o.code]; }));
+      if (origins.length < 3 && !fresh) return '';
+      return '<div class="ll-toolbar">' +
+        '<div class="ll-bar"><span class="ll-bar-label" id="' + listId + '-o">Odlet z</span>' +
+          '<div class="ll-chips" role="group" aria-labelledby="' + listId + '-o">' + origins.map(function (o) {
+            return '<button type="button" data-origin="' + esc(o[0]) + '" aria-pressed="' + (origin === o[0]) + '">' + esc(o[1]) + '</button>';
+          }).join('') + '</div></div>' +
+        '<div class="ll-bar"><span class="ll-bar-label" id="' + listId + '-s">Zoradiť</span>' +
+          '<div class="ll-chips" role="group" aria-labelledby="' + listId + '-s">' +
+            '<button type="button" data-sort="price" aria-pressed="' + (sortBy === 'price') + '">Podľa ceny</button>' +
+            '<button type="button" data-sort="date" aria-pressed="' + (sortBy === 'date') + '">Podľa termínu</button>' +
+          '</div></div>' +
+        (fresh ? '<span class="ll-fresh" title="Ceny vyhľadávam trikrát denne – o 7:00, 12:00 a 18:00."><i aria-hidden="true"></i>Vyhľadané ' + relDay(data.updatedAt) + ' ' + time(data.updatedAt) + '</span>' : '') +
+      '</div>';
+    }
+
     function weekendHtml() {
       if (!weekendDeals.length) return '';   // bez nájdenej letenky sekciu nezobrazujeme
       return '<section class="ll-sect ll-weekend" aria-label="Predĺžený víkend">' +
-        '<div><h3 class="ll-sect-title">Na predĺžený víkend – najlacnejšie letenky</h3>' +
-          '<p class="ll-sub">Odlet vo štvrtok alebo piatok, návrat v nedeľu alebo pondelok (3 až 4 noci).</p></div>' +
+        '<div class="ll-sect-head"><div><h3 class="ll-sect-title">Na predĺžený víkend – najlacnejšie letenky</h3>' +
+          '<p class="ll-sub">Odlet vo štvrtok alebo piatok, návrat v nedeľu alebo pondelok (3 až 4 noci).</p></div>' + countHtml(weekendDeals.length) + '</div>' +
         railHtml(weekendDeals, 'Lacné letenky na predĺžený víkend') + '</section>';
     }
 
     // Kategória 2: najlacnejšie letenky na dlhší pobyt (5–14 nocí) s odletom do 3 mesiacov
     function longHtml() {
       return '<section class="ll-sect ll-long" aria-label="Dlhší pobyt">' +
-        '<div><h3 class="ll-sect-title">Najlacnejšie letenky na dlhší pobyt do 3 mesiacov</h3>' +
-          '<p class="ll-sub">Odlet do 3 mesiacov, pobyt 5 až 14 nocí.</p></div>' +
+        '<div class="ll-sect-head"><div><h3 class="ll-sect-title">Najlacnejšie letenky na dlhší pobyt do 3 mesiacov</h3>' +
+          '<p class="ll-sub">Odlet do 3 mesiacov, pobyt 5 až 14 nocí.</p></div>' + countHtml(deals.length) + '</div>' +
         (hasAny
           ? '<div class="ll-filter" role="group" aria-label="Oblasť">' + regions.map(function (r) {
               return '<button type="button" data-region="' + r[0] + '" aria-pressed="' + (region === r[0]) + '">' + r[1] + '</button>';
@@ -306,7 +339,7 @@
         (deals.length
           ? railHtml(deals, 'Lacné letenky na dlhší pobyt')
           : hasAny
-            ? '<div class="ll-empty"><b>' + (region === 'eu' ? 'V Európe' : 'Mimo Európy') + ' som teraz nenašiel ponuky</b><span>Skúste inú oblasť alebo nové hľadanie.</span></div>'
+            ? '<div class="ll-empty"><b>Pre tento výber som teraz nenašiel ponuky</b><span>Skúste iné letisko, inú oblasť alebo nové hľadanie.</span></div>'
             : '<div class="ll-empty"><b>Práve nemáme aktuálne ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>') +
         '</section>';
     }
@@ -318,7 +351,7 @@
       if (!feature && !list) return '';
       return '<section class="ll-sect ll-asia" aria-label="Ázia a Emiráty">' +
         '<div><h3 class="ll-sect-title">Do Ázie a Emirátov – najlacnejšie letenky</h3>' +
-          '<p class="ll-sub">Spiatočné letenky do Ázie a Spojených arabských emirátov, odlet do 3 mesiacov.</p></div>' +
+          '<p class="ll-sub">Spiatočné letenky do Ázie a Spojených arabských emirátov, odlet do 3 mesiacov – vždy najlacnejšia zo všetkých troch letísk.</p></div>' +
         feature + list + '</section>';
     }
 
@@ -370,6 +403,7 @@
     // Blok začína rovno ponukami; nadpis sa ukáže, len ak ho web zadá (data-title / Nadpis v nastaveniach).
     el.innerHTML =
       (opts.title ? '<h2 class="ll-title">' + esc(opts.title) + '</h2>' : '') +
+      (hasAny || weekendDeals.length ? toolbarHtml() : '') +
       weekendHtml() +   // 1. predĺžený víkend
       longHtml() +      // 2. dlhší pobyt do 3 mesiacov
       asiaHtml() +      // 3. Ázia a Emiráty
@@ -410,6 +444,17 @@
       });
     });
 
+    // odkiaľ a zoradenie – prekreslí ponuky bez nového hľadania
+    Array.prototype.forEach.call(el.querySelectorAll('[data-origin],[data-sort]'), function (b) {
+      b.addEventListener('click', function () {
+        var attr = b.hasAttribute('data-origin') ? 'origin' : 'sort';
+        opts[attr] = b.getAttribute('data-' + attr);
+        render(el, data, opts, '');
+        var again = el.querySelector('[data-' + attr + '="' + opts[attr] + '"]');
+        if (again) again.focus();
+      });
+    });
+
     // šípky posúvača (myš na počítači); prstom sa posúva priamo – pre každý pás zvlášť
     Array.prototype.forEach.call(el.querySelectorAll('.ll-rail'), function (rail) {
       var grid = rail.querySelector('.ll-grid');
@@ -420,6 +465,7 @@
         navs[0].disabled = grid.scrollLeft <= 2;
         navs[1].disabled = grid.scrollLeft >= max;
         navbar.hidden = max <= 0; // všetko sa zmestí – šípky netreba
+        rail.classList.toggle('is-end', max <= 0 || grid.scrollLeft >= max);
       };
       Array.prototype.forEach.call(navs, function (b) {
         b.addEventListener('click', function () {

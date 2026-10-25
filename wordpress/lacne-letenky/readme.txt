@@ -3,7 +3,7 @@ Tags: letenky, lety, ryanair, wizzair, momondo
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.15.0
+Stable tag: 1.16.0
 License: GPL-2.0-or-later
 
 Blok s najlacnejšími letenkami z Viedne a Bratislavy: Bangkok, Dubaj, Abu Dhabí a ponuky kamkoľvek.
@@ -32,7 +32,7 @@ Nastavenia: Nastavenia → Lacné letenky (zdroj dát, cache, počet kariet, pí
 
 == Changelog ==
 
-= 1.15.0 =
+= 1.16.0 =
 * Tri sekcie v poradí: Na predĺžený víkend, Najlacnejšie letenky na dlhší pobyt do 3 mesiacov (pobyt 5 až 14 nocí, s filtrom Európa / Mimo Európy) a Do Ázie a Emirátov (Bangkok a zoznam krajín).
 * Odlety: Viedeň, Bratislava a Budapešť. Texty používajú „z Viedne“, „z Bratislavy“, „z Budapešti“.
 
