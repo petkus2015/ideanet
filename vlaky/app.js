@@ -11,6 +11,7 @@
   const REFRESH_MS = 5 * 60 * 1000;
   const STALE_MS = 15 * 60 * 1000;
   const PAGE = 15;
+  const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)');
   const PREVIEW = !!window.VLAKY_DEMO;   // samostatný náhľad bez dátového súboru
   const FORCE_DEMO = PREVIEW || new URLSearchParams(location.search).has('demo');
 
@@ -871,7 +872,11 @@
 
   function tick() {
     const left = Math.max(0, state.nextAt - Date.now()), s = Math.ceil(left / 1000);
-    $('clock').textContent = hm(nowMin());
+    const [hh, mm] = hm(nowMin()).split(':');
+    if ($('clockH').textContent !== hh) $('clockH').textContent = hh;
+    if ($('clockM').textContent !== mm) $('clockM').textContent = mm;
+    // dvojbodka bliká raz za sekundu ako na staničných hodinách (pri obmedzení pohybu svieti stále)
+    $('colon').classList.toggle('is-off', !REDUCED_MOTION.matches && new Date().getSeconds() % 2 === 1);
     $('countdown').textContent = s > 60 ? `${Math.ceil(s / 60)} min` : `${s} s`;
     if (left === 0 && !document.hidden) { state.nextAt = Date.now() + REFRESH_MS; load(); }
     const minute = Math.floor(Date.now() / 60000);

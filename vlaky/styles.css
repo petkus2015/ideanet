@@ -619,3 +619,9 @@ html.big body { zoom: 1.18; }
   .td-headline { font-size: 20px; }
   .td-actions .btn { flex: 1; justify-content: center; }
 }
+
+/* hodiny: popis + blikajúca dvojbodka */
+.clock__lbl { font: 600 12.5px/1.2 var(--f-body); color: var(--muted); margin: 0 0 3px; }
+.clock small.clock__lbl { margin-top: 0; font-size: 12.5px; }
+.colon { display: inline-block; padding: 0 1px; transition: opacity .15s; }
+.colon.is-off { opacity: .15; }
