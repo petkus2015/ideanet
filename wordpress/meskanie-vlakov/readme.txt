@@ -3,7 +3,7 @@ Tags: vlaky, meškanie, odchody, ŽSR, cestovný poriadok
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 
 Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku.
@@ -53,6 +53,10 @@ Vymažte cache optimalizačného pluginu a Cloudflare. Ak to nepomôže, v nasta
 Písma z Google Fonts sa dajú vypnúť v nastaveniach. Plugin nič neukladá o návštevníkoch; v prehliadači si pamätá len vybranú stanicu a veľkosť písma.
 
 == Changelog ==
+
+= 1.2.3 =
+* Poradie ako na staničnej tabuli: čas, cieľová stanica (so zastávkami), vlak, stav.
+* Cieľ vlaku na trati sa berie z cestovného poriadku (posledná zastávka), nie z textu ŽSR, ktorý môže obsahovať len názov vlaku.
 
 = 1.2.2 =
 * Najväčšie meškanie za posledných 24 hodín: vlak, trasa a čas, kedy meškal najviac.

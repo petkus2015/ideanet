@@ -795,3 +795,11 @@ html.big body { zoom: 1.18; }
   .via__txt { white-space: normal; line-height: 1.35; min-height: 2.7em; }
 }
 .section-sub { font: 500 15px var(--f-body); color: var(--muted); letter-spacing: 0; }
+
+/* ako na staničnej tabuli: čas, cieľ (najväčší), vlak, stav */
+.fids__cols, .fl { grid-template-columns: minmax(124px, .95fr) minmax(0, 3fr) minmax(150px, 1.15fr) minmax(170px, 1.2fr); }
+.thead.air, .row__air { grid-template-columns: minmax(124px, .95fr) minmax(0, 3fr) minmax(150px, 1.15fr) minmax(96px, .75fr) minmax(90px, .6fr); }
+@media (max-width: 860px) {
+  .fl { grid-template-columns: auto minmax(0, 1fr); }
+  .row__air { grid-template-columns: auto minmax(0, 1fr); }
+}
