@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Overiť správu</title>
+<meta name="description" content="Kontrola podozrivej správy, webovej adresy a postup overenia informácií v štyroch krokoch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="overit">
+<div id="site-header"></div>
+<main id="obsah">
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="crumbs"><a href="index.html">Domov</a> / Overiť správu</p>
+      <h1>Overte si to skôr, než kliknete</h1>
+      <p class="lead">Tri nástroje: kontrola podozrivej správy, kontrola webovej adresy a štyri kroky na overenie správ a fotiek.</p>
+      <div class="toc" style="margin-top:22px"><a href="#kontrola">Kontrola správy</a><a href="#adresa">Kontrola adresy</a><a href="#styri-kroky">4 kroky overenia</a><a href="#nastroje">Užitočné nástroje</a></div>
+    </div>
+  </section>
+
+  <section class="section tight" id="kontrola" style="scroll-margin-top:90px">
+    <div class="wrap trainer">
+      <div class="stack">
+        <p class="eyebrow">Nástroj 1</p>
+        <h2 style="font-size:var(--step-3)">Kontrola podozrivej správy</h2>
+        <p class="muted">Máte pred sebou SMS, e-mail, správu alebo telefonát? Odpovedzte na otázky. Nič sa nikam neodosiela.</p>
+        <div class="q-list" id="checker">
+          <div class="q" data-w="2"><p>Je správa nečakaná alebo od neznámeho odosielateľa či z nového čísla?</p><div class="yn"><button type="button" data-v="1" aria-pressed="false">Áno</button><button type="button" data-v="0" aria-pressed="false">Nie</button></div></div>
+          <div class="q" data-w="3"><p>Tlačí vás na rýchlu akciu (do 24 hodín, inak…)?</p><div class="yn"><button type="button" data-v="1" aria-pressed="false">Áno</button><button type="button" data-v="0" aria-pressed="false">Nie</button></div></div>
+          <div class="q" data-w="3"><p>Vyvoláva strach, alebo naopak sľubuje výhru, zisk či vrátenie peňazí?</p><div class="yn"><button type="button" data-v="1" aria-pressed="false">Áno</button><button type="button" data-v="0" aria-pressed="false">Nie</button></div></div>
+          <div class="q" data-w="3"><p>Obsahuje odkaz, ktorý nevedie na oficiálny web odosielateľa?</p><div class="yn"><button type="button" data-v="1" aria-pressed="false">Áno</button><button type="button" data-v="0" aria-pressed="false">Nie</button></div></div>
+          <div class="q" data-w="5" data-hard><p>Pýta si heslo, PIN, kód zo SMS alebo údaje z karty?</p><div class="yn"><button type="button" data-v="1" aria-pressed="false">Áno</button><button type="button" data-v="0" aria-pressed="false">Nie</button></div></div>
+          <div class="q" data-w="5" data-hard><p>Chce, aby ste poslali peniaze, presunuli úspory alebo nainštalovali aplikáciu?</p><div class="yn"><button type="button" data-v="1" aria-pressed="false">Áno</button><button type="button" data-v="0" aria-pressed="false">Nie</button></div></div>
+          <div class="q" data-w="3"><p>Žiada vás, aby ste o tom nikomu nehovorili?</p><div class="yn"><button type="button" data-v="1" aria-pressed="false">Áno</button><button type="button" data-v="0" aria-pressed="false">Nie</button></div></div>
+        </div>
+      </div>
+      <div class="t-panel" style="position:sticky;top:96px">
+        <p class="eyebrow">Výsledok</p>
+        <div class="meter" aria-hidden="true"><i id="meter-pin" style="left:0%"></i></div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem" class="muted"><span>Nízke riziko</span><span>Vysoké riziko</span></div>
+        <div class="verdict-box" id="ck-result" aria-live="polite"><p class="muted">Odpovedzte na otázky a výsledok sa ukáže tu.</p></div>
+        <button class="btn ghost" type="button" id="ck-reset">Začať odznova</button>
+        <p class="muted" style="font-size:.85rem">Nástroj vám pomôže rozmýšľať, ale nedá istotu. Keď váhate, overte si správu u odosielateľa známou cestou.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="adresa" style="scroll-margin-top:90px">
+    <div class="wrap trainer">
+      <div class="stack">
+        <p class="eyebrow">Nástroj 2</p>
+        <h2 style="font-size:var(--step-3)">Komu naozaj patrí odkaz?</h2>
+        <p class="muted">Podvodníci dávajú známe mená na začiatok adresy. Skutočný vlastník stránky je však posledná časť pred prvou lomkou. Vložte adresu (stačí ju opísať, neotvárajte ju) a nástroj ju rozoberie.</p>
+        <div class="url-tool">
+          <label for="url-input" class="eyebrow">Webová adresa</label>
+          <input id="url-input" type="text" inputmode="url" autocomplete="off" spellcheck="false" value="https://posta-sk.zasielka-overenie.top/platba">
+          <div class="filters"><span class="label">Skúste:</span>
+            <button class="chip" type="button" data-url="https://www.posta.sk/sledovanie-zasielok">posta.sk</button>
+            <button class="chip" type="button" data-url="https://ib.banka.sk.login-overenie.com/sk">banka.sk.login-overenie.com</button>
+            <button class="chip" type="button" data-url="https://www.facebook.com@fb-video.watch-now.click/v/77">trik so zavináčom</button>
+            <button class="chip" type="button" data-url="http://185.23.11.4/ucet/overenie">IP adresa</button>
+          </div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="url-out" id="url-out" aria-live="polite"></div>
+        <div class="stack" id="url-notes"></div>
+        <div class="callout"><p><b>Ako čítať adresu:</b> <span class="mono">https://<span class="muted">posta-sk.</span><span class="mark">zasielka-overenie.top</span><span class="muted">/platba</span></span>. Rozhoduje zvýraznená časť. Všetko pred ňou si môže podvodník napísať, ako chce.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="styri-kroky" style="scroll-margin-top:90px">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="eyebrow">Na správy, fotky a videá</p><h2 style="margin-top:10px">Štyri kroky overenia</h2></div>
+        <p>Postup používajú overovatelia faktov (metóda SIFT). Zvládnete ho za pár minút v mobile.</p>
+      </div>
+      <ol class="steps">
+        <li><div><b>Zastav sa</b>Ak vo vás správa vyvolá silnú emóciu (hnev, strach, nadšenie), nezdieľajte ju hneď. Opýtajte sa: viem, kto to napísal a prečo?</div></li>
+        <li><div><b>Over zdroj</b>Otvorte novú kartu a vyhľadajte, kto stojí za webom alebo profilom. Má redakciu, impresum, autora? Ako dlho existuje? Čo o ňom píšu iní?</div></li>
+        <li><div><b>Nájdi lepšie pokrytie</b>Píšu o tom aj iné, nezávislé médiá alebo oficiálne inštitúcie? Ak dôležitú správu nemá nikto iný, je to varovanie. Pozrite aj weby overovateľov faktov.</div></li>
+        <li><div><b>Vráť sa k pôvodnému kontextu</b>Fotka môže byť skutočná, ale z iného roku či krajiny. Citát môže byť vytrhnutý. Nájdite pôvodný zdroj, napríklad spätným vyhľadávaním obrázka.</div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section alt" id="nastroje" style="scroll-margin-top:90px">
+    <div class="wrap">
+      <div class="section-head"><h2>Užitočné nástroje a overovatelia</h2><p>Bezplatné a dôveryhodné. Odkazy sa otvoria v novom okne.</p></div>
+      <div class="grid g3">
+        <div class="card"><p class="eyebrow">Fotky</p><h3>Google Lens a TinEye</h3><p>Spätné vyhľadávanie obrázka ukáže, kde a kedy sa fotka objavila prvýkrát.</p><a class="go" href="https://tineye.com" target="_blank" rel="noopener">tineye.com →</a></div>
+        <div class="card"><p class="eyebrow">Videá</p><h3>InVID-WeVerify</h3><p>Doplnok do prehliadača na overovanie videí a fotiek. Vznikol vo výskumných projektoch financovaných EÚ.</p><a class="go" href="https://weverify.eu/verification-plugin/" target="_blank" rel="noopener">weverify.eu →</a></div>
+        <div class="card"><p class="eyebrow">Európa</p><h3>EDMO a EUvsDisinfo</h3><p>Európske observatórium digitálnych médií a databáza vyvrátených dezinformácií.</p><a class="go" href="https://edmo.eu" target="_blank" rel="noopener">edmo.eu →</a></div>
+        <div class="card"><p class="eyebrow">Slovensko</p><h3>AFP Fakty a Demagog.sk</h3><p>Slovenskí overovatelia faktov: vyvracajú virálne správy a kontrolujú výroky politikov.</p><a class="go" href="https://fakty.afp.com" target="_blank" rel="noopener">fakty.afp.com →</a></div>
+        <div class="card"><p class="eyebrow">Financie</p><h3>Zoznam NBS</h3><p>Pred investíciou si overte, či má firma povolenie Národnej banky Slovenska.</p><a class="go" href="https://subjekty.nbs.sk" target="_blank" rel="noopener">subjekty.nbs.sk →</a></div>
+        <div class="card"><p class="eyebrow">Nahlásenie</p><h3>SK-CERT</h3><p>Podvodné stránky a phishing môžete nahlásiť národnému centru kybernetickej bezpečnosti.</p><a class="go" href="https://www.sk-cert.sk/sk/rady-a-navody/nahlasit-incident/index.html" target="_blank" rel="noopener">sk-cert.sk →</a></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/site.js"></script>
+</body>
+</html>

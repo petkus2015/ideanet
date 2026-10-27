@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dezinformácie a AI</title>
+<meta name="description" content="Čo sú dezinformácie podľa EÚ, ako fungujú manipulačné techniky, deepfakes a algoritmy sociálnych sietí. S kvízom.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="dezinformacie">
+<div id="site-header"></div>
+<main id="obsah">
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="crumbs"><a href="index.html">Domov</a> / Dezinformácie a AI</p>
+      <h1>Ako nás médiá a siete dokážu oklamať</h1>
+      <p class="lead">Dezinformácie, manipulačné triky, deepfakes a algoritmy. Čo hovorí EÚ, ako to spoznať a ako si nastaviť vlastný informačný svet.</p>
+      <div class="toc" style="margin-top:22px"><a href="#pojmy">Čo je dezinformácia</a><a href="#techniky">6 manipulačných techník</a><a href="#ukazka">Rozbor príspevku</a><a href="#deepfake">Deepfakes a AI</a><a href="#algoritmy">Algoritmy</a><a href="#kviz">Kvíz</a></div>
+    </div>
+  </section>
+
+  <section class="section tight" id="pojmy" style="scroll-margin-top:90px">
+    <div class="wrap stack-l">
+      <div class="callout" style="padding:clamp(20px,4vw,36px)">
+        <p class="eyebrow">Definícia Európskej komisie</p>
+        <p style="font-family:var(--f-display);font-size:var(--step-2);font-weight:700;line-height:1.3;max-width:40ch">Dezinformácia je preukázateľne nepravdivá alebo zavádzajúca informácia, ktorá sa vytvára a šíri pre ekonomický zisk alebo zámerné klamanie verejnosti a môže spôsobiť verejnú škodu.</p>
+        <p class="cite">Európska komisia, oznámenie „Boj proti online dezinformáciám: európsky prístup“, COM(2018) 236 (vlastný preklad)</p>
+      </div>
+      <div class="grid g3">
+        <div class="card"><span class="stamp warn">Omyl</span><h3>Misinformácia</h3><p>Nepravdivá informácia, ktorú niekto šíri bez zlého úmyslu, lebo jej sám verí. Napríklad babka prepošle „zaručenú radu“ na liečbu.</p></div>
+        <div class="card"><span class="stamp scam">Zámer</span><h3>Dezinformácia</h3><p>Nepravda šírená zámerne, aby oklamala, zarobila peniaze alebo poškodila. Napríklad vymyslený „únik dokumentu“ pred voľbami.</p></div>
+        <div class="card"><span class="stamp warn">Zneužitie</span><h3>Malinformácia</h3><p>Pravdivá informácia použitá na ublíženie, napríklad zverejnenie súkromnej adresy alebo vytrhnutie z kontextu.</p></div>
+      </div>
+      <p class="muted" style="max-width:70ch">Podľa Európskej komisie medzi dezinformácie <b>nepatrí</b> satira a paródia, novinárske chyby, ani jasne označené názory a komentáre. Názor, s ktorým nesúhlasíte, ešte nie je dezinformácia.</p>
+      <div class="stats">
+        <div class="stat"><strong>36 %</strong><p>Európanov sa podľa vlastných slov stretlo s dezinformáciami „často“ alebo „veľmi často“ za posledný týždeň.</p><span class="cite">Flash Eurobarometer FL014EP, prieskum o sociálnych médiách 2025</span></div>
+        <div class="stat"><strong>66 %</strong><p>Európanov si myslí, že sa s dezinformáciami stretli aspoň niekedy. Takmer tretina si nie je istá, že by ich spoznala.</p><span class="cite">Flash Eurobarometer FL014EP, 2025</span></div>
+        <div class="stat"><strong>80 %+</strong><p>pozorovaného sociálneho inžinierstva vo svete začiatkom roka 2025 tvorili podľa ENISA kampane s pomocou umelej inteligencie.</p><span class="cite">ENISA Threat Landscape 2025</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark" id="techniky" style="scroll-margin-top:90px">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="eyebrow">Mentálne očkovanie</p><h2 style="margin-top:10px">Šesť techník, ktoré sa stále opakujú</h2></div>
+        <p>Kto pozná trik, ľahšie ho odhalí. Témy sa menia (zdravie, voľby, vojna, energie), techniky zostávajú.</p>
+      </div>
+      <div class="grid g3">
+        <div class="card"><h3>Emocionálny jazyk</h3><p>ŠOKUJÚCE, hanba, zrada, „toto vám tají“. Silné slová vypnú kritické myslenie a zvýšia zdieľanie.</p></div>
+        <div class="card"><h3>Falošná dilema</h3><p>„Buď ste s nami, alebo ste proti národu.“ Zložitý problém zúži na dve krajné možnosti.</p></div>
+        <div class="card"><h3>Obetný baránok</h3><p>Za všetko môže jedna skupina: migranti, Brusel, lekári, „elity“. Jednoduchý vinník namiesto zložitých príčin.</p></div>
+        <div class="card"><h3>Útok na osobu</h3><p>Namiesto argumentu sa útočí na človeka: jeho vzhľad, pôvod, minulosť. O veci samotnej sa nedozviete nič.</p></div>
+        <div class="card"><h3>Konšpirácia</h3><p>„Nič nie je náhoda, za tým stoja oni.“ Akýkoľvek protidôkaz sa vysvetlí ako súčasť sprisahania.</p></div>
+        <div class="card"><h3>Falošný expert a kontext</h3><p>„Lekár varuje…“ bez mena, alebo skutočný expert mimo svojho odboru. Pravdivá fotka s vymysleným popisom.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ukazka" style="scroll-margin-top:90px">
+    <div class="wrap trainer">
+      <div class="stack">
+        <p class="eyebrow">Rozbor</p>
+        <h2 style="font-size:var(--step-3)">Ako vyzerá manipulatívny príspevok</h2>
+        <p class="muted">Príspevok je vymyslený pre výučbu, ale skladá sa z presne tých prvkov, ktoré overovatelia faktov nachádzajú v skutočných dezinformáciách. Zapnite varovné znaky.</p>
+        <div class="callout"><p><b>Ako by to vyzeralo pri overení:</b> vyhľadáte „zákaz kúrenia drevom 2027“ a nájdete, či existuje návrh zákona, kto ho predložil a čo v ňom naozaj je. Pozriete, či o tom píše aj iné médium a overovatelia faktov.</p></div>
+      </div>
+      <div class="example">
+        <div class="example-bar"><span class="example-label">Ukážka · Facebook</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+        <div class="mock">
+          <div class="m-fb">
+            <div class="m-fb-head"><div class="m-av" style="background:#334155">S</div><div><b><span class="flag">Slobodný Hlas Pravdy</span></b><span>pred 5 h · 🌐</span></div></div>
+            <div class="m-fb-text"><span class="flag">🔴 TOTO VÁM V TELEVÍZII NEPOVEDIA!</span> Od roku 2027 vám <span class="flag">Brusel zakáže kúriť drevom</span> a bude chodiť kontrolovať domácnosti. <span class="flag">Potvrdil to istý európsky úradník</span>. <span class="flag">Kto mlčí, je spoluvinník!</span> ZDIEĽAJ, KÝM TO NEZMAŽÚ!!!</div>
+            <div class="m-fb-img" style="background:linear-gradient(135deg,#475569,#7f1d1d)"><span class="flag">[foto: polícia pred rodinným domom – v skutočnosti zo zásahu v inej krajine v roku 2019]</span></div>
+            <div class="m-fb-stats"><span>8,7 tis.</span><span>3,1 tis. zdieľaní</span></div>
+            <div class="m-fb-actions"><span>Páči sa mi to</span><span>Komentovať</span><span>Zdieľať</span></div>
+          </div>
+        </div>
+        <ul class="flag-list">
+          <li>Neznáma stránka s „pravdou“ v názve, bez redakcie a autora.</li>
+          <li>Emocionálny jazyk a tvrdenie, že „médiá to tajia“.</li>
+          <li>Obetný baránok a zveličenie. Skutočné pravidlá bývajú oveľa užšie (napr. normy na nové kotly).</li>
+          <li>Anonymný „úradník“: nedá sa overiť.</li>
+          <li>Falošná dilema: kto nezdieľa, je vinný.</li>
+          <li>Pravdivá fotka vo vymyslenom kontexte. Odhalí ju spätné vyhľadávanie obrázka.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="deepfake" style="scroll-margin-top:90px">
+    <div class="wrap">
+      <div class="section-head"><div><p class="eyebrow">Umelá inteligencia</p><h2 style="margin-top:10px">Deepfakes: keď nemožno veriť ani očiam</h2></div><p>Deepfake je video, fotka alebo hlas vytvorený či upravený umelou inteligenciou tak, aby vyzeral ako skutočný.</p></div>
+      <div class="grid g2">
+        <div class="card"><h3>Na čo sa pozerať</h3><ul class="prose" style="padding-left:1.1em;color:var(--muted)"><li>Pery nesedia so zvukom, zuby a jazyk sú rozmazané.</li><li>Zvláštne žmurkanie, nehybná hlava, „plávajúce“ okraje tváre.</li><li>Ruky, prsty, náušnice a text v pozadí sú deformované.</li><li>Hlas bez dýchania, monotónny alebo s divnou výslovnosťou.</li><li>Najdôležitejšie: <b>kto to zverejnil prvý</b>? Ak nie oficiálny účet danej osoby, buďte opatrní.</li></ul></div>
+        <div class="card"><h3>Čo hovorí právo EÚ</h3><p>Podľa článku 50 Aktu o umelej inteligencii musí byť od <b>2. augusta 2026</b> obsah typu deepfake označený ako umelo vytvorený alebo upravený. Poskytovatelia AI musia svoje výstupy strojovo označovať.</p><p><b>Pozor:</b> podvodníci pravidlá nedodržiavajú. Chýbajúce označenie neznamená, že video je pravé.</p><p class="cite">Nariadenie (EÚ) 2024/1689, čl. 50</p></div>
+        <div class="card"><h3>Klonovaný hlas v telefóne</h3><p>Pár sekúnd hlasu z videa na sociálnej sieti stačí na napodobnenie. Europol upozorňuje, že generatívna AI robí podvody osobnejšími a presvedčivejšími. Dohodnite si s rodinou heslo, ktoré poznáte len vy.</p><p class="cite">Europol IOCTA 2025</p></div>
+        <div class="card"><h3>Falošné reklamy so známymi tvárami</h3><p>Národná banka Slovenska varuje pred investičnými ponukami s deepfake videami slovenských politikov, hudobníkov a ďalších známych osobností. Žiadna známa osobnosť vám neodporučí zaručenú investíciu cez reklamu.</p><p class="cite">NBS, upozornenie na deepfake videá</p><a class="go" href="podvody.html#investicie-deepfake">Pozrite ukážku →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="algoritmy" style="scroll-margin-top:90px">
+    <div class="wrap trainer">
+      <div class="stack">
+        <p class="eyebrow">Sociálne siete</p>
+        <h2 style="font-size:var(--step-3)">Prečo vidíte práve to, čo vidíte</h2>
+        <div class="prose">
+          <p>Algoritmus vám ukazuje to, pri čom sa zastavíte, čo komentujete a zdieľate. Najviac pozornosti priťahuje hnev a strach. Postupne tak môžete skončiť v <b>informačnej bubline</b>, kde vidíte stále podobné názory a máte pocit, že tak zmýšľajú všetci.</p>
+          <p>Akt o digitálnych službách (DSA) platí v celej EÚ. Veľmi veľké platformy musia ponúknuť aspoň jednu možnosť zobrazenia obsahu, ktorá nie je založená na vašom profilovaní (napríklad chronologický feed). Každá platforma vám musí umožniť nahlásiť nezákonný obsah.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <h3 style="font-size:var(--step-1)">Ako si „vyčistiť“ feed</h3>
+        <ol class="steps">
+          <li><div><b>Prepnite na chronologický feed</b>Na Facebooku a Instagrame hľadajte voľbu „Najnovšie“ alebo „Sledované“.</div></li>
+          <li><div><b>Sledujte rôzne zdroje</b>Pridajte si aspoň dve seriózne médiá s rôznym pohľadom.</div></li>
+          <li><div><b>Nekomentujte hnevom</b>Aj nahnevaný komentár hovorí algoritmu „chcem viac“. Radšej zvoľte „Nezaujíma ma“.</div></li>
+          <li><div><b>Nahlasujte</b>Podvodné reklamy a nezákonný obsah nahláste cez tri bodky pri príspevku.</div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="kviz" style="scroll-margin-top:90px">
+    <div class="wrap trainer">
+      <div class="stack">
+        <p class="eyebrow">Kvíz</p>
+        <h2 style="font-size:var(--step-3)">Spoznáte techniku manipulácie?</h2>
+        <p class="muted">Päť vymyslených príspevkov. Ku každému vyberte, aký trik autor použil.</p>
+      </div>
+      <div class="quiz" id="technique-quiz" aria-live="polite"></div>
+    </div>
+    <script type="application/json" id="quiz-data">[
+      {"q":"Buď podporíš náš protest, alebo ti je jedno, čo bude s tvojimi deťmi.","a":["Falošná dilema","Falošný expert","Obetný baránok"],"r":0,"e":"Svet sa zúžil na dve možnosti. Pritom sa dá starať o deti a mať iný názor na protest."},
+      {"q":"Nemocnice sú plné? Za všetko môžu ľudia, čo prišli zo zahraničia.","a":["Útok na osobu","Obetný baránok","Konšpirácia"],"r":1,"e":"Zložitý problém (personál, financovanie, starnutie populácie) sa zvalí na jednu skupinu."},
+      {"q":"Ten ekonóm má tri rozvody a nosí smiešne okuliare. Prečo by sme mu verili?","a":["Útok na osobu","Emocionálny jazyk","Falošná dilema"],"r":0,"e":"Útok na súkromie a vzhľad namiesto odpovede na jeho argumenty."},
+      {"q":"Lekár z Ameriky varuje: tento čaj lieči cukrovku lepšie než inzulín!","a":["Obetný baránok","Falošný expert","Falošná dilema"],"r":1,"e":"Bezmenný „lekár“ bez zdroja a štúdie. Zdravotné rady overujte u svojho lekára."},
+      {"q":"Výpadok elektriny nebola porucha. Plánovali to roky, aby nás pripravili o slobodu. Kto tvrdí opak, je platený.","a":["Konšpirácia","Útok na osobu","Falošný expert"],"r":0,"e":"Typické konšpiračné myslenie: nič nie je náhoda a každý, kto nesúhlasí, je súčasťou sprisahania."}
+    ]</script>
+  </section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/site.js"></script>
+</body>
+</html>

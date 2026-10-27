@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atlas podvodov</title>
+<meta name="description" content="12 najčastejších online podvodov s ukážkami SMS, e-mailov, telefonátov a príspevkov na Facebooku. Varovné znaky a čo robiť.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="podvody">
+<div id="site-header"></div>
+<main id="obsah">
+
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="crumbs"><a href="index.html">Domov</a> / Atlas podvodov</p>
+      <h1>Atlas podvodov</h1>
+      <p class="lead">12 podvodov, s ktorými sa ľudia na Slovensku stretávajú najčastejšie. Pri každom je ukážka, varovné znaky a čo robiť. Tlačidlom <span class="mark">Ukázať varovné znaky</span> ich zvýrazníte priamo v ukážke.</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="callout warn" style="margin-bottom:24px"><p><b>Ukážky sú vytvorené pre výučbu.</b> Napodobňujú skutočné podvodné správy, o ktorých informovali SK-CERT, NBS, Polícia SR a Europol. Mená, čísla a adresy sú upravené alebo skrátené.</p></div>
+    <div class="filters" data-filter-group="#atlas" data-empty="#atlas-empty" role="group" aria-label="Filtrovať podvody">
+      <span class="label">Kanál:</span>
+      <button class="chip" type="button" data-filter="all" aria-pressed="true">Všetko</button>
+      <button class="chip" type="button" data-filter="sms" aria-pressed="false">SMS</button>
+      <button class="chip" type="button" data-filter="email" aria-pressed="false">E-mail</button>
+      <button class="chip" type="button" data-filter="telefon" aria-pressed="false">Telefonát</button>
+      <button class="chip" type="button" data-filter="socialne" aria-pressed="false">Sociálne siete</button>
+      <button class="chip" type="button" data-filter="chat" aria-pressed="false">Chat</button>
+      <button class="chip" type="button" data-filter="web" aria-pressed="false">Web</button>
+      <span class="label" style="margin-left:8px">Ohrozuje najmä:</span>
+      <button class="chip" type="button" data-filter="seniori" aria-pressed="false">Seniorov</button>
+      <button class="chip" type="button" data-filter="mladi" aria-pressed="false">Mladých</button>
+    </div>
+  </div>
+
+  <div class="wrap" id="atlas">
+    <p id="atlas-empty" class="muted" hidden>Pre tento filter nemáme ukážku.</p>
+
+    <!-- 1 -->
+    <article class="scam-item" id="sms-balik" data-tags="sms seniori mladi">
+      <div class="info">
+        <div class="tags"><span class="tag red">SMS</span><span class="tag">Smishing</span><span class="tag">Veľmi časté</span></div>
+        <h2>Falošná Slovenská pošta a kuriéri</h2>
+        <p>Príde SMS, že balík čaká na doplatok alebo opravu adresy. Odkaz vedie na stránku, ktorá vyzerá ako pošta. Tam zadáte číslo karty a potom aj kód zo SMS. Podľa SK-CERT si tým podvodník pridá vašu kartu do Apple Pay alebo Google Pay a platí ňou.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Nečakáte žiadny balík, alebo neviete, od koho je.</li><li>Žiadosť o drobný poplatok (1–3 €).</li><li>Odkaz nevedie na posta.sk, číslo odosielateľa je často zahraničné.</li><li>Termín „do 24 hodín“.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Na odkaz neklikajte. Stav zásielky si overte na webe alebo v aplikácii prepravcu, ktorú si otvoríte sami.</li><li>Ak ste zadali kartu, <b>hneď volajte banke</b> a kartu zablokujte.</li></ul>
+        <p class="src">Zdroj: SK-CERT, varovanie pred kampaňou zneužívajúcou identitu Slovenskej pošty; Slovenská pošta</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · SMS</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="m-phone">
+            <div class="m-phone-head"><div class="m-phone-av">+</div><div><b><span class="flag">+212 6 41 xx xx xx</span></b><span>Textová správa</span></div></div>
+            <div class="m-thread"><div class="m-time">Dnes 08:12</div>
+              <div class="bubble">Slovenska posta: Vasa zasielka SK48291 je pozastavena. <span class="flag">Doplatte clo 1,49 EUR</span> a potvrdte adresu <span class="flag">do 24 hodin</span>, inak bude vratena: <span class="flag lnk">posta-sk.zasielka-overenie.top</span></div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Zahraničné číslo (+212 je Maroko). Pošta takto nepíše.</li>
+            <li>Drobný poplatok je návnada. Skutočný cieľ sú údaje z karty a SMS kód.</li>
+            <li>Časový nátlak.</li>
+            <li>Skutočná doména je <b>zasielka-overenie.top</b>. „posta-sk“ na začiatku je len prídavok.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2 -->
+    <article class="scam-item" id="phishing-banka" data-tags="email seniori">
+      <div class="info">
+        <div class="tags"><span class="tag red">E-mail</span><span class="tag">Phishing</span></div>
+        <h2>E-mail „z banky“: účet bude zablokovaný</h2>
+        <p>E-mail napodobňuje vašu banku, s logom aj farbami. Tvrdí, že účet bude obmedzený, ak „neoveríte údaje“. Odkaz vedie na falošné prihlásenie do internetbankingu. Phishing je podľa agentúry EÚ pre kybernetickú bezpečnosť ENISA najčastejší spôsob, ako útočníci začínajú útok.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Adresa odosielateľa nie je z domény banky.</li><li>Neosobné oslovenie („Vážený klient“).</li><li>Hrozba a krátky termín.</li><li>Tlačidlo na prihlásenie priamo v e-maile.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Do bankovníctva sa prihlasujte len cez aplikáciu alebo adresu, ktorú si napíšete sami.</li><li>Podozrivý e-mail prepošlite svojej banke a vymažte.</li></ul>
+        <p class="src">Zdroj: ENISA Threat Landscape 2025; Polícia SR</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · E-mail</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="mock">
+            <div class="m-mail-top"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span><span style="margin-left:6px">Doručená pošta</span></div>
+            <div class="m-mail">
+              <div class="m-subject"><span class="flag">Bezpečnostné upozornenie: obmedzenie účtu</span></div>
+              <div class="m-from"><div class="m-av" style="background:#0f4c81">B</div><div><b>Klientske centrum banky</b><span>&lt;<span class="flag">security@ib-overenie-klienta.com</span>&gt;</span></div></div>
+              <div class="m-body">
+                <p><span class="flag">Vážený klient,</span></p>
+                <p>zaznamenali sme neobvyklé prihlásenie do vášho internetbankingu. Z bezpečnostných dôvodov bude účet <span class="flag">obmedzený do 12 hodín</span>, ak neoveríte svoju totožnosť.</p>
+                <span class="m-cta flag">Overiť totožnosť</span>
+              </div>
+              <div class="m-foot">Tento e-mail bol vygenerovaný automaticky, neodpovedajte naň.</div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Strašenie už v predmete.</li>
+            <li>Doména <b>ib-overenie-klienta.com</b> nepatrí žiadnej banke.</li>
+            <li>Banka vás pozná menom. Neosobné oslovenie znamená hromadnú rozosielku.</li>
+            <li>Hrozba a krátky termín majú zabrániť tomu, aby ste premýšľali.</li>
+            <li>Banky neposielajú odkazy na prihlásenie. Toto tlačidlo vedie na falošnú stránku.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3 -->
+    <article class="scam-item" id="falosny-bankar" data-tags="telefon seniori">
+      <div class="info">
+        <div class="tags"><span class="tag red">Telefonát</span><span class="tag">Vishing</span><span class="tag">Veľké škody</span></div>
+        <h2>Falošný bankár alebo policajt</h2>
+        <p>Volá „bezpečnostné oddelenie banky“ alebo „polícia“. Vraj niekto napadol váš účet a peniaze treba presunúť na „bezpečný účet“. Niekedy vás nahovoria na úver vo vašom mene alebo na výber hotovosti pre „kuriéra“. Na displeji môže byť aj skutočné číslo banky, dá sa sfalšovať.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>„Bezpečný účet“ neexistuje. Banka ani polícia peniaze nepresúvajú.</li><li>Pýtajú si kód zo SMS, PIN alebo prihlasovacie údaje.</li><li>Chcú, aby ste si nainštalovali aplikáciu (napr. na vzdialený prístup).</li><li>Zakazujú vám to s niekým prebrať.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Zložte. Potom sami zavolajte na číslo zo zadnej strany karty.</li><li>Polícia SR: nikdy nežiada údaje k bankovníctvu ani presun peňazí.</li></ul>
+        <p class="src">Zdroj: Polícia SR, varovania pred falošnými bankármi a policajtmi (2025–2026)</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Prepis hovoru</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="mock">
+            <div class="m-call">
+              <div class="m-call-head"><b>Banka – bezpečnosť</b><span>+421 2 xxxx xxxx · prichádzajúci hovor 04:12</span></div>
+              <div class="m-line"><i>Volajúci</i><span>Dobrý deň, tu Martin z bezpečnostného oddelenia vašej banky. <span class="flag">Zaznamenali sme pokus o krádež z vášho účtu.</span></span></div>
+              <div class="m-line"><i>Vy</i><span>Preboha, čo mám robiť?</span></div>
+              <div class="m-line"><i>Volajúci</i><span>Kvôli ochrane musíme peniaze presunúť <span class="flag">na bezpečný účet</span>. Teraz vám príde SMS, <span class="flag">nadiktujte mi kód</span>.</span></div>
+              <div class="m-line"><i>Volajúci</i><span><span class="flag">Nikomu o tom nehovorte, ani v pobočke</span>, zamestnanec môže byť zapojený.</span></div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Vyvolanie strachu hneď na začiatku.</li>
+            <li>„Bezpečný účet“ je vždy účet podvodníka.</li>
+            <li>Kód zo SMS potvrdzuje platbu. Kto ho nadiktuje, zaplatí.</li>
+            <li>Izolácia od rodiny a pobočky je typický znak podvodu.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 4 -->
+    <article class="scam-item" id="investicie-deepfake" data-tags="socialne seniori">
+      <div class="info">
+        <div class="tags"><span class="tag red">Facebook, YouTube</span><span class="tag">Deepfake</span><span class="tag">Investičný podvod</span></div>
+        <h2>Investície s deepfake videom známej osobnosti</h2>
+        <p>Platená reklama alebo „článok“ ukazuje známeho politika, moderátora či športovca. Odporúča zaručenú investíciu, často do kryptomien. Video je vyrobené umelou inteligenciou. Po registrácii volá „finančný poradca“, ktorý pýta vklad (často 250 €) a neskôr ďalšie peniaze.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Sľub vysokého zisku bez rizika.</li><li>Známa tvár, ktorá by takú ponuku nikdy nerobila.</li><li>Web mimo oficiálnych stránok, s koncovkami ako .app, .tech alebo .ru.</li><li>Vypnuté komentáre, „ponuka len dnes“.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Reklamu nahláste platforme. Neregistrujte sa a nedávajte telefón.</li><li>Pred investíciou si overte firmu v zozname NBS.</li></ul>
+        <p class="src">Zdroj: Národná banka Slovenska, upozornenie na deepfake videá; Europol IOCTA</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Sponzorovaný príspevok</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="mock">
+            <div class="m-fb">
+              <div class="m-fb-head"><div class="m-av" style="background:#b91c1c">E</div><div><b>Ekonomické Správy Dnes</b><span>Sponzorované · 🌐</span></div></div>
+              <div class="m-fb-text"><span class="flag">ŠOKUJÚCE: Známy moderátor prezradil v priamom prenose</span>, ako zarába <span class="flag">3 000 € týždenne</span>. Banky chcú tento rozhovor stiahnuť!</div>
+              <div class="m-fb-img" style="background:linear-gradient(135deg,#1e293b,#9f1239)"><span class="flag">▶ [video: moderátor v štúdiu, hlas mierne nesedí s perami]</span></div>
+              <div class="m-fb-link"><span><span class="flag">quantum-profit-ai.app</span></span><b>Začnite s vkladom 250 € ešte dnes</b></div>
+              <div class="m-fb-stats"><span>2,4 tis.</span><span class="flag">Komentáre sú vypnuté</span></div>
+              <div class="m-fb-actions"><span>Páči sa mi to</span><span>Komentovať</span><span>Zdieľať</span></div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Senzačný titulok a zneužité meno známej osoby.</li>
+            <li>Istý a vysoký zisk neexistuje.</li>
+            <li>Deepfake: pery nesedia so zvukom, tvár je rozmazaná na okrajoch, hlas je monotónny.</li>
+            <li>Cudzia doména, ktorá nepatrí banke ani regulovanej firme.</li>
+            <li>Vypnuté komentáre: varovania od iných ľudí by tu boli vidieť.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 5 -->
+    <article class="scam-item" id="ahoj-mami" data-tags="chat seniori">
+      <div class="info">
+        <div class="tags"><span class="tag red">WhatsApp, SMS</span><span class="tag">Vydávanie sa za blízkeho</span></div>
+        <h2>„Ahoj mami, mám nové číslo“</h2>
+        <p>Neznáme číslo sa vydáva za vaše dieťa alebo vnúča. Starý mobil sa vraj rozbil. Niekedy si píše aj niekoľko dní a potom príde súrna žiadosť: zaplatiť faktúru, poslať peniaze, zadať kartu. S umelou inteligenciou môže prísť aj hlasová správa s napodobneným hlasom.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Nové, neznáme číslo.</li><li>Súrna prosba o peniaze na cudzí účet.</li><li>„Nemôžem volať“, „píš sem“.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Zavolajte dieťaťu na jeho <b>staré číslo</b>, ktoré poznáte.</li><li>Opýtajte sa niečo, čo vie len on (alebo použite rodinné heslo).</li><li>Peniaze neposielajte a na odkazy neklikajte.</li></ul>
+        <p class="src">Zdroj: Polícia SR, varovanie pred podvodom „syn/dcéra v tiesni“ (2026)</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · WhatsApp</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="m-phone wa">
+            <div class="m-phone-head"><div class="m-phone-av">?</div><div><b>+44 7700 9xx xxx</b><span>online</span></div></div>
+            <div class="m-thread">
+              <div class="m-sys"><span class="flag">Toto číslo nie je vo vašich kontaktoch</span></div>
+              <div class="bubble">Ahoj mami, toto je moje nové číslo, starý mobil mi spadol do vody 😩 uloz si ho</div>
+              <div class="bubble me">Ahoj zlatko, čo sa stalo?</div>
+              <div class="bubble">Potrebujem dnes <span class="flag">zaplatiť nájom 640 €</span>, banka na novom mobile ešte nefunguje. <span class="flag">Pošleš na tento účet? Zajtra vrátim</span> SK31 xxxx xxxx</div>
+              <div class="bubble"><span class="flag">Teraz nemôžem volať</span>, som v práci ❤️</div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Neznáme číslo. Prvý krok je vždy zavolať na staré číslo.</li>
+            <li>Žiadosť o peniaze hneď na začiatku.</li>
+            <li>Účet patrí cudzej osobe, nie vášmu dieťaťu.</li>
+            <li>Vyhýbanie sa hovoru: podvodník nemá hlas vášho dieťaťa.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 6 -->
+    <article class="scam-item" id="bazar" data-tags="chat web">
+      <div class="info">
+        <div class="tags"><span class="tag red">Bazoš, Marketplace</span><span class="tag">Falošný kupujúci</span></div>
+        <h2>Falošný kupujúci na bazári</h2>
+        <p>Predávate na Bazoši alebo Facebook Marketplace. Kupujúci nezjednáva, je „v zahraničí“ a pošle kuriéra. Platbu vraj už poslal, stačí si ju „prevziať“ cez odkaz. Stránka vyzerá ako kuriér alebo bazár a pýta číslo karty, kód zo SMS alebo prihlásenie do banky.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Žiadne otázky o tovare, žiadne zjednávanie.</li><li>Kuriér, ktorého si objednáva kupujúci.</li><li>Odkaz na „prijatie platby“.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Na prijatie peňazí stačí číslo účtu (IBAN). Nikdy nie karta, PIN ani kód.</li><li>Komunikujte len cez platformu a predávajte osobne.</li></ul>
+        <p class="src">Zdroj: Polícia SR, varovania pred podvodmi na inzertných portáloch (2025)</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Správa od kupujúceho</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="m-phone">
+            <div class="m-phone-head"><div class="m-phone-av">L</div><div><b>Lukas K.</b><span>záujem o: Detský bicykel 24"</span></div></div>
+            <div class="m-thread">
+              <div class="bubble">Dobry den, beriem <span class="flag">za plnu cenu</span>. Som pracovne v Nemecku, <span class="flag">posielam kuriera</span>.</div>
+              <div class="bubble">Platba je uz odoslana, potvrdte prijem tu: <span class="flag lnk">bazos-sk.bezpecna-platba.live/prijem</span></div>
+              <div class="bubble">Musite zadat <span class="flag">cislo karty a kod z SMS</span> aby boli peniaze pripisane.</div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Kupujúci bez otázok a zjednávania.</li>
+            <li>Kuriér zo zahraničia, ktorého organizuje kupujúci.</li>
+            <li>Falošná „platobná brána“. Skutočná doména je <b>bezpecna-platba.live</b>.</li>
+            <li>Kód zo SMS slúži na potvrdenie platby z vášho účtu, nie na prijatie peňazí.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 7 -->
+    <article class="scam-item" id="ukradnuty-ucet" data-tags="socialne mladi">
+      <div class="info">
+        <div class="tags"><span class="tag red">Facebook, Instagram</span><span class="tag">Krádež účtu</span></div>
+        <h2>„Si to ty na videu?“ a falošná podpora Meta</h2>
+        <p>Kamarát vám pošle odkaz s otázkou „Nie si to ty na tomto videu?“. Jeho účet už ovláda podvodník. Odkaz vedie na falošné prihlásenie. Správcom stránok zase chodí „upozornenie od Meta“, že stránka bude zmazaná pre porušenie pravidiel.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Šokujúca otázka a odkaz bez ďalšieho kontextu.</li><li>Žiadosť o prihlásenie po kliknutí na odkaz.</li><li>„Meta“ píše z bežného profilu alebo cudzej domény.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Napíšte kamarátovi inou cestou, že mu niekto ukradol účet.</li><li>Zapnite si dvojstupňové overenie (kód z aplikácie).</li><li>Upozornenia od Meta kontrolujte v Centre účtov, nie cez odkaz.</li></ul>
+        <p class="src">Zdroj: Securitymagazin.sk; Europol IOCTA 2025 (krádeže a obchod s údajmi)</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Messenger a falošná stránka</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="m-phone">
+            <div class="m-phone-head"><div class="m-phone-av" style="background:#a855f7">T</div><div><b>Tomáš Novák</b><span>Messenger</span></div></div>
+            <div class="m-thread">
+              <div class="bubble"><span class="flag">Toto si ty?? 😳😳</span></div>
+              <div class="bubble"><span class="flag lnk">fb-video.watch-now.click/v/77125</span></div>
+            </div>
+          </div>
+          <div class="mock">
+            <div class="m-browser-bar"><span class="m-dot"></span><span class="m-dot"></span><div class="m-url">fb-video.watch-now.click/login</div></div>
+            <div class="m-page" style="text-align:center"><b style="font-size:22px;color:#1877f2">facebook</b><p style="font-size:14px"><span class="flag">Pre prehranie videa sa prihláste</span></p><div class="m-input">E-mail alebo telefónne číslo</div><div class="m-input">Heslo</div></div>
+          </div>
+          <ul class="flag-list">
+            <li>Šokujúca správa bez kontextu, aj keď je od známeho.</li>
+            <li>Odkaz nevedie na facebook.com.</li>
+            <li>Facebook na prehranie videa prihlásenie na cudzej stránke nepýta. Kto sa prihlási, stratí účet a podvodník pokračuje s jeho priateľmi.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 8 -->
+    <article class="scam-item" id="falosny-eshop" data-tags="web socialne mladi">
+      <div class="info">
+        <div class="tags"><span class="tag red">Web, reklama</span><span class="tag">Falošný e-shop</span></div>
+        <h2>Falošný e-shop s obrovskými zľavami</h2>
+        <p>Reklama ponúka značkové topánky, elektroniku alebo „výpredaj pre zatvorenie predajne“ so zľavou 70–90 %. E-shop je nový, nemá kontakty ani obchodné podmienky. Tovar nepríde alebo príde lacný falzifikát. Údaje z karty sa navyše môžu zneužiť.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Neuveriteľná cena a odpočítavanie času.</li><li>Chýba IČO, adresa, reklamačný poriadok.</li><li>Len platba vopred alebo prevodom do zahraničia.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Vyhľadajte názov obchodu so slovom „podvod“ alebo „recenzie“.</li><li>Plaťte kartou alebo na dobierku, nie prevodom cudzej osobe.</li><li>Ak ste platili kartou, požiadajte banku o reklamáciu platby (chargeback).</li></ul>
+        <p class="src">Zdroj: Europol IOCTA, online podvody v elektronickom obchode</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Webová stránka</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="mock">
+            <div class="m-browser-bar"><span class="m-dot"></span><span class="m-dot"></span><div class="m-url"><span class="flag">tenisky-vypredaj-sk.shop</span></div></div>
+            <div class="m-page">
+              <div style="background:#111;color:#fff;padding:8px 12px;border-radius:6px;font-weight:700;text-align:center"><span class="flag">ZATVÁRAME PREDAJŇU · Koniec akcie o 00:14:59</span></div>
+              <div style="display:grid;grid-template-columns:100px 1fr;gap:12px;align-items:center"><div style="aspect-ratio:1;border-radius:8px;background:linear-gradient(135deg,#e5e7eb,#9ca3af)"></div><div><b>Bežecké tenisky Air Pro</b><br><s style="color:#80868b">149,00 €</s> <b style="color:#c42b35;font-size:20px"><span class="flag">19,90 €</span></b></div></div>
+              <p style="font-size:13px;color:#5f6368">Platba: <span class="flag">len prevodom vopred</span> · Kontakt: formulár</p>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Nová doména bez histórie a značky.</li>
+            <li>Umelý nátlak odpočítavaním.</li>
+            <li>Zľava vyše 80 % na značkový tovar.</li>
+            <li>Platba len vopred a žiadne kontakty: peniaze sa už nevrátia.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 9 -->
+    <article class="scam-item" id="romanca" data-tags="socialne chat seniori">
+      <div class="info">
+        <div class="tags"><span class="tag red">Zoznamky, sociálne siete</span><span class="tag">Romance scam</span></div>
+        <h2>Láska na diaľku, ktorá skončí investíciou</h2>
+        <p>Niekto sympatický sa ozve „omylom“ alebo na zoznamke. Píše týždne, buduje dôveru. Potom príde príbeh o colnici a nemocnici, alebo „spoločná investícia“ do kryptomien. Europol tento podvod volá „pig butchering“: obeť najprv „vykrmujú“ dôverou a potom pripravia o úspory.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Nikdy sa nechce stretnúť ani zapnúť kameru.</li><li>Rýchle vyznania lásky.</li><li>Rozhovor sa stočí k peniazom alebo investícii.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Fotku profilu vyhľadajte cez Google Lens. Často patrí inej osobe.</li><li>Nikdy neposielajte peniaze niekomu, koho ste nestretli osobne.</li></ul>
+        <p class="src">Zdroj: Europol, IOCTA a správa o online podvodoch</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Chat po 3 týždňoch</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="m-phone wa">
+            <div class="m-phone-head"><div class="m-phone-av" style="background:#d97706">D</div><div><b>Daniel ❤️</b><span>online</span></div></div>
+            <div class="m-thread">
+              <div class="bubble">Dobré ráno, moja láska ☀️ <span class="flag">Kamera mi stále nefunguje</span>, prepáč.</div>
+              <div class="bubble">Môj strýko mi ukázal platformu, kde som za mesiac <span class="flag">zarobil 9 000 $</span>. Chcem, aby sme mali spoločnú budúcnosť.</div>
+              <div class="bubble"><span class="flag">Skús vložiť aspoň 1 000 €, pomôžem ti</span> 🙏</div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Vyhýbanie sa videohovoru: osoba neexistuje alebo vyzerá inak.</li>
+            <li>Ukážka „zisku“ má vzbudiť dôveru.</li>
+            <li>Prvá žiadosť o peniaze. Po nej príde ďalšia a ďalšia.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 10 -->
+    <article class="scam-item" id="praca-mula" data-tags="chat socialne mladi">
+      <div class="info">
+        <div class="tags"><span class="tag red">Telegram, Instagram</span><span class="tag">Peňažná mula</span><span class="tag">Trestný čin</span></div>
+        <h2>„Brigáda“: prijmi peniaze a pošli ďalej</h2>
+        <p>Ponuka ľahkého zárobku: na váš účet prídu peniaze, vy ich pošlete ďalej a časť si necháte. Ide o pranie peňazí z podvodov. Europol každoročne v akcii EMMA odhalí tisíce takzvaných peňažných múl a varuje, že zločinci verbujú najmä mladých cez sociálne siete.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Vysoký zárobok za minimálnu prácu.</li><li>Práca spočíva v prijímaní a posielaní peňazí.</li><li>Žiadosť o prístup k účtu alebo karte.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Nikdy nepožičiavajte svoj účet ani kartu. Zodpovedáte za to vy.</li><li>Ak ste už do toho spadli, hneď to povedzte banke a polícii.</li></ul>
+        <p class="src">Zdroj: Europol, European Money Mule Action (EMMA), kampaň #DontBeAMule</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Instagram, správa</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="m-phone">
+            <div class="m-phone-head"><div class="m-phone-av" style="background:#db2777">$</div><div><b>easy.money.jobs.sk</b><span>Instagram · Žiadosť o správu</span></div></div>
+            <div class="m-thread">
+              <div class="bubble">Čau! Zarob si <span class="flag">až 500 € týždenne</span> z mobilu 💸 aj pre študentov 16+</div>
+              <div class="bubble">Stačí mať bankový účet. <span class="flag">Prijmeš platbu, pošleš ju ďalej</span> a 15 % je tvojich.</div>
+              <div class="bubble"><span class="flag">Pošli mi foto karty z oboch strán</span> pre overenie 😉</div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Neprimeraný zárobok, cielený na mladých.</li>
+            <li>Toto je pranie peňazí. Za ukradnuté peniaze na vašom účte môžete niesť trestnú zodpovednosť.</li>
+            <li>Kto má fotku karty, môže ňou platiť.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 11 -->
+    <article class="scam-item" id="vydieranie" data-tags="socialne chat mladi">
+      <div class="info">
+        <div class="tags"><span class="tag red">Snapchat, Instagram, hry</span><span class="tag">Sextortion</span></div>
+        <h2>Vydieranie intímnymi fotkami</h2>
+        <p>Neznámy profil (často „rovesník“ alebo atraktívne dievča či chlapec) si získa dôveru a vymení si intímne fotky. Potom príde hrozba: zaplať, inak to pošleme rodine a spolužiakom. Niekedy ide o fotky upravené umelou inteligenciou. Europol na tento typ trestného činu upozorňuje kampaňou „Say No!“.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Nový kontakt, ktorý rýchlo prejde na flirt.</li><li>Žiadosť presunúť sa do inej aplikácie.</li><li>Tlak na fotky alebo video.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li><b>Neplaťte</b> a prestaňte komunikovať.</li><li>Urobte snímky obrazovky a profil nahláste.</li><li>Povedzte to dospelému, ktorému veríte. Nie je to vaša vina. Volajte 116 111 alebo políciu.</li></ul>
+        <p class="src">Zdroj: Europol, kampaň „Say No!“; Better Internet for Kids (EÚ)</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Chat</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="m-phone">
+            <div class="m-phone-head"><div class="m-phone-av" style="background:#0ea5e9">N</div><div><b>nina_2009</b><span>pridaná pred 2 dňami</span></div></div>
+            <div class="m-thread">
+              <div class="bubble">si fakt zlatý 😍 <span class="flag">poďme radšej na snap</span></div>
+              <div class="bubble"><span class="flag">pošli mi fotku, ja ti tiež</span> 🙈</div>
+              <div class="bubble"><span class="flag">Mám tvoje fotky a zoznam tvojich priateľov. Pošli 200 € do hodiny</span>, inak ich uvidí celá škola.</div>
+            </div>
+          </div>
+          <ul class="flag-list">
+            <li>Presun do aplikácie, kde správy miznú.</li>
+            <li>Tlak na intímne fotky od človeka, ktorého nepoznáte.</li>
+            <li>Vydieranie. Platba nič nevyrieši, vydierač si zvyčajne pýta ďalej. Hľadajte pomoc.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- 12 -->
+    <article class="scam-item" id="technicka-podpora" data-tags="web telefon seniori">
+      <div class="info">
+        <div class="tags"><span class="tag red">Web, telefonát</span><span class="tag">Tech support scam</span></div>
+        <h2>Falošná technická podpora</h2>
+        <p>Na obrazovke vyskočí hlásenie, že počítač je napadnutý, a číslo „podpory Microsoftu“. Niekedy zavolajú priamo. „Technik“ vás navedie nainštalovať program na vzdialený prístup (napr. AnyDesk) a potom sa prihlási do vášho bankovníctva.</p>
+        <h3>Varovné znaky</h3>
+        <ul><li>Hlasné varovanie, blikanie, zákaz vypnúť počítač.</li><li>Telefónne číslo priamo v okne.</li><li>Žiadosť o inštaláciu programu na vzdialenú správu.</li></ul>
+        <h3>Čo robiť</h3>
+        <ul><li>Zatvorte prehliadač (prípadne reštartujte počítač). Nevolajte.</li><li>Ak ste niekomu dali prístup, odpojte internet, volajte banke a dajte počítač skontrolovať.</li></ul>
+        <p class="src">Zdroj: ENISA, sociálne inžinierstvo; Polícia SR</p>
+      </div>
+      <div class="demo">
+        <div class="example">
+          <div class="example-bar"><span class="example-label">Ukážka · Vyskakovacie okno</span><button class="flags-btn" type="button" aria-pressed="false">Ukázať varovné znaky</button></div>
+          <div class="mock">
+            <div class="m-browser-bar"><span class="m-dot"></span><span class="m-dot"></span><div class="m-url"><span class="flag">windows-defender-alert.online</span>/sk</div></div>
+            <div class="m-popup"><b>⚠ Windows Defender – kritická hrozba</b><p><span class="flag">Váš počítač je zablokovaný. Neodpájajte ho!</span></p><p>Trojan:Win32/BankStealer zistený</p><p style="font-size:20px;font-weight:700"><span class="flag">Volajte podporu: +421 2 xxx xx xxx</span></p></div>
+          </div>
+          <ul class="flag-list">
+            <li>Adresa nepatrí Microsoftu. Skutočný antivírus nebeží na webe.</li>
+            <li>Strašenie a zákaz vypnúť počítač. Okno sa dá zavrieť.</li>
+            <li>Microsoft nedáva telefónne čísla do vyskakovacích okien.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <section class="section tight">
+    <div class="wrap">
+      <div class="callout cta-band">
+        <div class="stack"><h2 style="font-size:var(--step-2)">Viete ich už spoznať?</h2><p class="muted">Otestujte sa na 12 ukážkach. Niektoré sú v poriadku, niektoré podvod.</p></div>
+        <a class="btn" href="trenazer.html">Spustiť trenažér</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/site.js"></script>
+</body>
+</html>

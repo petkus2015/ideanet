@@ -1,0 +1,22 @@
+/* Administrácia: polia príkladov, kariet a testov */
+.mgt-box { display: grid; gap: 14px; }
+.mgt-field label { display: block; font-weight: 600; margin-bottom: 4px; }
+.mgt-field-checkbox label { font-weight: 400; }
+.mgt-field textarea.code { font-family: Menlo, Consolas, monospace; font-size: 13px; }
+.mgt-field .description { margin-top: 4px; }
+#mgt_box_mock .mgt-box { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#mgt_box_mock .mgt-field-code, #mgt_box_mock .mgt-count { grid-column: 1 / -1; }
+.mgt-posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 16px; }
+.mgt-count.mgt-ok { color: #157a4b; }
+.mgt-count.mgt-warn { color: #b42318; font-weight: 600; }
+
+.mgt-repeater { display: grid; gap: 8px; margin-bottom: 12px; }
+.mgt-q { border: 1px solid #c3c4c7; border-radius: 4px; background: #fff; }
+.mgt-q-head { display: flex; gap: 10px; align-items: center; padding: 8px 10px; background: #f6f7f7; }
+.mgt-q-num { font-weight: 700; min-width: 2em; }
+.mgt-q-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mgt-q-tools { display: flex; gap: 4px; align-items: center; }
+.mgt-q-body { display: none; padding: 12px; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mgt-q.mgt-open .mgt-q-body { display: grid; }
+.mgt-q-body .mgt-only:has(textarea), .mgt-q-body .mgt-count { grid-column: 1 / -1; }
+body.mgt-type-kviz .mgt-only-trenazer, body.mgt-type-trenazer .mgt-only-kviz { display: none; }
