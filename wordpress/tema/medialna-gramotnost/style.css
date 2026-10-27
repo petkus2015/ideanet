@@ -1,0 +1,14 @@
+/*
+Theme Name: Mediálna gramotnosť
+Theme URI: https://www.medialnagramotnost.sk/
+Description: Vzdelávací web o podvodoch a dezinformáciách. Príklady podvodov s ukážkami SMS, e-mailov a príspevkov, testy, rýchle karty a slovník, všetko editovateľné v administrácii. Texty domovskej stránky vo Vzhľad → Prispôsobiť.
+Version: 1.0.0
+Requires at least: 6.2
+Requires PHP: 7.4
+Author: IDEANET
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: mg-tema
+Tags: education, accessibility-ready, custom-logo, custom-menu, editor-style
+*/
+/* Štýly sú v assets/css/theme.css */
