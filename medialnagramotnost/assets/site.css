@@ -479,3 +479,7 @@ a.card:hover { border-color: var(--ink); transform: translateY(-2px); }
   .remember { background: #FFE04A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .wallet { break-inside: avoid; }
 }
+
+/* Žltá veta v kartách: vždy tmavý text (karta inak nastavuje šedý) */
+.card .remember, .card p.remember { color: var(--marker-ink); }
+.example.show .flag * { color: #121A2E; }

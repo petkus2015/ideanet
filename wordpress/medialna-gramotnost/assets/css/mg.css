@@ -479,3 +479,5 @@ a.mg-card:hover { border-color: var(--mg-ink); transform: translateY(-2px); }
 .mg-stack > .mg-btn, .mg-section-head .mg-btn { justify-self: start; }
 .mg-trainer-wrap { display: grid; gap: 20px; }
 @media (prefers-reduced-motion: reduce) { .mg *, .mg *::before, .mg *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+.mg-card .mg-remember, .mg-card p.mg-remember { color: var(--mg-marker-ink); }
+.mg-example.mg-show .mg-flag * { color: #121A2E; }
