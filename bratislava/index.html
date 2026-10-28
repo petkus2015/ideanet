@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bratislava Lifestyle — objavte mesto pod hradom</title>
+  <meta name="description" content="Lifestyle portál pre návštevníkov Bratislavy: pamiatky, výhľady, príroda, kultúra, gastro a rodinné tipy podľa kategórií.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="#top" class="logo" aria-label="Bratislava Lifestyle">
+        <span class="logo-mark"></span>Bratislava<b>.</b>
+      </a>
+      <nav class="nav-links" aria-label="Hlavná navigácia">
+        <a href="#kategorie">Kategórie</a>
+        <a href="#miesta">Miesta</a>
+        <a href="#den">Plán na 1 deň</a>
+        <a href="#tipy">Praktické tipy</a>
+      </nav>
+      <button class="fav-btn" id="favToggle" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.6-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 6c-2.3 4.4-9.3 9-9.3 9z"/></svg>
+        <span>Uložené</span><i id="favCount">0</i>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Sprievodca pre návštevníkov</p>
+          <h1>Mesto pod hradom,<br><span>ktoré si zamilujete.</span></h1>
+          <p class="lead">Od korunovačnej katedrály po víkend pri Dunaji. Vyberte si, čo vás baví, a nájdite miesta, ktoré stoja za čas.</p>
+          <div class="hero-cta">
+            <a class="btn primary" href="#miesta">Objaviť miesta</a>
+            <a class="btn ghost" href="#den">Plán na 1 deň</a>
+          </div>
+          <dl class="stats">
+            <div><dt>27</dt><dd>vybraných miest</dd></div>
+            <div><dt>6</dt><dd>kategórií</dd></div>
+            <div><dt>60 km</dt><dd>od Viedne</dd></div>
+          </dl>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="sun"></div>
+          <svg viewBox="0 0 400 320" class="skyline">
+            <path class="river" d="M0 262c60-14 110 14 200 0s140-14 200 0v58H0z"/>
+            <path class="hill" d="M0 250c50-40 90-60 140-60s70 18 120 6 100-30 140-6v78H0z"/>
+            <g class="castle">
+              <path d="M96 230V150h22v-18l12-10 12 10v18h22v80z"/>
+              <path d="M96 150l-10-18h14zM168 150l10-18h-14z"/>
+              <rect x="108" y="170" width="8" height="14" rx="4" class="win"/>
+              <rect x="132" y="170" width="8" height="14" rx="4" class="win"/>
+              <rect x="152" y="170" width="8" height="14" rx="4" class="win"/>
+            </g>
+            <g class="ufo">
+              <path d="M290 232l5-86h4l5 86z"/>
+              <ellipse cx="297" cy="140" rx="46" ry="9"/>
+              <path d="M258 140c10-18 70-18 78 0z"/>
+              <path d="M297 120v-22" stroke-width="3"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="kategorie" class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Vyberte si podľa nálady</h2>
+          <p>Šesť kategórií, jedno mesto. Kliknutím zobrazíte len to, čo vás zaujíma.</p>
+        </div>
+        <div class="cat-grid" id="catGrid"></div>
+      </div>
+    </section>
+
+    <section id="miesta" class="section alt">
+      <div class="wrap">
+        <div class="sec-head row">
+          <div>
+            <h2>Zaujímavé miesta</h2>
+            <p id="resultInfo" aria-live="polite"></p>
+          </div>
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <input id="q" type="search" placeholder="Hľadať miesto, štvrť…" autocomplete="off">
+          </label>
+        </div>
+        <div class="chips" id="chips" role="tablist" aria-label="Filter kategórií"></div>
+        <div class="cards" id="cards"></div>
+        <p class="empty" id="empty" hidden>Nič sme nenašli. Skúste iné slovo alebo kategóriu.</p>
+      </div>
+    </section>
+
+    <section id="den" class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Bratislava za jeden deň</h2>
+          <p>Kompaktné centrum sa dá prejsť peši. Takto si ho môžete rozložiť.</p>
+        </div>
+        <ol class="timeline">
+          <li><time>09:00</time><div><h3>Ranná káva a Staré Mesto</h3><p>Hlavné námestie, Michalská brána, Primaciálny palác. Kým sú uličky ešte prázdne.</p></div></li>
+          <li><time>11:30</time><div><h3>Hrad a výhľad na Dunaj</h3><p>Vyšliapte k Bratislavskému hradu a pozrite sa na mesto aj na Rakúsko.</p></div></li>
+          <li><time>14:00</time><div><h3>Obed a trh</h3><p>Stará tržnica alebo reštaurácie v okolí Hlavného námestia.</p></div></li>
+          <li><time>16:00</time><div><h3>Nábrežie a Eurovea</h3><p>Prechádzka popri Dunaji, zmrzlina a sochy, ktoré mesto robia hravým.</p></div></li>
+          <li><time>19:30</time><div><h3>Západ slnka z UFO</h3><p>Večera nad mestom z Mostu SNP, alebo víno v centre.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="tipy" class="section alt">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Praktické tipy</h2>
+        </div>
+        <div class="tips">
+          <article><h3>Ako sa dostať</h3><p>Z Viedne vlakom alebo loďou za približne hodinu. Letisko M. R. Štefánika je od centra pár kilometrov.</p></article>
+          <article><h3>Po meste</h3><p>Centrum je malé a väčšinou rovinaté. Na vzdialenejšie miesta (Devín, Kamzík, ZOO) sa oplatí MHD.</p></article>
+          <article><h3>Kedy prísť</h3><p>Jar a začiatok jesene sú najpríjemnejšie. V decembri tu fungujú vianočné trhy.</p></article>
+          <article><h3>Overte si pred cestou</h3><p>Otváracie hodiny a ceny sa menia. Pred návštevou si ich pozrite na oficiálnych stránkach miest.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span class="logo">Bratislava<b>.</b></span>
+      <p>Ukážkový lifestyle portál pre návštevníkov. Informácie sú orientačné.</p>
+    </div>
+  </footer>
+
+  <dialog id="modal" aria-labelledby="mTitle">
+    <form method="dialog"><button class="close" aria-label="Zavrieť">×</button></form>
+    <div class="m-art" id="mArt"></div>
+    <div class="m-body">
+      <p class="m-meta" id="mMeta"></p>
+      <h3 id="mTitle"></h3>
+      <p id="mText"></p>
+      <ul id="mTags" class="tags"></ul>
+      <div class="m-actions">
+        <a class="btn primary" id="mMap" target="_blank" rel="noopener">Zobraziť na mape</a>
+        <button class="btn ghost" id="mFav" type="button">Uložiť</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
