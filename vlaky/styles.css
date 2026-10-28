@@ -807,24 +807,34 @@ html.big body { zoom: 1.18; }
 /* hlavička bez loga a názvu: len informácia o obnovovaní */
 .top__in > .eyebrow { margin: 0; font: 500 16px/1.3 var(--f-body); color: var(--muted); }
 
-/* poradie ako na staniciach: čas, vlak („Ex 616 Považan“), smer, meškanie s novým časom, dopravca */
+/* ako tabuľa na stanici: čas, vlak, dopravca, cieľová (východzia) stanica, cez, meškanie s novým časom */
 .fids__cols, .fl, .thead.air, .row__air {
-  grid-template-columns: minmax(124px, .9fr) minmax(180px, 1.4fr) minmax(0, 2.6fr) minmax(120px, .85fr) minmax(84px, .55fr);
+  grid-template-columns: minmax(118px, .8fr) minmax(130px, 1fr) minmax(76px, .5fr) minmax(0, 1.8fr) minmax(0, 1.5fr) minmax(112px, .8fr);
 }
-.fids__cols > span:last-child { text-align: right; }
-.fids__cols > span:nth-last-child(2) { text-align: left; }
+.fids__cols > span:last-child { text-align: left; }
 .fl__st { justify-items: start; text-align: left; }
-.fl__car { justify-self: end; }
+.fl__car, .row__air .carrier { justify-self: start; }
 .fl__train, .ra__train { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; min-width: 0; }
-.tname { font: 600 clamp(16px, .5cqi + 10px, 21px)/1.2 var(--f-body); color: var(--fg); min-width: 0; }
+.tname { font: 600 clamp(15px, .4cqi + 10px, 19px)/1.2 var(--f-body); color: var(--fg); min-width: 0; }
 .dir__lbl { display: none; }
+.col-via { min-width: 0; font-size: clamp(14px, .35cqi + 9.5px, 17px); color: var(--muted); }
+.col-via .via { font-size: inherit; }
+.col-via .via--tick { flex-wrap: wrap; white-space: normal; align-items: baseline; }
+.col-via .via__txt { white-space: normal; color: var(--fg); }
+.col-via .via__lbl { display: none; }
 @media (max-width: 860px) {
   .fl, .row__air { grid-template-columns: auto minmax(0, 1fr); gap: 8px 12px; }
-  .fl { grid-template-areas: "time st" "train car" "dir dir"; }
-  .row__air { grid-template-areas: "time delay" "train carrier" "dir dir"; }
+  .fl { grid-template-areas: "time st" "train car" "dir dir" "via via"; }
+  .row__air { grid-template-areas: "time delay" "train carrier" "dir dir" "via via"; }
   .fl__car { grid-area: car; justify-self: end; align-self: center; }
   .row__air .carrier { justify-self: end; }
+  .col-via { grid-area: via; }
+  .col-via:empty { display: none; }
+  .col-via .via, .col-via .via--tick { display: block; }
+  .col-via .via__lbl { display: inline; color: var(--muted); }
+  .col-via .via__txt { display: inline; min-height: 0; }
+  .col-via .via__pg { display: inline-block; margin-left: 6px; }
   .fl__st { justify-items: end; text-align: right; }
-  /* bez hlavičky stĺpcov: pred cieľom slovo „Smer“ */
+  /* bez hlavičky stĺpcov: nad cieľom popis */
   .dir__lbl { display: block; font-size: 13px !important; font-weight: 600; color: var(--dim) !important; text-transform: uppercase; letter-spacing: .08em; }
 }

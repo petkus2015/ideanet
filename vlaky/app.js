@@ -338,7 +338,8 @@
     const items = boardFiltered(mode);
     ROOT.querySelectorAll('.fids__tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
     $('fidsTime').textContent = mode === 'dep' ? 'Odchod' : 'Príchod';
-    $('fidsDir').textContent = mode === 'dep' ? 'Smer' : 'Odkiaľ';
+    $('fidsDir').textContent = mode === 'dep' ? 'Cieľová stanica' : 'Východzia stanica';
+    $('fidsVia').textContent = mode === 'dep' ? 'Cez' : 'Zo smeru';
     const ahead = items.filter(e => !['gone', 'arrived'].includes(e.status));
     const lateN = ahead.filter(e => e.delay > 5).length;
     $('fidsNote').textContent = `Do ${hm(now + BOARD_AHEAD)}: ${ahead.length} vlakov, ${lateN ? `${lateN} mešká` : 'všetky načas'}`;
@@ -354,15 +355,16 @@
       const sub = norm(ends) === norm(state.station)
         ? (mode === 'dep' ? 'Začína v tejto stanici' : 'Končí v tejto stanici')
         : (mode === 'dep' ? '' : `Pokračuje do: ${e.dest}`);
-      const via = viaTicker(mode === 'dep' ? 'Ide cez' : 'Predtým', importantVia(e.via));
+      const via = viaTicker(mode === 'dep' ? 'Cez' : 'Zo smeru', importantVia(e.via));
       return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" data-type="${esc(e.type)}" data-num="${esc(e.number)}" tabindex="0" role="button" title="Zobraziť trasu a polohu vlaku"
           style="--k:var(--c${c})" aria-label="${esc(e.type)} ${esc(e.number)} ${mode === 'dep' ? 'do' : 'z'} ${esc(big)}, ${hm(e.plan)}, ${esc(stText)}">
         <span class="fl__time">${flap(hm(e.plan))}</span>
         <span class="fl__exp">${late ? `<span class="fl__lbl">nový čas</span>${hm(e.exp)}` : ''}</span>
         <span class="fl__train">${trainTitle(e.type, e.number, e.name, e.group)}</span>
-        <span class="fl__dir"><small class="dir__lbl">${mode === 'dep' ? 'Smer' : 'Z'}</small><b class="fl__dest">${esc(big)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}${via}</span>
-        <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${late ? `<small class="st__new">nový čas <b>${hm(e.exp)}</b></small>` : ''}</span>
         <span class="fl__car"><span class="carrier">${esc(e.carrier || '—')}</span></span>
+        <span class="fl__dir"><small class="dir__lbl">${mode === 'dep' ? 'Cieľová stanica' : 'Východzia stanica'}</small><b class="fl__dest">${esc(big)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span>
+        <span class="col-via">${via}</span>
+        <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${late ? `<small class="st__new">nový čas <b>${hm(e.exp)}</b></small>` : ''}</span>
       </li>`;
     }).join('') : `<li class="empty">V najbližších ${BOARD_AHEAD / 60} hodinách tu podľa filtra nič ${mode === 'dep' ? 'neodchádza' : 'neprichádza'}.</li>`;
     const rest = items.length - state.boardShown;
@@ -428,9 +430,10 @@
     const pages = [];
     for (let i = 0; i < names.length; i += VIA_PAGE) pages.push(names.slice(i, i + VIA_PAGE).join(', '));
     const full = `${label}: ${names.join(', ')}`;
-    if (pages.length === 1 || REDUCED_MOTION.matches) return `<small class="via">${esc(full)}</small>`;
+    const lbl = `<span class="via__lbl">${esc(label)}: </span>`;
+    if (pages.length === 1 || REDUCED_MOTION.matches) return `<small class="via" aria-label="${esc(full)}">${lbl}<span class="via__txt">${esc(names.join(', '))}</span></small>`;
     return `<small class="via via--tick" aria-label="${esc(full)}" data-pages="${esc(JSON.stringify(pages))}" data-i="0">`
-      + `${esc(label)}: <span class="via__txt" aria-hidden="true">${esc(pages[0])}</span>`
+      + `${lbl}<span class="via__txt" aria-hidden="true">${esc(pages[0])}</span>`
       + `<span class="via__pg" aria-hidden="true">1/${pages.length}</span></small>`;
   }
 
@@ -806,7 +809,7 @@
     $('stationClear').hidden = !st;
     $('quick').innerHTML = QUICK_STATIONS.map(n =>
       `<button type="button" data-station="${esc(n)}" aria-pressed="${!!st && findStation(n)?.[0] === st}">${esc(n)}</button>`).join('');
-    $('thPos').textContent = 'Smer';
+    $('thPos').textContent = 'Cieľová stanica';
     $('boardTitle').textContent = st ? `Stanica ${st}` : 'Vlaky na trati';
     $('stationHelp').textContent = st
       ? 'Tabuľa ukazuje vlaky na najbližšie 4 hodiny. Inú stanicu vyberiete nižšie alebo napíšete do poľa.'
@@ -924,12 +927,12 @@
             <small>${time ? esc(event || 'posledné hlásenie') : 'poloha zistená'}</small>
             ${planned ? '<small>podľa cestovného poriadku</small>' : ''}</span>
           <span class="ra__train">${trainTitle(t.type, t.number, trainName, groupOf(t))}</span>
-          <span class="ra__dir"><small class="dir__lbl">Smer</small>${to ? `<b class="fl__dest">${esc(to)}</b>` : (nextName ? `<b class="fl__dest">Smer ${esc(nextName)}</b>` : '<b class="muted">Cieľ neznámy</b>')}
-            ${viaTicker('Ide cez', importantVia(stops))}
+          <span class="carrier">${esc(t.carrier || '—')}</span>
+          <span class="ra__dir"><small class="dir__lbl">Cieľová stanica</small>${to ? `<b class="fl__dest">${esc(to)}</b>` : (nextName ? `<b class="fl__dest">Smer ${esc(nextName)}</b>` : '<b class="muted">Cieľ neznámy</b>')}
             <small>${relBadge(t)}${event ? (t.next && !stops.length ? `Ďalej: ${esc(t.next)}` : '') : `${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next && !stops.length ? ` · ďalej ${esc(t.next)}` : ''}`}</small>
 </span>
+          <span class="col-via">${viaTicker('Cez', importantVia(stops))}</span>
           <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span>${planned ? `<small class="ra__new">nový čas <b>${time}</b></small>` : ''}</span>
-          <span class="carrier">${esc(t.carrier || '—')}</span>
         </div>
         ${more ? `<div class="row__more">${more}</div>` : ''}
       </li>`;
