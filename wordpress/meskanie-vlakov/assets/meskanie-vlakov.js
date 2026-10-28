@@ -484,9 +484,23 @@
     return pool.find(x => r && r.includes(norm(tt.stations[x[3][x[3].length - 1][0]][0]))) || pool[0];
   }
 
+  // bez cestovného poriadku: stanice, popri ktorých vedie trasa vlaku z mapy ŽSR (pred vlakom, bez cieľa)
+  function pathStops(t) {
+    const path = t.path;
+    if (!path || path.length < 2) return [];
+    const s0 = t.lat != null ? along(path, [t.lat, t.lon]).s : 0;
+    const hits = [];
+    stationRows().forEach(st => {
+      if (st[1] == null) return;
+      const a = along(path, [st[1], st[2]]);
+      if (a.d <= 1.5 && a.s > s0 + 0.02 && a.s < path.length - 1.05) hits.push([a.s, st[0]]);
+    });
+    return hits.sort((a, b) => a[0] - b[0]).map(x => x[1]).filter((n, i, arr) => arr.indexOf(n) === i);
+  }
+
   function upcomingStops(t) {
     const tt = state.tt, trip = tripOf(t);
-    if (!trip) return [];
+    if (!trip) return pathStops(t);
     const stops = trip[3].map(([si]) => { const [name, lat, lon] = tt.stations[si]; return { name, lat, lon }; });
     const w = trainWhere(t, stops);
     const from = w ? (w.at != null ? w.at + 1 : w.between + 1) : 1;
