@@ -5,6 +5,17 @@ sekcia 2 % z dane, darcovská sekcia s kopírovaním IBAN a kontaktný formulár
 
 Bez build kroku a bez závislostí — čisté HTML, CSS a JavaScript.
 
+## Balík na FTP
+
+`nadacia-web-ftp.zip` je tá istá stránka pripravená na nahratie na hosting —
+obsah priečinka `nadacia-web/` nahráte do `public_html` (alebo `www`) a web ide.
+Sprievodný `CITAJ-MA.txt` v balíku popisuje postup aj to, čo si doplníte.
+Balík prebalíte príkazom:
+
+```bash
+cd nadacia && zip -r nadacia-web-ftp.zip index.html styles.css app.js assets
+```
+
 ## Spustenie
 
 ```bash
