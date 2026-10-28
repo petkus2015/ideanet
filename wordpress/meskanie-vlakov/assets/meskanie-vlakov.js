@@ -337,12 +337,16 @@
     return best;
   };
 
+  // ako na staniciach: „Ex 616 Považan“ v jednom riadku
+  const trainTitle = (type, number, name, group) =>
+    `<b class="tchip tchip--${group}">${esc(type || 'Vlak')}</b><span class="fl__num">${esc(number)}</span>${name ? `<span class="tname">${esc(name)}</span>` : ''}`;
+
   function renderBoard() {
     const mode = state.boardMode, now = nowMin();
     const items = boardFiltered(mode);
     ROOT.querySelectorAll('.fids__tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
     $('fidsTime').textContent = mode === 'dep' ? 'Odchod' : 'Príchod';
-    $('fidsDir').textContent = mode === 'dep' ? 'Kam ide' : 'Odkiaľ prichádza';
+    $('fidsDir').textContent = mode === 'dep' ? 'Smer' : 'Odkiaľ';
     const ahead = items.filter(e => !['gone', 'arrived'].includes(e.status));
     const lateN = ahead.filter(e => e.delay > 5).length;
     $('fidsNote').textContent = `Do ${hm(now + BOARD_AHEAD)}: ${ahead.length} vlakov, ${lateN ? `${lateN} mešká` : 'všetky načas'}`;
@@ -357,16 +361,16 @@
       const ends = mode === 'dep' ? e.origin : e.dest;
       const sub = norm(ends) === norm(state.station)
         ? (mode === 'dep' ? 'Začína v tejto stanici' : 'Končí v tejto stanici')
-        : (mode === 'dep' ? `Ide z: ${e.origin}` : `Pokračuje do: ${e.dest}`);
+        : (mode === 'dep' ? '' : `Pokračuje do: ${e.dest}`);
       const via = viaTicker(mode === 'dep' ? 'Ide cez' : 'Predtým', importantVia(e.via));
       return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" data-type="${esc(e.type)}" data-num="${esc(e.number)}" tabindex="0" role="button" title="Zobraziť trasu a polohu vlaku"
           style="--k:var(--c${c})" aria-label="${esc(e.type)} ${esc(e.number)} ${mode === 'dep' ? 'do' : 'z'} ${esc(big)}, ${hm(e.plan)}, ${esc(stText)}">
         <span class="fl__time">${flap(hm(e.plan))}</span>
         <span class="fl__exp">${late ? `<span class="fl__lbl">nový čas</span>${hm(e.exp)}` : ''}</span>
-        <span class="fl__dir"><b class="fl__dest">${esc(big)}</b><small>${esc(sub)}</small>${via}</span>
-        <span class="fl__train"><b class="tchip tchip--${e.group}">${esc(e.type)}</b><span class="fl__num">${esc(e.number)}</span>
-          <small>${esc([TYPE_LABEL[e.type], e.name].filter(Boolean).join(' · '))}</small></span>
-        <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${late ? `<small class="st__new">nový čas <b>${hm(e.exp)}</b></small>` : ''}${e.carrier && e.carrier !== 'ZSSK' ? `<small>${esc(e.carrier)}</small>` : ''}</span>
+        <span class="fl__train">${trainTitle(e.type, e.number, e.name, e.group)}</span>
+        <span class="fl__dir"><small class="dir__lbl">${mode === 'dep' ? 'Smer' : 'Z'}</small><b class="fl__dest">${esc(big)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}${via}</span>
+        <span class="fl__st"><span class="st st--${cls}">${esc(stText)}</span>${late ? `<small class="st__new">nový čas <b>${hm(e.exp)}</b></small>` : ''}</span>
+        <span class="fl__car"><span class="carrier">${esc(e.carrier || '—')}</span></span>
       </li>`;
     }).join('') : `<li class="empty">V najbližších ${BOARD_AHEAD / 60} hodinách tu podľa filtra nič ${mode === 'dep' ? 'neodchádza' : 'neprichádza'}.</li>`;
     const rest = items.length - state.boardShown;
@@ -810,7 +814,7 @@
     $('stationClear').hidden = !st;
     $('quick').innerHTML = QUICK_STATIONS.map(n =>
       `<button type="button" data-station="${esc(n)}" aria-pressed="${!!st && findStation(n)?.[0] === st}">${esc(n)}</button>`).join('');
-    $('thPos').textContent = 'Kam ide';
+    $('thPos').textContent = 'Smer';
     $('boardTitle').textContent = st ? `Stanica ${st}` : 'Vlaky na trati';
     $('stationHelp').textContent = st
       ? 'Tabuľa ukazuje vlaky na najbližšie 4 hodiny. Inú stanicu vyberiete nižšie alebo napíšete do poľa.'
@@ -927,12 +931,11 @@
           <span class="ra__time"><span class="fl__time">${flap(planned || time || dataTime)}</span>
             <small>${time ? esc(event || 'posledné hlásenie') : 'poloha zistená'}</small>
             ${planned ? '<small>podľa cestovného poriadku</small>' : ''}</span>
-          <span class="ra__dir">${to ? `<b class="fl__dest">${esc(to)}</b>` : (nextName ? `<b class="fl__dest">Smer ${esc(nextName)}</b>` : '<b class="muted">Cieľ neznámy</b>')}
+          <span class="ra__train">${trainTitle(t.type, t.number, trainName, groupOf(t))}</span>
+          <span class="ra__dir"><small class="dir__lbl">Smer</small>${to ? `<b class="fl__dest">${esc(to)}</b>` : (nextName ? `<b class="fl__dest">Smer ${esc(nextName)}</b>` : '<b class="muted">Cieľ neznámy</b>')}
             ${viaTicker('Ide cez', importantVia(stops))}
             <small>${relBadge(t)}${event ? (t.next && !stops.length ? `Ďalej: ${esc(t.next)}` : '') : `${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next && !stops.length ? ` · ďalej ${esc(t.next)}` : ''}`}</small>
 </span>
-          <span class="ra__train"><b class="tchip tchip--${groupOf(t)}">${esc(t.type || 'Vlak')}</b><span class="fl__num">${esc(t.number)}</span>
-            <small>${esc([TYPE_LABEL[t.type], trainName].filter(Boolean).join(' · '))}</small></span>
           <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span>${planned ? `<small class="ra__new">nový čas <b>${time}</b></small>` : ''}</span>
           <span class="carrier">${esc(t.carrier || '—')}</span>
         </div>
