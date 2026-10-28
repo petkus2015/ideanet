@@ -709,7 +709,8 @@
 
   function renderTrend() {
     const svg = $('trendSvg');
-    const h = state.history.map(x => {
+    const since = Date.now() - 12 * 3600e3;   // graf za posledných 12 hodín
+    const h = state.history.filter(x => new Date(x.t).getTime() >= since).map(x => {
       const v = pickGroup(x);
       return v && typeof v.onTime === 'number' && v.n ? { t: x.t, onTime: v.onTime } : null;
     }).filter(Boolean);
