@@ -5,6 +5,8 @@
     priroda: '<path d="M12 21v-6M12 3l6 8h-3l4 6H5l4-6H6z"/>',
     kultura: '<path d="M4 5h16v14H4zM4 15l5-4 4 3 3-2 4 3"/>',
     gastro: '<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 9h2a2 2 0 0 1 0 5h-2M8 3v2M12 3v2"/>',
+    restauracie: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-3 4-3 7h3v11"/>',
+    aktivity: '<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
     rodina: '<circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8 15c1 1.5 2.5 2 4 2s3-.5 4-2"/>'
   };
 
@@ -13,7 +15,9 @@
     { id: 'vyhlady', name: 'Výhľady', desc: 'Miesta, odkiaľ uvidíte Dunaj, Rakúsko aj Malé Karpaty.', c: '#1f5eff', c2: '#7aa2ff' },
     { id: 'priroda', name: 'Príroda a parky', desc: 'Lesy, záhrady a nábrežie na oddych od mesta.', c: '#15803d', c2: '#65d19a' },
     { id: 'kultura', name: 'Kultúra a umenie', desc: 'Galérie, múzeá a moderné umenie pri Dunaji.', c: '#7c3aed', c2: '#c084fc' },
-    { id: 'gastro', name: 'Gastro a kaviarne', desc: 'Káva, trhy a miesta na dobré jedlo a víno.', c: '#e11d48', c2: '#ff8a65' },
+    { id: 'gastro', name: 'Kaviarne a trhy', desc: 'Káva, koláče, trhy a víno z okolia.', c: '#e11d48', c2: '#ff8a65' },
+    { id: 'restauracie', name: 'Reštaurácie a bary', desc: 'Slovenská kuchyňa, pivovary a podniky na večer.', c: '#b45309', c2: '#fbbf24' },
+    { id: 'aktivity', name: 'Zaujímavé aktivity', desc: 'Plavby, bicykel, rafting, prehliadky a sezónne akcie.', c: '#0f766e', c2: '#2dd4bf' },
     { id: 'rodina', name: 'Rodina a zábava', desc: 'Zvieratá, voda a aktivity pre deti aj dospelých.', c: '#0891b2', c2: '#5eead4' }
   ];
 
@@ -41,10 +45,22 @@
     { n: 'Kaffee Mayer', cat: 'gastro', a: 'Hlavné námestie', t: 'Viedenská kaviareň od roku 1873 priamo na Hlavnom námestí, známa torty a kávou. Klasika pre každého návštevníka.', tags: ['káva', 'koláče', 'tradícia'] },
     { n: 'Eurovea', cat: 'gastro', a: 'Staré Mesto', t: 'Obchodné centrum s promenádou pri Dunaji. Obchody, reštaurácie a kaviarne s výhľadom na vodu.', tags: ['promenáda', 'nákupy', 'reštaurácie'] },
     { n: 'Malokarpatská vínna cesta', cat: 'gastro', a: 'Pezinok a okolie', t: 'Vinárstva len pár kilometrov za mestom. Ochutnávky, pivnice a víkendové výlety medzi vinicami.', tags: ['víno', 'výlet', 'ochutnávky'] },
+    { n: 'Slovak Pub', cat: 'restauracie', a: 'Obchodná ulica', t: 'Klasická slovenská kuchyňa v centre mesta: bryndzové halušky, kapustnica a výber domácich piv. Dobrá voľba na prvé zoznámenie s miestnymi jedlami.', tags: ['slovenská kuchyňa', 'pivo', 'tradícia'] },
+    { n: 'Bratislavský Meštiansky Pivovar', cat: 'restauracie', a: 'Staré Mesto', t: 'Pivovar s vlastnou reštauráciou v centre. Pivo sa varí priamo v budove a hodí sa k nemu poriadne jedlo.', tags: ['pivovar', 'pivo', 'večera'] },
+    { n: 'Hviezdoslavovo námestie', cat: 'restauracie', a: 'Staré Mesto', t: 'Alejou stromov lemované námestie pri divadle s množstvom reštaurácií, kaviarní a terás. V lete sa tu sedí do neskorého večera.', tags: ['terasy', 'večer', 'centrum'] },
+    { n: 'Medická záhrada', cat: 'restauracie', a: 'Staré Mesto', t: 'Zelený vnútroblok pri centre s letnými podujatiami, kaviarňou a priestorom na posedenie pod stromami.', tags: ['záhrada', 'leto', 'drink'] },
+    { n: 'Obchodná ulica', cat: 'restauracie', a: 'Staré Mesto', t: 'Pešia zóna s obchodmi, pubmi a lokálnymi podnikmi. Dobré miesto na obed alebo pivo po prehliadke centra.', tags: ['pešia zóna', 'puby'] },
+    { n: 'Reštaurácia UFO', cat: 'restauracie', a: 'Petržalka', t: 'Večera nad mestom v reštaurácii s vyhliadkou na vrchole Mosta SNP. Rezervujte si stôl vopred, najmä na západ slnka.', tags: ['výhľad', 'večera', 'rezervácia'] },
+    { n: 'Plavba loďou po Dunaji', cat: 'aktivity', a: 'Nábrežie', t: 'Z Bratislavy chodia lode do Viedne aj okružné plavby k Devínu. Mesto vyzerá z vody inak a cesta je pohodlná.', tags: ['loď', 'Viedeň', 'Dunaj'] },
+    { n: 'Prešporáčik', cat: 'aktivity', a: 'Staré Mesto', t: 'Turistický vláčik, ktorý prevezie návštevníkov po historickom centre. Vhodný pre rodiny a pre tých, čo sa nechcú veľa chodiť.', tags: ['vláčik', 'centrum', 'rodiny'] },
+    { n: 'Pešie prehliadky mesta', cat: 'aktivity', a: 'Staré Mesto', t: 'Sprievodcovia ukážu centrum, príbehy sôch a skryté dvory. Prehliadky sú v slovenčine aj v cudzích jazykoch.', tags: ['sprievodca', 'história'] },
+    { n: 'Turistika z Kamzíka', cat: 'aktivity', a: 'Malé Karpaty', t: 'Značené trasy lesom z Kamzíka k Železnej studničke a ďalej do Malých Karpát. Ideálne na polovicu dňa mimo ruchu mesta.', tags: ['turistika', 'príroda'] },
+    { n: 'Vianočné trhy', cat: 'aktivity', a: 'Hlavné námestie', t: 'Každý december pôsobia v centre trhy s punčom, medovníkmi a remeselnými stánkami. Najlepšia nálada je po zotmení.', tags: ['december', 'trhy', 'sezónne'] },
+    { n: 'Víkendový výlet do Viedne', cat: 'aktivity', a: 'Okolie', t: 'Viedeň je len asi hodinu vlakom, loďou alebo autom. Pri dlhšom pobyte stojí za zvážiť jednodňový výlet.', tags: ['výlet', 'Rakúsko'] },
     { n: 'Bratislavská ZOO', cat: 'rodina', a: 'Mlynská dolina', t: 'Zoologická záhrada v zalesnenom údolí. Pre rodiny je to najlepší program na pol dňa.', tags: ['zvieratá', 'deti'] },
-    { n: 'Divoká voda Čunovo', cat: 'rodina', a: 'Čunovo', t: 'Areál vodných športov s olympijským kanálom. Rafting, kajaky a celé leto aj pre návštevníkov bez skúseností.', tags: ['rafting', 'adrenalín', 'leto'] },
+    { n: 'Divoká voda Čunovo', cat: 'aktivity', a: 'Čunovo', t: 'Areál vodných športov s olympijským kanálom. Rafting, kajaky a celé leto aj pre návštevníkov bez skúseností.', tags: ['rafting', 'adrenalín', 'leto'] },
     { n: 'Rusovce a kaštieľ', cat: 'rodina', a: 'Rusovce', t: 'Kaštieľ s anglickým parkom na južnom okraji mesta, blízko hraníc s Maďarskom a Rakúskom. Pokojný výlet na bicykli.', tags: ['park', 'kaštieľ', 'bicykel'] },
-    { n: 'Cyklotrasa do Hainburgu', cat: 'rodina', a: 'Petržalka', t: 'Dunajská cyklotrasa vedie cez Čunovo až do Rakúska. Rovinatá trasa, ideálna na celodenný výlet.', tags: ['bicykel', 'Rakúsko'] }
+    { n: 'Cyklotrasa do Hainburgu', cat: 'aktivity', a: 'Petržalka', t: 'Dunajská cyklotrasa vedie cez Čunovo až do Rakúska. Rovinatá trasa, ideálna na celodenný výlet.', tags: ['bicykel', 'Rakúsko'] }
   ];
 
   const $ = s => document.querySelector(s);
