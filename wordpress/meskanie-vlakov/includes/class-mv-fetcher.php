@@ -501,7 +501,7 @@ class MV_Fetcher {
 	 * Stiahne GTFS ako prehliadač (niektoré servery odmietajú WordPress) a overí, že prišiel naozaj ZIP.
 	 * Pri chybe vysvetlí, čo server namiesto neho vrátil.
 	 */
-	private static function download_gtfs( $url ) {
+	private static function download_gtfs( $url, $follow = true ) {
 		$tmp = wp_tempnam( 'mv-gtfs' );
 		$res = wp_safe_remote_get(
 			$url,
@@ -526,7 +526,13 @@ class MV_Fetcher {
 			$type = wp_remote_retrieve_header( $res, 'content-type' );
 			$size = is_readable( $tmp ) ? (int) filesize( $tmp ) : 0;
 			$head = is_readable( $tmp ) ? (string) file_get_contents( $tmp, false, null, 0, 2000 ) : ''; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$page = 200 === $code && $follow && $size < 2 * MB_IN_BYTES ? (string) file_get_contents( $tmp ) : ''; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			wp_delete_file( $tmp );
+			// ŽSR namiesto súboru vracia stránku „GTFS info“: nájdeme na nej odkaz na ZIP a stiahneme ho
+			$link = $page ? self::zip_link( $page, $url ) : '';
+			if ( $link ) {
+				return self::download_gtfs( $link, false );
+			}
 			$text = trim( preg_replace( '/\s+/u', ' ', wp_strip_all_tags( preg_replace( '/<[^>]*>/', ' ', $head ) ) ) );
 			throw new RuntimeException(
 				sprintf(
@@ -539,6 +545,28 @@ class MV_Fetcher {
 			);
 		}
 		return $tmp;
+	}
+
+	/** Odkaz na ZIP s GTFS na stránke (prednostne s „gtfs“ v adrese), ako absolútna adresa. */
+	private static function zip_link( $html, $base ) {
+		if ( ! preg_match_all( '/href\s*=\s*["\']([^"\'#]+?\.zip(?:\?[^"\']*)?)["\']/i', $html, $m ) ) {
+			return '';
+		}
+		$links = array_map( 'html_entity_decode', $m[1] );
+		usort( $links, fn( $a, $b ) => (int) ( false === stripos( $a, 'gtfs' ) ) <=> (int) ( false === stripos( $b, 'gtfs' ) ) );
+		$link = $links[0];
+		if ( preg_match( '#^https?://#i', $link ) ) {
+			return $link;
+		}
+		$p    = wp_parse_url( $base );
+		$root = ( $p['scheme'] ?? 'https' ) . '://' . ( $p['host'] ?? '' );
+		if ( 0 === strpos( $link, '//' ) ) {
+			return ( $p['scheme'] ?? 'https' ) . ':' . $link;
+		}
+		if ( '/' === $link[0] ) {
+			return $root . $link;
+		}
+		return $root . preg_replace( '#/[^/]*$#', '/', $p['path'] ?? '/' ) . $link;
 	}
 
 	private static function build_timetable_unlocked( $local_only = false ) {
