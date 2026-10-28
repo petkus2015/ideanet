@@ -312,9 +312,29 @@
     }
     return '';
   }
+  // „Košice - Bratislava hl.st.“ aj „Košice-Bratislava hl.st.“; spojovník je aj v názvoch staníc
+  // („Poprad-Tatry“), preto bez medzier delíme len tam, kde sú na oboch stranách známe stanice
   const routeEnds = route => {
-    const parts = String(route || '').split(/\s+[-–—]\s+/).map(x => x.trim()).filter(Boolean);
-    return parts.length > 1 ? [parts[0], parts[parts.length - 1]] : ['', parts[0] || ''];
+    const r = String(route || '').trim();
+    const parts = r.split(/\s+[-–—]\s+/).map(x => x.trim()).filter(Boolean);
+    if (parts.length > 1) return [parts[0], parts[parts.length - 1]];
+    const known = x => { const n = norm(x).trim(); return !!n && stationRows().some(st => norm(st[0]) === n); };
+    const cuts = [...r.matchAll(/[-–—]/g)].map(m => m.index);
+    for (const i of cuts) {
+      for (const j of cuts.slice().reverse()) {
+        if (j < i) break;
+        const a = r.slice(0, i), b = r.slice(j + 1);
+        if (known(a) && known(b)) return [a.trim(), b.trim()];
+      }
+    }
+    return ['', r];
+  };
+  // najbližšia známa stanica k súradniciam (do 3 km)
+  const nearestStation = p => {
+    if (!p || p[0] == null) return '';
+    let best = '', bd = 3;
+    stationRows().forEach(st => { if (st[1] != null) { const d = km(p, [st[1], st[2]]); if (d < bd) { bd = d; best = st[0]; } } });
+    return best;
   };
 
   function renderBoard() {
@@ -378,8 +398,7 @@
       const hit = codeIndex().get(v.replace(/^0+/, ''));
       if (hit) return hit;
     }
-    const tt = state.tt, num = digits(t.number);
-    const trip = tt && num && (tt.trips.find(x => digits(x[1]) === num && x[0] === t.type) || tt.trips.find(x => digits(x[1]) === num));
+    const tt = state.tt, trip = tripOf(t);
     if (trip) {
       const stops = trip[3].map(([si]) => { const [name, lat, lon] = tt.stations[si]; return { name, lat, lon }; });
       const w = trainWhere(t, stops);
@@ -424,10 +443,25 @@
 
   // zastávky vlaku na trati od ďalšej stanice po cieľ (bez cieľa), podľa cestovného poriadku
   // spoj z cestovného poriadku pre vlak na trati (podľa čísla, prednostne aj podľa druhu)
+  // čísla v označení vlaku bez úvodných núl: „612“, „Ex 612“, „612/613“, „00612“
+  const numKeys = s => (String(s || '').match(/\d+/g) || []).map(x => x.replace(/^0+/, '')).filter(Boolean);
+  let tripIdx = null, tripIdxFor = null;
   function tripOf(t) {
-    const tt = state.tt, num = digits(t.number);
-    if (!tt || !num) return null;
-    return tt.trips.find(x => digits(x[1]) === num && x[0] === t.type) || tt.trips.find(x => digits(x[1]) === num) || null;
+    const tt = state.tt;
+    if (!tt || !t) return null;
+    if (tripIdxFor !== tt) {
+      tripIdxFor = tt;
+      tripIdx = new Map();
+      tt.trips.forEach(x => numKeys(x[1]).forEach(k => { if (!tripIdx.has(k)) tripIdx.set(k, []); tripIdx.get(k).push(x); }));
+    }
+    const cands = [...new Set(numKeys(t.number).flatMap(k => tripIdx.get(k) || []))];
+    if (cands.length < 2) return cands[0] || null;
+    const type = String(t.type || '').toLowerCase();
+    const same = cands.filter(x => String(x[0]).toLowerCase() === type);
+    const pool = same.length ? same : cands;
+    // viac jázd s rovnakým číslom: vyberieme tú, ktorej trasa sedí s textom ŽSR
+    const r = norm(t.route || '');
+    return pool.find(x => r && r.includes(norm(tt.stations[x[3][x[3].length - 1][0]][0]))) || pool[0];
   }
 
   function upcomingStops(t) {
@@ -469,7 +503,7 @@
     const num = digits(openKey.number);
     const t = state.trains.find(x => digits(x.number) === num && x.type === openKey.type) || state.trains.find(x => digits(x.number) === num) || null;
     const tt = state.tt;
-    const trip = tt && (tt.trips.find(x => digits(x[1]) === num && x[0] === openKey.type) || tt.trips.find(x => digits(x[1]) === num));
+    const trip = tripOf(t || openKey);
     const type = trip?.[0] || t?.type || openKey.type, name = trip?.[2] || t?.name || '';
     const carrier = t?.carrier || trip?.[4] || '';
     const stops = trip ? trip[3].map(([si, arr, dep]) => {
@@ -579,7 +613,7 @@
 
   function render() {
     failed.length = 0;
-    [['stav', renderStatus], ['zoznam staníc', fillStations], ['výber stanice', renderStation], ['filter druhov', renderSeg],
+    [['stav', renderStatus], ['zoznam staníc', fillStations], ['výber stanice', renderStation],
       ['štatistiky druhov', renderGroups], ['súhrn', renderKpis], ['rozdelenie', renderDist], ['graf', renderTrend],
       ['dopravcovia', renderCarriers], ['tabuľa', renderList], ['mapa', renderDots], ['detail vlaku', renderTrain]]
       .forEach(([part, fn]) => safe(part, fn));
@@ -718,13 +752,12 @@
       const full = Date.now() - since > 23 * 3600e3;
       $('grpSince').textContent = full ? '· posledných 24 hodín, celá sieť' : `· od ${fmtTime(since)}, celá sieť`;
       const card24 = (id, label, types, s) => {
-        const on = state.group === id || (!state.group && id === '');
-        return `<button type="button" class="grp ${id ? '' : 'grp--all'}" data-group="${id}" aria-pressed="${on}" ${s && s.n ? '' : 'disabled'}>
+        return `<div class="grp ${id ? '' : 'grp--all'} ${s && s.n ? '' : 'grp--off'}">
           <span class="grp__head"><span class="grp__name">${label}</span><span class="grp__types">${types}</span></span>
           <span class="grp__v">${s && s.n ? fmtNum(s.onTime) + '<small>% načas</small>' : '<small>žiadne vlaky</small>'}</span>
           <span class="grp__bar">${(s?.c || []).map((n, i) => (n ? `<span style="flex-grow:${n};background:var(--c${i})"></span>` : '')).join('')}</span>
           <span class="grp__meta"><span><b>${fmtNum(s?.n || 0)}</b> jázd</span><span>${fmtAvg(s || { avg: 0 })}</span><span>max <b>${fmtMin(s?.max || 0)}</b></span></span>
-        </button>`;
+        </div>`;
       };
       $('groups').innerHTML = card24('', 'Všetky', 'všetky druhy', s24.all) +
         GROUPS.map(g => card24(g.id, g.label, typesOf(g), s24.g?.[g.id])).join('');
@@ -735,27 +768,17 @@
       const s = summarize(trains), c = CATS.map(() => 0);
       trains.forEach(t => c[catOf(t.delay)]++);
       const max = trains.reduce((m, t) => Math.max(m, t.delay), 0);
-      const on = state.group === id || (!state.group && id === '');
-      return `<button type="button" class="grp ${id ? '' : 'grp--all'}" data-group="${id}" aria-pressed="${on}" ${s.n ? '' : 'disabled'}>
+      return `<div class="grp ${id ? '' : 'grp--all'} ${s.n ? '' : 'grp--off'}">
         <span class="grp__head"><span class="grp__name">${label}</span><span class="grp__types">${types}</span></span>
         <span class="grp__v">${s.n ? fmtNum(s.onTime) + '<small>% načas</small>' : '<small>žiadne vlaky</small>'}</span>
         <span class="grp__bar">${c.map((n, i) => (n ? `<span style="flex-grow:${n};background:var(--c${i})"></span>` : '')).join('')}</span>
         <span class="grp__meta"><span><b>${s.n}</b> vlakov</span><span>${fmtAvg(s)}</span><span>max <b>${fmtMin(max)}</b></span></span>
-      </button>`;
+      </div>`;
     };
     const base = stationScope();
     $('groups').innerHTML = card('', 'Všetky', 'všetky druhy', base) +
       GROUPS.map(g => card(g.id, g.label, g.types.filter(t => state.trains.some(x => x.type === t)).join(' · ') || g.types.slice(0, 3).join(' · '),
         base.filter(t => groupOf(t) === g.id))).join('');
-  }
-
-  function renderSeg() {
-    const base = boardActive()
-      ? boardEntries(state.boardMode).filter(e => !['gone', 'arrived'].includes(e.status)).map(e => ({ type: e.type }))
-      : stationScope();
-    const btn = (id, label, n) => `<button type="button" data-group="${id}" aria-pressed="${(state.group || '') === id}">${label}<span>${n}</span></button>`;
-    $('groupSeg').innerHTML = btn('', 'Všetky', base.length) +
-      GROUPS.map(g => btn(g.id, g.label, base.filter(t => groupOf(t) === g.id).length)).join('');
   }
 
   let stationsFilled = null;
@@ -809,14 +832,7 @@
     state.shown = PAGE;
     state.active = null;
     $('tip').hidden = true;
-    renderStation(); renderSeg(); renderGroups(); renderKpis(); renderDist(); renderList(); renderDots();
-  }
-
-  function setGroup(id) {
-    state.group = id || null;
-    store.set('group', state.group);
-    refreshAll();
-    renderTrend();
+    renderStation(); renderGroups(); renderKpis(); renderDist(); renderList(); renderDots();
   }
 
   function setStation(name) {
@@ -877,8 +893,11 @@
       const tripEnds = trip && [state.tt.stations[trip[3][0][0]][0], state.tt.stations[trip[3][trip[3].length - 1][0]][0]];
       const parts = routeEnds(t.route);
       const routeIsTrip = !!parts[0];   // „Košice - Bratislava“; inak je to zvyčajne názov vlaku
-      const [from, to] = tripEnds || (routeIsTrip ? parts : ['', '']);
+      // bez cestovného poriadku aj bez trasy v texte: koniec trasy z mapy ŽSR (posledný bod = cieľová stanica)
+      const pathEnds = t.path?.length > 1 ? [nearestStation(t.path[0]), nearestStation(t.path[t.path.length - 1])] : ['', ''];
+      const [from, to] = tripEnds || (routeIsTrip ? parts : pathEnds);
       const trainName = t.name || trip?.[2] || (!routeIsTrip ? t.route : '');
+      const nextName = !to && resolveNext(t);
       const stops = upcomingStops(t);
       const time = reportTime(t);
       // bez vlastného času hlásenia ukážeme, kedy sme polohu stiahli (údaje sa obnovujú každé 2 minúty)
@@ -894,7 +913,7 @@
           <span class="ra__time"><span class="fl__time">${flap(planned || time || dataTime)}</span>
             <small>${time ? esc(event || 'posledné hlásenie') : 'poloha zistená'}</small>
             ${planned ? '<small>podľa cestovného poriadku</small>' : ''}</span>
-          <span class="ra__dir">${to ? `<b class="fl__dest">${esc(to)}</b>` : '<b class="muted">Cieľ neznámy</b>'}
+          <span class="ra__dir">${to ? `<b class="fl__dest">${esc(to)}</b>` : (nextName ? `<b class="fl__dest">Smer ${esc(nextName)}</b>` : '<b class="muted">Cieľ neznámy</b>')}
             ${from ? `<small>Ide z: ${esc(from)}</small>` : ''}
             <small>${relBadge(t)}${event ? (t.next && !stops.length ? `Ďalej: ${esc(t.next)}` : '') : `${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next && !stops.length ? ` · ďalej ${esc(t.next)}` : ''}`}</small>
             ${viaTicker('Zastavuje', stops)}</span>
@@ -1024,8 +1043,6 @@
   }
 
   function bind() {
-    $('groups').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) setGroup(b.dataset.group); });
-    $('groupSeg').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) setGroup(b.dataset.group); });
     $('quick').addEventListener('click', e => {
       const b = e.target.closest('[data-station]');
       if (b) setStation(findStation(b.dataset.station)?.[0] === state.station ? '' : b.dataset.station);
@@ -1271,7 +1288,7 @@
   }
 
   state.station = store.get('station');   // overí sa po načítaní zoznamu staníc
-  state.group = GROUPS.some(g => g.id === store.get('group')) ? store.get('group') : null;
+  state.group = null;
   function setBig(on) {
     HOST.classList.toggle('big', on);
     $('bigText').setAttribute('aria-pressed', String(on));

@@ -1,13 +1,7 @@
 <!-- Vygenerované z vlaky/index.html skriptom scripts/build_wp_plugin.py — needitovať ručne. -->
 <header class="top">
   <div class="wrap top__in">
-    <div class="brand">
-      <span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
-      <div>
-        <h1>Meškanie vlakov</h1>
-        <p class="eyebrow">Slovensko · aktualizuje sa každé 2 minúty</p>
-      </div>
-    </div>
+    <p class="eyebrow">Aktualizuje sa každé 2 minúty</p>
     <div class="status">
       <span class="pill" id="pill" data-state="loading"><i></i><span id="pillText">Načítavam…</span></span>
       <div class="clock"><small class="clock__lbl">Aktuálny čas</small><span id="clock" role="timer" aria-live="off"><span id="clockH">--</span><span class="colon" id="colon">:</span><span id="clockM">--</span></span><small><span id="updated">—</span> · ďalšie o <b id="countdown">2 min</b></small></div>
@@ -47,7 +41,6 @@
     </div>
 
     <div class="board__bar">
-      <div class="seg" id="groupSeg" role="group" aria-label="Druh vlaku"></div>
       <div class="filters">
         <label class="search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
@@ -89,7 +82,7 @@
   </section>
 
   <h2 class="section-title">Štatistiky podľa druhu vlaku <small class="section-sub" id="grpSince"></small></h2>
-  <section class="groups" id="groups" role="group" aria-label="Filtrovať podľa druhu vlaku"></section>
+  <section class="groups" id="groups" aria-label="Štatistiky podľa druhu vlaku"></section>
 
   <h2 class="scope">Teraz na trati · <span id="kScope">Všetky vlaky</span></h2>
   <section class="kpis" aria-label="Súhrn">

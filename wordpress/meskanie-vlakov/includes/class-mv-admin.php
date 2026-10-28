@@ -136,6 +136,9 @@ class MV_Admin {
 							<?php if ( ! empty( $st['trains_count'] ) ) : ?>
 								(<?php echo (int) $st['trains_count']; ?> vlakov)
 							<?php endif; ?>
+							<?php if ( isset( $st['trains_match'] ) ) : ?>
+								<br>Spárované s cestovným poriadkom: <?php echo (int) $st['trains_match']; ?> z <?php echo (int) ( $st['trains_count'] ?? 0 ); ?> vlakov
+							<?php endif; ?>
 							<br>Ďalšie stiahnutie: <?php echo self::when( $next ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							<?php if ( ! empty( $st['trains_error'] ) ) : ?>
 								<br><strong style="color:#b32d2e">Posledná chyba (<?php echo self::when( $st['trains_error_at'] ?? 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>): <?php echo esc_html( $st['trains_error'] ); ?></strong>
@@ -166,6 +169,12 @@ class MV_Admin {
 					</tr>
 				</tbody>
 			</table>
+			<?php if ( ! empty( $st['trains_sample'] ) ) : ?>
+				<details style="max-width:760px;margin:12px 0">
+					<summary>Ukážka údajov zo ŽSR (pri nahlasovaní chyby skopírujte)</summary>
+					<textarea readonly rows="12" style="width:100%;font-family:monospace;font-size:12px"><?php echo esc_textarea( wp_json_encode( $st['trains_sample'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) ); ?></textarea>
+				</details>
+			<?php endif; ?>
 			<p>
 				<?php foreach ( array( 'trains' => 'Stiahnuť polohu vlakov teraz', 'timetable' => 'Zostaviť cestovný poriadok teraz' ) as $what => $label ) : ?>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;margin-right:8px">

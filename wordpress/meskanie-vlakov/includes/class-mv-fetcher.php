@@ -143,8 +143,56 @@ class MV_Fetcher {
 		$hist[] = self::summary( $trains, $ts );
 		self::write_json( 'history.json', array_slice( $hist, -self::HISTORY_LEN ) );
 
-		self::set_status( array( 'trains_ok' => time(), 'trains_count' => count( $trains ), 'trains_error' => '' ) );
+		self::set_status(
+			array(
+				'trains_ok'     => time(),
+				'trains_count'  => count( $trains ),
+				'trains_error'  => '',
+				'trains_match'  => self::timetable_matches( $trains ),
+				'trains_sample' => self::raw_sample( $raw ),
+			)
+		);
 		return count( $trains );
+	}
+
+	/** Koľko vlakov zo ŽSR sa podarilo spárovať s dnešným cestovným poriadkom (podľa čísla vlaku). */
+	private static function timetable_matches( $trains ) {
+		$tt = self::read_json( 'timetable.json' );
+		if ( ! is_array( $tt ) || empty( $tt['trips'] ) ) {
+			return null;
+		}
+		$nums = array();
+		foreach ( $tt['trips'] as $trip ) {
+			foreach ( self::num_keys( $trip[1] ?? '' ) as $k ) {
+				$nums[ $k ] = true;
+			}
+		}
+		$hit = 0;
+		foreach ( $trains as $t ) {
+			foreach ( self::num_keys( $t['number'] ) as $k ) {
+				if ( isset( $nums[ $k ] ) ) {
+					++$hit;
+					break;
+				}
+			}
+		}
+		return $hit;
+	}
+
+	/** Čísla v označení vlaku bez úvodných núl („612/613“ -> 612, 613). */
+	private static function num_keys( $s ) {
+		preg_match_all( '/\d+/', (string) $s, $m );
+		return array_values( array_filter( array_map( fn( $x ) => ltrim( $x, '0' ), $m[0] ) ) );
+	}
+
+	/** Ukážka surových údajov zo ŽSR pre diagnostiku v nastaveniach (len textové polia, bez trasy). */
+	private static function raw_sample( $raw ) {
+		$keys = array( 'TypVlaku', 'CisloVlaku', 'NazovVlaku', 'Nazov', 'Dopravca', 'Meska', 'InfoZoStanice', 'NextStation', 'Cas' );
+		$out  = array();
+		foreach ( array_slice( $raw, 0, 4 ) as $r ) {
+			$out[] = array_intersect_key( (array) $r, array_flip( $keys ) );
+		}
+		return $out;
 	}
 
 	/* ---------- evidencia jázd za posledných 24 h (štatistiky podľa druhu vlaku) ---------- */

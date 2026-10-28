@@ -3,7 +3,7 @@ Tags: vlaky, meškanie, odchody, ŽSR, cestovný poriadok
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 
 Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku.
@@ -53,6 +53,12 @@ Vymažte cache optimalizačného pluginu a Cloudflare. Ak to nepomôže, v nasta
 Písma z Google Fonts sa dajú vypnúť v nastaveniach. Plugin nič neukladá o návštevníkoch; v prehliadači si pamätá len vybranú stanicu a veľkosť písma.
 
 == Changelog ==
+
+= 1.2.4 =
+* Cieľová stanica: spoľahlivejšie párovanie vlakov s cestovným poriadkom (aj „612/613“), trasa ŽSR zapísaná bez medzier („Košice-Bratislava hl.st.“), záložne koniec trasy z mapy alebo smer jazdy.
+* Nastavenia: počet vlakov spárovaných s cestovným poriadkom a ukážka údajov zo ŽSR na diagnostiku.
+* Hlavička bez loga a názvu, len „Aktualizuje sa každé 2 minúty“.
+* Zrušený výber druhu vlaku: zobrazujú sa všetky vlaky (štatistiky podľa druhu ostávajú).
 
 = 1.2.3 =
 * Poradie ako na staničnej tabuli: čas, cieľová stanica (so zastávkami), vlak, stav.
