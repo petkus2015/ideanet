@@ -358,7 +358,7 @@
       const sub = norm(ends) === norm(state.station)
         ? (mode === 'dep' ? 'Začína v tejto stanici' : 'Končí v tejto stanici')
         : (mode === 'dep' ? `Ide z: ${e.origin}` : `Pokračuje do: ${e.dest}`);
-      const via = viaTicker(mode === 'dep' ? 'Zastavuje' : 'Predtým', e.via);
+      const via = viaTicker(mode === 'dep' ? 'Ide cez' : 'Predtým', importantVia(e.via));
       return `<li class="fl fl--${cls} ${late ? 'is-late' : ''}" data-type="${esc(e.type)}" data-num="${esc(e.number)}" tabindex="0" role="button" title="Zobraziť trasu a polohu vlaku"
           style="--k:var(--c${c})" aria-label="${esc(e.type)} ${esc(e.number)} ${mode === 'dep' ? 'do' : 'z'} ${esc(big)}, ${hm(e.plan)}, ${esc(stText)}">
         <span class="fl__time">${flap(hm(e.plan))}</span>
@@ -414,6 +414,19 @@
   const VIA_MS = 4000;         // ako dlho je jedna skupina zastávok na tabuli
 
   // riadok „Zastavuje: A, B, C…“; dlhší zoznam sa po skupinách strieda (čítačka dostane celý zoznam)
+  // dôležité stanice = tie, kde zastavuje najviac vlakov (uzly a väčšie mestá); poradie podľa trasy ostáva
+  let stopCount = null, stopCountFor = null;
+  function importantVia(names, max = 6) {
+    if (!names || names.length <= max) return names || [];
+    if (stopCountFor !== state.tt) {
+      stopCountFor = state.tt;
+      stopCount = new Map();
+      (state.tt?.trips || []).forEach(x => x[3].forEach(([si]) => { const n = state.tt.stations[si][0]; stopCount.set(n, (stopCount.get(n) || 0) + 1); }));
+    }
+    const keep = new Set([...names].sort((a, b) => (stopCount.get(b) || 0) - (stopCount.get(a) || 0)).slice(0, max));
+    return names.filter(n => keep.has(n));
+  }
+
   function viaTicker(label, names) {
     if (!names || !names.length) return '';
     const pages = [];
@@ -895,7 +908,7 @@
       const routeIsTrip = !!parts[0];   // „Košice - Bratislava“; inak je to zvyčajne názov vlaku
       // bez cestovného poriadku aj bez trasy v texte: koniec trasy z mapy ŽSR (posledný bod = cieľová stanica)
       const pathEnds = t.path?.length > 1 ? [nearestStation(t.path[0]), nearestStation(t.path[t.path.length - 1])] : ['', ''];
-      const [from, to] = tripEnds || (routeIsTrip ? parts : pathEnds);
+      const [, to] = tripEnds || (routeIsTrip ? parts : pathEnds);
       const trainName = t.name || trip?.[2] || (!routeIsTrip ? t.route : '');
       const nextName = !to && resolveNext(t);
       const stops = upcomingStops(t);
@@ -914,9 +927,9 @@
             <small>${time ? esc(event || 'posledné hlásenie') : 'poloha zistená'}</small>
             ${planned ? '<small>podľa cestovného poriadku</small>' : ''}</span>
           <span class="ra__dir">${to ? `<b class="fl__dest">${esc(to)}</b>` : (nextName ? `<b class="fl__dest">Smer ${esc(nextName)}</b>` : '<b class="muted">Cieľ neznámy</b>')}
-            ${from ? `<small>Ide z: ${esc(from)}</small>` : ''}
+            ${viaTicker('Ide cez', importantVia(stops))}
             <small>${relBadge(t)}${event ? (t.next && !stops.length ? `Ďalej: ${esc(t.next)}` : '') : `${where ? `Posledná poloha: ${esc(where)}` : 'Poloha neznáma'}${t.next && !stops.length ? ` · ďalej ${esc(t.next)}` : ''}`}</small>
-            ${viaTicker('Zastavuje', stops)}</span>
+</span>
           <span class="ra__train"><b class="tchip tchip--${groupOf(t)}">${esc(t.type || 'Vlak')}</b><span class="fl__num">${esc(t.number)}</span>
             <small>${esc([TYPE_LABEL[t.type], trainName].filter(Boolean).join(' · '))}</small></span>
           <span class="ra__delay"><span class="dly k${c}">${t.delay <= 0 ? '0' : '+' + t.delay}<small>min</small></span>${planned ? `<small class="ra__new">nový čas <b>${time}</b></small>` : ''}</span>
