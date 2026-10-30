@@ -291,16 +291,34 @@ button.ib-arrow{
 }
 .ib-calc__row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,32px)}
 .ib-calc__field{display:flex;flex-direction:column;gap:10px}
-.ib-calc__label{font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ib-ink-3) !important}
-.ib-calc__stepper{display:flex;align-items:center;gap:16px}
-.ib-calc__step{
-  display:grid;place-items:center;width:38px;height:38px;flex:none;padding:0;
-  border:1px solid var(--ib-line-2);border-radius:50%;background:var(--ib-canvas);
-  color:var(--ib-ink) !important;font-size:18px;line-height:1;cursor:pointer;transition:border-color .2s,transform .15s;
+.ib-calc__label{
+  display:flex;align-items:baseline;gap:8px;
+  font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ib-ink-3) !important;
 }
-.ib-calc__step:hover{border-color:var(--ib-accent)}
-.ib-calc__step:active{transform:scale(.92)}
-.ib-calc__count{min-width:2.2ch;text-align:center;font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.ib-calc__count{font-size:17px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ib-ink) !important;font-variant-numeric:tabular-nums}
+/* Vlastný štýl natívneho <input type="range"> — vyplnená dráha pred
+   posuvníkom sa farbí cez JS (initCalculator() nastavuje inline
+   background gradient podľa aktuálnej hodnoty); vo Firefoxe to isté
+   rieši natívne ::-moz-range-progress, takže tam JS gradient nie je
+   vidno (prekrýva ho vlastný track), ale výsledok je rovnaký. */
+.ib-calc__slider{
+  -webkit-appearance:none;appearance:none;width:100%;height:6px;margin-top:6px;
+  border-radius:999px;background:var(--ib-line-2);outline:none;cursor:pointer;
+}
+.ib-calc__slider::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:transparent}
+.ib-calc__slider::-moz-range-track{height:6px;border-radius:999px;background:var(--ib-line-2)}
+.ib-calc__slider::-moz-range-progress{height:6px;border-radius:999px;background:var(--ib-accent)}
+.ib-calc__slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;margin-top:-7px;width:20px;height:20px;border-radius:50%;
+  background:var(--ib-accent);border:3px solid var(--ib-paper);box-shadow:var(--ib-sh-1);
+  cursor:pointer;transition:transform .15s;
+}
+.ib-calc__slider::-webkit-slider-thumb:hover{transform:scale(1.12)}
+.ib-calc__slider::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:var(--ib-accent);border:3px solid var(--ib-paper);
+  box-shadow:var(--ib-sh-1);cursor:pointer;transition:transform .15s;
+}
+.ib-calc__slider::-moz-range-thumb:hover{transform:scale(1.12)}
 .ib-calc__speeds{display:flex;flex-wrap:wrap;gap:8px}
 .ib-calc__speed{
   padding:9px 14px;border:1px solid var(--ib-line-2);border-radius:var(--ib-r-lg);background:var(--ib-canvas);

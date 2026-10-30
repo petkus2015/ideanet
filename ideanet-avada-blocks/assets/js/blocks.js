@@ -299,6 +299,7 @@
     const totalEl = $('[data-ib-total]', root);
     if (!countEl || !totalEl) return;
 
+    const slider = $('[data-ib-slider]', root);
     let count = parseInt(countEl.textContent, 10) || min;
     const activeSpeed = $('.ib-calc__speed.is-active', root);
     let surcharge = activeSpeed ? parseFloat(activeSpeed.dataset.surcharge) || 0 : 0;
@@ -307,15 +308,19 @@
       countEl.textContent = count;
       const total = Math.round(count * pricePerReel * (1 + surcharge / 100));
       totalEl.textContent = total.toLocaleString('sk-SK');
+      if (slider) {
+        slider.value = count;
+        const pct = ((count - min) / (max - min || 1)) * 100;
+        slider.style.background = `linear-gradient(to right, var(--ib-accent) ${pct}%, var(--ib-line-2) ${pct}%)`;
+      }
     };
 
-    $$('.ib-calc__step', root).forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const dir = parseInt(btn.dataset.dir, 10) || 0;
-        count = Math.min(max, Math.max(min, count + dir));
+    if (slider) {
+      slider.addEventListener('input', () => {
+        count = Math.min(max, Math.max(min, parseInt(slider.value, 10) || min));
         render();
       });
-    });
+    }
 
     $$('.ib-calc__speed', root).forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -502,7 +507,7 @@
      aj odkazoch v navigácii, vrátane obsahu pridaného/zmeneného
      neskôr (napr. po zmene jazyka alebo AJAX-e).
   ───────────────────────────────────────────────────────── */
-  const RIPPLE_SEL = '.ib-btn, .ib-card, .ib-quote, .ib-tile, .ib-calc__step, .ib-calc__speed, a.ib-nav__link';
+  const RIPPLE_SEL = '.ib-btn, .ib-card, .ib-quote, .ib-tile, .ib-calc__speed, a.ib-nav__link';
 
   function initRipple() {
     if (REDUCED) return;

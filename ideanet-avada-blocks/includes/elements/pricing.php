@@ -88,10 +88,10 @@ class Ideanet_Blocks_Pricing {
 						'type'       => 'range',
 						'heading'    => __( 'Maximálny počet reelsov', 'ideanet-avada-blocks' ),
 						'param_name' => 'reels_max',
-						'min'        => '5',
+						'min'        => '2',
 						'max'        => '40',
 						'step'       => '1',
-						'value'      => '20',
+						'value'      => '10',
 					),
 					array(
 						'type'       => 'range',
@@ -164,7 +164,7 @@ class Ideanet_Blocks_Pricing {
 				'price_per_reel'   => '45',
 				'currency'         => '€',
 				'reels_min'        => '1',
-				'reels_max'        => '20',
+				'reels_max'        => '10',
 				'reels_default'    => '4',
 				'speeds'           => array(),
 				'cta_text'         => '',
@@ -194,12 +194,14 @@ class Ideanet_Blocks_Pricing {
 					data-max="<?php echo esc_attr( $reels_max ); ?>">
 					<div class="ib-calc__row">
 						<div class="ib-calc__field">
-							<span class="ib-calc__label"><?php esc_html_e( 'Počet reelsov', 'ideanet-avada-blocks' ); ?></span>
-							<div class="ib-calc__stepper">
-								<button type="button" class="ib-calc__step" data-dir="-1" aria-label="<?php esc_attr_e( 'Ubrať reels', 'ideanet-avada-blocks' ); ?>">−</button>
+							<span class="ib-calc__label">
+								<?php esc_html_e( 'Počet reelsov', 'ideanet-avada-blocks' ); ?>
 								<span class="ib-calc__count" data-ib-count><?php echo esc_html( $reels_default ); ?></span>
-								<button type="button" class="ib-calc__step" data-dir="1" aria-label="<?php esc_attr_e( 'Pridať reels', 'ideanet-avada-blocks' ); ?>">+</button>
-							</div>
+							</span>
+							<input type="range" class="ib-calc__slider" data-ib-slider
+								min="<?php echo esc_attr( $reels_min ); ?>" max="<?php echo esc_attr( $reels_max ); ?>" step="1"
+								value="<?php echo esc_attr( $reels_default ); ?>"
+								aria-label="<?php esc_attr_e( 'Počet reelsov', 'ideanet-avada-blocks' ); ?>">
 						</div>
 
 						<?php if ( $speeds ) : ?>

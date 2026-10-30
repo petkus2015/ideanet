@@ -128,15 +128,17 @@ lišta od verzie **1.7.0** aj:
 
 Blok **IDEANET — Ferové ceny** (shortcode `[ideanet_pricing]`) od
 verzie **3.0.0** nezobrazuje statické cenové balíky, ale
-**interaktívnu kalkulačku**: návštevník si stepperom (−/+) zvolí
-počet reelsov a kliknutím vyberie úroveň rýchlosti dodania, cena sa
-prepočíta naživo bez obnovenia stránky. Výpočet je jednoduchý:
+**interaktívnu kalkulačku**: návštevník si posuvníkom (od verzie
+**3.1.0**, predtým tlačidlami −/+) zvolí počet reelsov a kliknutím
+vyberie úroveň rýchlosti dodania, cena sa prepočíta naživo bez
+obnovenia stránky. Výpočet je jednoduchý:
 *počet reelsov × cena za jeden reels × (1 + príplatok za rýchlosť v %)*.
 
 Nastaviteľné polia:
 - **„Cena za jeden reels”** a **„Mena / symbol”** — základ výpočtu.
 - **„Minimálny/maximálny/predvolený počet reelsov”** — hranice
-  steppera a hodnota pri načítaní stránky.
+  posuvníka a hodnota pri načítaní stránky (predvolené maximum je
+  **10 reelsov**).
 - **„Úrovne rýchlosti dodania”** — repeater (názov, text dodania,
   príplatok v %), napr. Štandardné 0 %, Rýchle +20 %, Expresné +50 %.
   Rovnako ako ostatné repeatery je dostupný aj cez **Nástroje →
