@@ -2,6 +2,9 @@
 /**
  * Kalkulačka — výpočet beží v JavaScripte, čísla prichádzajú z Prispôsobiť.
  *
+ * Vykresľuje sa vnútri sekcie s cenníkom, preto tu nie je ani <section>,
+ * ani vlastný nadpis.
+ *
  * @package IDEANET
  */
 
@@ -12,11 +15,7 @@ $max   = max( $min, (int) ideanet_num( 'calc_max' ) );
 $start = min( $max, max( $min, (int) ideanet_num( 'calc_start' ) ) );
 $addons = ideanet_pairs( 'calc_addons', 3 );
 ?>
-<section class="section section--alt" id="kalkulacka">
-	<div class="wrap">
-		<?php ideanet_section_head( 'kalkulacka' ); ?>
-
-		<div class="calc reveal">
+<div class="calc reveal" id="kalkulacka">
 			<form class="calc__form" id="calcForm">
 
 				<div class="field field--wide">
@@ -88,6 +87,4 @@ $addons = ideanet_pairs( 'calc_addons', 3 );
 				<a class="btn btn--primary btn--full" href="#kontakt" id="calcCta"><?php echo esc_html( ideanet_opt( 'calc_cta' ) ); ?></a>
 				<p class="calc__disc"><?php ideanet_text( 'calc_disc' ); ?></p>
 			</aside>
-		</div>
-	</div>
-</section>
+</div>

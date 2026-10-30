@@ -17,7 +17,7 @@ get_header();
 	<?php
 	get_template_part( 'template-parts/hero' );
 
-	foreach ( array( 'portfolio', 'vizualy', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'kalkulacka', 'podmienky', 'kontakt' ) as $section ) {
+	foreach ( array( 'portfolio', 'vizualy', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'podmienky', 'kontakt' ) as $section ) {
 		if ( ideanet_show( $section ) ) {
 			get_template_part( 'template-parts/' . $section );
 		}

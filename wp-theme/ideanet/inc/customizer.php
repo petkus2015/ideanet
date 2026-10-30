@@ -91,7 +91,6 @@ function ideanet_customizer_map() {
 				'tab_eventy'       => array( __( 'Záložka 3 — názov', 'ideanet' ), 'text' ),
 				'tab_eventy_sub'   => array( __( 'Záložka 3 — podtitul', 'ideanet' ), 'text' ),
 				'eventy_intro'     => array( __( 'Záložka 3 — úvodná veta', 'ideanet' ), 'area' ),
-				'ponuka_link_text' => array( __( 'Text odkazu na celú ponuku', 'ideanet' ), 'text' ),
 				'ponuka_firmy_url'    => array( __( 'Ponuka pre firmy — odkaz', 'ideanet' ), 'text', __( 'Prázdne = odkaz sa nezobrazí.', 'ideanet' ) ),
 				'ponuka_firmy_label'  => array( __( 'Ponuka pre firmy — názov tlačidla', 'ideanet' ), 'text' ),
 				'ponuka_agentury_url'   => array( __( 'Ponuka pre agentúry — odkaz', 'ideanet' ), 'text' ),
@@ -259,7 +258,6 @@ function ideanet_customizer_sections_fields() {
 		'proces'     => __( 'Proces', 'ideanet' ),
 		'referencie' => __( 'Referencie', 'ideanet' ),
 		'cennik'     => __( 'Cenník', 'ideanet' ),
-		'kalkulacka' => __( 'Kalkulačka', 'ideanet' ),
 		'podmienky'  => __( 'Podmienky', 'ideanet' ),
 		'kontakt'    => __( 'Kontakt', 'ideanet' ),
 	);
@@ -492,7 +490,7 @@ add_action( 'customize_preview_init', 'ideanet_customize_preview_js' );
  * @return array<string,string[]> Výber v stránke => zoznam nastavení.
  */
 function ideanet_edit_map() {
-	$sekcie = array( 'portfolio', 'vizualy', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'kalkulacka', 'podmienky' );
+	$sekcie = array( 'portfolio', 'vizualy', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'podmienky' );
 
 	$map = array(
 		'.nav .brand'       => array( 'brand_name', 'brand_co', 'brand_co_bold', 'brand_photo' ),

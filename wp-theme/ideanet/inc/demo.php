@@ -349,7 +349,6 @@ function ideanet_seed_menus() {
 		'#portfolio'  => 'Portfólio',
 		'#sluzby'     => 'Služby',
 		'#cennik'     => 'Cenník',
-		'#kalkulacka' => 'Kalkulačka',
 		'#podmienky'  => 'Podmienky',
 		'#kontakt'    => 'Kontakt',
 	);
@@ -362,10 +361,10 @@ function ideanet_seed_menus() {
 		'tabbar'  => array(
 			'Spodná lišta',
 			array(
-				'#portfolio'  => 'Portfólio',
-				'#cennik'     => 'Cenník',
-				'#kalkulacka' => 'Kalkulačka',
-				'#kontakt'    => 'Kontakt',
+				'#portfolio' => 'Portfólio',
+				'#vizualy'   => 'Vizuály',
+				'#cennik'    => 'Cenník',
+				'#kontakt'   => 'Kontakt',
 			),
 		),
 		'footer'  => array(

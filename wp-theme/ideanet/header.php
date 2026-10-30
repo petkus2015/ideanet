@@ -48,10 +48,10 @@ defined( 'ABSPATH' ) || exit;
 $tabs = ideanet_menu_items(
 	'tabbar',
 	array(
-		'#portfolio'  => __( 'Portfólio', 'ideanet' ),
-		'#cennik'     => __( 'Cenník', 'ideanet' ),
-		'#kalkulacka' => __( 'Kalkulačka', 'ideanet' ),
-		'#kontakt'    => __( 'Kontakt', 'ideanet' ),
+		'#portfolio' => __( 'Portfólio', 'ideanet' ),
+		'#vizualy'   => __( 'Vizuály', 'ideanet' ),
+		'#cennik'    => __( 'Cenník', 'ideanet' ),
+		'#kontakt'   => __( 'Kontakt', 'ideanet' ),
 	)
 );
 $tabs = array_slice( $tabs, 0, 4 );

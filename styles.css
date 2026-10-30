@@ -662,9 +662,11 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   position:relative;display:grid;align-content:start;gap:.55rem;
   padding:clamp(1.4rem,2.4vw,1.9rem);border-radius:var(--radius-lg);
   border:1px solid var(--line);background:rgba(5,8,22,.62);
-  transition:transform .3s,border-color .3s,box-shadow .3s;
+  transition:transform .3s,box-shadow .3s;
 }
-.lane:hover{transform:translateY(-5px);border-color:rgba(255,45,148,.4);box-shadow:0 30px 70px -40px rgba(255,45,148,.8)}
+/* Pri prejdení myšou sa karta nadvihne a rozsvieti — rám zostáva, aký
+   bol. Prefarbovanie rámov je rukopis, ktorý má na webe kdekto. */
+.lane:hover{transform:translateY(-5px);box-shadow:0 30px 70px -40px rgba(255,45,148,.8)}
 .lane--best{border-color:rgba(255,45,148,.45);background:linear-gradient(170deg,rgba(255,45,148,.12),rgba(5,8,22,.75) 50%)}
 .lane__tag{
   justify-self:start;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
@@ -706,10 +708,12 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 .segments li{
   display:flex;align-items:center;gap:.7rem;font-size:.92rem;
   padding:.85rem 1rem;border-radius:16px;border:1px solid var(--line);
-  background:rgba(5,8,22,.5);transition:border-color .3s,transform .3s;
+  background:rgba(5,8,22,.5);transition:transform .3s,box-shadow .3s;
 }
-.segments li:hover{border-color:rgba(255,45,148,.38);transform:translateY(-2px)}
+.segments li:hover{transform:translateY(-2px);box-shadow:0 18px 40px -26px rgba(255,45,148,.75)}
 .segments span{font-size:1.15rem;line-height:1}
+/* Bez značky vľavo netreba ani medzeru po nej. */
+.segments li:not(:has(span)){gap:0}
 
 /* ── prepínač cenníka ────────────────────── */
 .tabs__list{
@@ -750,9 +754,9 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;
   padding:1rem clamp(1rem,2vw,1.4rem);border-radius:18px;
   border:1px solid var(--line);background:rgba(5,8,22,.55);
-  transition:border-color .3s,transform .3s;
+  transition:transform .3s,box-shadow .3s;
 }
-.tier:hover{border-color:rgba(255,45,148,.35);transform:translateX(3px)}
+.tier:hover{transform:translateX(3px);box-shadow:0 18px 44px -28px rgba(255,45,148,.7)}
 .tier--best{border-color:rgba(255,45,148,.5);background:linear-gradient(100deg,rgba(255,45,148,.12),rgba(5,8,22,.7) 55%)}
 .tier__main{flex:1 1 260px;display:grid;gap:.15rem}
 .tier__main b{font-family:var(--display);font-size:1.02rem;letter-spacing:-.01em;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}

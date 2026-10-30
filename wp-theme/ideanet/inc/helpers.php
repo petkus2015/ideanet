@@ -342,7 +342,6 @@ function ideanet_default_sections() {
 		'#portfolio'  => __( 'Portfólio', 'ideanet' ),
 		'#sluzby'     => __( 'Služby', 'ideanet' ),
 		'#cennik'     => __( 'Cenník', 'ideanet' ),
-		'#kalkulacka' => __( 'Kalkulačka', 'ideanet' ),
 		'#podmienky'  => __( 'Podmienky', 'ideanet' ),
 		'#kontakt'    => __( 'Kontakt', 'ideanet' ),
 	);

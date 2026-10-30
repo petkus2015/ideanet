@@ -36,7 +36,7 @@ function ideanet_defaults() {
 		'hero_title_hl'   => 'máte obsah',
 		'hero_lead'       => 'Mesačná tvorba vertikálneho videa pre firmy, ktoré nechcú riešiť produkciu a nechcú obsah vygenerovaný cez AI. Raz mesačne prídem na dve až tri hodiny a vy máte hotové Reels na celý mesiac — na Instagram, TikTok aj YouTube Shorts.',
 		'hero_flow'       => "Nápady a témy\nNatáčací blok\nStrih a titulky\nHotový obsah",
-		'hero_cta1'       => 'Pozrieť balíky a ceny',
+		'hero_cta1'       => 'Spočítať si cenu',
 		'hero_cta1_url'   => '#cennik',
 		'hero_cta2'       => 'Pozrieť tvorbu',
 		'hero_cta2_url'   => '#portfolio',
@@ -52,8 +52,8 @@ function ideanet_defaults() {
 		'portfolio_title'   => 'Tvorba na výšku',
 		'portfolio_note'    => 'Potiahnite prstom alebo myšou, skrolujte kolieskom, alebo použite šípky. Klik na kartu spustí ukážku, ikona vpravo dole otvorí video na celú výšku.',
 
-		'vizualy_eyebrow' => 'Vizuály a identita',
-		'vizualy_title'   => 'Nielen video',
+		'vizualy_eyebrow' => 'Nielen video',
+		'vizualy_title'   => 'Vizuály a identita',
 		'vizualy_note'    => 'Logo, farby, písma a šablóny pre siete. Aby profil vyzeral ako jedna značka, nie ako zbierka príspevkov od rôznych ľudí.',
 
 		'sluzby_eyebrow' => 'Služby',
@@ -67,7 +67,7 @@ function ideanet_defaults() {
 		'prekoho_eyebrow' => 'Pre koho',
 		'prekoho_title'   => 'Video, ktoré prináša zákazníkov a udržuje komunitu',
 		'prekoho_note'    => 'Najlepšie to funguje tam, kde má značka čo ukazovať a video priamo pomáha predávať. Ak sa v niektorom bode nájdete, viem vám poslať konkrétne nápady.',
-		'prekoho_items'   => "☕ | Gastro, kaviarne a nové prevádzky\n🏋️ | Fitness centrá a tréneri\n🏠 | Realitní makléri\n💈 | Barber, kaderníctva a beauty\n🦷 | Zubné a estetické kliniky\n🛎️ | Hotely a apartmány\n🏗️ | Developeri\n🎤 | Eventové agentúry\n🛍️ | Lokálne e-shopy a značky",
+		'prekoho_items'   => "Gastro, kaviarne a nové prevádzky\nFitness centrá a tréneri\nRealitní makléri\nBarber, kaderníctva a beauty\nZubné a estetické kliniky\nHotely a apartmány\nDeveloperi\nEventové agentúry\nLokálne e-shopy a značky",
 
 		'proces_eyebrow' => 'Proces',
 		'proces_title'   => 'Štyri kroky, žiadny chaos',
@@ -79,11 +79,7 @@ function ideanet_defaults() {
 
 		'cennik_eyebrow' => 'Cenník',
 		'cennik_title'   => 'Férové ceny',
-		'cennik_note'    => 'Ceny sú uvedené bez DPH. Prepnite si pohľad podľa toho, kto ste — firmy majú iné podmienky ako agentúry.',
-
-		'kalkulacka_eyebrow' => 'Kalkulačka',
-		'kalkulacka_title'   => 'Orientačná cena za 1 Reel — od natočenia po dodanie',
-		'kalkulacka_note'    => 'Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video vrátane natáčania, strihu aj dodania. Orientačný odhad bez DPH, nie záväzná ponuka.',
+		'cennik_note'    => 'Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video vrátane natáčania, strihu aj dodania. Orientačný odhad bez DPH, nie záväzná ponuka. Celý cenník aj s balíkmi je v ponuke na stiahnutie.',
 
 		'podmienky_eyebrow' => 'Podmienky',
 		'podmienky_title'   => 'Nič skryté v malom písme',
@@ -145,7 +141,6 @@ function ideanet_defaults() {
 		'ponuka_firmy_url'      => '',
 		'ponuka_agentury_label' => 'Ponuka pre agentúry',
 		'ponuka_agentury_url'   => '',
-		'ponuka_link_text'      => 'Otvoriť celú ponuku na jednej strane — na prečítanie alebo uloženie do PDF',
 
 		/* ── kalkulačka ────────────────────────── */
 		'calc_first'      => '160',

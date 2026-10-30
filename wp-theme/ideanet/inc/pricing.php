@@ -156,26 +156,6 @@ function ideanet_tier_block( $group, $block, $title, $note = '', $foot = '' ) {
 }
 
 /**
- * Odkaz na celú ponuku na jednej strane.
- *
- * @param string $key Kľúč s adresou.
- */
-function ideanet_panel_link( $key ) {
-	$url = ideanet_opt( $key );
-	if ( ! $url ) {
-		return;
-	}
-	?>
-	<p class="panel__link">
-		<a href="<?php echo esc_url( $url ); ?>">
-			<?php echo esc_html( ideanet_opt( 'ponuka_link_text' ) ); ?>
-			<span aria-hidden="true">&#8594;</span>
-		</a>
-	</p>
-	<?php
-}
-
-/**
  * Pri šablóne „Ponuka na jednu stranu" treba vedieť, ktorý cenník vypísať.
  */
 function ideanet_ponuka_box() {

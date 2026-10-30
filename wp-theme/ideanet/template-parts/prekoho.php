@@ -16,7 +16,18 @@ $items = ideanet_pairs( 'prekoho_items', 2 );
 		<?php if ( $items ) : ?>
 			<ul class="segments reveal" role="list">
 				<?php foreach ( $items as $item ) : ?>
-					<li><span aria-hidden="true"><?php echo esc_html( $item[0] ); ?></span> <?php echo esc_html( $item[1] ); ?></li>
+					<?php
+					/* Riadok môže byť len text. Keď značka chýba, nevypisujeme
+					   prázdny prvok — zostala by po ňom medzera. */
+					$znacka = $item[1] ? $item[0] : '';
+					$text   = $item[1] ? $item[1] : $item[0];
+					?>
+					<li>
+						<?php if ( $znacka ) : ?>
+							<span aria-hidden="true"><?php echo esc_html( $znacka ); ?></span>
+						<?php endif; ?>
+						<?php echo esc_html( $text ); ?>
+					</li>
 				<?php endforeach; ?>
 			</ul>
 		<?php endif; ?>
