@@ -217,5 +217,13 @@
     if (state.onlyFavs) $('#miesta').scrollIntoView({ behavior: 'smooth' });
   });
 
+  const root = document.documentElement;
+  try { if (localStorage.getItem('ba-theme') === 'light') root.dataset.theme = 'light'; } catch (e) {}
+  $('#themeToggle').addEventListener('click', () => {
+    const light = root.dataset.theme !== 'light';
+    root.dataset.theme = light ? 'light' : 'dark';
+    try { localStorage.setItem('ba-theme', root.dataset.theme); } catch (e) {}
+  });
+
   renderGroups(); renderTabs(); renderCards(); updateFavUi();
 })();
