@@ -39,6 +39,22 @@
     mhd: 'Najpohodlnejšie MHD alebo taxi.',
     far: 'Mimo centra: použite MHD, vlak alebo taxi.'
   };
+  const ORIGINS = [
+    { v: '', l: 'Moja poloha' },
+    { v: 'Bratislava hlavná stanica', l: 'Hlavná stanica' },
+    { v: 'Hlavné námestie Bratislava', l: 'Hlavné námestie' },
+    { v: 'Nový most Bratislava', l: 'Nový most' },
+    { v: 'Letisko M. R. Štefánika Bratislava', l: 'Letisko' }
+  ];
+  /* Orientačné návrhy liniek (DPB). Linky a trasy sa menia, preto vždy odkaz na plánovač. */
+  const MHD = {
+    'Hrad Devín': 'Autobus 29 od zastávky Nový most až na Devín.',
+    'Botanická záhrada UK': 'Od Mosta SNP autobusom 29 alebo električkou 4 na zastávku Botanická záhrada.',
+    'Bratislavská ZOO': 'Autobusom 30 alebo 37 na zastávku ZOO (Mlynská dolina).',
+    'Železná studnička': 'Autobus 43 na zastávku Železná studnička.',
+    'Kamzík': 'Do zastávky Koliba, odtiaľ autobus 144 na Kamzík. Alebo pešo cez les alebo lanovkou zo Železnej studničky.',
+    'Turistika z Kamzíka': 'Do zastávky Koliba, odtiaľ autobus 144 na Kamzík.'
+  };
   const goOf = n => WALK.includes(n) ? 'walk' : FAR.includes(n) ? 'far' : 'mhd';
 
   const PLACES = [
@@ -89,7 +105,7 @@
   const icon = id => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[id]}</svg>`;
   const esc = s => s.replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
   const q = p => encodeURIComponent(p.n + ' Bratislava');
-  const dir = (p, mode) => 'https://www.google.com/maps/dir/?api=1&destination=' + q(p) + (mode ? '&travelmode=' + mode : '');
+  const dir = (p, mode, from) => 'https://www.google.com/maps/dir/?api=1&destination=' + q(p) + (from ? '&origin=' + encodeURIComponent(from) : '') + (mode ? '&travelmode=' + mode : '');
 
   let favs = new Set();
   try { favs = new Set(JSON.parse(localStorage.getItem('ba-favs') || '[]')); } catch (e) {}
@@ -161,6 +177,12 @@
       tile('bus', 'MHD', dir(p, 'transit'), go === 'mhd') +
       tile('taxi', 'Taxi', 'https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[nickname]=' + q(p), go === 'far' && !train) +
       (train ? tile('train', 'Vlak', 'https://www.zssk.sk/', go === 'far') : '');
+    const line = MHD[p.n];
+    $('#mLine').hidden = go === 'walk' && !line;
+    $('#mLineText').textContent = line || 'Konkrétnu linku a prestup nájdete v plánovači podľa toho, odkiaľ idete.';
+    $('#mFrom').innerHTML = ORIGINS.map(o => `<option value="${esc(o.v)}">${o.l}</option>`).join('');
+    const setFrom = () => { const u = dir(p, 'transit', $('#mFrom').value); $('#mPlan').href = u; const t = $('#mModes a:nth-child(2)'); if (t) t.href = u; };
+    $('#mFrom').onchange = setFrom; setFrom();
     $('#mTaxi').innerHTML = 'Taxi si objednáte v aplikácii <a href="https://bolt.eu/sk-sk/" target="_blank" rel="noopener">Bolt</a> alebo Uber. Cenu uvidíte pred jazdou.' + (train ? ' Vlaky odchádzajú z hlavnej stanice (Bratislava hl. st.) a stanice Petržalka.' : '');
     $('#mNav').href = dir(p);
     $('#mMap').href = 'https://www.google.com/maps/search/?api=1&query=' + q(p);
