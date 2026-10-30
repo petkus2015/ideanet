@@ -286,6 +286,54 @@
   }
 
   /* ─────────────────────────────────────────────────────────
+     CENOVÁ KALKULAČKA (Ferové ceny) — počet reelsov × cena za
+     kus, s príplatkom podľa zvolenej rýchlosti dodania. Hodnoty
+     (cena za kus, mena, min/max) prichádzajú z data-* atribútov,
+     ktoré vykresľuje PHP (ideanet_pricing::render()).
+  ───────────────────────────────────────────────────────── */
+  function initCalculator(root) {
+    const pricePerReel = parseFloat(root.dataset.pricePerReel) || 0;
+    const min = parseInt(root.dataset.min, 10) || 1;
+    const max = parseInt(root.dataset.max, 10) || 99;
+    const countEl = $('[data-ib-count]', root);
+    const totalEl = $('[data-ib-total]', root);
+    if (!countEl || !totalEl) return;
+
+    let count = parseInt(countEl.textContent, 10) || min;
+    const activeSpeed = $('.ib-calc__speed.is-active', root);
+    let surcharge = activeSpeed ? parseFloat(activeSpeed.dataset.surcharge) || 0 : 0;
+
+    const render = () => {
+      countEl.textContent = count;
+      const total = Math.round(count * pricePerReel * (1 + surcharge / 100));
+      totalEl.textContent = total.toLocaleString('sk-SK');
+    };
+
+    $$('.ib-calc__step', root).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const dir = parseInt(btn.dataset.dir, 10) || 0;
+        count = Math.min(max, Math.max(min, count + dir));
+        render();
+      });
+    });
+
+    $$('.ib-calc__speed', root).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        $$('.ib-calc__speed', root).forEach((b) => {
+          b.classList.remove('is-active');
+          b.setAttribute('aria-checked', 'false');
+        });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-checked', 'true');
+        surcharge = parseFloat(btn.dataset.surcharge) || 0;
+        render();
+      });
+    });
+
+    render();
+  }
+
+  /* ─────────────────────────────────────────────────────────
      5) HERO — svetlo za kurzorom, náklon kariet, magnet tlačidlo
   ───────────────────────────────────────────────────────── */
   function initHeroFx(hero) {
@@ -454,7 +502,7 @@
      aj odkazoch v navigácii, vrátane obsahu pridaného/zmeneného
      neskôr (napr. po zmene jazyka alebo AJAX-e).
   ───────────────────────────────────────────────────────── */
-  const RIPPLE_SEL = '.ib-btn, .ib-card, .ib-price, .ib-quote, .ib-tile, a.ib-nav__link';
+  const RIPPLE_SEL = '.ib-btn, .ib-card, .ib-quote, .ib-tile, .ib-calc__step, .ib-calc__speed, a.ib-nav__link';
 
   function initRipple() {
     if (REDUCED) return;
@@ -487,8 +535,9 @@
     $$('.ib-hero').forEach(initHeroFx);
     $$('.ib-scope').forEach((scope) => {
       $$('.ib-carousel', scope).forEach(initCarousel);
-      $$('.ib-card, .ib-price, .ib-quote', scope).forEach((el) => initTilt(el, 5));
+      $$('.ib-card, .ib-quote', scope).forEach((el) => initTilt(el, 5));
       $$('.ib-slide', scope).forEach((el) => initTilt(el, 4));
+      $$('.ib-calc', scope).forEach(initCalculator);
       initReveal(scope);
       initContact(scope);
     });

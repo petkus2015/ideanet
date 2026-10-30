@@ -1,9 +1,13 @@
 <?php
 /**
- * IDEANET — Cenník (balíky).
+ * IDEANET — Ferové ceny (interaktívna kalkulačka).
+ *
+ * Namiesto statických balíkov počíta orientačnú cenu naživo podľa
+ * počtu reelsov a zvolenej rýchlosti dodania (cena za kus × príplatok
+ * podľa rýchlosti) — pozri assets/js/blocks.js → initCalculator().
  *
  * Shortcode: [ideanet_pricing]
- * Repeater:  plans (názov, cena, popis, funkcie, tlačidlo)
+ * Repeater:  speeds (úroveň rýchlosti dodania, dni, príplatok v %)
  *
  * @package Ideanet_Avada_Blocks
  */
@@ -23,7 +27,7 @@ class Ideanet_Blocks_Pricing {
 		}
 		fusion_builder_map(
 			array(
-				'name'      => __( 'IDEANET — Cenník', 'ideanet-avada-blocks' ),
+				'name'      => __( 'IDEANET — Ferové ceny (kalkulačka)', 'ideanet-avada-blocks' ),
 				'shortcode' => 'ideanet_pricing',
 				'icon'      => 'fusiona-price-list',
 				'category'  => __( 'IDEANET', 'ideanet-avada-blocks' ),
@@ -39,90 +43,108 @@ class Ideanet_Blocks_Pricing {
 						'type'       => 'textfield',
 						'heading'    => __( 'Kicker', 'ideanet-avada-blocks' ),
 						'param_name' => 'kicker',
-						'value'      => 'Cenník',
+						'value'      => 'Ferové ceny',
 					),
 					array(
 						'type'       => 'textfield',
 						'heading'    => __( 'Nadpis — bežný text', 'ideanet-avada-blocks' ),
 						'param_name' => 'heading',
-						'value'      => 'Orientačné balíky',
+						'value'      => 'Koľko stojí',
 					),
 					array(
 						'type'       => 'textfield',
 						'heading'    => __( 'Nadpis — zvýraznená časť', 'ideanet-avada-blocks' ),
 						'param_name' => 'heading_emphasis',
-						'value'      => 'bez skrytých položiek',
+						'value'      => 'vaša séria reelsov?',
 					),
 					array(
 						'type'       => 'textarea',
 						'heading'    => __( 'Podnadpis', 'ideanet-avada-blocks' ),
 						'param_name' => 'sub',
-						'value'      => 'Ceny sú bez DPH a slúžia na predstavu. Finálna ponuka aj termíny dodania vždy vychádzajú z dohody a rozsahu prác.',
+						'value'      => 'Vyberte počet reelsov a rýchlosť dodania — cena sa prepočíta hneď.',
+					),
+					array(
+						'type'       => 'textfield',
+						'heading'    => __( 'Cena za jeden reels (€, bez DPH)', 'ideanet-avada-blocks' ),
+						'param_name' => 'price_per_reel',
+						'value'      => '45',
+					),
+					array(
+						'type'       => 'textfield',
+						'heading'    => __( 'Mena / symbol', 'ideanet-avada-blocks' ),
+						'param_name' => 'currency',
+						'value'      => '€',
+					),
+					array(
+						'type'       => 'range',
+						'heading'    => __( 'Minimálny počet reelsov', 'ideanet-avada-blocks' ),
+						'param_name' => 'reels_min',
+						'min'        => '1',
+						'max'        => '10',
+						'step'       => '1',
+						'value'      => '1',
+					),
+					array(
+						'type'       => 'range',
+						'heading'    => __( 'Maximálny počet reelsov', 'ideanet-avada-blocks' ),
+						'param_name' => 'reels_max',
+						'min'        => '5',
+						'max'        => '40',
+						'step'       => '1',
+						'value'      => '20',
+					),
+					array(
+						'type'       => 'range',
+						'heading'    => __( 'Predvolený počet reelsov pri načítaní', 'ideanet-avada-blocks' ),
+						'param_name' => 'reels_default',
+						'min'        => '1',
+						'max'        => '40',
+						'step'       => '1',
+						'value'      => '4',
 					),
 					array(
 						'type'        => 'multiple',
-						'heading'     => __( 'Cenové balíky', 'ideanet-avada-blocks' ),
-						'param_name'  => 'plans',
+						'heading'     => __( 'Úrovne rýchlosti dodania', 'ideanet-avada-blocks' ),
+						'description' => __( 'Príplatok je percento navyše k základnej cene (0 = bez príplatku).', 'ideanet-avada-blocks' ),
+						'param_name'  => 'speeds',
 						'value'       => array(
 							array(
 								'type'       => 'textfield',
-								'heading'    => __( 'Názov balíka', 'ideanet-avada-blocks' ),
-								'param_name' => 'title',
+								'heading'    => __( 'Názov úrovne', 'ideanet-avada-blocks' ),
+								'param_name' => 'label',
 								'value'      => '',
 							),
 							array(
 								'type'       => 'textfield',
-								'heading'    => __( 'Cena (napr. od 390 €)', 'ideanet-avada-blocks' ),
-								'param_name' => 'price',
+								'heading'    => __( 'Dodanie za (napr. 5–7 pracovných dní)', 'ideanet-avada-blocks' ),
+								'param_name' => 'days_text',
 								'value'      => '',
 							),
 							array(
 								'type'       => 'textfield',
-								'heading'    => __( 'Dodatok k cene (napr. / natáčací deň)', 'ideanet-avada-blocks' ),
-								'param_name' => 'price_suffix',
-								'value'      => '',
-							),
-							array(
-								'type'       => 'textarea',
-								'heading'    => __( 'Krátky popis', 'ideanet-avada-blocks' ),
-								'param_name' => 'description',
-								'value'      => '',
-							),
-							array(
-								'type'       => 'textarea',
-								'heading'    => __( 'Zahrnuté (oddeľte bodkočiarkou ;)', 'ideanet-avada-blocks' ),
-								'param_name' => 'features',
-								'value'      => '',
-							),
-							array(
-								'type'       => 'radio_button_set',
-								'heading'    => __( 'Zvýrazniť ako odporúčaný balík', 'ideanet-avada-blocks' ),
-								'param_name' => 'featured',
-								'value'      => array(
-									'no'  => __( 'Nie', 'ideanet-avada-blocks' ),
-									'yes' => __( 'Áno', 'ideanet-avada-blocks' ),
-								),
-								'default'    => 'no',
-							),
-							array(
-								'type'       => 'textfield',
-								'heading'    => __( 'Štítok odporúčaného balíka', 'ideanet-avada-blocks' ),
-								'param_name' => 'featured_label',
-								'value'      => 'Najčastejšia voľba',
-							),
-							array(
-								'type'       => 'textfield',
-								'heading'    => __( 'Text tlačidla', 'ideanet-avada-blocks' ),
-								'param_name' => 'button_text',
-								'value'      => 'Mám záujem',
-							),
-							array(
-								'type'       => 'textfield',
-								'heading'    => __( 'Odkaz tlačidla', 'ideanet-avada-blocks' ),
-								'param_name' => 'button_link',
-								'value'      => '#kontakt',
+								'heading'    => __( 'Príplatok v % (0 pre štandard)', 'ideanet-avada-blocks' ),
+								'param_name' => 'surcharge',
+								'value'      => '0',
 							),
 						),
+					),
+					array(
+						'type'       => 'textfield',
+						'heading'    => __( 'Tlačidlo — text', 'ideanet-avada-blocks' ),
+						'param_name' => 'cta_text',
+						'value'      => 'Dohodnúť termín',
+					),
+					array(
+						'type'       => 'textfield',
+						'heading'    => __( 'Tlačidlo — odkaz', 'ideanet-avada-blocks' ),
+						'param_name' => 'cta_link',
+						'value'      => '#kontakt',
+					),
+					array(
+						'type'       => 'textarea',
+						'heading'    => __( 'Poznámka pod kalkulačkou', 'ideanet-avada-blocks' ),
+						'param_name' => 'note',
+						'value'      => 'Orientačná cena bez DPH. Finálna ponuka vždy vychádza z dohody a rozsahu prác.',
 					),
 				),
 			)
@@ -139,13 +161,25 @@ class Ideanet_Blocks_Pricing {
 				'heading'          => '',
 				'heading_emphasis' => '',
 				'sub'              => '',
-				'plans'            => array(),
+				'price_per_reel'   => '45',
+				'currency'         => '€',
+				'reels_min'        => '1',
+				'reels_max'        => '20',
+				'reels_default'    => '4',
+				'speeds'           => array(),
+				'cta_text'         => '',
+				'cta_link'         => '#kontakt',
+				'note'             => '',
 			),
 			$atts,
 			'ideanet_pricing'
 		);
 
-		$plans = ideanet_blocks_resolve_items( 'pricing_plans', $args['plans'], ideanet_blocks_default_plans() );
+		$speeds        = ideanet_blocks_resolve_items( 'pricing_speeds', $args['speeds'], ideanet_blocks_default_speeds() );
+		$price_per_reel = (float) str_replace( ',', '.', $args['price_per_reel'] );
+		$reels_min     = max( 1, (int) $args['reels_min'] );
+		$reels_max     = max( $reels_min, (int) $args['reels_max'] );
+		$reels_default = min( $reels_max, max( $reels_min, (int) $args['reels_default'] ) );
 
 		ob_start();
 		?>
@@ -153,37 +187,62 @@ class Ideanet_Blocks_Pricing {
 			<div class="ib-wrap">
 				<?php echo ideanet_blocks_head( $args['kicker'], $args['heading'], $args['heading_emphasis'], $args['sub'] ); ?>
 
-				<?php if ( $plans ) : ?>
-					<div class="ib-price-cards">
-						<?php foreach ( $plans as $plan ) : ?>
-							<?php
-							$featured = 'yes' === ( $plan['featured'] ?? 'no' );
-							$features = ideanet_blocks_lines( $plan['features'] ?? '' );
-							?>
-							<article class="ib-price ib-reveal <?php echo $featured ? 'ib-price--hot' : ''; ?>">
-								<?php if ( $featured && ! empty( $plan['featured_label'] ) ) : ?>
-									<span class="ib-price__flag"><?php echo esc_html( $plan['featured_label'] ); ?></span>
-								<?php endif; ?>
-								<?php if ( ! empty( $plan['title'] ) ) : ?><h3><?php echo esc_html( $plan['title'] ); ?></h3><?php endif; ?>
-								<p class="ib-price__val">
-									<?php echo esc_html( $plan['price'] ?? '' ); ?>
-									<?php if ( ! empty( $plan['price_suffix'] ) ) : ?><span><?php echo esc_html( $plan['price_suffix'] ); ?></span><?php endif; ?>
-								</p>
-								<?php if ( ! empty( $plan['description'] ) ) : ?><p class="ib-price__desc"><?php echo esc_html( $plan['description'] ); ?></p><?php endif; ?>
-								<?php if ( $features ) : ?>
-									<ul class="ib-ticks">
-										<?php foreach ( $features as $f ) : ?><li><?php echo esc_html( $f ); ?></li><?php endforeach; ?>
-									</ul>
-								<?php endif; ?>
-								<?php if ( ! empty( $plan['button_text'] ) ) : ?>
-									<a class="ib-btn <?php echo $featured ? '' : 'ib-btn--ghost'; ?> ib-btn--full" href="<?php echo esc_url( $plan['button_link'] ?? '#kontakt' ); ?>">
-										<?php echo esc_html( $plan['button_text'] ); ?>
-									</a>
-								<?php endif; ?>
-							</article>
-						<?php endforeach; ?>
+				<div class="ib-calc ib-reveal"
+					data-price-per-reel="<?php echo esc_attr( $price_per_reel ); ?>"
+					data-currency="<?php echo esc_attr( $args['currency'] ); ?>"
+					data-min="<?php echo esc_attr( $reels_min ); ?>"
+					data-max="<?php echo esc_attr( $reels_max ); ?>">
+					<div class="ib-calc__row">
+						<div class="ib-calc__field">
+							<span class="ib-calc__label"><?php esc_html_e( 'Počet reelsov', 'ideanet-avada-blocks' ); ?></span>
+							<div class="ib-calc__stepper">
+								<button type="button" class="ib-calc__step" data-dir="-1" aria-label="<?php esc_attr_e( 'Ubrať reels', 'ideanet-avada-blocks' ); ?>">−</button>
+								<span class="ib-calc__count" data-ib-count><?php echo esc_html( $reels_default ); ?></span>
+								<button type="button" class="ib-calc__step" data-dir="1" aria-label="<?php esc_attr_e( 'Pridať reels', 'ideanet-avada-blocks' ); ?>">+</button>
+							</div>
+						</div>
+
+						<?php if ( $speeds ) : ?>
+							<div class="ib-calc__field">
+								<span class="ib-calc__label"><?php esc_html_e( 'Rýchlosť dodania', 'ideanet-avada-blocks' ); ?></span>
+								<div class="ib-calc__speeds" role="radiogroup" aria-label="<?php esc_attr_e( 'Rýchlosť dodania', 'ideanet-avada-blocks' ); ?>">
+									<?php foreach ( $speeds as $i => $speed ) : ?>
+										<?php
+										$label     = $speed['label'] ?? '';
+										$days_text = $speed['days_text'] ?? '';
+										$surcharge = (float) str_replace( ',', '.', $speed['surcharge'] ?? '0' );
+										if ( '' === trim( (string) $label ) ) {
+											continue;
+										}
+										?>
+										<button type="button" class="ib-calc__speed<?php echo 0 === $i ? ' is-active' : ''; ?>"
+											data-surcharge="<?php echo esc_attr( $surcharge ); ?>"
+											role="radio" aria-checked="<?php echo 0 === $i ? 'true' : 'false'; ?>">
+											<strong><?php echo esc_html( $label ); ?></strong>
+											<?php if ( $days_text ) : ?><span><?php echo esc_html( $days_text ); ?></span><?php endif; ?>
+										</button>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						<?php endif; ?>
 					</div>
-				<?php endif; ?>
+
+					<div class="ib-calc__result">
+						<span class="ib-calc__result-lab"><?php esc_html_e( 'Orientačná cena', 'ideanet-avada-blocks' ); ?></span>
+						<p class="ib-calc__total">
+							<span data-ib-total><?php echo esc_html( number_format_i18n( $reels_default * $price_per_reel ) ); ?></span>
+							<span class="ib-calc__currency"><?php echo esc_html( $args['currency'] ); ?></span>
+						</p>
+					</div>
+
+					<?php if ( $args['cta_text'] ) : ?>
+						<a class="ib-btn ib-btn--full ib-calc__cta" href="<?php echo esc_url( $args['cta_link'] ); ?>"><?php echo esc_html( $args['cta_text'] ); ?></a>
+					<?php endif; ?>
+
+					<?php if ( $args['note'] ) : ?>
+						<p class="ib-calc__note"><?php echo esc_html( $args['note'] ); ?></p>
+					<?php endif; ?>
+				</div>
 			</div>
 		</section>
 		<?php

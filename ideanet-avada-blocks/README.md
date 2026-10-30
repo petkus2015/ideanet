@@ -78,7 +78,7 @@ Táto stránka bez hádania ukáže:
 | IDEANET — Služby | `[ideanet_services]` | Tri (aj viac) karty disciplín s ikonou, popisom a zoznamom bodov |
 | IDEANET — Portfólio karusel | `[ideanet_carousel]` | Znovupoužiteľný karusel ukážok — vložte ho trikrát (video, grafika, sociálne siete), zakaždým s inými nastaveniami |
 | IDEANET — Proces | `[ideanet_process]` | Očíslované kroky spolupráce |
-| IDEANET — Cenník | `[ideanet_pricing]` | Cenové balíky, jeden môže byť zvýraznený ako odporúčaný |
+| IDEANET — Ferové ceny | `[ideanet_pricing]` | Interaktívna kalkulačka — počet reelsov × cena za kus, príplatok podľa rýchlosti dodania |
 | IDEANET — Školenia pre firmy | `[ideanet_training]` | Sekcia „pre koho / čo si odnesú” + karta formátov a cien |
 | IDEANET — Referencie | `[ideanet_testimonials]` | Citáty klientov |
 | IDEANET — Kontakt | `[ideanet_contact]` | Kontaktné údaje, box dostupnosti a formulár (odosielanie cez `mailto:`) |
@@ -123,6 +123,31 @@ lišta od verzie **1.7.0** aj:
   moderný prvok na jednostránkových weboch;
 - **zjemnenie pri scrollovaní** — po odscrollovaní sa lišta aj logo
   mierne zmenšia (menej miesta na obrazovke), s plynulým prechodom.
+
+### Ferové ceny — cenová kalkulačka
+
+Blok **IDEANET — Ferové ceny** (shortcode `[ideanet_pricing]`) od
+verzie **3.0.0** nezobrazuje statické cenové balíky, ale
+**interaktívnu kalkulačku**: návštevník si stepperom (−/+) zvolí
+počet reelsov a kliknutím vyberie úroveň rýchlosti dodania, cena sa
+prepočíta naživo bez obnovenia stránky. Výpočet je jednoduchý:
+*počet reelsov × cena za jeden reels × (1 + príplatok za rýchlosť v %)*.
+
+Nastaviteľné polia:
+- **„Cena za jeden reels”** a **„Mena / symbol”** — základ výpočtu.
+- **„Minimálny/maximálny/predvolený počet reelsov”** — hranice
+  steppera a hodnota pri načítaní stránky.
+- **„Úrovne rýchlosti dodania”** — repeater (názov, text dodania,
+  príplatok v %), napr. Štandardné 0 %, Rýchle +20 %, Expresné +50 %.
+  Rovnako ako ostatné repeatery je dostupný aj cez **Nástroje →
+  IDEANET obsah → Ferové ceny — rýchlosti dodania**, keby repeater v
+  Avada Builderi robil problémy.
+- **Tlačidlo** a **poznámka pod kalkulačkou** (napr. „Orientačná
+  cena bez DPH…”).
+
+Ak pole „Cena za jeden reels” necháte prázdne/nulové, kalkulačka sa
+aj tak zobrazí (len počíta nuly) — ide o bežný textový/číselný vstup,
+nie o povinné pole.
 
 ### Portfólio karusel — jeden blok, tri použitia
 
@@ -289,6 +314,14 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
   vložiť vlastné SVG cez voľbu „Vlastné SVG“.
 
 ## Riešenie problémov
+
+**Kde sú cenové balíky? V Cenníku vidím len kalkulačku.**
+Presne tak — od verzie **3.0.0** je to zámer. Blok sa premenoval na
+**Ferové ceny** a namiesto karát s balíkmi zobrazuje interaktívnu
+kalkulačku (počet reelsov × cena za kus + príplatok za rýchlosť
+dodania), pozri sekciu vyššie. Staré pole „Cenové balíky” aj
+súvisiaci obsah v **Nástroje → IDEANET obsah** zmizli — nahradilo ich
+pole „Úrovne rýchlosti dodania”.
 
 **Funguje to aj na Microsoft Surface Duo (skladací telefón s dvoma obrazovkami)?**
 Od verzie **2.4.0** áno. Pri bežnom používaní na jednej obrazovke

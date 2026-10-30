@@ -284,29 +284,42 @@ button.ib-arrow{
 .ib-step h3{font-size:18px;margin-bottom:9px}
 .ib-step p{font-size:14.5px;color:var(--ib-ink-2) !important}
 
-/* ══════════════════════ CENNÍK ══════════════════════════════ */
-.ib-price-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,1.8vw,24px);align-items:stretch}
-.ib-price{
-  position:relative;display:flex;flex-direction:column;padding:clamp(24px,2.2vw,34px);
+/* ══════════════════════ FEROVÉ CENY (kalkulačka) ═══════════════ */
+.ib-calc{
+  max-width:640px;margin-inline:auto;padding:clamp(26px,3vw,40px);
   background:var(--ib-paper);border:1px solid var(--ib-line-2);border-radius:var(--ib-r-xl);box-shadow:var(--ib-sh-1);
-  transition:transform .3s var(--ib-ease),box-shadow .3s var(--ib-ease),border-color .3s var(--ib-ease);
-  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg));
 }
-.ib-price.ib-price:hover{
-  transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-4px);
-  box-shadow:var(--ib-sh-2);border-color:var(--ib-accent);
+.ib-calc__row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,32px)}
+.ib-calc__field{display:flex;flex-direction:column;gap:10px}
+.ib-calc__label{font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ib-ink-3) !important}
+.ib-calc__stepper{display:flex;align-items:center;gap:16px}
+.ib-calc__step{
+  display:grid;place-items:center;width:38px;height:38px;flex:none;padding:0;
+  border:1px solid var(--ib-line-2);border-radius:50%;background:var(--ib-canvas);
+  color:var(--ib-ink) !important;font-size:18px;line-height:1;cursor:pointer;transition:border-color .2s,transform .15s;
 }
-.ib-price--hot{border-color:var(--ib-accent);box-shadow:var(--ib-sh-2)}
-.ib-price__flag{
-  position:absolute;top:-13px;left:clamp(24px,2.2vw,34px);padding:6px 13px;border-radius:999px;
-  background:var(--ib-accent);color:var(--ib-accent-ink) !important;font-size:11px;font-weight:600;
-  letter-spacing:.06em;text-transform:uppercase;
+.ib-calc__step:hover{border-color:var(--ib-accent)}
+.ib-calc__step:active{transform:scale(.92)}
+.ib-calc__count{min-width:2.2ch;text-align:center;font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.ib-calc__speeds{display:flex;flex-wrap:wrap;gap:8px}
+.ib-calc__speed{
+  padding:9px 14px;border:1px solid var(--ib-line-2);border-radius:var(--ib-r-lg);background:var(--ib-canvas);
+  text-align:left;cursor:pointer;transition:border-color .2s,background .2s;
 }
-.ib-price h3{font-size:18px;color:var(--ib-ink-3) !important;font-weight:550}
-.ib-price__val{margin:10px 0 12px;font-size:clamp(26px,2.8vw,36px);font-weight:600;letter-spacing:-.03em}
-.ib-price__val span{display:block;margin-top:4px;font-size:13.5px;font-weight:400;color:var(--ib-ink-3) !important}
-p.ib-price__desc{font-size:14.5px;color:var(--ib-ink-2) !important}
-.ib-price .ib-ticks{margin:18px 0;flex:1}
+.ib-calc__speed strong{display:block;font-size:13.5px;font-weight:600;color:var(--ib-ink) !important}
+.ib-calc__speed span{display:block;margin-top:2px;font-size:11.5px;color:var(--ib-ink-3) !important}
+.ib-calc__speed:hover{border-color:var(--ib-line)}
+.ib-calc__speed.is-active{border-color:var(--ib-accent);background:rgba(var(--ib-accent-soft),.12)}
+.ib-calc__result{
+  margin-top:clamp(24px,3vw,34px);padding-top:clamp(20px,2.5vw,28px);border-top:1px solid var(--ib-line);
+  text-align:center;
+}
+.ib-calc__result-lab{display:block;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ib-ink-3) !important}
+.ib-calc__total{margin:8px 0 0;font-size:clamp(34px,5vw,48px);font-weight:700;letter-spacing:-.02em}
+.ib-calc__currency{font-size:.5em;font-weight:500;color:var(--ib-ink-3) !important;margin-left:4px}
+.ib-calc__cta{margin-top:20px}
+.ib-calc__note{margin-top:14px;font-size:12.5px;line-height:1.5;color:var(--ib-ink-3) !important;text-align:center}
+@media (max-width:560px){ .ib-calc__row{grid-template-columns:1fr} }
 
 /* ══════════════════════ ŠKOLENIA ═════════════════════════════ */
 .ib-train{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,60px);align-items:start}
@@ -496,8 +509,8 @@ a.ib-nav__link.is-active{color:var(--ib-ink) !important}
    Mäkký impulz z presného miesta kliknutia — na rozdiel od
    klasického Material ripple nemá tvrdý okraj (gradient stmieva
    do priehľadna už vo vlastnom polomere), takže nepotrebuje
-   overflow:hidden na rodičovi a nekoliduje napr. so štítkom
-   .ib-price__flag, ktorý zámerne presahuje cez horný okraj karty.
+   overflow:hidden na rodičovi a nekoliduje s prvkami, ktoré
+   zámerne presahujú cez okraj karty (odznaky, štítky a pod.).
 ───────────────────────────────────────────────────────── */
 .ib-ripple{
   position:absolute;left:0;top:0;z-index:4;pointer-events:none;
@@ -519,12 +532,12 @@ a.ib-nav__link.is-active{color:var(--ib-ink) !important}
 @media (max-width:1180px){ .ib-scope{--ib-per:4.5} }
 @media (max-width:980px){
   .ib-scope{--ib-per:3.5}
-  .ib-cards,.ib-steps,.ib-quotes,.ib-price-cards{grid-template-columns:repeat(2,1fr)}
+  .ib-cards,.ib-steps,.ib-quotes{grid-template-columns:repeat(2,1fr)}
   .ib-contact{grid-template-columns:1fr}
 }
 @media (max-width:720px){
   .ib-scope{--ib-per:2.5}
-  .ib-cards,.ib-steps,.ib-quotes,.ib-price-cards{grid-template-columns:1fr}
+  .ib-cards,.ib-steps,.ib-quotes{grid-template-columns:1fr}
   .ib-carousel__head{align-items:center}
 }
 @media (max-width:560px){

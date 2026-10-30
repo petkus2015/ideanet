@@ -120,19 +120,13 @@ function ideanet_blocks_content_sections() {
 				array( 'key' => 'description', 'label' => __( 'Popis', 'ideanet-avada-blocks' ), 'type' => 'textarea' ),
 			),
 		),
-		'pricing_plans'    => array(
-			'label'    => __( 'Cenník — balíky', 'ideanet-avada-blocks' ),
-			'defaults' => 'ideanet_blocks_default_plans',
+		'pricing_speeds'   => array(
+			'label'    => __( 'Ferové ceny — rýchlosti dodania', 'ideanet-avada-blocks' ),
+			'defaults' => 'ideanet_blocks_default_speeds',
 			'fields'   => array(
-				array( 'key' => 'title', 'label' => __( 'Názov', 'ideanet-avada-blocks' ), 'type' => 'text' ),
-				array( 'key' => 'price', 'label' => __( 'Cena (napr. od 390 €)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
-				array( 'key' => 'price_suffix', 'label' => __( 'Prípona ceny (napr. / natáčací deň)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
-				array( 'key' => 'description', 'label' => __( 'Popis', 'ideanet-avada-blocks' ), 'type' => 'textarea' ),
-				array( 'key' => 'features', 'label' => __( 'Zahrnuté (oddeľte ;)', 'ideanet-avada-blocks' ), 'type' => 'textarea' ),
-				array( 'key' => 'featured', 'label' => __( 'Zvýrazniť tento balík', 'ideanet-avada-blocks' ), 'type' => 'checkbox' ),
-				array( 'key' => 'featured_label', 'label' => __( 'Štítok zvýraznenia (napr. Najčastejšia voľba)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
-				array( 'key' => 'button_text', 'label' => __( 'Text tlačidla', 'ideanet-avada-blocks' ), 'type' => 'text' ),
-				array( 'key' => 'button_link', 'label' => __( 'Odkaz tlačidla (napr. #kontakt)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'label', 'label' => __( 'Názov úrovne', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'days_text', 'label' => __( 'Dodanie za (napr. 5–7 pracovných dní)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
+				array( 'key' => 'surcharge', 'label' => __( 'Príplatok v % (0 pre štandard)', 'ideanet-avada-blocks' ), 'type' => 'text' ),
 			),
 		),
 		'training_formats' => array(

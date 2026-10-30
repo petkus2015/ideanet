@@ -205,45 +205,16 @@ function ideanet_blocks_default_steps() {
 }
 
 /**
- * Predvolené cenové balíky.
+ * Predvolené úrovne rýchlosti dodania pre cenovú kalkulačku
+ * (počet reelsov × cena za kus × príplatok podľa rýchlosti).
  *
- * @return array<int, array<string, mixed>>
+ * @return array<int, array<string, string>>
  */
-function ideanet_blocks_default_plans() {
+function ideanet_blocks_default_speeds() {
 	return array(
-		array(
-			'title'          => 'Video',
-			'price'          => 'od 390 €',
-			'price_suffix'   => '/ natáčací deň',
-			'description'    => 'Pre eventy a značky, ktoré potrebujú obsah von, kým je téma živá.',
-			'features'       => 'Až 8 hotových vertikálnych videí; Scenár, natáčanie, strih; Grading, titulky, hudba',
-			'featured'       => 'no',
-			'featured_label' => '',
-			'button_text'    => 'Mám záujem',
-			'button_link'    => '#kontakt',
-		),
-		array(
-			'title'          => 'Kompletná starostlivosť',
-			'price'          => 'od 790 €',
-			'price_suffix'   => '/ mesiac',
-			'description'    => 'Video, grafika aj správa profilov v jednom balíku.',
-			'features'       => 'Jeden natáčací deň mesačne; 12 príspevkov vrátane grafiky; Obsahový plán a publikovanie',
-			'featured'       => 'yes',
-			'featured_label' => 'Najčastejšia voľba',
-			'button_text'    => 'Mám záujem',
-			'button_link'    => '#kontakt',
-		),
-		array(
-			'title'          => 'Grafika',
-			'price'          => 'od 290 €',
-			'price_suffix'   => '/ projekt',
-			'description'    => 'Keď potrebujete identitu alebo sadu vizuálov bez videa.',
-			'features'       => 'Logo a vizuálny štýl; Mini brand manuál; Šablóny pre siete',
-			'featured'       => 'no',
-			'featured_label' => '',
-			'button_text'    => 'Mám záujem',
-			'button_link'    => '#kontakt',
-		),
+		array( 'label' => 'Štandardné', 'days_text' => '5–7 pracovných dní', 'surcharge' => '0' ),
+		array( 'label' => 'Rýchle', 'days_text' => '48 hodín', 'surcharge' => '20' ),
+		array( 'label' => 'Expresné', 'days_text' => '24 hodín', 'surcharge' => '50' ),
 	);
 }
 
