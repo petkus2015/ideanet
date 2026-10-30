@@ -55,6 +55,9 @@
     'Kamzík': 'Do zastávky Koliba, odtiaľ autobus 144 na Kamzík. Alebo pešo cez les alebo lanovkou zo Železnej studničky.',
     'Turistika z Kamzíka': 'Do zastávky Koliba, odtiaľ autobus 144 na Kamzík.'
   };
+  /* Fotky: súbor photos/<slug>.jpg (pomer 3:2, min. 800 px). Ak chýba, karta ukáže farebný gradient. */
+  const slug = n => n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const photo = n => `photos/${slug(n)}.jpg`;
   const goOf = n => WALK.includes(n) ? 'walk' : FAR.includes(n) ? 'far' : 'mhd';
 
   const PLACES = [
@@ -144,7 +147,7 @@
       const c = catOf(p.cat);
       return `<article class="card-wrap">
         <button class="card" data-n="${esc(p.n)}" style="--c:${c.c};--c2:${c.c2}">
-          <div class="card-art">${icon(p.cat)}<span class="badge">${c.name}</span></div>
+          <div class="card-art">${icon(p.cat)}<img src="${photo(p.n)}" alt="" loading="lazy" onerror="this.remove()"><span class="badge">${c.name}</span></div>
           <div class="card-body"><h3>${esc(p.n)}</h3><div class="area">${esc(p.a)}</div><p>${esc(p.t)}</p></div></button>
         <button class="heart" data-fav="${esc(p.n)}" aria-label="Uložiť ${esc(p.n)}" aria-pressed="${favs.has(p.n)}"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 6c-2.3 4.4-9.3 9-9.3 9z"/></svg></button>
         <a class="navbtn" href="${dir(p)}" target="_blank" rel="noopener" aria-label="Navigovať: ${esc(p.n)}">${icon('nav')}Navigovať</a></article>`;
@@ -165,7 +168,7 @@
     const p = PLACES.find(x => x.n === name), c = catOf(p.cat), m = $('#modal');
     const go = goOf(p.n), train = TRAIN.includes(p.n);
     m.style.setProperty('--c', c.c); m.style.setProperty('--c2', c.c2);
-    $('#mArt').innerHTML = icon(p.cat);
+    $('#mArt').innerHTML = icon(p.cat) + `<img src="${photo(p.n)}" alt="${esc(p.n)}" onerror="this.remove()">`;
     $('#mMeta').textContent = `${groupOf(p.cat).name} · ${c.name} · ${p.a}`;
     $('#mTitle').textContent = p.n;
     $('#mText').textContent = p.t;
