@@ -290,6 +290,21 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
+**Funguje to aj na Microsoft Surface Duo (skladací telefón s dvoma obrazovkami)?**
+Od verzie **2.4.0** áno. Pri bežnom používaní na jednej obrazovke
+(540×720, resp. 720×540 na šírku) web funguje úplne normálne — overené
+na oboch orientáciách, bez vodorovného pretekania obsahu. Pre vzácny
+prípad, že niekto prehliadač roztiahne cez **obe** obrazovky naraz,
+pridaná CSS (`@media (horizontal-viewport-segments: 2)` s
+`env(viewport-segment-left 1 0)`, oficiálne štandardizované CSS
+Viewport Segments API) obmedzí šírku obsahu presne po hranicu druhej
+obrazovky — takže sa nič dôležité (navigácia, text, tlačidlá)
+nerozdelí cez pánt uprostred. Na všetkých ostatných zariadeniach a
+prehliadačoch sa toto pravidlo jednoducho vôbec neuplatní. Tento
+roztiahnutý režim cez obe obrazovky sa nedá otestovať bez reálneho
+zariadenia (bežný prehliadač ho nevie simulovať) — ak by napriek
+tomu niečo sedelo zle, daj vedieť.
+
 **Navigácia teraz vyzerá ako „plávajúca kapsula”.**
 Od verzie **2.3.0** lišta `[ideanet_nav]` už nie je pás na celú šírku
 obrazovky — je od okrajov odsadená a vznáša sa nad obsahom ako

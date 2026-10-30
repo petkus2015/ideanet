@@ -62,6 +62,19 @@
 
 .ib-wrap{width:min(100% - 40px,1240px);margin-inline:auto;position:relative;z-index:1}
 
+/* Skladacie zariadenia s dvoma obrazovkami vedľa seba (napr. Microsoft
+   Surface Duo). Keď je prehliadač roztiahnutý cez obe obrazovky,
+   CSS Viewport Segments API nám cez env(viewport-segment-left 1 0)
+   povie, kde presne začína druhá obrazovka — teda kde je pánt/seam.
+   Obmedzením šírky na túto hodnotu sa celý obsah (plávajúca
+   navigácia aj všetky sekcie, ktoré používajú .ib-wrap) zmestí celý
+   na prvú obrazovku a nikdy neprechádza cez pánt. Na všetkých
+   ostatných zariadeniach a prehliadačoch sa toto pravidlo vôbec
+   nezhoduje a nič nemení. */
+@media (horizontal-viewport-segments: 2) {
+  .ib-wrap{width:min(100% - 40px,env(viewport-segment-left 1 0,1240px))}
+}
+
 /* ── typografické stavebné kamene ─────────────────────────── */
 p.ib-kicker{
   display:inline-flex;align-items:center;gap:9px;margin:0 0 16px;
