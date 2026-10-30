@@ -392,6 +392,13 @@
         nav.classList.remove('is-open');
         burger.setAttribute('aria-expanded', 'false');
       }));
+      const scrim = $('.ib-nav__scrim', nav);
+      if (scrim) {
+        scrim.addEventListener('click', () => {
+          nav.classList.remove('is-open');
+          burger.setAttribute('aria-expanded', 'false');
+        });
+      }
     }
 
     /* plynulý skrol na kotvu + zatvorenie mobilného menu */

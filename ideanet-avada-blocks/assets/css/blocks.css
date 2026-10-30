@@ -463,14 +463,24 @@ p.ib-form__status{margin-top:11px;font-size:13.5px;color:var(--ib-accent-2) !imp
 .ib-nav[data-sticky="yes"]{position:sticky;top:clamp(10px,2vw,18px)}
 .ib-nav__progress{position:absolute;left:28px;right:28px;bottom:0;height:2px;overflow:hidden;pointer-events:none}
 .ib-nav__progress i{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--ib-accent),rgba(var(--ib-accent-soft),.4))}
+/* Vizuálne pozadie kapsuly (sklo/blur/okraj/tieň) je zámerne na
+   ::before, nie priamo na .ib-nav__bar — backdrop-filter na
+   elemente vytvára nový "containing block" pre position:fixed
+   potomkov (presne ako transform), čo by uväznilo mobilné
+   rozbaľovacie menu (position:fixed, pozri nižšie) vo vnútri malej
+   lišty hore namiesto toho, aby sa prichytilo k spodku obrazovky. */
 .ib-nav__bar{
-  display:flex;align-items:center;gap:clamp(16px,3vw,36px);padding:13px 24px;
-  border-radius:999px;background:rgba(10,7,12,.72);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--ib-line-2);box-shadow:var(--ib-sh-1);
-  transition:padding .3s var(--ib-ease),background .3s,box-shadow .3s;
+  position:relative;display:flex;align-items:center;gap:clamp(16px,3vw,36px);padding:13px 24px;
+  transition:padding .3s var(--ib-ease);
 }
-.ib-nav.is-scrolled .ib-nav__bar{padding:9px 22px;background:rgba(10,7,12,.92);box-shadow:var(--ib-sh-2)}
+.ib-nav__bar::before{
+  content:'';position:absolute;inset:0;z-index:-1;border-radius:999px;
+  background:rgba(10,7,12,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--ib-line-2);box-shadow:var(--ib-sh-1);pointer-events:none;
+  transition:background .3s,box-shadow .3s;
+}
+.ib-nav.is-scrolled .ib-nav__bar{padding:9px 22px}
+.ib-nav.is-scrolled .ib-nav__bar::before{background:rgba(10,7,12,.92);box-shadow:var(--ib-sh-2)}
 .ib-nav__brand{display:flex;align-items:center;gap:11px;flex:none;color:var(--ib-ink) !important;text-decoration:none !important;transition:opacity .2s}
 .ib-nav__brand:hover{opacity:.8}
 .ib-nav__logo{height:34px;width:auto;display:block;border-radius:8px;transition:height .3s var(--ib-ease)}
@@ -506,11 +516,23 @@ a.ib-nav__link.is-active{color:var(--ib-ink) !important}
 .ib-nav.is-open .ib-nav__burger span:nth-child(2){opacity:0}
 .ib-nav.is-open .ib-nav__burger span:nth-child(3){transform:translateY(-6.6px) rotate(-45deg)}
 @media (max-width:860px){
+  /* Mobilné menu je "bottom sheet" — panel prilepený dole na
+     obrazovke (nie rozbaľovanie spod lišty hore), s tmavým scrimom
+     za sebou. Bežný vzor v mobilných appkách, lepšie dosiahnuteľné
+     palcom ako položky hore pri notifikačnej lište. */
+  .ib-nav__scrim{
+    position:fixed;inset:0;z-index:1;background:rgba(4,3,5,.6);
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility .25s;
+  }
+  .ib-nav.is-open .ib-nav__scrim{opacity:1;visibility:visible;pointer-events:auto}
+  .ib-nav__bar{position:relative;z-index:2}
   .ib-nav__links{
-    position:absolute;left:0;right:0;top:calc(100% + 8px);flex-direction:column;align-items:flex-start;gap:2px;
-    padding:10px clamp(20px,5vw,40px) 18px;margin:0;background:rgba(10,7,12,.98);
-    border:1px solid var(--ib-line-2);border-radius:20px;box-shadow:var(--ib-sh-2);
-    opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .25s,transform .25s,visibility .25s;
+    position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));top:auto;
+    z-index:2;flex-direction:column;align-items:stretch;gap:2px;
+    padding:14px clamp(20px,5vw,32px) 18px;margin:0;background:rgba(10,7,12,.98);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--ib-line-2);border-radius:22px;box-shadow:var(--ib-sh-2);
+    opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .25s,transform .25s,visibility .25s;
   }
   .ib-nav.is-open .ib-nav__links{opacity:1;visibility:visible;transform:none}
   a.ib-nav__link{width:100%;padding:11px 0}

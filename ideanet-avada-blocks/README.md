@@ -317,6 +317,17 @@ vidíte v poli „value” v builderi; stačí ho prepísať vlastným.
 
 ## Riešenie problémov
 
+**Mobilné menu sa má rozbaľovať dole, nie hore.**
+Od verzie **3.2.0** je to tak — po kliknutí na hamburger sa menu
+zobrazí ako panel prilepený k spodku obrazovky (bežný mobilný vzor,
+„bottom sheet”), s tmavým prekrytím zvyšku stránky za ním. Klik na
+toto prekrytie menu zavrie, rovnako ako klik na konkrétnu položku.
+Pri tejto oprave sa zároveň odhalila a opravila súvisiaca chyba:
+sklenené pozadie plávajúcej lišty (`backdrop-filter`) by inak
+„uväznilo” `position:fixed` panel vo vnútri malej lišty hore namiesto
+skutočného spodku obrazovky — vizuálne pozadie kapsuly je teraz na
+samostatnej vrstve (`::before`), nie priamo na lište.
+
 **Kde sú cenové balíky? V Cenníku vidím len kalkulačku.**
 Presne tak — od verzie **3.0.0** je to zámer. Blok sa premenoval na
 **Ferové ceny** a namiesto karát s balíkmi zobrazuje interaktívnu

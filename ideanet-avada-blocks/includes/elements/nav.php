@@ -132,6 +132,7 @@ class Ideanet_Blocks_Nav {
 		ob_start();
 		?>
 		<header class="ib-scope ib-nav" data-sticky="<?php echo esc_attr( $sticky ); ?>">
+			<span class="ib-nav__scrim" aria-hidden="true"></span>
 			<div class="ib-wrap ib-nav__bar">
 				<span class="ib-nav__progress" aria-hidden="true"><i></i></span>
 				<?php if ( $args['logo'] || $args['brand_text'] || $args['name_text'] ) : ?>
