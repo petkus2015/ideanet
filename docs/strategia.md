@@ -220,7 +220,7 @@ Video z konferencie, ktoré príde o týždeň, je archív. Video, ktoré vyjde
 ešte v ten večer, zachytí moment, keď majú ľudia akciu v hlave.
 
 Preto si môžeš pýtať viac než za obyčajný Reel — a preto má same-day
-príplatok 50 %.
+príplatok 30 %.
 
 ---
 

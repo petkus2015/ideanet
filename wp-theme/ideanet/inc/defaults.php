@@ -165,7 +165,7 @@ function ideanet_defaults() {
 		'calc_mode_day'    => 'Celý deň — som u vás do 8 hodín',
 		'calc_modes_hint'  => 'Pre eventy, otvorenia a natáčacie dni, keď treba byť k dispozícii celý čas. V cene sú 2 Reels pri poldni a 3 pri celom dni, každý ďalší + 95 €.',
 		'calc_addons_label' => 'Doplnky',
-		'calc_addons'      => "Same-day dodanie — ešte v deň natáčania | 50 | percento\nRAW materiál z natáčania | 20 | jednorazovo",
+		'calc_addons'      => "Same-day dodanie — ešte v deň natáčania | 30 | percento\nRAW materiál z natáčania | 20 | jednorazovo",
 		'calc_km_label'    => 'Vzdialenosť mimo Bratislavy, Žiliny a Brna <i>(km jedným smerom)</i>',
 		'calc_km_hint'     => '{mesta} sú v cene. Mimo nich {sadzba} € / km tam aj späť, alebo podľa dohody.',
 		'calc_out_label'   => 'Orientačná cena',

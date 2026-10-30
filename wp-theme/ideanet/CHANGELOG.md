@@ -8,6 +8,12 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.3.0
+
+- Príplatok za dodanie v deň natáčania je 30 % namiesto 50 %. Zmenené
+  všade, kde sa spomínal — v kalkulačke, v podmienkach aj v príklade
+  (z 390 € je tak 507 €, nie 585 €).
+
 ## 1.2.0
 
 **Kalkulačka**

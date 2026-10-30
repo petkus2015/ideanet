@@ -908,7 +908,9 @@
         if (!boxes[i] || !boxes[i].checked) return;
         if (a.kind === 'mesacne') { mesacne += a.amount; side.push([a.label, '+ ' + eur(a.amount) + ' ' + T.monthly]); return; }
         const fee = a.kind === 'percento' ? base * (a.amount / 100) : a.amount;
-        rows.push([a.label, eur(fee)]);
+        /* Pri percentuálnom doplnku pripíšeme aj sadzbu — zo samotnej
+           sumy sa nedá zistiť, z čoho vyšla. */
+        rows.push([a.kind === 'percento' ? `${a.label} (+${a.amount} %)` : a.label, eur(fee)]);
         total += fee;
       });
 

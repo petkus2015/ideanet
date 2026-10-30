@@ -153,7 +153,7 @@ function ideanet_seed() {
 	$podmienky = array(
 		array( 'Revízie', '1 kolo v cene, pri PRO a pri grafike dve. Ďalšie úpravy 40 € / h pre firmy, 35 € / h pre agentúry.' ),
 		array( 'Dodanie', 'Video do 24 hodín od natáčania. Grafika a podcast majú vlastné termíny — od 3 do 10 pracovných dní podľa rozsahu.' ),
-		array( 'Same-day', 'Dodanie ešte v deň natáčania + 50 %. Z 390 € je tak 585 €.' ),
+		array( 'Same-day', 'Dodanie ešte v deň natáčania + 30 %. Z 390 € je tak 507 €.' ),
 		array( 'Doprava', 'Bratislava, Žilina a Brno sú v cene. Mimo nich 0,40 € / km tam aj späť, alebo podľa dohody.' ),
 		array( 'Storno', 'Nad 48 h zdarma, 24 – 48 h 30 %, pod 24 h 50 %, nedostavenie 100 %.' ),
 		array( 'Surový materiál', 'Zábery z natáčania nie sú v cene. Na požiadanie od + 80 €.' ),

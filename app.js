@@ -711,7 +711,7 @@
   if (calc) {
     const FIRST = 160, NEXT = 95,
           HALF = 280, HALF_REELS = 2, DAY = 420, DAY_REELS = 3,
-          KM_RATE = .4, RAW = 20, RUSH = .5;
+          KM_RATE = .4, RAW = 20, RUSH = .3;
 
     const reels  = $('#calcReels'), reelsOut = $('#reelsOut'),
           rushBox = $('#calcSameDay'),
@@ -763,7 +763,7 @@
         eur(extra * NEXT)]);
 
       const rushFee = rushBox.checked ? base * RUSH : 0;
-      if (rushFee) rows.push(['Same-day dodanie (+50 %)', eur(rushFee)]);
+      if (rushFee) rows.push(['Same-day dodanie (+30 %)', eur(rushFee)]);
 
       const rawFee = rawBox.checked ? RAW : 0;
       if (rawFee) rows.push(['RAW materiál', eur(rawFee)]);

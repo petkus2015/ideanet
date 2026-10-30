@@ -118,21 +118,23 @@ Kalkulačka počíta jednorazovú produkciu z počtu Reels:
 Prírastok 95 € nie je náhodný — je odvodený z cenníka tak, aby
 3 Reels vyšli presne na 350 €, ako sú uvedené v ponuke.
 
-Doplnky sú zaškrtávacie: same-day (+50 %), RAW (+80 €), grafika na event
-(+180 €) a správa sociálnych sietí (+300 €/mes.). Tá posledná sa do
-jednorazovej sumy nesčítava a uvádza sa zvlášť, lebo je mesačná.
+Doplnky sú zaškrtávacie: same-day (+30 %) a RAW materiál (+20 €).
 
 Sadzby sú konštanty na začiatku bloku *9) KALKULAČKA* v `app.js`:
 
 ```js
-const FIRST = 160, NEXT = 95, DAY = 420, DAY_REELS = 3,
-      KM_RATE = .4, RAW = 80, GRAPHICS = 180, SOCIAL = 300, RUSH = .5;
+const FIRST = 160, NEXT = 95,
+      HALF = 280, HALF_REELS = 2, DAY = 420, DAY_REELS = 3,
+      KM_RATE = .4, RAW = 20, RUSH = .3;
 ```
 
 ## Cenník
 
-Ceny sú v `index.html` uvedené priamo v texte, kalkulačka ich číta
-z atribútov `value` v `#calcPkg`. **Pri zmene ceny upravte obe miesta.**
+Sekcia **Férové ceny** na stránke obsahuje kalkulačku, nie balíky. Celý
+cenník s balíkmi je v ponukách v priečinku `ponuka/`. Ceny sú na oboch
+miestach napísané priamo v texte — **pri zmene ceny upravte obe miesta.**
+(Vo WordPress téme to tak nie je: tam sú balíky položky obsahu a ťahá si
+ich z nich aj formulár aj ponuka.)
 
 **Firmy — mesačne:** START 390 € · GROW 690 € · PRO 990 €
 **Firmy — jednorazovo:** 1 Reel 160 € · 3 Reels 350 €
@@ -143,20 +145,8 @@ z atribútov `value` v `#calcPkg`. **Pri zmene ceny upravte obe miesta.**
 **Grafika na event:** 180 € za sadu formátov, 2 kolá revízií
 **Vizuály a identita:** Vizuály pre siete 280 € · Vizuálna identita 690 €
 
-Sadzby v kalkulačke sú konštanty na začiatku bloku *9) KALKULAČKA* v `app.js`:
-
-```js
-const KM_RATE = .4, HOUR_RATE = 60, RAW_FEE = 80;
-```
-
-Príplatky za expres (30 % / 50 %) sú v `value` atribútoch `#calcSpeed`.
-
-## Prepínač cenníka
-
-Tri panely (`#panel-firmy`, `#panel-agentury`, `#panel-eventy`) prepína
-`role="tablist"` — myšou aj šípkami ← →. Karty v sekcii Služby majú
-`data-tab` a otvoria príslušný pohľad. Každé tlačidlo balíka nesie
-`data-package` — po kliknutí predvyplní výber v kontaktnom formulári.
+Každé tlačidlo balíka v ponukách nesie `data-package` — po kliknutí
+predvyplní výber v kontaktnom formulári.
 
 ## Stratégia a ponuka v textovej podobe
 
@@ -183,8 +173,8 @@ Obe majú `<meta name="robots" content="noindex">` — sú určené na priame
 poslanie, nie do vyhľadávania.
 
 **Pozor pri úprave cien:** každý súbor si nesie vlastnú kópiu štýlov aj čísel.
-Pri zmene cenníka treba upraviť `index.html`, `#calcPkg` v `index.html`
-a obe ponuky v `ponuka/`.
+Pri zmene cenníka treba upraviť obe ponuky v `ponuka/`; sadzby
+kalkulačky sú v `app.js`.
 
 ## Interakcie portfólia
 
@@ -250,7 +240,7 @@ Geometria kariet sa meria raz (`measure()`), nie pri každom snímku —
 ## Prispôsobenie
 
 - **Farby, rádiusy, šírka obsahu** — premenné v `:root` v `styles.css`.
-- **Texty, ceny, kontakt** — priamo v `index.html` (ceny aj v `#calcPkg`).
+- **Texty a kontakt** — priamo v `index.html`; sadzby kalkulačky v `app.js`.
 - **Formulár** momentálne otvára e-mailového klienta (`mailto:`).
   Pre odosielanie na server nahraďte záver `submit` handlera v `app.js`
   volaním `fetch()` na váš endpoint.

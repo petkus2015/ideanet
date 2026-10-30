@@ -225,9 +225,9 @@ potrebných podkladov. Výnimka je podcast — celá epizóda do 3 pracovných d
 | Termín | Príplatok |
 |---|---|
 | do 24 hodín | v cene |
-| same-day, ešte v deň natáčania | + 50 % |
+| same-day, ešte v deň natáčania | + 30 % |
 
-Príklad: produkcia za 390 € stojí v same-day režime 585 €.
+Príklad: produkcia za 390 € stojí v same-day režime 507 €.
 
 ### Doprava
 
