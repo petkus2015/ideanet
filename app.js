@@ -711,12 +711,11 @@
   if (calc) {
     const FIRST = 160, NEXT = 95,
           HALF = 280, HALF_REELS = 2, DAY = 420, DAY_REELS = 3,
-          KM_RATE = .4, RAW = 80, GRAPHICS = 180, VISUALS = 280, SOCIAL = 300, RUSH = .5;
+          KM_RATE = .4, RAW = 20, RUSH = .5;
 
     const reels  = $('#calcReels'), reelsOut = $('#reelsOut'),
           rushBox = $('#calcSameDay'),
-          rawBox = $('#calcRaw'),   grBox    = $('#calcGraphics'),
-          visBox = $('#calcVisuals'), socBox  = $('#calcSocial'), km = $('#calcKm'),
+          rawBox = $('#calcRaw'), km = $('#calcKm'),
           shootHint = $('#shootHint');
 
     const outTotal = $('#calcTotal'), outUnit = $('#calcUnit'), outPer = $('#calcPer'),
@@ -769,29 +768,18 @@
       const rawFee = rawBox.checked ? RAW : 0;
       if (rawFee) rows.push(['RAW materiál', eur(rawFee)]);
 
-      const grFee = grBox.checked ? GRAPHICS : 0;
-      if (grFee) rows.push(['Grafika na event', eur(grFee)]);
-
-      const visFee = visBox.checked ? VISUALS : 0;
-      if (visFee) rows.push(['Vizuály pre siete', eur(visFee)]);
-
       const kmOne = Math.max(0, +km.value || 0);
       const travel = kmOne * 2 * KM_RATE;
       if (travel) rows.push([`Doprava — ${kmOne * 2} km`, eur(travel)]);
 
-      const total = base + rushFee + rawFee + grFee + visFee + travel;
-
-      /* správa sociálnych sietí je mesačná, preto sa do jednorazovej
-         sumy nesčítava a uvádza sa zvlášť */
-      const social = socBox.checked ? SOCIAL : 0;
+      const total = base + rushFee + rawFee + travel;
 
       outRows.innerHTML = rows
         .map(([l, v, cls]) => `<li class="${cls || ''}"><span>${l}</span><b>${v}</b></li>`)
-        .join('') + (social
-          ? `<li class="is-side"><span>Správa sociálnych sietí</span><b>+ ${eur(social)} / mes.</b></li>` : '');
+        .join('');
 
       outTotal.textContent = Math.round(total).toLocaleString('sk-SK');
-      outUnit.textContent  = 'jednorazovo, bez DPH';
+      outUnit.textContent  = 'konečná cena';
       outPer.innerHTML = n === 1
         ? 'Jeden Reel od natočenia po dodanie.'
         : `Vychádza to na <b>${eur(total / n)}</b> za jeden Reel.`;
@@ -806,8 +794,7 @@
       /* podklad pre dopyt */
       outCta.dataset.package = 'Vlastná zostava podľa kalkulačky';
       outCta.dataset.summary = rows.map(([l, v]) => `${l}: ${v}`).join('\n')
-        + `\nSpolu (orientačne): ${eur(total)}`
-        + (social ? `\nSpráva sociálnych sietí: + ${eur(social)} / mesiac` : '');
+        + `\nSpolu (orientačne): ${eur(total)}`;
     };
 
     /* krokovanie tlačidlami aj ťahaním */

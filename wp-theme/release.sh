@@ -20,6 +20,17 @@ if ! echo "$VERZIA" | grep -qE '^[0-9]+(\.[0-9]+)*$'; then
 fi
 
 STARA=$(sed -n 's/^Version: *//p' theme-header.css | head -1)
+
+# Bez zápisu v changelogu sa po čase nedá zistiť, čím sa vydania líšia.
+if ! grep -q "^## $VERZIA$" ideanet/CHANGELOG.md; then
+  echo "V ideanet/CHANGELOG.md chýba oddiel pre verziu $VERZIA. Najprv napíšte, čo sa zmenilo." >&2
+  exit 1
+fi
+if [ "$STARA" = "$VERZIA" ]; then
+  echo "Verzia $VERZIA je už nastavená. Zvýšte číslo, inak sa vydania nedajú rozlíšiť." >&2
+  exit 1
+fi
+
 echo "Verzia $STARA → $VERZIA"
 
 sed -i.bak "s/^Version: .*/Version: $VERZIA/" theme-header.css && rm -f theme-header.css.bak

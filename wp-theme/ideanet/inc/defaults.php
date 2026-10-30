@@ -79,7 +79,7 @@ function ideanet_defaults() {
 
 		'cennik_eyebrow' => 'Cenník',
 		'cennik_title'   => 'Férové ceny',
-		'cennik_note'    => 'Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video vrátane natáčania, strihu aj dodania. Orientačný odhad bez DPH, nie záväzná ponuka. Celý cenník aj s balíkmi je v ponuke na stiahnutie.',
+		'cennik_note'    => 'Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video vrátane natáčania, strihu aj dodania. Nie som platca DPH, k cene sa nič nepripočítava. Celý cenník aj s balíkmi je v ponuke na stiahnutie.',
 
 		'podmienky_eyebrow' => 'Podmienky',
 		'podmienky_title'   => 'Nič skryté v malom písme',
@@ -165,11 +165,11 @@ function ideanet_defaults() {
 		'calc_mode_day'    => 'Celý deň — som u vás do 8 hodín',
 		'calc_modes_hint'  => 'Pre eventy, otvorenia a natáčacie dni, keď treba byť k dispozícii celý čas. V cene sú 2 Reels pri poldni a 3 pri celom dni, každý ďalší + 95 €.',
 		'calc_addons_label' => 'Doplnky',
-		'calc_addons'      => "Same-day dodanie — ešte v deň natáčania | 50 | percento\nRAW materiál z natáčania | 80 | jednorazovo\nGrafika na event — vizuál a formáty pre siete | 180 | jednorazovo\nVizuály pre siete — sada šablón vo vašich farbách | 280 | jednorazovo\nSpráva sociálnych sietí | 300 | mesacne",
+		'calc_addons'      => "Same-day dodanie — ešte v deň natáčania | 50 | percento\nRAW materiál z natáčania | 20 | jednorazovo",
 		'calc_km_label'    => 'Vzdialenosť mimo Bratislavy, Žiliny a Brna <i>(km jedným smerom)</i>',
 		'calc_km_hint'     => '{mesta} sú v cene. Mimo nich {sadzba} € / km tam aj späť, alebo podľa dohody.',
 		'calc_out_label'   => 'Orientačná cena',
-		'calc_unit'        => 'jednorazovo, bez DPH',
+		'calc_unit'        => 'konečná cena',
 		'calc_cta'         => 'Poslať tento dopyt',
 		'calc_disc'        => 'Presnú cenu potvrdím po krátkom hovore — závisí od miesta, rozsahu a termínu.',
 		'calc_tip_from'    => '4',

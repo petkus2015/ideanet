@@ -176,6 +176,18 @@ balíkov ako cenník, takže sa to nemá ako rozísť.
 Pri tlači (Ctrl+P → Uložiť ako PDF) sa tmavé pozadie, menu aj tlačidlá
 vypnú a strana vyjde čitateľná na bielom papieri.
 
+## Ktorú verziu mám nainštalovanú
+
+Číslo verzie je v administrácii v **IDEANET → Kde čo upraviť → Verzia
+témy …** a vo **Vzhľad → Témy** pod názvom témy. Keď nahrávate novú
+tému cez Vzhľad → Témy → Pridať novú → Nahrať tému, WordPress ukáže obe
+čísla vedľa seba — súčasné a nahrávané —, takže je vidieť, čo sa čím
+nahrádza.
+
+Čo sa v ktorej verzii zmenilo, je v [`ideanet/CHANGELOG.md`](ideanet/CHANGELOG.md).
+Ten súbor sa inštaluje spolu s témou, takže sa dá prečítať aj priamo
+na hostingu.
+
 ## Aktualizácie
 
 Téma nie je v katalógu na wordpress.org, ale aktualizuje sa rovnako ako
@@ -200,7 +212,10 @@ Ukážkový obsah sa znovu nepridá.
 
 Skript zmení verziu v hlavičke témy, poskladá `style.css`, zabalí tému
 do `wp-theme/ideanet-theme.zip` a vypíše, čo ďalej — zapísať zmenu
-a vytvoriť vydanie:
+a vytvoriť vydanie. **Odmietne pracovať**, keď v
+`ideanet/CHANGELOG.md` chýba oddiel pre tú verziu alebo keď sa číslo
+oproti poslednému vydaniu nezmenilo — inak by sa vydania nedali
+rozlíšiť:
 
 ```bash
 git add -A && git commit -m "Téma 1.1.0" && git push
