@@ -7,7 +7,12 @@
     gastro: '<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 9h2a2 2 0 0 1 0 5h-2M8 3v2M12 3v2"/>',
     restauracie: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-3 4-3 7h3v11"/>',
     aktivity: '<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
-    rodina: '<circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8 15c1 1.5 2.5 2 4 2s3-.5 4-2"/>'
+    rodina: '<circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8 15c1 1.5 2.5 2 4 2s3-.5 4-2"/>',
+    walk: '<circle cx="13" cy="4.5" r="1.6"/><path d="M10 21l2-6-3-3 2-5 3 3h3M7 12l2-4"/>',
+    bus: '<path d="M5 4h14v13H5zM5 11h14M8 20v-3M16 20v-3M8 14h.01M16 14h.01"/>',
+    taxi: '<path d="M5 16v-4l2-5h10l2 5v4zM5 16v3h3v-3M16 16v3h3v-3M8 12h8M10 4h4"/>',
+    train: '<path d="M7 3h10v13H7zM7 10h10M9 21l2-5M15 21l-2-5M10 13h.01M14 13h.01"/>',
+    nav: '<path d="M3 11l18-8-8 18-2-8z"/>'
   };
 
   const CATS = [
@@ -20,6 +25,21 @@
     { id: 'aktivity', name: 'Zaujímavé aktivity', desc: 'Plavby, bicykel, rafting, prehliadky a sezónne akcie.', c: '#0f766e', c2: '#2dd4bf' },
     { id: 'rodina', name: 'Rodina a zábava', desc: 'Zvieratá, voda a aktivity pre deti aj dospelých.', c: '#0891b2', c2: '#5eead4' }
   ];
+
+  const GROUPS = [
+    { id: 'vidiet', name: 'Čo vidieť', desc: 'Pamiatky, výhľady, príroda a umenie.', cats: ['pamiatky', 'vyhlady', 'priroda', 'kultura'], c: '#1f5eff' },
+    { id: 'robit', name: 'Čo robiť', desc: 'Aktivity, výlety a zábava pre rodiny.', cats: ['aktivity', 'rodina'], c: '#0f766e' },
+    { id: 'jest', name: 'Jedlo a pitie', desc: 'Kaviarne, trhy, reštaurácie a bary.', cats: ['gastro', 'restauracie'], c: '#e11d48' }
+  ];
+  const WALK = ['Michalská brána','Katedrála sv. Martina','Primaciálny palác','Stará radnica','Modrý kostolík','Bratislavský hrad','Vyhliadka Bratislavského hradu','Slovenská národná galéria','Slovenské národné divadlo','Sochy v uliciach','Stará tržnica','Kaffee Mayer','Hviezdoslavovo námestie','Medická záhrada','Obchodná ulica','Dunajské nábrežie','Eurovea','Pešie prehliadky mesta','Prešporáčik','Vianočné trhy','Bratislavský Meštiansky Pivovar','Slovak Pub','Plavba loďou po Dunaji'];
+  const FAR = ['Danubiana Meulensteen Art Museum','Divoká voda Čunovo','Rusovce a kaštieľ','Cyklotrasa do Hainburgu','Malokarpatská vínna cesta','Víkendový výlet do Viedne'];
+  const TRAIN = ['Malokarpatská vínna cesta','Víkendový výlet do Viedne','Cyklotrasa do Hainburgu'];
+  const GO = {
+    walk: 'Z centra sa dá dôjsť pešo.',
+    mhd: 'Najpohodlnejšie MHD alebo taxi.',
+    far: 'Mimo centra: použite MHD, vlak alebo taxi.'
+  };
+  const goOf = n => WALK.includes(n) ? 'walk' : FAR.includes(n) ? 'far' : 'mhd';
 
   const PLACES = [
     { n: 'Bratislavský hrad', cat: 'pamiatky', a: 'Staré Mesto', t: 'Biela dominanta nad Dunajom. Z nádvoria a vyhliadkových terás je výhľad na mesto aj na rakúsku hranicu. V areáli sú expozície Slovenského národného múzea.', tags: ['výhľad', 'história', 'múzeum'] },
@@ -65,78 +85,85 @@
 
   const $ = s => document.querySelector(s);
   const catOf = id => CATS.find(c => c.id === id);
+  const groupOf = catId => GROUPS.find(g => g.cats.includes(catId));
   const icon = id => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[id]}</svg>`;
   const esc = s => s.replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+  const q = p => encodeURIComponent(p.n + ' Bratislava');
+  const dir = (p, mode) => 'https://www.google.com/maps/dir/?api=1&destination=' + q(p) + (mode ? '&travelmode=' + mode : '');
 
   let favs = new Set();
   try { favs = new Set(JSON.parse(localStorage.getItem('ba-favs') || '[]')); } catch (e) {}
   const saveFavs = () => { try { localStorage.setItem('ba-favs', JSON.stringify([...favs])); } catch (e) {} };
 
-  const state = { cat: 'all', q: '', onlyFavs: false };
+  const state = { group: 'all', cat: 'all', q: '', onlyFavs: false };
 
-  function renderCats() {
-    $('#catGrid').innerHTML = CATS.map(c => {
-      const n = PLACES.filter(p => p.cat === c.id).length;
-      return `<button class="cat" data-cat="${c.id}" style="--c:${c.c}">
-        <span class="ico">${icon(c.id)}</span><h3>${c.name}</h3><p>${c.desc}</p><small>${n} miest →</small></button>`;
+  function renderGroups() {
+    $('#groupGrid').innerHTML = GROUPS.map(g => {
+      const cats = g.cats.map(catOf);
+      const n = PLACES.filter(p => g.cats.includes(p.cat)).length;
+      return `<section class="group" style="--c:${g.c}" id="g-${g.id}">
+        <header><h3>${g.name}</h3><p>${g.desc}</p></header>
+        <div class="sub">${cats.map(c => `<button class="cat" data-group="${g.id}" data-cat="${c.id}" style="--c:${c.c}">
+          <span class="ico">${icon(c.id)}</span><span><b>${c.name}</b><small>${PLACES.filter(p => p.cat === c.id).length} miest</small></span></button>`).join('')}</div>
+        <button class="more" data-group="${g.id}" data-cat="all">Všetko z kategórie (${n}) →</button></section>`;
     }).join('');
   }
 
-  function renderChips() {
-    const all = [{ id: 'all', name: 'Všetko' }, ...CATS];
-    $('#chips').innerHTML = all.map(c =>
-      `<button class="chip" role="tab" data-cat="${c.id}" aria-selected="${state.cat === c.id}">${c.name}</button>`).join('');
+  function renderTabs() {
+    const g = [{ id: 'all', name: 'Všetko' }, ...GROUPS];
+    $('#tabs').innerHTML = g.map(x => `<button class="tab" role="tab" data-group="${x.id}" data-cat="all" aria-selected="${state.group === x.id}">${x.name}</button>`).join('');
+    const cats = state.group === 'all' ? CATS : CATS.filter(c => GROUPS.find(g => g.id === state.group).cats.includes(c.id));
+    $('#chips').innerHTML = cats.length > 1 ? [{ id: 'all', name: 'Všetky podkategórie' }, ...cats].map(c =>
+      `<button class="chip" data-group="${state.group}" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">${c.name}</button>`).join('') : '';
   }
 
   function renderCards() {
-    const q = state.q.trim().toLowerCase();
+    const text = state.q.trim().toLowerCase();
     const list = PLACES.filter(p =>
+      (state.group === 'all' || groupOf(p.cat).id === state.group) &&
       (state.cat === 'all' || p.cat === state.cat) &&
       (!state.onlyFavs || favs.has(p.n)) &&
-      (!q || (p.n + ' ' + p.a + ' ' + p.t + ' ' + p.tags.join(' ')).toLowerCase().includes(q)));
+      (!text || (p.n + ' ' + p.a + ' ' + p.t + ' ' + p.tags.join(' ')).toLowerCase().includes(text)));
     $('#cards').innerHTML = list.map(p => {
       const c = catOf(p.cat);
-      return `<article class="card-wrap"><button class="card" data-n="${esc(p.n)}" style="--c:${c.c};--c2:${c.c2}">
-        <div class="card-art">${icon(p.cat)}<span class="badge">${c.name}</span></div>
-        <div class="card-body"><h3>${esc(p.n)}</h3><div class="area">${esc(p.a)}</div><p>${esc(p.t)}</p></div></button></article>`;
+      return `<article class="card-wrap">
+        <button class="card" data-n="${esc(p.n)}" style="--c:${c.c};--c2:${c.c2}">
+          <div class="card-art">${icon(p.cat)}<span class="badge">${c.name}</span></div>
+          <div class="card-body"><h3>${esc(p.n)}</h3><div class="area">${esc(p.a)}</div><p>${esc(p.t)}</p></div></button>
+        <button class="heart" data-fav="${esc(p.n)}" aria-label="Uložiť ${esc(p.n)}" aria-pressed="${favs.has(p.n)}"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 6c-2.3 4.4-9.3 9-9.3 9z"/></svg></button>
+        <a class="navbtn" href="${dir(p)}" target="_blank" rel="noopener" aria-label="Navigovať: ${esc(p.n)}">${icon('nav')}Navigovať</a></article>`;
     }).join('');
-    // srdiečka ako samostatné tlačidlá nad kartou
-    document.querySelectorAll('.card-wrap').forEach((w, i) => {
-      const p = list[i];
-      w.style.position = 'relative';
-      const b = document.createElement('button');
-      b.className = 'heart';
-      b.setAttribute('aria-label', 'Uložiť ' + p.n);
-      b.setAttribute('aria-pressed', favs.has(p.n));
-      b.dataset.fav = p.n;
-      b.style.cssText = 'right:12px;top:12px;position:absolute';
-      b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 6c-2.3 4.4-9.3 9-9.3 9z"/></svg>';
-      w.appendChild(b);
-    });
     $('#empty').hidden = list.length > 0;
-    const label = state.cat === 'all' ? 'všetkých kategórií' : catOf(state.cat).name;
-    $('#resultInfo').textContent = `${list.length} ${list.length === 1 ? 'miesto' : list.length < 5 && list.length > 0 ? 'miesta' : 'miest'} z ${label}${state.onlyFavs ? ' (uložené)' : ''}`;
+    const g = state.group === 'all' ? 'všetkých kategórií' : state.cat !== 'all' ? catOf(state.cat).name : GROUPS.find(x => x.id === state.group).name;
+    const n = list.length;
+    $('#resultInfo').textContent = `${n} ${n === 1 ? 'miesto' : n > 1 && n < 5 ? 'miesta' : 'miest'} z ${g}${state.onlyFavs ? ' (uložené)' : ''}`;
   }
 
   function updateFavUi() {
     $('#favCount').textContent = favs.size;
     $('#favToggle').setAttribute('aria-pressed', state.onlyFavs);
   }
-
-  function toggleFav(name) {
-    favs.has(name) ? favs.delete(name) : favs.add(name);
-    saveFavs(); updateFavUi(); renderCards();
-  }
+  function toggleFav(name) { favs.has(name) ? favs.delete(name) : favs.add(name); saveFavs(); updateFavUi(); renderCards(); }
 
   function openModal(name) {
     const p = PLACES.find(x => x.n === name), c = catOf(p.cat), m = $('#modal');
+    const go = goOf(p.n), train = TRAIN.includes(p.n);
     m.style.setProperty('--c', c.c); m.style.setProperty('--c2', c.c2);
     $('#mArt').innerHTML = icon(p.cat);
-    $('#mMeta').textContent = `${c.name} · ${p.a}`;
+    $('#mMeta').textContent = `${groupOf(p.cat).name} · ${c.name} · ${p.a}`;
     $('#mTitle').textContent = p.n;
     $('#mText').textContent = p.t;
     $('#mTags').innerHTML = p.tags.map(t => `<li>${esc(t)}</li>`).join('');
-    $('#mMap').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.n + ' Bratislava');
+    $('#mHint').textContent = GO[go];
+    const tile = (id, label, href, rec) => `<a class="mode${rec ? ' rec' : ''}" href="${href}" target="_blank" rel="noopener">${icon(id)}<span>${label}</span>${rec ? '<em>odporúčame</em>' : ''}</a>`;
+    $('#mModes').innerHTML =
+      tile('walk', 'Pešo', dir(p, 'walking'), go === 'walk') +
+      tile('bus', 'MHD', dir(p, 'transit'), go === 'mhd') +
+      tile('taxi', 'Taxi', 'https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[nickname]=' + q(p), go === 'far' && !train) +
+      (train ? tile('train', 'Vlak', 'https://www.zssk.sk/', go === 'far') : '');
+    $('#mTaxi').innerHTML = 'Taxi si objednáte v aplikácii <a href="https://bolt.eu/sk-sk/" target="_blank" rel="noopener">Bolt</a> alebo Uber. Cenu uvidíte pred jazdou.' + (train ? ' Vlaky odchádzajú z hlavnej stanice (Bratislava hl. st.) a stanice Petržalka.' : '');
+    $('#mNav').href = dir(p);
+    $('#mMap').href = 'https://www.google.com/maps/search/?api=1&query=' + q(p);
     const f = $('#mFav');
     const sync = () => { f.textContent = favs.has(p.n) ? 'Uložené ✓' : 'Uložiť'; };
     f.onclick = () => { toggleFav(p.n); sync(); };
@@ -144,19 +171,18 @@
     m.showModal();
   }
 
-  function setCat(id) {
-    state.cat = id; renderChips(); renderCards();
-  }
+  function setFilter(group, cat) { state.group = group; state.cat = cat; renderTabs(); renderCards(); }
 
   document.addEventListener('click', e => {
     const fav = e.target.closest('[data-fav]');
     if (fav) return toggleFav(fav.dataset.fav);
+    if (e.target.closest('.navbtn')) return;
     const card = e.target.closest('.card');
     if (card) return openModal(card.dataset.n);
-    const cat = e.target.closest('[data-cat]');
-    if (cat) {
-      setCat(cat.dataset.cat);
-      if (cat.classList.contains('cat')) $('#miesta').scrollIntoView({ behavior: 'smooth' });
+    const f = e.target.closest('[data-group]');
+    if (f) {
+      setFilter(f.dataset.group, f.dataset.cat);
+      if (f.closest('.group')) $('#miesta').scrollIntoView({ behavior: 'smooth' });
     }
     if (e.target === $('#modal')) $('#modal').close();
   });
@@ -166,5 +192,5 @@
     if (state.onlyFavs) $('#miesta').scrollIntoView({ behavior: 'smooth' });
   });
 
-  renderCats(); renderChips(); renderCards(); updateFavUi();
+  renderGroups(); renderTabs(); renderCards(); updateFavUi();
 })();

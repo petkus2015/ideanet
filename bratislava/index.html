@@ -14,10 +14,11 @@
         <span class="logo-mark"></span>Bratislava<b>.</b>
       </a>
       <nav class="nav-links" aria-label="Hlavná navigácia">
-        <a href="#kategorie">Kategórie</a>
-        <a href="#miesta">Miesta</a>
-        <a href="#den">Plán na 1 deň</a>
-        <a href="#tipy">Praktické tipy</a>
+        <a href="#g-vidiet">Čo vidieť</a>
+        <a href="#g-robit">Čo robiť</a>
+        <a href="#g-jest">Jedlo a pitie</a>
+        <a href="#doprava">Doprava</a>
+        <a href="#den">Plán dňa</a>
       </nav>
       <button class="fav-btn" id="favToggle" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.6-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 6c-2.3 4.4-9.3 9-9.3 9z"/></svg>
@@ -69,10 +70,10 @@
     <section id="kategorie" class="section">
       <div class="wrap">
         <div class="sec-head">
-          <h2>Vyberte si podľa nálady</h2>
-          <p>Osem kategórií, jedno mesto. Kliknutím zobrazíte len to, čo vás zaujíma.</p>
+          <h2>Čo hľadáte?</h2>
+          <p>Tri hlavné oblasti, osem podkategórií. Pri každom mieste nájdete navigáciu, MHD, taxi aj vlak.</p>
         </div>
-        <div class="cat-grid" id="catGrid"></div>
+        <div class="groups" id="groupGrid"></div>
       </div>
     </section>
 
@@ -88,13 +89,29 @@
             <input id="q" type="search" placeholder="Hľadať miesto, štvrť…" autocomplete="off">
           </label>
         </div>
-        <div class="chips" id="chips" role="tablist" aria-label="Filter kategórií"></div>
+        <div class="tabs" id="tabs" role="tablist" aria-label="Hlavné oblasti"></div>
+        <div class="chips" id="chips" aria-label="Podkategórie"></div>
         <div class="cards" id="cards"></div>
         <p class="empty" id="empty" hidden>Nič sme nenašli. Skúste iné slovo alebo kategóriu.</p>
       </div>
     </section>
 
-    <section id="den" class="section">
+    <section id="doprava" class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Ako sa pohybovať po meste</h2>
+          <p>Pri každom mieste vám ponúkneme trasu pešo, MHD, taxi alebo vlakom. Tu je prehľad.</p>
+        </div>
+        <div class="tips transport">
+          <article><h3>MHD</h3><p>Električky, trolejbusy a autobusy pokrývajú celé mesto. Lístok kúpite v automate alebo v mobilnej aplikácii. Spojenie vyhľadáte v mapách.</p><a href="https://www.google.com/maps" target="_blank" rel="noopener">Plánovač v mapách →</a></article>
+          <article><h3>Taxi</h3><p>Najjednoduchšie cez aplikáciu Bolt alebo Uber. Cenu uvidíte pred jazdou a platíte v aplikácii.</p><a href="https://bolt.eu/sk-sk/" target="_blank" rel="noopener">Bolt →</a></article>
+          <article><h3>Vlak</h3><p>Hlavná stanica a stanica Petržalka spájajú mesto s Viedňou, Pezinkom a ďalšími mestami. Poradie a ceny nájdete u dopravcu.</p><a href="https://www.zssk.sk/" target="_blank" rel="noopener">ZSSK →</a></article>
+          <article><h3>Pešo a bicykel</h3><p>Centrum je malé a dá sa prejsť pešo. Popri Dunaji vedú cyklotrasy do Čunova a Rakúska.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="den" class="section alt">
       <div class="wrap">
         <div class="sec-head">
           <h2>Bratislava za jeden deň</h2>
@@ -110,7 +127,7 @@
       </div>
     </section>
 
-    <section id="tipy" class="section alt">
+    <section id="tipy" class="section">
       <div class="wrap">
         <div class="sec-head">
           <h2>Praktické tipy</h2>
@@ -140,8 +157,15 @@
       <h3 id="mTitle"></h3>
       <p id="mText"></p>
       <ul id="mTags" class="tags"></ul>
+      <div class="how">
+        <h4>Ako sa tam dostať</h4>
+        <p id="mHint" class="hint"></p>
+        <div class="modes" id="mModes"></div>
+        <p class="note" id="mTaxi"></p>
+      </div>
       <div class="m-actions">
-        <a class="btn primary" id="mMap" target="_blank" rel="noopener">Zobraziť na mape</a>
+        <a class="btn primary" id="mNav" target="_blank" rel="noopener">Navigovať</a>
+        <a class="btn ghost" id="mMap" target="_blank" rel="noopener">Zobraziť na mape</a>
         <button class="btn ghost" id="mFav" type="button">Uložiť</button>
       </div>
     </div>
