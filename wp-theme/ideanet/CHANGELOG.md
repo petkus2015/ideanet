@@ -8,6 +8,11 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.5.0
+
+- Riadok nad nadpisom v úvode znie „Som videotvorca, grafik a content
+  creator · BA · ZA · Brno".
+
 ## 1.4.0
 
 - Nadpis sekcie s podmienkami je „Férové podmienky".

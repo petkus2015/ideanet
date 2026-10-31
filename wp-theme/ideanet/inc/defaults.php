@@ -30,7 +30,7 @@ function ideanet_defaults() {
 		'brand_co_bold'   => 'NET',
 
 		/* ── hero ──────────────────────────────── */
-		'hero_eyebrow'    => 'Videotvorca, grafik a content creator · BA · ZA · Brno',
+		'hero_eyebrow'    => 'Som videotvorca, grafik a content creator · BA · ZA · Brno',
 		'hero_title'      => 'Prídem, natočím,',
 		'hero_title_2'    => 'zostrihám a',
 		'hero_title_hl'   => 'máte obsah',
