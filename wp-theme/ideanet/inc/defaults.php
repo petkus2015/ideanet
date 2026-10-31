@@ -82,13 +82,13 @@ function ideanet_defaults() {
 		'cennik_note'    => 'Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video vrátane natáčania, strihu aj dodania. Nie som platca DPH, k cene sa nič nepripočítava. Celý cenník aj s balíkmi je v ponuke na stiahnutie.',
 
 		'podmienky_eyebrow' => 'Podmienky',
-		'podmienky_title'   => 'Nič skryté v malom písme',
+		'podmienky_title'   => 'Férové podmienky',
 		'podmienky_note'    => 'Osem viet, ktoré si odsúhlasíme dopredu. Podrobnosti sú v ponuke na stiahnutie.',
 		'podmienky_grab'    => 'Celá ponuka aj s podmienkami na jednej strane — na prečítanie alebo uloženie do PDF:',
 
 		'kontakt_eyebrow' => 'Kontakt',
 		'kontakt_title'   => 'Napíšte mi, čo potrebujete',
-		'kontakt_note'    => 'Odpisujem do 24 hodín. Ak mi pošlete odkaz na váš Instagram, vrátim sa rovno s dvomi či tromi konkrétnymi nápadmi na Reels a s cenou.',
+		'kontakt_note'    => 'Ak mi pošlete odkaz na váš Instagram, vrátim sa rovno s dvomi či tromi konkrétnymi nápadmi na Reels a s cenou. Ozvať sa mi môžete aj na Instagrame — <a href="https://instagram.com/petermiskus">@petermiskus</a>.',
 
 		/* ── cenník: záložky a panely ──────────── */
 		'tab_firmy'          => 'Pre firmy',
@@ -178,8 +178,8 @@ function ideanet_defaults() {
 		/* ── kontakt a formulár ────────────────── */
 		'contact_email'  => 'ahoj@ideanet.sk',
 		'contact_phone'  => '+421 900 000 000',
-		'contact_social' => '@ideanet.studio',
-		'contact_social_url' => '',
+		'contact_social' => '@petermiskus',
+		'contact_social_url' => 'https://instagram.com/petermiskus',
 		'contact_facts'  => "BA · ZA · Brno | doprava v cene\ndo 24 h | alebo same-day\nNie som platca DPH |",
 
 		'form_to'        => '',
@@ -197,7 +197,7 @@ function ideanet_defaults() {
 		'form_gdpr'      => '',
 
 		/* ── siete ─────────────────────────────── */
-		'social_instagram' => 'https://instagram.com/ideanet.studio',
+		'social_instagram' => 'https://instagram.com/petermiskus',
 		'social_tiktok'    => 'https://tiktok.com/@ideanet.studio',
 		'social_youtube'   => 'https://youtube.com/@ideanet.studio',
 		'social_facebook'  => 'https://facebook.com/ideanet.studio',

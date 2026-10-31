@@ -8,6 +8,14 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.4.0
+
+- Nadpis sekcie s podmienkami je „Férové podmienky".
+- V kontakte vypadol sľub „Odpisujem do 24 hodín" a pribudla možnosť
+  ozvať sa na Instagrame (@petermiskus). Prezývka pri kontakte aj ikona
+  Instagramu vedú na ten profil; TikTok, YouTube a Facebook sú stále
+  zástupné.
+
 ## 1.3.0
 
 - Príplatok za dodanie v deň natáčania je 30 % namiesto 50 %. Zmenené

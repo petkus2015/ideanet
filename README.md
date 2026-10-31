@@ -66,9 +66,10 @@ je `styles.css` s hlavičkou témy navrchu.
 ## Odkazy na sociálne siete
 
 Ikony sú v pätičke a v rozbalenom mobilnom menu — Instagram, TikTok,
-YouTube a Facebook. **Adresy sú zástupné** (`ideanet.studio`), treba ich
-prepísať na skutočné profily; nachádzajú sa na dvoch miestach
-v `index.html`, v blokoch s triedou `socials`.
+YouTube a Facebook. Instagram vedie na skutočný profil
+(`instagram.com/petermiskus`), **ostatné tri sú ešte zástupné**
+(`ideanet.studio`) a treba ich prepísať; nachádzajú sa na dvoch
+miestach v `index.html`, v blokoch s triedou `socials`.
 
 Pridanie ďalšej siete znamená skopírovať jeden `<a>` s vlastnou
 `aria-label` a cestou ikony.
