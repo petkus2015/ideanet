@@ -1,0 +1,15 @@
+/*
+Theme Name: RELIFE
+Theme URI: https://example.com/relife
+Author: RELIFE
+Description: Digitálny magazín RELIFE – Culture. Future. Better Living. Tmavá téma pre WordPress s anketou, výberom nálady a ukladaním článkov v prehliadači čitateľa.
+Version: 1.0.0
+Requires at least: 6.6
+Requires PHP: 8.1
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: relife
+Tags: blog, news, dark, custom-colors, custom-menu, featured-images, threaded-comments, translation-ready, block-styles, wide-blocks, editor-style
+*/
+
+/* Štýly témy sú v assets/css/relife.css (načítané cez wp_enqueue_style). */

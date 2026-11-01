@@ -1,0 +1,121 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1280px"
+    },
+    "color": {
+      "defaultPalette": false,
+      "defaultGradients": false,
+      "palette": [
+        {
+          "slug": "ink",
+          "name": "Ink",
+          "color": "#131313"
+        },
+        {
+          "slug": "surface",
+          "name": "Surface",
+          "color": "#1F1F1F"
+        },
+        {
+          "slug": "paper",
+          "name": "Paper",
+          "color": "#F5F5F2"
+        },
+        {
+          "slug": "mint",
+          "name": "Mint",
+          "color": "#3CFFD0"
+        },
+        {
+          "slug": "ultraviolet",
+          "name": "Ultraviolet",
+          "color": "#5200FF"
+        },
+        {
+          "slug": "trendy",
+          "name": "Trendy",
+          "color": "#FF3D8B"
+        },
+        {
+          "slug": "health",
+          "name": "Health",
+          "color": "#A6FF4D"
+        },
+        {
+          "slug": "money",
+          "name": "Money",
+          "color": "#FFE14D"
+        },
+        {
+          "slug": "travel",
+          "name": "Travel",
+          "color": "#FF7A2B"
+        },
+        {
+          "slug": "style",
+          "name": "Style",
+          "color": "#8F5CFF"
+        }
+      ]
+    },
+    "typography": {
+      "fluid": true,
+      "fontFamilies": [
+        {
+          "slug": "display",
+          "name": "Bricolage Grotesque",
+          "fontFamily": "'Bricolage Grotesque', 'Inter', system-ui, sans-serif"
+        },
+        {
+          "slug": "body",
+          "name": "Inter",
+          "fontFamily": "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif"
+        }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var(--wp--preset--color--ink)",
+      "text": "var(--wp--preset--color--paper)"
+    },
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--body)",
+      "lineHeight": "1.6"
+    },
+    "elements": {
+      "link": {
+        "color": {
+          "text": "inherit"
+        },
+        "typography": {
+          "textDecoration": "none"
+        }
+      },
+      "heading": {
+        "typography": {
+          "fontFamily": "var(--wp--preset--font-family--display)",
+          "fontWeight": "800",
+          "lineHeight": "1.08"
+        }
+      },
+      "button": {
+        "color": {
+          "background": "var(--wp--preset--color--mint)",
+          "text": "var(--wp--preset--color--ink)"
+        },
+        "typography": {
+          "fontWeight": "700"
+        },
+        "border": {
+          "radius": "12px"
+        }
+      }
+    }
+  }
+}
