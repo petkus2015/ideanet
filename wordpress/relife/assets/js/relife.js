@@ -244,6 +244,8 @@
 		qsa( '.js-search-toggle' ).forEach( function ( btn ) {
 			btn.addEventListener( 'click', function () {
 				if ( ! panel ) { return; }
+				var mp = qs( '#rl-menu' ), mb = qs( '.js-menu-toggle' );
+				if ( mp && ! mp.hidden && mb ) { mb.click(); }
 				var open = panel.hidden;
 				panel.hidden = ! open;
 				qsa( '.js-search-toggle' ).forEach( function ( b ) { b.setAttribute( 'aria-expanded', open ? 'true' : 'false' ); } );
@@ -295,6 +297,7 @@
 			panel.hidden = ! open;
 			btn.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
 			btn.classList.toggle( 'is-active', open );
+			btn.setAttribute( 'aria-label', btn.getAttribute( open ? 'data-open-label' : 'data-closed-label' ) || '' );
 			document.documentElement.classList.toggle( 'rl-lock', open );
 			if ( open ) { panel.scrollTop = 0; }
 		}

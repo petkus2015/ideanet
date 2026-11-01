@@ -60,12 +60,15 @@ $action = (string) get_theme_mod( 'relife_newsletter_action', '' );
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
 		<?php esc_html_e( 'Domov', 'relife' ); ?>
 	</a>
-	<button type="button" class="rl-tab js-menu-toggle" aria-expanded="false" aria-controls="rl-menu">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
-		<?php esc_html_e( 'Sekcie', 'relife' ); ?>
+	<button type="button" class="rl-tab js-search-toggle" aria-expanded="false" aria-controls="rl-search">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+		<?php esc_html_e( 'Hľadať', 'relife' ); ?>
 	</button>
-	<button type="button" class="rl-tab rl-tab--search js-search-toggle" aria-label="<?php esc_attr_e( 'Hľadať', 'relife' ); ?>">
-		<span class="rl-tab__fab"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></span>
+	<button type="button" class="rl-tab rl-tab--menu js-menu-toggle" aria-expanded="false" aria-controls="rl-menu" aria-label="<?php esc_attr_e( 'Otvoriť menu', 'relife' ); ?>" data-open-label="<?php esc_attr_e( 'Zavrieť menu', 'relife' ); ?>" data-closed-label="<?php esc_attr_e( 'Otvoriť menu', 'relife' ); ?>">
+		<span class="rl-tab__fab">
+			<svg class="ico-menu" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+			<svg class="ico-close" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+		</span>
 	</button>
 	<a class="rl-tab js-tab" data-match="saved" href="<?php echo esc_url( relife_page_url_by_template( 'template-saved.php' ) ); ?>">
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>

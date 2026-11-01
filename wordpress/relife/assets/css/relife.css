@@ -307,7 +307,11 @@ button{font:inherit;color:inherit}
 	.rl-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:56px;background:transparent;border:none;color:var(--rl-muted);font-size:11px;font-weight:600;cursor:pointer}
 	.rl-tab.is-active{color:var(--rl-accent)}
 	.rl-tab.is-active::before{content:"";position:absolute;top:0;width:24px;height:3px;border-radius:0 0 3px 3px;background:var(--rl-accent)}
-	.rl-tab--search{margin-top:-22px}
+	.rl-tab--menu{margin-top:-22px}
+	.rl-tab--menu .ico-close{display:none}
+	.rl-tab--menu[aria-expanded="true"] .ico-menu{display:none}
+	.rl-tab--menu[aria-expanded="true"] .ico-close{display:block}
+	.rl-tab--menu.is-active::before{display:none}
 	.rl-tab__fab{width:56px;height:56px;border-radius:20px;background:var(--rl-accent);color:#131313;display:flex;align-items:center;justify-content:center;border:3px solid #131313;box-shadow:0 6px 18px rgba(0,0,0,.5)}
 	body{padding-bottom:0}
 }
