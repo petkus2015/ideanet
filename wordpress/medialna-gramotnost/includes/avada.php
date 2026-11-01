@@ -25,6 +25,9 @@ function mg_avada_param( $p ) {
 		'description' => $desc,
 		'param_name'  => $name,
 	);
+	if ( ! empty( $p[6] ) ) {
+		$out['group'] = $p[6];
+	}
 
 	switch ( $type ) {
 		case 'textarea':
@@ -122,6 +125,9 @@ function mg_avada_map_args( $tag, $el ) {
 			'param_name'  => 'element_content',
 			'value'       => isset( $c[2] ) ? $c[2] : '',
 		);
+		if ( ! empty( $c[4] ) ) {
+			$params[ count( $params ) - 1 ]['group'] = $c[4];
+		}
 	}
 
 	foreach ( $el['params'] as $p ) {

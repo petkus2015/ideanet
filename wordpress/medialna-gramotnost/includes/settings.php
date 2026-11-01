@@ -132,7 +132,7 @@ function mg_settings_page() {
 					<p class="description"><?php esc_html_e( 'Zväčšuje písmo prvkov pluginu v troch stupňoch a zapamätá si voľbu. Tlačidlo môžete vložiť aj ako prvok „MG Väčšie písmo“.', 'medialna-gramotnost' ); ?></p>
 				</td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Písma', 'medialna-gramotnost' ); ?></th><td>
-					<p><?php mg_field_checkbox( 'load_fonts', __( 'Načítať písma Bricolage Grotesque, Atkinson Hyperlegible Next a JetBrains Mono z Google Fonts', 'medialna-gramotnost' ), $opt ); ?></p>
+					<p><?php mg_field_checkbox( 'load_fonts', __( 'Načítať písma Newsreader, Atkinson Hyperlegible Next a JetBrains Mono z Google Fonts', 'medialna-gramotnost' ), $opt ); ?></p>
 					<p><?php mg_field_checkbox( 'theme_fonts', __( 'Použiť písma témy Avada namiesto vlastných (nadpisy a text)', 'medialna-gramotnost' ), $opt ); ?></p>
 				</td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Farby', 'medialna-gramotnost' ); ?></th><td>

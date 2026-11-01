@@ -33,8 +33,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Spoločné polia pre ukážku správy (používa prvok Ukážka aj položka trenažéra).
  */
-function mg_mock_params() {
-	return array(
+function mg_mock_params( $group = '' ) {
+	$params = array(
 		array( 'type', 'select', 'Typ ukážky', 'sms', array(
 			'sms'      => 'SMS',
 			'whatsapp' => 'WhatsApp / Messenger',
@@ -52,6 +52,13 @@ function mg_mock_params() {
 		array( 'address', 'text', 'E-mailová adresa odosielateľa', '', null, 'Len pre e-mail. Napr. ==noreply@podvod.com==' ),
 		array( 'url', 'text', 'Adresa stránky', '', null, 'Len pre web. Napr. ==microsoft-alert.online==/sk' ),
 	);
+	if ( $group ) {
+		foreach ( $params as $i => $p ) {
+			$params[ $i ] = array_pad( $p, 6, '' );
+			$params[ $i ][6] = $group;
+		}
+	}
+	return $params;
 }
 
 /**
@@ -105,7 +112,13 @@ function mg_elements() {
 				array( 'button1_link', 'link', 'Tlačidlo 1 – odkaz', '#' ),
 				array( 'button2_text', 'text', 'Tlačidlo 2 – text', '' ),
 				array( 'button2_link', 'link', 'Tlačidlo 2 – odkaz', '' ),
+				array( 'with_example', 'yesno', 'Ukážka správy vpravo', 'no', null, 'Áno = vedľa nadpisu sa zobrazí ukážka podvodnej správy (záložka Ukážka správy).', 'Ukážka správy' ),
+				array( 'label', 'text', 'Popis nad ukážkou', 'Ukážka · SMS', null, '', 'Ukážka správy' ),
+				array( 'button_text', 'text', 'Text tlačidla', 'Ukázať varovné znaky', null, '', 'Ukážka správy' ),
+				array( 'button_text_on', 'text', 'Text tlačidla po zapnutí', 'Skryť varovné znaky', null, '', 'Ukážka správy' ),
 			),
+			'extra_params' => 'mock:Ukážka správy',
+			'content'      => array( 'textarea', 'Ukážka: správa a vysvetlivky', '', 'Použije sa, ak je zapnutá ukážka. Každý riadok = bublina. ==text== = varovný znak. Pod --- vysvetlivky, jedna na riadok.', 'Ukážka správy' ),
 		),
 
 		'mg_heading' => array(
@@ -152,6 +165,42 @@ function mg_elements() {
 				array( 'hide_scope', 'select', 'Pri filtrovaní skryť', 'container', array( 'container' => 'Celý kontajner Avada', 'element' => 'Len tento prvok' ) ),
 			),
 			'content' => array( 'tinymce', 'Popis', '<p>Ako podvod funguje.</p><h3>Varovné znaky</h3><ul><li>…</li></ul><h3>Čo robiť</h3><ul><li>…</li></ul>' ),
+		),
+
+		'mg_atlas' => array(
+			'name'   => 'MG Atlas podvodov',
+			'desc'   => 'Celý atlas na jednom mieste: filter a podvody, každý s popisom, varovnými znakmi, radami a ukážkou správy.',
+			'icon'   => 'fusiona-exclamation-triangle',
+			'child'  => 'mg_atlas_item',
+			'params' => array(
+				array( 'filter', 'yesno', 'Zobraziť filter', 'yes' ),
+				array( 'filter1_label', 'text', 'Filter 1 – popis', 'Kanál' ),
+				array( 'filter1', 'textarea', 'Filter 1 – možnosti', 'sms|SMS; email|E-mail; telefon|Telefonát; socialne|Sociálne siete; chat|Chat; web|Web', null, 'kľúč|Text; oddelené bodkočiarkou. Kľúče sa vyberajú pri každom podvode.' ),
+				array( 'filter2_label', 'text', 'Filter 2 – popis', 'Pre koho' ),
+				array( 'filter2', 'textarea', 'Filter 2 – možnosti', 'seniori|Seniori; mladi|Mladí', null, 'kľúč|Text; oddelené bodkočiarkou.' ),
+				array( 'all_label', 'text', 'Tlačidlo „všetko“', 'Všetko' ),
+				array( 'empty_text', 'text', 'Text, keď nič nevyhovuje', 'Pre tento filter zatiaľ nemáme príklad.' ),
+				array( 'warn_title', 'text', 'Nadpis „Varovné znaky“', 'Varovné znaky' ),
+				array( 'act_title', 'text', 'Nadpis „Čo robiť“', 'Čo robiť' ),
+				array( 'source_label', 'text', 'Označenie zdroja', 'Zdroj:' ),
+			),
+		),
+		'mg_atlas_item' => array(
+			'name'         => 'Podvod',
+			'params'       => array(
+				array( 'title', 'text', 'Nadpis', 'Názov podvodu', null, '', 'Obsah' ),
+				array( 'anchor', 'text', 'Kotva (id)', '', null, 'Napr. sms-balik – odkaz potom môže viesť na stranka/#sms-balik.', 'Obsah' ),
+				array( 'labels', 'text', 'Štítky', 'SMS; Smishing', null, 'Oddeľte bodkočiarkou. Prvý je červený.', 'Obsah' ),
+				array( 'how', 'textarea', 'Ako podvod funguje', '', null, '', 'Obsah' ),
+				array( 'warnings', 'textarea', 'Varovné znaky', '', null, 'Body oddeľte bodkočiarkou.', 'Obsah' ),
+				array( 'actions', 'textarea', 'Čo robiť', '', null, 'Body oddeľte bodkočiarkou. Povolené je &lt;b&gt;.', 'Obsah' ),
+				array( 'source', 'text', 'Zdroj', '', null, '', 'Obsah' ),
+				array( 'filter_tags', 'checkboxes', 'Kategórie pre filter', 'sms', $filter_tags, '', 'Obsah' ),
+				array( 'label', 'text', 'Popis nad ukážkou', 'Ukážka · SMS', null, '', 'Ukážka správy' ),
+				array( 'open', 'yesno', 'Zobraziť varovné znaky hneď', 'no', null, '', 'Ukážka správy' ),
+			),
+			'extra_params' => 'mock:Ukážka správy',
+			'content'      => array( 'textarea', 'Správa a vysvetlivky', "Text správy s ==varovným znakom==\n---\nVysvetlenie varovného znaku.", 'Každý riadok = bublina alebo odsek. ==text== = varovný znak. Pod --- vysvetlivky v rovnakom poradí. Skratky: > odpoveď, ! upozornenie, btn:, img:, link:, stats:, foot:, title:, input:, alert:, Meno: (hovor).', 'Ukážka správy' ),
 		),
 
 		'mg_filter' => array(
@@ -510,6 +559,12 @@ function mg_elements() {
 	/**
 	 * Filter na pridanie alebo úpravu prvkov z témy.
 	 */
+	// Doplnenie spoločných polí ukážky do prvkov, ktoré ich majú v záložke.
+	foreach ( $els as $tag => $el ) {
+		if ( ! empty( $el['extra_params'] ) && 0 === strpos( $el['extra_params'], 'mock:' ) ) {
+			$els[ $tag ]['params'] = array_merge( $el['params'], mg_mock_params( substr( $el['extra_params'], 5 ) ) );
+		}
+	}
 	$els = apply_filters( 'mg_elements', $els );
 	return $els;
 }

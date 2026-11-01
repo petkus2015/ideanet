@@ -38,6 +38,10 @@ function mg_render_hero( $a, $content ) {
 	if ( $buttons ) {
 		$html .= '<div class="mg-btn-row">' . $buttons . '</div>';
 	}
+	if ( 'yes' === $a['with_example'] && '' !== trim( $content ) ) {
+		$a['open'] = 'no';
+		$html      = '<div class="mg-hero-grid"><div class="mg-hero-copy">' . $html . '</div><div class="mg-hero-demo">' . mg_example_block( $a, $content ) . '</div></div>';
+	}
 	return mg_wrap( 'mg_hero', $a, $html, $is_page ? 'mg-page-hero' : 'mg-hero-text' );
 }
 
@@ -468,4 +472,75 @@ function mg_render_cols( $atts, $content ) {
 
 function mg_render_col( $atts, $content ) {
 	return '<div class="mg-col">' . mg_children( $content ) . '</div>';
+}
+
+/* ---------- Atlas podvodov (celý v jednom prvku) ---------- */
+
+function mg_render_atlas( $a, $content ) {
+	static $n = 0;
+	$n++;
+	$group = 'atlas-' . $n;
+	$a['group_id'] = $group;
+	mg_ctx_push( 'mg_atlas', $a );
+	$items = mg_children( $content );
+	mg_ctx_pop( 'mg_atlas' );
+
+	$filter = '';
+	if ( 'yes' === $a['filter'] ) {
+		$filter = '<div class="mg-el-filter mg-atlas-filter" data-mg-filter-group="' . esc_attr( $group ) . '" role="group" aria-label="Filter">';
+		$first  = true;
+		foreach ( array( 1, 2 ) as $i ) {
+			$opts = mg_pairs( $a[ 'filter' . $i ] );
+			if ( ! $opts ) {
+				continue;
+			}
+			$filter .= '<div class="mg-filters"><span class="mg-label">' . esc_html( $a[ 'filter' . $i . '_label' ] ) . '</span>';
+			if ( $first ) {
+				$filter .= '<button class="mg-chip" type="button" data-filter="all" aria-pressed="true">' . esc_html( $a['all_label'] ) . '</button>';
+				$first   = false;
+			}
+			foreach ( $opts as $o ) {
+				$filter .= '<button class="mg-chip" type="button" data-filter="' . esc_attr( $o[0] ) . '" aria-pressed="false">' . esc_html( $o[1] ? $o[1] : $o[0] ) . '</button>';
+			}
+			$filter .= '</div>';
+		}
+		$filter .= '<p class="mg-muted mg-filter-empty" hidden>' . esc_html( $a['empty_text'] ) . '</p></div>';
+	}
+	return mg_wrap( 'mg_atlas', $a, $filter . '<div class="mg-cases">' . $items . '</div>' );
+}
+
+function mg_render_atlas_item( $a, $content ) {
+	$group  = mg_ctx( 'mg_atlas', 'group_id', 'atlas' );
+	$labels = mg_split( $a['labels'] );
+	$out    = '<article class="mg-case"' . ( '' !== trim( $a['anchor'] ) ? ' id="' . esc_attr( sanitize_title( $a['anchor'] ) ) . '"' : '' ) . ' data-mg-group="' . esc_attr( $group ) . '" data-mg-tags="' . esc_attr( str_replace( ',', ' ', $a['filter_tags'] ) ) . '" data-mg-scope="element"><div class="mg-case-text">';
+	if ( $labels ) {
+		$out .= '<p class="mg-case-labels">';
+		foreach ( $labels as $i => $l ) {
+			$out .= '<span' . ( 0 === $i ? ' class="mg-hot"' : '' ) . '>' . esc_html( $l ) . '</span>';
+		}
+		$out .= '</p>';
+	}
+	$out .= '<h2>' . mg_inline( $a['title'], false ) . '</h2><div class="mg-case-body">';
+	if ( '' !== trim( $a['how'] ) ) {
+		$out .= '<p>' . mg_text( $a['how'] ) . '</p>';
+	}
+	foreach ( array( 'warnings' => 'warn_title', 'actions' => 'act_title' ) as $field => $title_key ) {
+		$items = mg_split( $a[ $field ] );
+		if ( ! $items ) {
+			continue;
+		}
+		$out .= '<h3>' . esc_html( mg_ctx( 'mg_atlas', $title_key, 'warnings' === $field ? 'Varovné znaky' : 'Čo robiť' ) ) . '</h3><ul>';
+		foreach ( $items as $it ) {
+			$out .= '<li>' . mg_inline( $it, false ) . '</li>';
+		}
+		$out .= '</ul>';
+	}
+	$out .= '</div>';
+	if ( '' !== trim( $a['source'] ) ) {
+		$out .= '<p class="mg-source">' . esc_html( mg_ctx( 'mg_atlas', 'source_label', 'Zdroj:' ) ) . ' ' . mg_inline( $a['source'], false ) . '</p>';
+	}
+	$a['button_text']    = 'Ukázať varovné znaky';
+	$a['button_text_on'] = 'Skryť varovné znaky';
+	$out .= '</div><div class="mg-case-demo">' . mg_example_block( $a, $content ) . '</div></article>';
+	return $out;
 }

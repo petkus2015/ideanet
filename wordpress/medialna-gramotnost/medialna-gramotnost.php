@@ -63,7 +63,7 @@ function mg_enqueue_assets() {
 
 	$opt = mg_options();
 	if ( $opt['load_fonts'] ) {
-		wp_enqueue_style( 'mg-fonts', 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap', array(), null );
+		wp_enqueue_style( 'mg-fonts', 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=JetBrains+Mono:wght@400;600&display=swap', array(), null );
 	}
 	wp_enqueue_style( 'mg', MG_URL . 'assets/css/mg.css', array(), MG_VERSION );
 	wp_add_inline_style( 'mg', mg_custom_css( $opt ) );

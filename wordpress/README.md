@@ -20,13 +20,37 @@ Logo sa v Avade nastavuje v téme, nie v plugine: **Avada → Options → Header
 
 Opakovaný import stránky prepíše (nevytvára duplikáty). Svoje úpravy preto robte až po importe.
 
+## Podstránka = niekoľko kontajnerov
+
+Každá podstránka je v Avada Builderi poskladaná z mála ucelených prvkov, nie z desiatok drobných blokov:
+
+- **Domov** začína jedným prvkom *MG Úvod stránky*, ktorý má ukážku podvodnej SMS priamo v sebe
+  (karta **Ukážka správy** → „Zobraziť ukážku vedľa textu“). Netreba skladať stĺpce.
+- **Atlas podvodov** má 3 kontajnery: úvod, upozornenie a jeden prvok *MG Atlas podvodov*.
+  Filter, všetkých 12 podvodov aj ich ukážky sú položky tohto jedného prvku.
+  Nový podvod pridáte tlačidlom **+ Pridať položku**.
+- Trenažér, kvíz, kontrola správy, rýchle karty, slovník a kontakty sú tiež vždy jeden prvok s položkami.
+
+Plugin nepridáva vlastné typy príspevkov ani ďalšie menu v administrácii. Všetko sa upravuje
+priamo na stránke v builderi, okrem jednej obrazovky nastavení.
+
+### MG Atlas podvodov
+
+- Prvok má popisy oboch riadkov filtra (napr. `sms|SMS; email|E-mail`), text tlačidla „Všetko“,
+  nadpisy „Varovné znaky“ a „Čo robiť“.
+- Položka (jeden podvod) má dve karty:
+  - **Obsah**: nadpis, kotva, štítky, ako to prebieha, varovné znaky a rady (oddelené `;`),
+    zdroj a kategórie pre filter (napr. `sms seniori`);
+  - **Ukážka správy**: typ, odosielateľ, predmet, adresa a text správy (syntax nižšie).
+
 ## Prvky v Avada Builderi
 
 V Avada Builderi kliknite na **+ Prvok** a vyhľadajte „MG“.
 
 | Prvok | Čo sa dá upraviť |
 |---|---|
-| MG Úvod stránky | nadtitulok, nadpis, zvýraznená časť, text, 2 tlačidlá, drobečková navigácia |
+| MG Úvod stránky | nadtitulok, nadpis, zvýraznená časť, text, 2 tlačidlá, drobečková navigácia; voliteľne ukážka správy vedľa textu |
+| MG Atlas podvodov | filter v dvoch riadkoch; položky: celý podvod (popis, varovné znaky, rady, zdroj, ukážka správy) |
 | MG Nadpis sekcie | nadtitulok, nadpis, popis, tlačidlo, svetlý/tmavý text |
 | MG Ukážka správy | typ (SMS, WhatsApp, e-mail, Facebook, web, hovor), odosielateľ, avatar, predmet, adresa, text správy s varovnými znakmi a vysvetlivkami |
 | MG Popis podvodu | štítky, nadpis, popis s varovnými znakmi a radami (editor), zdroj, kategórie pre filter |

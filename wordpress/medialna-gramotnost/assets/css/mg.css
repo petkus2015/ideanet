@@ -481,3 +481,98 @@ a.mg-card:hover { border-color: var(--mg-ink); transform: translateY(-2px); }
 @media (prefers-reduced-motion: reduce) { .mg *, .mg *::before, .mg *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
 .mg-card .mg-remember, .mg-card p.mg-remember { color: var(--mg-marker-ink); }
 .mg-example.mg-show .mg-flag * { color: #121A2E; }
+
+/* =====================================================================
+   Redakčný vzhľad (rovnaký ako téma): pätkové nadpisy, linky namiesto
+   kariet, obdĺžnikové tlačidlá, žltá len na varovné znaky.
+   ===================================================================== */
+:root {
+  --mg-bg: #ffffff; --mg-surface: #ffffff; --mg-ink: #14213d; --mg-muted: #596273; --mg-line: #dcdfe5; --mg-soft: #f3f4f6;
+  --mg-primary: #1f4fbf; --mg-marker: #ffd23f; --mg-marker-ink: #14213d; --mg-danger: #b42318; --mg-danger-soft: #fdecea;
+  --mg-ok: #15803d; --mg-ok-soft: #e8f5ec; --mg-warn: #a15c07; --mg-warn-soft: #fff4dc;
+  --mg-night: #14213d; --mg-night-ink: #f2f4f8; --mg-night-muted: #b9c1d1; --mg-night-line: rgba(255, 255, 255, .22);
+  --mg-f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --mg-f-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+.mg h1, .mg h2 { font-family: var(--mg-f-display); font-weight: 600; letter-spacing: -.005em; }
+.mg h3, .mg h4 { font-family: var(--mg-f-body); font-weight: 700; letter-spacing: 0; }
+
+/* Tlačidlá */
+.mg .mg-btn { min-height: 50px; padding: 12px 22px; border-radius: 4px; font: 700 17px/1.2 var(--mg-f-body); transition: background .15s ease; }
+.mg .mg-btn:hover { background: #173f9c; border-color: #173f9c; color: #fff; transform: none; }
+.mg .mg-btn.mg-ghost:hover { background: var(--mg-ink); border-color: var(--mg-ink); color: #fff; }
+.mg .mg-btn.mg-danger { background: var(--mg-danger); border-color: var(--mg-danger); color: #fff; }
+.mg .mg-btn.mg-ok { background: var(--mg-ok); border-color: var(--mg-ok); color: #fff; }
+
+/* Úvod */
+.mg-hero-text h1, .mg-page-hero h1 { font-family: var(--mg-f-display); font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+.mg-hero-text h1 { font-size: clamp(44px, 5.6vw, 82px); }
+.mg-page-hero h1 { font-size: clamp(40px, 5vw, 68px); max-width: 20ch; }
+.mg .mg-mark { background: linear-gradient(transparent 58%, var(--mg-marker) 58%, var(--mg-marker) 90%, transparent 90%); padding-inline: .04em; }
+.mg-hero-text .mg-eyebrow { color: var(--mg-danger); font-size: 16px; margin-bottom: 18px; }
+.mg-hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(32px, 6vw, 80px); align-items: center; }
+@media (max-width: 900px) { .mg-hero-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Nadpis sekcie */
+.mg-heading h2, .mg .mg-section-head h2 { font-size: clamp(30px, 3.2vw, 46px); line-height: 1.08; }
+
+/* Malé popisy bez strojového písma */
+.mg .mg-eyebrow, .mg .mg-lesson-no, .mg .mg-example-label { font-family: var(--mg-f-body); text-transform: none; letter-spacing: 0; font-weight: 700; font-size: 14px; }
+.mg .mg-remember::before, .mg .mg-looks::before { font-family: var(--mg-f-body); letter-spacing: .02em; }
+
+/* Tvary */
+.mg .mg-chip { border-radius: 4px; font: 600 15px/1.2 var(--mg-f-body); min-height: 40px; padding: 8px 14px; }
+.mg .mg-chip[aria-pressed="true"] { background: var(--mg-ink); border-color: var(--mg-ink); color: #fff; }
+.mg .mg-flags-btn { border-radius: 4px; font: 700 15px/1.2 var(--mg-f-body); }
+.mg .mg-card, .mg .mg-callout, .mg .mg-contact, .mg .mg-verdict-box, .mg .mg-q, .mg .mg-url-out, .mg .mg-url-tool input, .mg .mg-search-input, .mg .mg-answers button, .mg .mg-yn button, .mg .mg-tree-opts button, .mg .mg-flag-list li, .mg .mg-steps > li, .mg .mg-el-steps.mg-on-dark { border-radius: 4px; }
+.mg .mg-lesson, .mg .mg-t-panel, .mg .mg-quiz, .mg .mg-wallet { border-radius: 6px; }
+.mg .mg-tag { border-radius: 2px; font-family: var(--mg-f-body); font-weight: 700; letter-spacing: 0; }
+.mg .mg-remember { border-radius: 2px; }
+.mg .mg-steps > li::before { border-radius: 4px; font-family: var(--mg-f-display); }
+.mg .mg-card h3, .mg .mg-lesson h2, .mg .mg-rule h3 { font-family: var(--mg-f-display); font-weight: 600; }
+.mg .mg-card h3 { font-size: 24px; line-height: 1.15; }
+.mg .mg-lesson h2 { font-size: 26px; }
+.mg .mg-t-side h2, .mg .mg-tree-answer h2 { font-size: 28px; }
+.mg .mg-t-score, .mg .mg-num, .mg .mg-stat strong { font-family: var(--mg-f-display); font-weight: 600; }
+.mg .mg-stamp { border-radius: 3px; }
+.mg .mg-m-phone { border-radius: 26px; }
+.mg .mg-mock { border-radius: 8px; }
+.mg .mg-t-progress span { border-radius: 2px; height: 6px; }
+.mg .mg-gloss summary { font-family: var(--mg-f-display); font-weight: 600; font-size: 22px; }
+
+/* Čísla: linka nad, veľké pätkové číslo */
+.mg .mg-stats { border-top: 0; gap: 0 40px; }
+.mg .mg-stat, .mg .mg-stat + .mg-stat { border: 0; border-top: 2px solid var(--mg-ink); padding: 18px 0 0; }
+.mg .mg-stat strong { font-size: clamp(48px, 5vw, 68px); letter-spacing: -.02em; }
+@media (max-width: 760px) { .mg .mg-stats { gap: 28px; } }
+
+/* Varovania ako spravodajský zoznam */
+.mg .mg-warn-list { gap: 0; border-top: 2px solid var(--mg-ink); }
+.mg .mg-warn-item { grid-template-columns: 120px minmax(0, 1fr) auto; border: 0; border-bottom: 1px solid var(--mg-line); border-radius: 0; padding: 18px 0; background: transparent; }
+.mg .mg-warn-item .mg-tag { background: transparent; padding: 0; color: var(--mg-danger); font-size: 14px; }
+.mg .mg-warn-item b { font-family: var(--mg-f-display); font-weight: 600; font-size: 23px; }
+.mg a.mg-warn-item:hover b { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 700px) { .mg .mg-warn-item { grid-template-columns: minmax(0, 1fr); } }
+
+/* Pravidlá v tmavom páse: bez zaoblenia, väčšie nadpisy */
+.mg-el-steps.mg-on-dark .mg-rule h3 { font-size: 30px; line-height: 1.1; color: #fff; }
+.mg-el-steps.mg-on-dark .mg-rule .mg-n { font-family: var(--mg-f-body); color: #ffd23f; font-weight: 700; }
+
+/* Atlas podvodov */
+.mg-atlas-filter { display: grid; gap: 10px; margin-bottom: 28px; }
+.mg-atlas-filter .mg-filters { align-items: center; }
+.mg .mg-atlas-filter .mg-label { min-width: 86px; margin: 0; font-weight: 700; color: var(--mg-ink); }
+@media (max-width: 560px) { .mg .mg-atlas-filter .mg-label { min-width: 0; width: 100%; } }
+.mg-cases { display: grid; }
+.mg-case { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 64px); padding-block: clamp(36px, 5vw, 56px); border-top: 1px solid var(--mg-line); scroll-margin-top: 120px; }
+.mg-cases > .mg-case:first-child { border-top: 2px solid var(--mg-ink); }
+@media (max-width: 900px) { .mg-case { grid-template-columns: minmax(0, 1fr); } }
+.mg .mg-case-labels { margin: 0 0 10px; font-weight: 700; font-size: 14px; color: var(--mg-muted); }
+.mg-case-labels span + span::before { content: " · "; }
+.mg-case-labels .mg-hot { color: var(--mg-danger); }
+.mg .mg-case h2 { margin: 0 0 14px; font-size: clamp(28px, 2.6vw, 36px); line-height: 1.1; }
+.mg .mg-case-body p { margin: 0 0 .9em; }
+.mg .mg-case-body h3 { margin: 1.2em 0 .4em; font-size: 17px; }
+.mg .mg-case-body ul { margin: 0; padding-left: 1.15em; display: grid; gap: 4px; }
+.mg .mg-source { margin: 16px 0 0; font-size: 14px; color: var(--mg-muted); }
+.mg-hero-grid { align-items: start; }

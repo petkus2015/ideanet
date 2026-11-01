@@ -55,22 +55,21 @@ function mg_demo_pages() {
 				'cols' => array(
 					mg_sc( 'mg_hero', array(
 						'size'         => 'large',
-						'eyebrow'      => 'Podvody · dezinformácie · overovanie',
+						'eyebrow'      => 'Podvody, dezinformácie a ako sa brániť',
 						'title'        => 'Neklikni hneď.',
 						'highlight'    => 'Over si to.',
-						'lead'         => 'Ukážeme vám na skutočných typoch správ, ako vyzerá podvodná SMS, e-mail, reklama na Facebooku či falošný telefonát. A čo robiť, keď sa to stane.',
+						'lead'         => 'Ukážeme vám na typoch správ, ktoré dnes chodia ľuďom na Slovensku, ako vyzerá podvodná SMS, e-mail, reklama na Facebooku či falošný telefonát. A čo robiť, keď sa to stane.',
 						'button1_text' => 'Vyskúšať trenažér',
 						'button1_link' => $u( 'trenazer' ),
 						'button2_text' => 'Prišla mi podozrivá správa',
 						'button2_link' => $u( 'overit-spravu' ) . '#kontrola',
-					) ),
-					mg_sc( 'mg_example', array(
-						'label'    => 'Ukážka podľa varovania SK-CERT',
-						'type'     => 'sms',
-						'sender'   => '+212 6 41 xx xx xx',
-						'subtitle' => 'SMS · Textová správa',
-						'avatar'   => '+',
-						'time'     => 'Dnes 09:41',
+						'with_example' => 'yes',
+						'label'        => 'Ukážka podľa varovania SK-CERT',
+						'type'         => 'sms',
+						'sender'       => '+212 6 41 xx xx xx',
+						'subtitle'     => 'SMS · Textová správa',
+						'avatar'       => '+',
+						'time'         => 'Dnes 09:41',
 					), "Slovenska posta: Vas balik bol vrateny do skladu pre ==nespravnu adresu==. ==Doplatte poplatok 1,20 EUR== do 24 hodin: ==sk-posta.balik-info.top/sk==\n---\nNečakaný balík a problém s adresou. Slovenská pošta takto poplatky nevyberá.\nDrobná suma má znížiť ostražitosť. Podvodník chce číslo karty a SMS kód, ktorým si vašu kartu pridá do Apple Pay alebo Google Pay.\nStránka patrí doméne <b>balik-info.top</b>, nie pošte. Číslo odosielateľa je zahraničné." ),
 				),
 			),
@@ -168,26 +167,31 @@ function mg_demo_pages() {
 					'lead'      => '12 podvodov, s ktorými sa ľudia na Slovensku stretávajú najčastejšie. Pri každom je ukážka, varovné znaky a čo robiť. Tlačidlom „Ukázať varovné znaky“ ich zvýrazníte priamo v ukážke.',
 					'button1_text' => '',
 				) ) .
-				mg_sc( 'mg_callout', array( 'style' => 'warn' ), '<p><b>Ukážky sú vytvorené pre výučbu.</b> Napodobňujú skutočné podvodné správy, o ktorých informovali SK-CERT, NBS, Polícia SR a Europol. Mená, čísla a adresy sú upravené alebo skrátené.</p>' ) .
-				mg_sc( 'mg_filter', array( 'group' => 'atlas', 'label' => 'Kanál:' ) ),
+				mg_sc( 'mg_callout', array( 'style' => 'warn' ), '<p><b>Ukážky sú vytvorené pre výučbu.</b> Napodobňujú skutočné podvodné správy, o ktorých informovali SK-CERT, NBS, Polícia SR a Europol. Mená, čísla a adresy sú upravené alebo skrátené.</p>' ),
 			),
 		),
 	);
+	$atlas_items = array();
 	foreach ( $scams as $s ) {
-		$sections[] = array(
-			'cols' => array(
-				mg_sc( 'mg_scam', array(
-					'id'           => $s['id'],
-					'labels'       => $s['labels'],
-					'title'        => $s['title'],
-					'source'       => $s['source'],
-					'filter_group' => 'atlas',
-					'filter_tags'  => $s['tags'],
-				), $s['text'] ),
-				mg_sc( 'mg_example', $s['example'], $s['message'] ),
+		$parts = mg_demo_split_scam_text( $s['text'] );
+		$atlas_items[] = array(
+			array_merge(
+				$s['example'],
+				array(
+					'anchor'      => $s['id'],
+					'title'       => $s['title'],
+					'labels'      => $s['labels'],
+					'how'         => $parts['how'],
+					'warnings'    => $parts['warnings'],
+					'actions'     => $parts['actions'],
+					'source'      => $s['source'],
+					'filter_tags' => $s['tags'],
+				)
 			),
+			$s['message'],
 		);
 	}
+	$sections[] = array( 'cols' => array( mg_sc( 'mg_atlas', array(), mg_items( 'mg_atlas_item', $atlas_items ) ) ) );
 	$sections[] = array(
 		'cols' => array(
 			mg_sc( 'mg_cta', array(
@@ -985,4 +989,20 @@ function mg_import_demo_pages() {
 
 	update_option( 'mg_demo_pages', $created, false );
 	return $created;
+}
+
+/**
+ * Rozdelí HTML popis podvodu na „ako funguje“, „varovné znaky“ a „čo robiť“.
+ */
+function mg_demo_split_scam_text( $html ) {
+	$out = array( 'how' => '', 'warnings' => '', 'actions' => '' );
+	if ( preg_match( '#^\s*<p>(.*?)</p>#s', $html, $m ) ) {
+		$out['how'] = wp_strip_all_tags( $m[1] );
+	}
+	foreach ( array( 'warnings' => 'Varovné znaky', 'actions' => 'Čo robiť' ) as $k => $h ) {
+		if ( preg_match( '#<h3>' . preg_quote( $h, '#' ) . '</h3>\s*<ul>(.*?)</ul>#s', $html, $m ) && preg_match_all( '#<li>(.*?)</li>#s', $m[1], $li ) ) {
+			$out[ $k ] = implode( '; ', array_map( 'trim', $li[1] ) );
+		}
+	}
+	return $out;
 }
