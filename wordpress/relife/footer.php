@@ -60,10 +60,10 @@ $action = (string) get_theme_mod( 'relife_newsletter_action', '' );
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
 		<?php esc_html_e( 'Domov', 'relife' ); ?>
 	</a>
-	<a class="rl-tab js-tab" data-match="sections" href="<?php echo esc_url( home_url( '/#sekcie' ) ); ?>">
+	<button type="button" class="rl-tab js-menu-toggle" aria-expanded="false" aria-controls="rl-menu">
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
 		<?php esc_html_e( 'Sekcie', 'relife' ); ?>
-	</a>
+	</button>
 	<button type="button" class="rl-tab rl-tab--search js-search-toggle" aria-label="<?php esc_attr_e( 'Hľadať', 'relife' ); ?>">
 		<span class="rl-tab__fab"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></span>
 	</button>
@@ -76,6 +76,88 @@ $action = (string) get_theme_mod( 'relife_newsletter_action', '' );
 		Weekly
 	</a>
 </nav>
+
+
+<?php
+$menu_sections = relife_sections();
+$menu_formats  = relife_formats();
+$menu_guides   = relife_posts_by_format( 'ultimate-guide', 4 );
+$pillar_slugs  = array( 'tech', 'health', 'money' );
+$other_slugs   = array( 'trendy', 'travel', 'style', 'life' );
+?>
+<div id="rl-menu" class="rl-menu" role="dialog" aria-modal="false" aria-label="<?php esc_attr_e( 'Sekcie', 'relife' ); ?>" hidden>
+	<div class="rl-menu__inner">
+		<div class="rl-kicker">RELIFE</div>
+		<h2 class="rl-menu__title"><?php esc_html_e( 'Sekcie', 'relife' ); ?></h2>
+		<?php get_search_form(); ?>
+
+		<div class="rl-menu__head"><h3><?php esc_html_e( 'Hlavné piliere', 'relife' ); ?></h3><span class="rl-muted"><?php esc_html_e( '3 sekcie', 'relife' ); ?></span></div>
+		<?php foreach ( $pillar_slugs as $slug ) : ?>
+			<?php
+			if ( ! isset( $menu_sections[ $slug ] ) ) {
+				continue;
+			}
+			$sec  = $menu_sections[ $slug ];
+			$term = get_category_by_slug( $slug );
+			?>
+			<a class="rl-mpillar" style="background:<?php echo esc_attr( $sec['color'] ); ?>" href="<?php echo esc_url( $term instanceof WP_Term ? (string) get_category_link( $term ) : home_url( '/' ) ); ?>">
+				<span class="rl-mpillar__initial" aria-hidden="true"><?php echo esc_html( mb_substr( $sec['name'], 0, 1 ) ); ?></span>
+				<span class="rl-mpillar__top">
+					<span class="rl-mpillar__name"><?php echo esc_html( $sec['name'] ); ?></span>
+					<span class="rl-mpillar__arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+				</span>
+				<span class="rl-mpillar__desc"><?php echo esc_html( $sec['desc'] ); ?></span>
+				<span class="rl-mpillar__chips">
+					<?php foreach ( array_filter( array_map( 'trim', explode( '•', $sec['topics'] ) ) ) as $topic ) : ?>
+						<span><?php echo esc_html( $topic ); ?></span>
+					<?php endforeach; ?>
+				</span>
+			</a>
+		<?php endforeach; ?>
+
+		<div class="rl-menu__head"><h3><?php esc_html_e( 'Ďalšie sekcie', 'relife' ); ?></h3><span class="rl-muted"><?php esc_html_e( '4 sekcie', 'relife' ); ?></span></div>
+		<div class="rl-mgrid">
+			<?php foreach ( $other_slugs as $slug ) : ?>
+				<?php
+				if ( ! isset( $menu_sections[ $slug ] ) ) {
+					continue;
+				}
+				$sec  = $menu_sections[ $slug ];
+				$term = get_category_by_slug( $slug );
+				$tops = array_slice( array_filter( array_map( 'trim', explode( '•', $sec['topics'] ) ) ), 0, 2 );
+				?>
+				<a class="rl-mtile" style="background:<?php echo esc_attr( $sec['color'] ); ?>" href="<?php echo esc_url( $term instanceof WP_Term ? (string) get_category_link( $term ) : home_url( '/' ) ); ?>">
+					<span class="rl-mtile__name"><?php echo esc_html( $sec['name'] ); ?></span>
+					<span>
+						<span class="rl-mtile__desc"><?php echo esc_html( $sec['desc'] ); ?></span>
+						<span class="rl-mtile__tops"><?php echo esc_html( mb_strtoupper( implode( ' • ', $tops ) ) ); ?></span>
+					</span>
+				</a>
+			<?php endforeach; ?>
+		</div>
+
+		<div class="rl-menu__head"><h3><?php esc_html_e( 'Podľa formátu', 'relife' ); ?></h3></div>
+		<div class="rl-mformats">
+			<?php foreach ( $menu_formats as $slug => $f ) : ?>
+				<a href="<?php echo esc_url( (string) get_term_link( $slug, 'relife_format' ) ); ?>"><?php echo esc_html( $f['name'] ); ?></a>
+			<?php endforeach; ?>
+		</div>
+
+		<?php if ( ! empty( $menu_guides ) ) : ?>
+			<div class="rl-menu__head"><h3>Ultimate Guides</h3></div>
+			<div class="rl-mguides">
+				<?php foreach ( $menu_guides as $gid ) : ?>
+					<?php $gs = relife_primary_section( (int) $gid ); ?>
+					<a href="<?php echo esc_url( (string) get_permalink( (int) $gid ) ); ?>">
+						<span class="rl-dot" style="background:<?php echo esc_attr( relife_section_color( $gs ) ); ?>"></span>
+						<span class="rl-mguides__t"><?php echo esc_html( get_the_title( (int) $gid ) ); ?></span>
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+					</a>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+	</div>
+</div>
 
 <?php wp_footer(); ?>
 </body>

@@ -286,6 +286,30 @@
 		} );
 	}
 
+	/* ---------- Rozbaľovacie menu Sekcie (mobil) ---------- */
+	function initMenu() {
+		var btn = qs( '.js-menu-toggle' );
+		var panel = qs( '#rl-menu' );
+		if ( ! btn || ! panel ) { return; }
+		function setOpen( open ) {
+			panel.hidden = ! open;
+			btn.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			btn.classList.toggle( 'is-active', open );
+			document.documentElement.classList.toggle( 'rl-lock', open );
+			if ( open ) { panel.scrollTop = 0; }
+		}
+		btn.addEventListener( 'click', function () { setOpen( panel.hidden ); } );
+		panel.addEventListener( 'click', function ( ev ) {
+			if ( ev.target.closest && ev.target.closest( 'a' ) ) { setOpen( false ); }
+		} );
+		document.addEventListener( 'keydown', function ( ev ) {
+			if ( ev.key === 'Escape' && ! panel.hidden ) { setOpen( false ); btn.focus(); }
+		} );
+		window.addEventListener( 'resize', function () {
+			if ( window.innerWidth > 760 && ! panel.hidden ) { setOpen( false ); }
+		} );
+	}
+
 	function init() {
 		updateSavedUI();
 		initPoll();
@@ -293,6 +317,7 @@
 		initMood();
 		initPollFilters();
 		initMisc();
+		initMenu();
 		renderSavedPage();
 	}
 	if ( document.readyState === 'loading' ) {
