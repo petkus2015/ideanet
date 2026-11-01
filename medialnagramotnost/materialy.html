@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rýchle materiály</title>
+<meta name="description" content="12 krátkych vzdelávacích kariet o podvodoch a dezinformáciách na prečítanie za minútu. Kartička do peňaženky pre seniorov.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="materialy">
+<div id="site-header"></div>
+<main id="obsah">
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="crumbs"><a href="index.html">Domov</a> / Rýchle materiály</p>
+      <h1>Pochopte to za minútu</h1>
+      <p class="lead">12 krátkych kariet. Každá má príklad, varovné znaky, čo robiť a jednu vetu na zapamätanie. Vhodné na rýchle prečítanie, do školy aj na rozhovor so starými rodičmi.</p>
+      <div class="btn-row no-print" style="margin-top:22px">
+        <button class="btn" type="button" id="print-btn" hidden>Vytlačiť karty</button>
+        <a class="btn ghost" href="assets/pdf/rychle-karty.pdf" target="_blank" rel="noopener">Karty v PDF (5 strán A4)</a>
+        <a class="btn ghost" href="#penazenka">Kartička do peňaženky</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section tight">
+    <div class="wrap stack-l">
+      <div class="filters" data-filter-group="#lessons" role="group" aria-label="Filtrovať karty">
+        <span class="label">Pre koho:</span>
+        <button class="chip" type="button" data-filter="all" aria-pressed="true">Všetky karty</button>
+        <button class="chip" type="button" data-filter="seniori" aria-pressed="false">Pre seniorov</button>
+        <button class="chip" type="button" data-filter="mladi" aria-pressed="false">Pre mladých</button>
+        <button class="chip" type="button" data-filter="media" aria-pressed="false">Médiá a dezinformácie</button>
+      </div>
+
+      <div class="lessons" id="lessons">
+
+        <article class="lesson" id="k1" data-tags="seniori mladi">
+          <div class="lesson-top"><span class="lesson-no">KARTA 1 · 1 MIN</span><span class="tag red">SMS</span></div>
+          <h2>SMS o balíku</h2>
+          <p class="looks">„Vaša zásielka čaká. Doplatte 1,49 € do 24 hodín: posta-sk.zasielka-overenie.top“</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Varovné znaky</h3><ul><li>Nečakáte balík</li><li>Malý doplatok</li><li>Cudzia adresa odkazu</li></ul></div>
+            <div class="good"><h3>Čo urobiť</h3><ul><li>Neklikať</li><li>Stav overiť v appke prepravcu</li><li>Zadali ste kartu? Volať banke</li></ul></div>
+          </div>
+          <p class="remember">Pošta ani kuriér nevyberajú poplatky cez odkaz v SMS.</p>
+          <details><summary>Rýchla otázka: prečo chcú aj kód zo SMS?</summary><p>Kódom potvrdíte pridanie vašej karty do mobilu podvodníka (Apple Pay, Google Pay). Potom platí vašou kartou. Upozorňuje na to SK-CERT.</p></details>
+          <a class="more" href="podvody.html#sms-balik">Pozrieť ukážku →</a>
+        </article>
+
+        <article class="lesson" id="k2" data-tags="seniori">
+          <div class="lesson-top"><span class="lesson-no">KARTA 2 · 1 MIN</span><span class="tag red">Telefonát</span></div>
+          <h2>Volá „banka“ alebo „polícia“</h2>
+          <p class="looks">„Váš účet je napadnutý. Presuňte peniaze na bezpečný účet a nadiktujte mi kód.“</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Varovné znaky</h3><ul><li>Strach a ponáhľanie</li><li>„Bezpečný účet“</li><li>Pýta kód, PIN, heslo</li><li>„Nikomu to nehovorte“</li></ul></div>
+            <div class="good"><h3>Čo urobiť</h3><ul><li>Zložiť</li><li>Zavolať na číslo z karty</li><li>Povedať rodine</li></ul></div>
+          </div>
+          <p class="remember">Bezpečný účet neexistuje. Banka ani polícia nepresúvajú vaše peniaze.</p>
+          <details><summary>Rýchla otázka: na displeji svieti číslo banky. Je to banka?</summary><p>Nemusí. Číslo volajúceho sa dá sfalšovať. Zložte a zavolajte sami.</p></details>
+          <a class="more" href="podvody.html#falosny-bankar">Pozrieť ukážku →</a>
+        </article>
+
+        <article class="lesson" id="k3" data-tags="seniori">
+          <div class="lesson-top"><span class="lesson-no">KARTA 3 · 1 MIN</span><span class="tag red">WhatsApp</span></div>
+          <h2>„Ahoj mami, mám nové číslo“</h2>
+          <p class="looks">„Ahoj mami, rozbil sa mi mobil. Pošleš mi dnes 640 €? Teraz nemôžem volať.“</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Varovné znaky</h3><ul><li>Neznáme číslo</li><li>Súrne peniaze</li><li>Nechce volať</li></ul></div>
+            <div class="good"><h3>Čo urobiť</h3><ul><li>Zavolať na staré číslo</li><li>Opýtať sa rodinné heslo</li><li>Nič neposielať</li></ul></div>
+          </div>
+          <p class="remember">Nové číslo + prosba o peniaze = najprv zavolaj na staré číslo.</p>
+          <details><summary>Rýchla otázka: čo je rodinné heslo?</summary><p>Slovo, ktoré poznáte len vy a vaši blízki. Podvodník ho nevie, aj keby napodobnil hlas umelou inteligenciou.</p></details>
+          <a class="more" href="podvody.html#ahoj-mami">Pozrieť ukážku →</a>
+        </article>
+
+        <article class="lesson" id="k4" data-tags="seniori mladi">
+          <div class="lesson-top"><span class="lesson-no">KARTA 4 · 1 MIN</span><span class="tag red">E-mail</span></div>
+          <h2>Phishingový e-mail</h2>
+          <p class="looks">„Vážený klient, váš účet bude obmedzený do 12 hodín. Overte totožnosť.“</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Varovné znaky</h3><ul><li>Čudná adresa odosielateľa</li><li>Neosobné oslovenie</li><li>Hrozba a termín</li><li>Tlačidlo na prihlásenie</li></ul></div>
+            <div class="good"><h3>Čo urobiť</h3><ul><li>Prihlásiť sa cez appku, nie odkaz</li><li>Označiť ako phishing</li></ul></div>
+          </div>
+          <p class="remember">Do banky sa prihlasuj len cez aplikáciu alebo adresu, ktorú si napíšeš sám.</p>
+          <details><summary>Rýchla otázka: aký častý je phishing?</summary><p>Podľa agentúry EÚ ENISA začína phishingom asi 60 % kybernetických útokov.</p></details>
+          <a class="more" href="podvody.html#phishing-banka">Pozrieť ukážku →</a>
+        </article>
+
+        <article class="lesson" id="k5" data-tags="seniori media">
+          <div class="lesson-top"><span class="lesson-no">KARTA 5 · 1 MIN</span><span class="tag red">Facebook</span></div>
+          <h2>Známa tvár radí investovať</h2>
+          <p class="looks">Reklama: „Známy moderátor prezradil, ako zarába 3 000 € týždenne. Začnite s 250 €.“</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Varovné znaky</h3><ul><li>Istý a vysoký zisk</li><li>Známa osobnosť</li><li>Cudzí web (.app, .tech)</li><li>Vypnuté komentáre</li></ul></div>
+            <div class="good"><h3>Čo urobiť</h3><ul><li>Neregistrovať sa</li><li>Nahlásiť reklamu</li><li>Firmu overiť v zozname NBS</li></ul></div>
+          </div>
+          <p class="remember">Video môže byť deepfake. Istý zisk bez rizika neexistuje.</p>
+          <details><summary>Rýchla otázka: kto na to upozorňuje?</summary><p>Národná banka Slovenska varuje pred deepfake videami slovenských politikov a hudobníkov v podvodných reklamách.</p></details>
+          <a class="more" href="podvody.html#investicie-deepfake">Pozrieť ukážku →</a>
+        </article>
+
+        <article class="lesson" id="k6" data-tags="seniori mladi">
+          <div class="lesson-top"><span class="lesson-no">KARTA 6 · 1 MIN</span><span class="tag red">Bazár</span></div>
+          <h2>Predávam na bazári</h2>
+          <p class="looks">„Beriem bez zjednávania, pošlem kuriéra. Platbu si prevezmite cez tento odkaz.“</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Varovné znaky</h3><ul><li>Nezjednáva, je v zahraničí</li><li>Kuriér od kupujúceho</li><li>Odkaz „na prijatie platby“</li></ul></div>
+            <div class="good"><h3>Čo urobiť</h3><ul><li>Dať len IBAN</li><li>Predávať osobne</li><li>Písať len cez platformu</li></ul></div>
+          </div>
+          <p class="remember">Na prijatie peňazí nikdy netreba kartu ani kód zo SMS.</p>
+          <details><summary>Rýchla otázka: čo stačí kupujúcemu poslať?</summary><p>Iba číslo účtu (IBAN). Údaje z karty slúžia na platenie, nie na prijímanie peňazí.</p></details>
+          <a class="more" href="podvody.html#bazar">Pozrieť ukážku →</a>
+        </article>
+
+        <article class="lesson" id="k7" data-tags="seniori mladi">
+          <div class="lesson-top"><span class="lesson-no">KARTA 7 · 1 MIN</span><span class="tag">Web</span></div>
+          <h2>Ako prečítať webovú adresu</h2>
+          <p class="looks mono">https://posta-sk.<b>zasielka-overenie.top</b>/platba</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Triky podvodníkov</h3><ul><li>Známe meno na začiatku</li><li>Zavináč @ v adrese</li><li>Veľa pomlčiek</li><li>Čísla namiesto mena</li></ul></div>
+            <div class="good"><h3>Ako čítať</h3><ul><li>Nájdi prvú lomku /</li><li>Pozri, čo je tesne pred ňou</li><li>To je skutočný vlastník</li></ul></div>
+          </div>
+          <p class="remember">Rozhoduje posledná časť pred prvou lomkou, nie začiatok adresy.</p>
+          <details><summary>Rýchla otázka: komu patrí ib.banka.sk.login-overenie.com?</summary><p>Doméne <b>login-overenie.com</b>, nie banke. „banka.sk“ je len pridaný začiatok.</p></details>
+          <a class="more" href="overit.html#adresa">Vyskúšať kontrolu adresy →</a>
+        </article>
+
+        <article class="lesson" id="k8" data-tags="mladi media">
+          <div class="lesson-top"><span class="lesson-no">KARTA 8 · 1 MIN</span><span class="tag">Overovanie</span></div>
+          <h2>Overenie správy v 4 krokoch</h2>
+          <p class="looks">Virálny príspevok: „TOTO VÁM V TELEVÍZII NEPOVEDIA! Zdieľaj, kým to zmažú!“</p>
+          <div class="lesson-cols">
+            <div class="good"><h3>Postup</h3><ul><li><b>Zastav sa</b> pri emócii</li><li><b>Over zdroj</b>: kto to píše?</li><li><b>Hľadaj inde</b>: píšu o tom iní?</li><li><b>Kontext</b>: odkiaľ je fotka?</li></ul></div>
+            <div class="bad"><h3>Varovné znaky</h3><ul><li>Krik a výkričníky</li><li>„Médiá to tajia“</li><li>Anonymný expert</li></ul></div>
+          </div>
+          <p class="remember">Keď ťa správa nahnevá alebo vystraší, najprv over, potom zdieľaj.</p>
+          <details><summary>Rýchla otázka: ako zistím, odkiaľ je fotka?</summary><p>Spätným vyhľadávaním obrázka, napríklad cez Google Lens alebo TinEye. Ukáže, kde sa fotka objavila prvýkrát.</p></details>
+          <a class="more" href="overit.html#styri-kroky">Viac o overovaní →</a>
+        </article>
+
+        <article class="lesson" id="k9" data-tags="media mladi">
+          <div class="lesson-top"><span class="lesson-no">KARTA 9 · 1 MIN</span><span class="tag">Dezinformácie</span></div>
+          <h2>Omyl, lož, alebo zneužitie?</h2>
+          <div class="lesson-cols">
+            <div><h3>Misinformácia</h3><ul><li>Nepravda bez zlého úmyslu</li><li>Napr. babka prepošle „zaručenú radu“</li></ul></div>
+            <div><h3>Dezinformácia</h3><ul><li>Nepravda šírená zámerne</li><li>Pre zisk alebo oklamanie ľudí</li></ul></div>
+          </div>
+          <p class="muted" style="font-size:.95rem">Satira, novinárska chyba ani označený názor nie sú dezinformácia (Európska komisia).</p>
+          <p class="remember">Nesúhlas nie je dezinformácia. Rozhoduje, či je to preukázateľne nepravdivé.</p>
+          <details><summary>Rýchla otázka: koľko Európanov sa s dezinformáciami stretáva často?</summary><p>Podľa Eurobarometra 2025 je to 36 % (za posledný týždeň „často“ alebo „veľmi často“).</p></details>
+          <a class="more" href="dezinformacie.html#pojmy">Viac o dezinformáciách →</a>
+        </article>
+
+        <article class="lesson" id="k10" data-tags="media mladi seniori">
+          <div class="lesson-top"><span class="lesson-no">KARTA 10 · 1 MIN</span><span class="tag">AI</span></div>
+          <h2>Spoznaj deepfake</h2>
+          <p class="looks">Video politika, ktorý hovorí niečo šokujúce. Pery mierne nesedia so zvukom.</p>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Na čo sa pozrieť</h3><ul><li>Pery a zuby</li><li>Okraje tváre, ruky</li><li>Hlas bez dýchania</li></ul></div>
+            <div class="good"><h3>Čo urobiť</h3><ul><li>Kto to zverejnil prvý?</li><li>Je to na oficiálnom účte?</li><li>Píšu o tom médiá?</li></ul></div>
+          </div>
+          <p class="remember">Neveríme očiam, overujeme zdroj.</p>
+          <details><summary>Rýchla otázka: musí byť deepfake označený?</summary><p>Áno. Od 2. augusta 2026 to vyžaduje Akt EÚ o umelej inteligencii (čl. 50). Podvodníci to však nedodržiavajú.</p></details>
+          <a class="more" href="dezinformacie.html#deepfake">Viac o deepfakes →</a>
+        </article>
+
+        <article class="lesson" id="k11" data-tags="mladi">
+          <div class="lesson-top"><span class="lesson-no">KARTA 11 · 1 MIN</span><span class="tag red">Pre mladých</span></div>
+          <h2>Vydieranie a „ľahká brigáda“</h2>
+          <div class="lesson-cols">
+            <div class="bad"><h3>Vydieranie fotkami</h3><ul><li>Neplať</li><li>Prestaň písať</li><li>Urob snímky obrazovky</li><li>Povedz to dospelému, volaj 116 111</li></ul></div>
+            <div class="bad"><h3>„Prijmi a pošli ďalej“</h3><ul><li>Je to pranie peňazí</li><li>Trestne zodpovedáš ty</li><li>Účet ani kartu nepožičiavaj</li></ul></div>
+          </div>
+          <p class="remember">Nie je to tvoja vina, ale je to tvoj účet. Pomoc existuje.</p>
+          <details><summary>Rýchla otázka: kto varuje pred „peňažnými mulami“?</summary><p>Europol. V akciách EMMA každoročne odhalí tisíce ľudí, ktorí cez svoj účet posielali špinavé peniaze. Veľa z nich sú mladí.</p></details>
+          <a class="more" href="mladi.html">Sprievodca pre mladých →</a>
+        </article>
+
+        <article class="lesson" id="k12" data-tags="seniori mladi">
+          <div class="lesson-top"><span class="lesson-no">KARTA 12 · 1 MIN</span><span class="tag red">Stalo sa</span></div>
+          <h2>Naletel som. Čo teraz?</h2>
+          <div class="lesson-cols">
+            <div class="good"><h3>Hneď</h3><ul><li><b>Banka</b>: číslo na karte</li><li>Zablokovať kartu</li><li>Zmeniť heslá</li></ul></div>
+            <div class="good"><h3>Potom</h3><ul><li><b>Polícia 158</b></li><li>Uložiť správy a výpisy</li><li>Nahlásiť stránku SK-CERT</li></ul></div>
+          </div>
+          <p class="remember">Rozhodujú minúty. Najprv banka, potom polícia. Nehanbite sa.</p>
+          <details><summary>Rýchla otázka: firma sľubuje vrátiť peniaze za poplatok. Áno?</summary><p>Nie. „Vymáhači“ stratených peňazí za poplatok sú často ďalší podvodníci.</p></details>
+          <a class="more" href="pomoc.html">Postup krok za krokom →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="penazenka" style="scroll-margin-top:90px">
+    <div class="wrap trainer">
+      <div class="stack">
+        <p class="eyebrow">Pre seniorov a ich rodiny</p>
+        <h2 style="font-size:var(--step-3)">Kartička do peňaženky</h2>
+        <p class="muted">Vytlačte, vystrihnite a doplňte čísla perom. Kartička patrí k platobnej karte, aby bola po ruke, keď niekto volá.</p>
+        <p class="muted">Tip pre vnúčatá: vyplňte ju spolu so starými rodičmi a prejdite si pritom kartu 2 a 3.</p>
+      </div>
+      <div class="wallet">
+        <h2>Keď volá „banka“, „polícia“ alebo „vnuk“</h2>
+        <ol>
+          <li><b>Zložím</b> a zavolám sám na známe číslo.</li>
+          <li><b>Kódy, PIN a heslá</b> nikomu nediktujem.</li>
+          <li><b>Peniaze</b> nikam nepresúvam a nikomu nedávam.</li>
+        </ol>
+        <div class="nums">
+          <div><b>158</b><span>Polícia</span></div>
+          <div><b>112</b><span>Tiesňová linka</span></div>
+          <div><b>0850 111 321</b><span>Pomoc obetiam</span></div>
+        </div>
+        <div style="display:grid;gap:10px">
+          <div><span class="muted" style="font-size:.85rem">Moja banka (číslo zo zadnej strany karty):</span><div class="fill"></div></div>
+          <div><span class="muted" style="font-size:.85rem">Moja rodina:</span><div class="fill"></div></div>
+          <div><span class="muted" style="font-size:.85rem">Naše rodinné heslo poznám naspamäť, nepíšem ho sem.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/site.js"></script>
+</body>
+</html>

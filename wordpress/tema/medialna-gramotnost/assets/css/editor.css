@@ -1,0 +1,3 @@
+/* Editor: rovnaké písmo a šírka textu ako na webe */
+.editor-styles-wrapper { font-family: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif; font-size: 18px; color: #14213d; }
+.editor-styles-wrapper h1, .editor-styles-wrapper h2 { font-family: "Newsreader", Georgia, serif; font-weight: 600; }
