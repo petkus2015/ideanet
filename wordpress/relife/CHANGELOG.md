@@ -2,6 +2,12 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.7.0
+- Google tag: vo Vzhľad → Prispôsobiť → RELIFE → Google tag ID zadáte `G-…` (Google Analytics 4), `GTM-…` (Tag Manager) alebo `AW-…`. Načíta sa asynchrónne v `<head>`, takže nebrzdí vykresľovanie.
+- Režim súhlasu (Consent Mode v2) je predvolene zapnutý: kým návštevník nedá súhlas, nič sa nesleduje. Súhlas nastavíte cez cookie plugin alebo volaním `relifeConsent.grant()` / `relifeConsent.deny()`.
+- Prihlásení redaktori a administrátori sa nesledujú (vypnuteľné).
+- Udalosti pre analytiku: `relife_poll_vote`, `relife_mood_select`, `relife_save_article`.
+
 ## 1.6.0
 - Logo v pätičke: vo Vzhľad → Prispôsobiť → RELIFE → Logo v pätičke (a Maximálna výška loga v pätičke). Bez vybraného loga sa zobrazí text RELIFE a heslo ako doteraz. Rozmery sa rezervujú vopred (bez posunu stránky).
 

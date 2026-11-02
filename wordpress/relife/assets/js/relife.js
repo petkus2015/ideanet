@@ -24,6 +24,12 @@
 			window.localStorage.setItem( key, value );
 		} catch ( e ) { /* súkromný režim */ }
 	}
+	/** Odošle udalosť do Google tagu (ak je načítaný). Meno a parametre neobsahujú osobné údaje. */
+	function track( name, params ) {
+		try {
+			if ( typeof window.gtag === 'function' ) { window.gtag( 'event', name, params || {} ); }
+		} catch ( e ) { /* sledovanie nesmie ovplyvniť stránku */ }
+	}
 	function qs( sel, root ) { return ( root || document ).querySelector( sel ); }
 	function qsa( sel, root ) { return Array.prototype.slice.call( ( root || document ).querySelectorAll( sel ) ); }
 
@@ -66,6 +72,7 @@
 		if ( idx === -1 ) {
 			saved.push( id );
 			cacheUrl( url, true );
+			track( 'relife_save_article', { article_id: id } );
 		} else {
 			saved.splice( idx, 1 );
 			cacheUrl( url, false );
@@ -141,6 +148,7 @@
 				if ( poll.classList.contains( 'is-voted' ) ) { return; }
 				lsSet( key, String( i ) );
 				show( true, i );
+				track( 'relife_poll_vote', { poll_id: poll.getAttribute( 'data-poll' ), option_index: i } );
 			} );
 		} );
 	}
@@ -207,6 +215,7 @@
 				current = current === id ? null : id;
 				lsSet( 'relife.mood', current || '' );
 				apply( current );
+				if ( current ) { track( 'relife_mood_select', { mood: current } ); }
 			} );
 		} );
 		var clear = qs( '.js-mood-clear' );
