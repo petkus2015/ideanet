@@ -42,8 +42,8 @@ function relife_customize_register( WP_Customize_Manager $wp_customize ): void {
 	$wp_customize->add_setting(
 		'relife_logo_height',
 		array(
-			'default'           => 56,
-			'sanitize_callback' => static fn( $v ): int => max( 24, min( 120, (int) $v ) ),
+			'default'           => 72,
+			'sanitize_callback' => static fn( $v ): int => max( 24, min( 140, (int) $v ) ),
 		)
 	);
 	$wp_customize->add_control(
@@ -53,7 +53,7 @@ function relife_customize_register( WP_Customize_Manager $wp_customize ): void {
 			'description' => __( 'Nahrané logo sa prispôsobí tejto výške, šírka sa dopočíta. Na mobile je výška o štvrtinu menšia.', 'relife' ),
 			'section'     => 'relife_options',
 			'type'        => 'number',
-			'input_attrs' => array( 'min' => 24, 'max' => 120, 'step' => 2 ),
+			'input_attrs' => array( 'min' => 24, 'max' => 140, 'step' => 2 ),
 		)
 	);
 

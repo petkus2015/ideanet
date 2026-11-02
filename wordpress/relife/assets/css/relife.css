@@ -34,9 +34,9 @@ button{font:inherit;color:inherit}
 .rl-header__row{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-top:14px;padding-bottom:14px}
 .rl-brand{display:block;min-width:0}
 /* Nahrané logo: kontajner aj obrázok majú pevný strop, takže logo nikdy nezaberie celú šírku hlavičky. */
-.rl-brand--logo{flex:0 0 auto;width:auto;max-width:min(260px,55vw);overflow:hidden}
+.rl-brand--logo{flex:0 0 auto;width:auto;max-width:min(340px,55vw);overflow:hidden}
 .rl-brand .custom-logo-link{display:block;line-height:0;max-width:100%}
-.rl-brand .custom-logo{display:block !important;width:auto !important;height:auto !important;max-width:100% !important;max-height:var(--rl-logo-h,56px) !important;object-fit:contain}
+.rl-brand .custom-logo{display:block !important;width:auto !important;height:auto !important;max-width:100% !important;max-height:var(--rl-logo-h,72px) !important;object-fit:contain}
 .rl-brand__mark{display:block;font-family:var(--rl-display);font-weight:800;font-size:60px;letter-spacing:-.04em;line-height:.9}
 .rl-brand__tag{display:block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--rl-accent)}
 .rl-nav__list{display:flex;gap:2px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
@@ -288,8 +288,8 @@ button{font:inherit;color:inherit}
 	.rl-wrap{padding:0 16px}
 	.rl-header__row{padding-top:10px;padding-bottom:6px}
 	.rl-brand__mark{font-size:46px}
-	.rl-brand--logo{max-width:min(190px,52vw)}
-	.rl-brand .custom-logo{max-height:calc(var(--rl-logo-h,56px) * .75) !important}
+	.rl-brand--logo{max-width:min(230px,55vw)}
+	.rl-brand .custom-logo{max-height:calc(var(--rl-logo-h,72px) * .75) !important}
 	.rl-brand__tag{font-size:9px}
 	.rl-nav{order:3;width:calc(100% + 32px);min-width:0;max-width:calc(100% + 32px);margin:0 -16px;padding:0 16px;overflow-x:auto;scrollbar-width:none}
 	.rl-nav__list{flex-wrap:nowrap;padding-bottom:8px}

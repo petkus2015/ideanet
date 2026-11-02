@@ -122,7 +122,7 @@ function relife_accent_css(): string {
 	if ( null === $accent || '' === $accent ) {
 		$accent = '#3CFFD0';
 	}
-	$logo_h = max( 24, min( 120, (int) get_theme_mod( 'relife_logo_height', 56 ) ) );
+	$logo_h = max( 24, min( 140, (int) get_theme_mod( 'relife_logo_height', 72 ) ) );
 	return ':root{--rl-accent:' . $accent . ';--rl-logo-h:' . $logo_h . 'px;}';
 }
 
