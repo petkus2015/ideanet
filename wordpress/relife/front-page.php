@@ -48,7 +48,7 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 			<a class="rl-herocard" href="<?php echo esc_url( (string) get_permalink( $hero ) ); ?>">
 				<span class="rl-herocard__bg" style="background:var(--rl-ultraviolet)">
 					<?php if ( has_post_thumbnail( $hero ) ) : ?>
-						<?php echo get_the_post_thumbnail( $hero, 'relife-hero', array( 'alt' => '' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+						<?php echo get_the_post_thumbnail( $hero, 'relife-hero', array( 'alt' => '', 'loading' => 'eager', 'fetchpriority' => 'high' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					<?php else : ?>
 						<span class="rl-herocard__big" aria-hidden="true"><?php echo esc_html( $h_sec ? mb_substr( $h_sec->name, 0, 2 ) : 'RE' ); ?></span>
 					<?php endif; ?>
@@ -92,10 +92,11 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 
 <section class="rl-wrap rl-block rl-light-ish" id="dnes">
 	<div class="rl-sechead">
-		<h2 class="rl-sechead__title js-today-title" data-default="<?php esc_attr_e( 'Čo dnes stojí za tvoju pozornosť?', 'relife' ); ?>"><?php esc_html_e( 'Čo dnes stojí za tvoju pozornosť?', 'relife' ); ?></h2>
+		<h2 class="rl-sechead__title js-today-title" data-default="<?php esc_attr_e( 'Čo dnes stojí za tvoju pozornosť?', 'relife' ); ?>" data-mood="<?php esc_attr_e( 'Pre tvoju náladu', 'relife' ); ?>"><?php esc_html_e( 'Čo dnes stojí za tvoju pozornosť?', 'relife' ); ?></h2>
 		<?php $posts_page = (int) get_option( 'page_for_posts' ); ?>
 		<a class="rl-link" href="<?php echo esc_url( $posts_page > 0 ? (string) get_permalink( $posts_page ) : home_url( '/#dnes' ) ); ?>"><?php esc_html_e( 'Všetky články →', 'relife' ); ?></a>
 	</div>
+	<script>(function(){var t=document.querySelector('.js-today-title');if(t&&t.dataset.mood&&document.documentElement.classList.contains('rl-has-mood')){t.textContent=t.dataset.mood}})();</script>
 	<div class="rl-moodstatus js-mood-status" hidden>
 		<span class="js-mood-text"></span>
 		<button type="button" class="rl-pill rl-pill--outline js-mood-clear"><?php esc_html_e( 'Zrušiť výber', 'relife' ); ?></button>

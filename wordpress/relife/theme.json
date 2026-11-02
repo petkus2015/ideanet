@@ -69,12 +69,12 @@
         {
           "slug": "display",
           "name": "Bricolage Grotesque",
-          "fontFamily": "'Bricolage Grotesque', 'Inter', system-ui, sans-serif"
+          "fontFamily": "'Bricolage Grotesque', 'Bricolage Fallback', 'Inter Fallback', system-ui, sans-serif"
         },
         {
           "slug": "body",
           "name": "Inter",
-          "fontFamily": "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif"
+          "fontFamily": "'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif"
         }
       ]
     }

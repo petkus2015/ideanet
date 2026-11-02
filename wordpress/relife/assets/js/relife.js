@@ -188,7 +188,7 @@
 				card.classList.toggle( 'is-hidden', ! visible );
 			} );
 			moodBtns.forEach( function ( b ) { b.setAttribute( 'aria-pressed', mood && b.getAttribute( 'data-mood' ) === mood.id ? 'true' : 'false' ); } );
-			if ( titleEl ) { titleEl.textContent = mood ? 'Pre tvoju náladu' : titleEl.getAttribute( 'data-default' ); }
+			if ( titleEl ) { titleEl.textContent = mood ? ( titleEl.getAttribute( 'data-mood' ) || 'Pre tvoju náladu' ) : titleEl.getAttribute( 'data-default' ); }
 			if ( status ) {
 				status.hidden = ! mood;
 				if ( mood && statusText ) { statusText.innerHTML = ( i18n.moodNow || '' ) + ' <b>' + esc( mood.label ) + '</b> · ' + esc( mood.sections.join( ' · ' ).toUpperCase() ); }
@@ -322,6 +322,7 @@
 		initMisc();
 		initMenu();
 		renderSavedPage();
+		document.documentElement.classList.add( 'rl-ready' );
 	}
 	if ( document.readyState === 'loading' ) {
 		document.addEventListener( 'DOMContentLoaded', init );

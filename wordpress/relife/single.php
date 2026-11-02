@@ -57,7 +57,7 @@ while ( have_posts() ) :
 
 		<?php if ( has_post_thumbnail() ) : ?>
 			<figure class="rl-wrap rl-article__hero">
-				<?php the_post_thumbnail( 'relife-hero' ); ?>
+				<?php the_post_thumbnail( 'relife-hero', array( 'loading' => 'eager', 'fetchpriority' => 'high' ) ); ?>
 				<?php if ( get_the_post_thumbnail_caption() ) : ?><figcaption class="rl-muted"><?php echo esc_html( get_the_post_thumbnail_caption() ); ?></figcaption><?php endif; ?>
 			</figure>
 		<?php endif; ?>

@@ -2,6 +2,14 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.5.0
+Optimalizácia Cumulative Layout Shift (CLS):
+- **Logo:** pomer strán a prirodzená výška loga sa zapíšu do CSS vopred, takže hlavička má pevnú výšku ešte pred načítaním obrázka. V teste sa tým odstránil jediný namerany posun (0,0059 → 0).
+- **Písma:** náhradné písma `Inter Fallback` a `Bricolage Fallback` majú rozmery nastavené podľa skutočných písiem (size-adjust, ascent/descent-override), takže po načítaní webfontu sa text nepreskupí. Pridané predpripojenie na Google Fonts.
+- **Úvodná stránka:** zoznam „Čo dnes stojí za tvoju pozornosť?“ sa vykreslí hneď so 4 kartami (predtým 14, 10 sa skrylo až skriptom). Nálada, nadpis podľa nálady a uložené články sa zistia ešte pred vykreslením, miesto pre stavový pruh a text ankety je rezervované.
+- **Uložené:** zoznam má vopred rezervovanú výšku, prázdny stav je v HTML od začiatku.
+- **Obrázky:** titulný obrázok (úvod, článok) má vysokú prioritu načítania, ostatné dekódujú asynchrónne. Všetky obrázky majú rozmery (width/height) a pomer strán v CSS.
+
 ## 1.4.1
 - Článok: titulný obrázok má pevný odstup od bloku s autorom a tlačidlami Uložiť a Zdieľať (na mobile 28 px, na desktope 32 px). Odstup už nezávisí od vnútorných okrajov hlavičky.
 

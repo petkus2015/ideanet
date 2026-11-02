@@ -123,7 +123,16 @@ function relife_accent_css(): string {
 		$accent = '#3CFFD0';
 	}
 	$logo_h = max( 24, min( 140, (int) get_theme_mod( 'relife_logo_height', 72 ) ) );
-	return ':root{--rl-accent:' . $accent . ';--rl-logo-h:' . $logo_h . 'px;}';
+	// Rozmery loga vopred: rezervuje sa miesto v hlavičke ešte pred načítaním obrázka (bez posunu stránky).
+	$logo_vars = '';
+	$logo_id   = (int) get_theme_mod( 'custom_logo' );
+	if ( $logo_id > 0 ) {
+		$img = wp_get_attachment_image_src( $logo_id, 'full' );
+		if ( is_array( $img ) && (int) $img[1] > 0 && (int) $img[2] > 0 ) {
+			$logo_vars = '--rl-logo-ratio:' . (int) $img[1] . '/' . (int) $img[2] . ';--rl-logo-nat-h:' . (int) $img[2] . 'px;';
+		}
+	}
+	return ':root{--rl-accent:' . $accent . ';--rl-logo-h:' . $logo_h . 'px;' . $logo_vars . '}';
 }
 
 /**
@@ -226,3 +235,40 @@ function relife_content_image_sizes( string $sizes ): string {
 	return $sizes;
 }
 add_filter( 'wp_calculate_image_sizes', 'relife_content_image_sizes' );
+
+/**
+ * Predpripojenie k Google Fonts (rýchlejšie načítanie písma, menej výmen písma za behu).
+ *
+ * @param array<int, mixed> $urls
+ * @return array<int, mixed>
+ */
+function relife_resource_hints( array $urls, string $relation_type ): array {
+	if ( 'preconnect' === $relation_type && apply_filters( 'relife_load_google_fonts', true ) ) {
+		$urls[] = 'https://fonts.googleapis.com';
+		$urls[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' );
+	}
+	return $urls;
+}
+add_filter( 'wp_resource_hints', 'relife_resource_hints', 10, 2 );
+
+/**
+ * Stav čitateľa (nálada, uložené) sa zistí ešte pred vykreslením, aby sa rozloženie nemenilo až po načítaní skriptu.
+ */
+function relife_early_state_script(): void {
+	echo "<script>try{var d=document.documentElement,s=window.localStorage;if(s.getItem('relife.mood')){d.classList.add('rl-has-mood')}var v=JSON.parse(s.getItem('relife.saved')||'[]');if(v&&v.length){d.classList.add('rl-has-saved')}}catch(e){}</script>\n"; // phpcs:ignore WordPress.Security.EscapeOutput
+}
+add_action( 'wp_head', 'relife_early_state_script', 1 );
+
+/**
+ * Obrázky v kartách: asynchrónne dekódovanie. Všetky obrázky z WordPressu majú width/height, takže majú rezervované miesto.
+ *
+ * @param array<string, mixed> $attr
+ * @return array<string, mixed>
+ */
+function relife_image_attributes( array $attr ): array {
+	if ( ! isset( $attr['decoding'] ) ) {
+		$attr['decoding'] = 'async';
+	}
+	return $attr;
+}
+add_filter( 'wp_get_attachment_image_attributes', 'relife_image_attributes' );
