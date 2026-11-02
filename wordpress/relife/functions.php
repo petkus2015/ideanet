@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'RELIFE_VERSION', '1.0.0' );
+define( 'RELIFE_VERSION', (string) wp_get_theme( get_template() )->get( 'Version' ) ); // Verzia sa berie z hlavičky style.css.
 define( 'RELIFE_DIR', get_template_directory() );
 define( 'RELIFE_URI', get_template_directory_uri() );
 

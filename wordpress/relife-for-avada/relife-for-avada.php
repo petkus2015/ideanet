@@ -3,7 +3,7 @@
  * Plugin Name:       RELIFE pre Avadu
  * Plugin URI:        https://relife.sk
  * Description:       Magazínové prvky RELIFE (anketa, výber nálady, uložené články, formáty, sekcie, mobilné spodné menu) ako plugin pre tému Avada. Bežia aj v Avada Builderi.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.2
  * Requires PHP:      8.1
  * Author:            RELIFE
@@ -20,7 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'RLAV_VERSION', '1.0.0' );
+$rlav_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
+define( 'RLAV_VERSION', '' !== $rlav_data['Version'] ? $rlav_data['Version'] : '1.0.0' ); // Verzia sa berie z hlavičky pluginu.
 define( 'RLAV_FILE', __FILE__ );
 define( 'RLAV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RLAV_URI', plugin_dir_url( __FILE__ ) );

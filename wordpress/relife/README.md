@@ -9,7 +9,7 @@ Klasická PHP téma s `theme.json` (paleta, písma, šírky obsahu v editore blo
 
 ## Inštalácia
 
-1. Skopírujte priečinok `relife/` do `wp-content/themes/` (alebo nahrajte `relife.zip` cez *Vzhľad → Témy → Pridať novú*).
+1. Skopírujte priečinok `relife/` do `wp-content/themes/` (alebo nahrajte `relife-<verzia>.zip` cez *Vzhľad → Témy → Pridať novú*).
 2. Aktivujte tému.
 3. *Vzhľad → RELIFE ukážkový obsah → Importovať* (alebo `wp relife demo`) vytvorí sekcie, formáty, články, ankety, stránky a menu.
 

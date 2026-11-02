@@ -7,7 +7,7 @@ Magazínové prvky RELIFE ako plugin pre tému **Avada**. Téma sa nemení. Plug
 
 ## Inštalácia
 
-1. Pluginy → Pridať nový → Nahrať plugin → `relife-for-avada.zip` → Aktivovať.
+1. Pluginy → Pridať nový → Nahrať plugin → `relife-for-avada-<verzia>.zip` → Aktivovať.
 2. Nastavenia → RELIFE pre Avadu → *Importovať ukážkový obsah*. Vytvorí sekcie, formáty, články, ankety a **tri hotové stránky v Avada Builderi**:
    - **Domov** (hero s anketou, Quick Take, Dnes podľa nálady, Vysvetlené jednoducho, piliere, Versus, sekcie, formáty, Ultimate Guides, newsletter), voliteľne ju nastaví ako úvodnú stránku,
    - **Ankety** (aktívna anketa vedľa starších ankiet s výsledkami),
