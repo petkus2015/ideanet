@@ -351,3 +351,8 @@
 .rl-article-comments{max-width:760px;margin:0 auto 40px}
 @container (max-width:900px){.rl-scope .rl-toc{display:none}}
 @container (max-width:560px){.rl-scope .rl-article__dek{font-size:18px}.rl-scope .rl-content{font-size:17px}.rl-scope .rl-content h2{font-size:28px}.rl-scope .rl-answer p{font-size:21px}}
+
+/* Úzky blok: bez ukážkového textu, ostáva nadpis, kategória a čas čítania */
+@container (max-width:560px){
+	.rl-scope .rl-herocard__dek,.rl-scope .rl-versus p.rl-muted{display:none}
+}
