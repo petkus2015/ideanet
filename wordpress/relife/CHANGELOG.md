@@ -2,6 +2,11 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.8.0
+- Odrážky a zoznamy v článkoch: odrážky v tvare kosoštvorca s akcentovou farbou, vnorené zoznamy s kruhovými a štvorcovými odrážkami, číslované zoznamy s číslom v kruhu (vnorené s písmenami a, b, c), zoznam pojmov.
+- Štýly zoznamu v editore blokov (Zoznam → Štýly): **Zaškrtnutia**, **Krížiky (bez)**, **Kroky (číslovaný)** s prepojenou čiarou a **V rámčeku**.
+- Položky, ktoré začínajú ✓ alebo ✗ (aj `x-`), automaticky dostanú zaškrtnutie alebo krížik, značka sa z textu odstráni.
+
 ## 1.7.0
 - Google tag: vo Vzhľad → Prispôsobiť → RELIFE → Google tag ID zadáte `G-…` (Google Analytics 4), `GTM-…` (Tag Manager) alebo `AW-…`. Načíta sa asynchrónne v `<head>`, takže nebrzdí vykresľovanie.
 - Režim súhlasu (Consent Mode v2) je predvolene zapnutý: kým návštevník nedá súhlas, nič sa nesleduje. Súhlas nastavíte cez cookie plugin alebo volaním `relifeConsent.grant()` / `relifeConsent.deny()`.

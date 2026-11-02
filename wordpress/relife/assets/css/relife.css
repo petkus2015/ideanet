@@ -429,3 +429,55 @@ html.rl-has-saved .js-saved-empty{display:none}
 /* Logo v pätičke */
 .rl-footer__logo{display:block;width:fit-content;max-width:min(340px,100%);line-height:0}
 .rl-footer__logo-img{display:block;width:auto;height:min(var(--rl-flogo-h,56px),var(--rl-flogo-nat-h,9999px));max-width:100%;aspect-ratio:var(--rl-flogo-ratio,auto);object-fit:contain}
+
+/* Odrážky a zoznamy v článku */
+.rl-content ul,.rl-content ol{list-style:none;margin:28px 0;padding:0}
+.rl-content li{position:relative;margin:0 0 12px;padding-left:32px;line-height:1.6}
+.rl-content li:last-child{margin-bottom:0}
+.rl-content li>p{margin:0 0 8px}
+.rl-content li>p:last-child{margin-bottom:0}
+.rl-content li strong{color:#fff}
+
+/* Odrážky */
+.rl-content ul>li::before{content:"";position:absolute;left:4px;top:.72em;width:10px;height:10px;border-radius:3px;background:var(--rl-accent);transform:translateY(-50%) rotate(45deg)}
+.rl-content ul ul,.rl-content ol ul{margin:12px 0 4px}
+.rl-content ul ul>li::before,.rl-content ol ul>li::before{width:8px;height:8px;border-radius:50%;background:transparent;border:2px solid var(--rl-accent);transform:translateY(-50%)}
+.rl-content ul ul ul>li::before{border-radius:2px;border-color:var(--rl-muted)}
+
+/* Číslované zoznamy */
+.rl-content ol{counter-reset:rl-ol}
+.rl-content ol>li{counter-increment:rl-ol;padding-left:48px;min-height:32px}
+.rl-content ol>li::before{content:counter(rl-ol);position:absolute;left:0;top:-1px;width:32px;height:32px;border-radius:50%;border:2px solid var(--rl-accent);color:var(--rl-accent);font-family:var(--rl-display);font-weight:800;font-size:15px;line-height:28px;text-align:center}
+.rl-content ol ol{margin:12px 0 4px;counter-reset:rl-ol2}
+.rl-content ol ol>li{counter-increment:rl-ol2;padding-left:40px}
+.rl-content ol ol>li::before{content:counter(rl-ol2,lower-alpha);width:26px;height:26px;line-height:22px;font-size:13px;border-color:var(--rl-line);color:var(--rl-soft)}
+
+/* Postup po krokoch: zoznam so štýlom „Kroky" */
+.rl-content ol.is-style-rl-steps>li{padding:0 0 28px 64px;margin:0}
+.rl-content ol.is-style-rl-steps>li:last-child{padding-bottom:0}
+.rl-content ol.is-style-rl-steps>li::before{width:44px;height:44px;line-height:40px;font-size:20px;background:var(--rl-accent);border-color:var(--rl-accent);color:#131313;top:-4px}
+.rl-content ol.is-style-rl-steps>li::after{content:"";position:absolute;left:21px;top:44px;bottom:6px;width:2px;background:var(--rl-line)}
+.rl-content ol.is-style-rl-steps>li:last-child::after{display:none}
+
+/* Zaškrtnutia a krížiky (štýly zoznamu alebo položky s ✓ / ✗ na začiatku) */
+.rl-content ul.is-style-rl-check>li,.rl-content ul.is-style-rl-cross>li,.rl-content li.rl-li-yes,.rl-content li.rl-li-no{padding-left:36px}
+.rl-content ul.is-style-rl-check>li::before,.rl-content ul.is-style-rl-cross>li::before,.rl-content li.rl-li-yes::before,.rl-content li.rl-li-no::before{left:0;top:2px;width:24px;height:24px;border:none;border-radius:50%;transform:none;background-repeat:no-repeat;background-position:center;background-size:14px}
+.rl-content ul.is-style-rl-check>li::before,.rl-content li.rl-li-yes::before{background-color:var(--rl-accent);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23131313' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E")}
+.rl-content ul.is-style-rl-cross>li::before,.rl-content li.rl-li-no::before{background-color:#3D3D3D;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F5F5F2' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E")}
+.rl-content ul.is-style-rl-cross>li,.rl-content li.rl-li-no{color:var(--rl-muted)}
+
+/* Zoznam vo vyznačenom rámčeku */
+.rl-content ul.is-style-rl-box,.rl-content ol.is-style-rl-box{background:var(--rl-surface);border:1px solid var(--rl-line);border-radius:18px;padding:24px 24px 24px 20px}
+
+/* Zoznam pojmov */
+.rl-content dl{margin:28px 0}
+.rl-content dt{font-family:var(--rl-display);font-weight:800;font-size:20px;color:#fff;margin-top:20px}
+.rl-content dt:first-child{margin-top:0}
+.rl-content dd{margin:4px 0 0;color:var(--rl-soft)}
+
+@media (max-width:600px){
+	.rl-content li{padding-left:28px}
+	.rl-content ol>li{padding-left:44px}
+	.rl-content ol.is-style-rl-steps>li{padding-left:58px}
+	.rl-content ul.is-style-rl-box,.rl-content ol.is-style-rl-box{padding:18px 16px}
+}

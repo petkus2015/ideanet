@@ -282,3 +282,41 @@ function relife_image_attributes( array $attr ): array {
 	return $attr;
 }
 add_filter( 'wp_get_attachment_image_attributes', 'relife_image_attributes' );
+
+/**
+ * Štýly zoznamov v editore blokov (Zoznam → Štýly).
+ */
+function relife_register_block_styles(): void {
+	register_block_style( 'core/list', array( 'name' => 'rl-check', 'label' => __( 'Zaškrtnutia', 'relife' ) ) );
+	register_block_style( 'core/list', array( 'name' => 'rl-cross', 'label' => __( 'Krížiky (bez)', 'relife' ) ) );
+	register_block_style( 'core/list', array( 'name' => 'rl-steps', 'label' => __( 'Kroky (číslovaný)', 'relife' ) ) );
+	register_block_style( 'core/list', array( 'name' => 'rl-box', 'label' => __( 'V rámčeku', 'relife' ) ) );
+}
+add_action( 'init', 'relife_register_block_styles' );
+
+/**
+ * Položky zoznamu, ktoré začínajú ✓ / ✔ alebo ✗ / ✘ / „x-", dostanú zaškrtnutie alebo krížik.
+ * Značka sa z textu odstráni, takže funguje aj pri vložení textu z iného systému.
+ */
+function relife_list_markers( string $content ): string {
+	if ( ! is_singular() || false === strpos( $content, '<li' ) ) {
+		return $content;
+	}
+	$apply = static function ( string $html, string $markers, string $class ): string {
+		return (string) preg_replace_callback(
+			'#<li(\s[^>]*)?>\\s*(?:' . $markers . ')\\s*#u',
+			static function ( array $m ) use ( $class ): string {
+				$attrs = $m[1] ?? '';
+				if ( preg_match( '/\sclass=(["\'])(.*?)\1/', $attrs ) ) {
+					$attrs = (string) preg_replace( '/\sclass=(["\'])(.*?)\1/', ' class="$2 ' . $class . '"', $attrs, 1 );
+					return '<li' . $attrs . '>';
+				}
+				return '<li class="' . $class . '"' . $attrs . '>';
+			},
+			$html
+		);
+	};
+	$content = $apply( $content, '✓|✔|☑', 'rl-li-yes' );
+	return $apply( $content, '✗|✘|✕|☒|x-\\s', 'rl-li-no' );
+}
+add_filter( 'the_content', 'relife_list_markers', 12 );
