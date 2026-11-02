@@ -199,3 +199,17 @@ function relife_archive_title( string $title ): string {
 	return $title;
 }
 add_filter( 'get_the_archive_title', 'relife_archive_title' );
+
+/**
+ * Logo v hlavičke: menší `sizes`, aby prehliadač nesťahoval obrovský súbor, a bez lenivého načítania.
+ *
+ * @param array<string, mixed> $attr
+ * @return array<string, mixed>
+ */
+function relife_custom_logo_attributes( array $attr ): array {
+	$attr['sizes']         = '(max-width: 760px) 190px, 260px';
+	$attr['loading']       = 'eager';
+	$attr['fetchpriority'] = 'high';
+	return $attr;
+}
+add_filter( 'get_custom_logo_image_attributes', 'relife_custom_logo_attributes' );

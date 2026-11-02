@@ -26,14 +26,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <header class="rl-header">
 	<div class="rl-wrap rl-header__row">
-		<a class="rl-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
-			<?php if ( has_custom_logo() ) : ?>
-				<?php the_custom_logo(); ?>
-			<?php else : ?>
+		<?php if ( has_custom_logo() ) : ?>
+			<?php /* the_custom_logo() vypíše vlastný odkaz, preto tu nesmie byť ďalší <a> (vnorené odkazy rozbijú rozloženie). */ ?>
+			<div class="rl-brand rl-brand--logo"><?php the_custom_logo(); ?></div>
+		<?php else : ?>
+			<a class="rl-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 				<span class="rl-brand__mark"><?php echo esc_html( get_bloginfo( 'name' ) ?: 'RELIFE' ); ?></span>
 				<span class="rl-brand__tag"><?php echo esc_html( strtoupper( get_bloginfo( 'description' ) ?: 'Culture. Future. Better Living.' ) ); ?></span>
-			<?php endif; ?>
-		</a>
+			</a>
+		<?php endif; ?>
 
 		<nav class="rl-nav" aria-label="<?php esc_attr_e( 'Hlavná navigácia', 'relife' ); ?>">
 			<?php
