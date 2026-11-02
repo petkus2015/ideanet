@@ -214,7 +214,7 @@ button{font:inherit;color:inherit}
 .rl-byline__name{font-weight:600}
 .rl-byline__actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .rl-avatar{border-radius:50%}
-.rl-article__hero{margin:0 auto 40px}
+.rl-article__hero{margin:32px auto 40px}
 .rl-article__hero img{width:100%;aspect-ratio:21/9;object-fit:cover;border-radius:20px}
 .rl-article__hero figcaption{margin-top:10px;font-size:13px}
 .rl-article__cols{display:flex;gap:56px;align-items:flex-start;flex-wrap:wrap;padding-bottom:64px}
@@ -405,3 +405,8 @@ button{font:inherit;color:inherit}
 .rl-article__main .comment-form .submit{min-height:48px;padding:0 24px;border-radius:999px;border:none;background:var(--rl-accent);color:#131313;font-weight:700;cursor:pointer}
 .rl-article__main .comment-list{list-style:none;margin:0;padding:0}
 .rl-article__main .comment-list .children{list-style:none;padding-left:20px}
+
+@media (max-width:760px){
+	.rl-article__head{padding-bottom:0}
+	.rl-article__hero{margin:28px auto 32px}
+}

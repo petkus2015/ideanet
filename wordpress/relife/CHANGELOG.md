@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.4.1
+- Článok: titulný obrázok má pevný odstup od bloku s autorom a tlačidlami Uložiť a Zdieľať (na mobile 28 px, na desktope 32 px). Odstup už nezávisí od vnútorných okrajov hlavičky.
+
 ## 1.4.0
 - Videá z YouTube a Vimeo: stačí vložiť odkaz na samostatný riadok v článku (alebo ho prilepiť v editore blokov). Odkaz, ktorý je v odseku sám, sa tiež zmení na video.
 - Video je responzívne (pomer 16:9, celá šírka stĺpca) a používa `youtube-nocookie.com` (vypnete filtrom `relife_youtube_nocookie`).
