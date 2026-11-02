@@ -3,10 +3,15 @@
   "landingPage": "/",
   "steps": [
     { "step": "login", "username": "admin" },
+    {
+      "step": "writeFile",
+      "path": "/wordpress/wp-content/mu-plugins/fusion-stub.php",
+      "data": "<?php foreach ( array( 'fusion_builder_container', 'fusion_text' ) as $sc ) { add_shortcode( $sc, function ( $a, $c = '' ) { return '<div class=\"fusion-stub\">' . do_shortcode( $c ) . '</div>'; } ); } add_shortcode( 'fusion_builder_row', function ( $a, $c = '' ) { return '<div style=\"display:flex;flex-wrap:wrap;gap:20px;max-width:1200px;margin:0 auto;padding:0 16px\">' . do_shortcode( $c ) . '</div>'; } ); add_shortcode( 'fusion_builder_column', function ( $a, $c = '' ) { $w = ( isset( $a['type'] ) && '1_3' === $a['type'] ) ? '1 1 300px' : ( ( isset( $a['type'] ) && '2_3' === $a['type'] ) ? '2 1 560px' : '1 1 100%' ); return '<div style=\"flex:' . $w . ';min-width:0\">' . do_shortcode( $c ) . '</div>'; } );"
+    },
     { "step": "activatePlugin", "pluginPath": "relife-for-avada/relife-for-avada.php" },
     {
       "step": "runPHP",
-      "code": "<?php require '/wordpress/wp-load.php'; global $wp_rewrite; $wp_rewrite->set_permalink_structure('/%postname%/'); rlav_import_demo(); $id = wp_insert_post(array('post_title'=>'Domov','post_name'=>'domov','post_status'=>'publish','post_type'=>'page','post_content'=>'[relife_hero][relife_quick][relife_today][relife_explained][relife_pillars][relife_versus][relife_sections][relife_formats][relife_guides][relife_newsletter]')); update_option('show_on_front','page'); update_option('page_on_front',$id); $wp_rewrite->flush_rules(false);"
+      "code": "<?php require '/wordpress/wp-load.php'; global $wp_rewrite; $wp_rewrite->set_permalink_structure('/%postname%/'); rlav_import_demo( true ); $wp_rewrite->flush_rules(false);"
     }
   ]
 }

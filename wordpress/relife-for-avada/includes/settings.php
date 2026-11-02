@@ -48,6 +48,7 @@ function rlav_sanitize_options( mixed $input ): array {
 		'fonts'             => empty( $input['fonts'] ) ? 0 : 1,
 		'schema'            => empty( $input['schema'] ) ? 0 : 1,
 		'single'            => empty( $input['single'] ) ? 0 : 1,
+		'article_template'  => empty( $input['article_template'] ) ? 0 : 1,
 		'dark_avada'        => empty( $input['dark_avada'] ) ? 0 : 1,
 		'newsletter_action' => isset( $input['newsletter_action'] ) ? esc_url_raw( (string) $input['newsletter_action'] ) : '',
 		'saved_page'        => isset( $input['saved_page'] ) ? absint( $input['saved_page'] ) : 0,
@@ -61,7 +62,7 @@ function rlav_settings_page(): void {
 	}
 	$result = null;
 	if ( isset( $_POST['rlav_demo_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( (string) $_POST['rlav_demo_nonce'] ) ), 'rlav_demo' ) ) {
-		$result = rlav_import_demo();
+		$result = rlav_import_demo( ! empty( $_POST['rlav_set_front'] ) );
 	}
 	$o = rlav_options();
 	?>
@@ -96,6 +97,13 @@ function rlav_settings_page(): void {
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Mobilné spodné menu', 'relife-avada' ); ?></th>
 					<td><label><input type="checkbox" name="rlav_options[tabbar]" value="1" <?php checked( 1, (int) $o['tabbar'] ); ?>> <?php esc_html_e( 'Zobraziť spodné menu (Domov, Hľadať, Menu, Uložené, Weekly) na mobile', 'relife-avada' ); ?></label></td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Šablóna článku RELIFE', 'relife-avada' ); ?></th>
+					<td>
+						<label><input type="checkbox" name="rlav_options[article_template]" value="1" <?php checked( 1, (int) $o['article_template'] ); ?>> <?php esc_html_e( 'Zobraziť články v dizajne RELIFE (odpoveď v skratke, obsah článku, zdroje, autor, ďalšie články)', 'relife-avada' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Hlavička a pätička ostávajú z Avady. Ak je vypnutá, platí štandardná šablóna Avady a doplnky nižšie.', 'relife-avada' ); ?></p>
+					</td>
 				</tr>
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Doplnky v článku', 'relife-avada' ); ?></th>
@@ -134,9 +142,10 @@ function rlav_settings_page(): void {
 
 		<hr>
 		<h2><?php esc_html_e( 'Ukážkový obsah', 'relife-avada' ); ?></h2>
-		<p><?php esc_html_e( 'Vytvorí 7 sekcií, 6 formátov, ukážkové články a ankety a stránky „Staršie ankety“ a „Uložené“. Nemení nastavenia webu ani menu. Opakované spustenie nič nezduplikuje.', 'relife-avada' ); ?></p>
+		<p><?php esc_html_e( 'Vytvorí 7 sekcií, 6 formátov, ukážkové články a ankety a hotové stránky v Avada Builderi: Domov, Ankety a Uložené. Menu nemení. Opakované spustenie nič nezduplikuje.', 'relife-avada' ); ?></p>
 		<form method="post">
 			<?php wp_nonce_field( 'rlav_demo', 'rlav_demo_nonce' ); ?>
+			<p><label><input type="checkbox" name="rlav_set_front" value="1" checked> <?php esc_html_e( 'Nastaviť stránku „Domov“ ako úvodnú stránku webu', 'relife-avada' ); ?></label></p>
 			<?php submit_button( __( 'Importovať ukážkový obsah', 'relife-avada' ), 'secondary' ); ?>
 		</form>
 

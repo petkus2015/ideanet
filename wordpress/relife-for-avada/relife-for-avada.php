@@ -46,6 +46,7 @@ require_once RLAV_DIR . 'includes/shortcodes.php';
 require_once RLAV_DIR . 'includes/single.php';
 require_once RLAV_DIR . 'includes/settings.php';
 require_once RLAV_DIR . 'includes/avada.php';
+require_once RLAV_DIR . 'includes/builder-pages.php';
 require_once RLAV_DIR . 'includes/demo.php';
 
 register_activation_hook(

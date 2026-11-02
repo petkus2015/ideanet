@@ -23,6 +23,7 @@ function rlav_options(): array {
 		'fonts'             => 1,
 		'schema'            => 1,
 		'single'            => 1,
+		'article_template'  => 1,
 		'dark_avada'        => 0,
 		'newsletter_action' => '',
 		'saved_page'        => 0,

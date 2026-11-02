@@ -34,7 +34,7 @@ function rlav_find_by_title( string $title, string $post_type ): ?WP_Post {
  *
  * @return array<string, int> Počty vytvorených položiek.
  */
-function rlav_import_demo(): array {
+function rlav_import_demo( bool $set_front = false ): array {
 	$created = array( 'sections' => 0, 'formats' => 0, 'posts' => 0, 'polls' => 0, 'pages' => 0 );
 
 	// Sekcie (kategórie).
@@ -173,36 +173,8 @@ function rlav_import_demo(): array {
 		}
 	}
 
-	// Stránky so shortcodmi (Avada Builder ich zobrazí v Code Block / Shortcode elemente).
-	$pages = array(
-		array( 'Staršie ankety', 'ankety', '[relife_polls]', 'polls' ),
-		array( 'Uložené', 'ulozene', '[relife_saved]', 'saved' ),
-	);
-	$options = rlav_options();
-	foreach ( $pages as $pg ) {
-		$existing = get_page_by_path( $pg[1] );
-		if ( $existing instanceof WP_Post ) {
-			if ( empty( $options[ $pg[3] . '_page' ] ) ) {
-				$options[ $pg[3] . '_page' ] = $existing->ID;
-			}
-			continue;
-		}
-		$id = wp_insert_post(
-			array(
-				'post_title'   => $pg[0],
-				'post_name'    => $pg[1],
-				'post_status'  => 'publish',
-				'post_type'    => 'page',
-				'post_content' => $pg[2],
-			),
-			true
-		);
-		if ( ! is_wp_error( $id ) ) {
-			$options[ $pg[3] . '_page' ] = (int) $id;
-			++$created['pages'];
-		}
-	}
-	update_option( 'rlav_options', $options );
+	// Stránky v Avada Builderi: Domov, Ankety, Uložené.
+	$created['pages'] = rlav_create_builder_pages( $set_front );
 
 	return $created;
 }
@@ -211,7 +183,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command(
 		'relife-avada demo',
 		static function (): void {
-			$r = rlav_import_demo();
+			$r = rlav_import_demo( true );
 			WP_CLI::success( wp_json_encode( $r ) ?: 'ok' );
 		}
 	);

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function rlav_single_filter( string $content ): string {
-	if ( empty( rlav_option( 'single' ) ) || ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) {
+	if ( empty( rlav_option( 'single' ) ) || ! empty( rlav_option( 'article_template' ) ) || ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) {
 		return $content;
 	}
 	$post_id    = (int) get_the_ID();
@@ -66,3 +66,17 @@ function rlav_single_filter( string $content ): string {
 	return $top . $content . $bottom;
 }
 add_filter( 'the_content', 'rlav_single_filter', 12 );
+
+/**
+ * Vlastná šablóna článku RELIFE (vypnuteľná v nastaveniach).
+ */
+function rlav_single_template( string $template ): string {
+	if ( ! empty( rlav_option( 'article_template' ) ) && is_singular( 'post' ) ) {
+		$file = RLAV_DIR . 'templates/single-post.php';
+		if ( is_readable( $file ) ) {
+			return $file;
+		}
+	}
+	return $template;
+}
+add_filter( 'template_include', 'rlav_single_template', 99 );
