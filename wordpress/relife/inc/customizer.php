@@ -40,6 +40,24 @@ function relife_customize_register( WP_Customize_Manager $wp_customize ): void {
 	);
 
 	$wp_customize->add_setting(
+		'relife_logo_height',
+		array(
+			'default'           => 56,
+			'sanitize_callback' => static fn( $v ): int => max( 24, min( 120, (int) $v ) ),
+		)
+	);
+	$wp_customize->add_control(
+		'relife_logo_height',
+		array(
+			'label'       => __( 'Maximálna výška loga (px)', 'relife' ),
+			'description' => __( 'Nahrané logo sa prispôsobí tejto výške, šírka sa dopočíta. Na mobile je výška o štvrtinu menšia.', 'relife' ),
+			'section'     => 'relife_options',
+			'type'        => 'number',
+			'input_attrs' => array( 'min' => 24, 'max' => 120, 'step' => 2 ),
+		)
+	);
+
+	$wp_customize->add_setting(
 		'relife_newsletter_action',
 		array(
 			'default'           => '',

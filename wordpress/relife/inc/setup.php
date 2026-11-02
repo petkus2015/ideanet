@@ -28,8 +28,8 @@ function relife_setup(): void {
 	add_theme_support(
 		'custom-logo',
 		array(
-			'height'      => 80,
-			'width'       => 320,
+			'height'      => 112,
+			'width'       => 480,
 			'flex-height' => true,
 			'flex-width'  => true,
 		)
@@ -122,7 +122,8 @@ function relife_accent_css(): string {
 	if ( null === $accent || '' === $accent ) {
 		$accent = '#3CFFD0';
 	}
-	return ':root{--rl-accent:' . $accent . ';}';
+	$logo_h = max( 24, min( 120, (int) get_theme_mod( 'relife_logo_height', 56 ) ) );
+	return ':root{--rl-accent:' . $accent . ';--rl-logo-h:' . $logo_h . 'px;}';
 }
 
 /**
