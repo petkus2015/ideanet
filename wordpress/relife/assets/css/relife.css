@@ -391,3 +391,17 @@ button{font:inherit;color:inherit}
 	.rl-content .wp-block-gallery figure{flex-basis:100%}
 	.rl-article__hero img{aspect-ratio:16/10}
 }
+
+/* Video z YouTube a Vimeo: pomer 16:9 na celú šírku stĺpca */
+.rl-content .rl-embed{position:relative;aspect-ratio:16/9;width:100%;max-width:100%;margin:32px 0;border-radius:16px;overflow:hidden;background:#000}
+.rl-content .rl-embed iframe{position:absolute;inset:0;width:100% !important;height:100% !important;max-width:none;border:0;border-radius:0;aspect-ratio:auto}
+.rl-content .wp-block-embed__wrapper .rl-embed{margin:0}
+.rl-content .wp-block-embed{margin:32px 0}
+
+/* Komentáre: formulár sa nesmie rozšíriť za stĺpec */
+.rl-article__main .comment-respond,.rl-article__main .comments-area{max-width:100%;min-width:0;margin-top:36px}
+.rl-article__main .comment-form input[type="text"],.rl-article__main .comment-form input[type="email"],.rl-article__main .comment-form input[type="url"],.rl-article__main .comment-form textarea{display:block;width:100%;max-width:100%;box-sizing:border-box;background:var(--rl-surface);color:var(--rl-ink);border:1.5px solid var(--rl-line);border-radius:12px;padding:12px 14px;font:inherit;font-size:16px}
+.rl-article__main .comment-form textarea{min-height:140px}
+.rl-article__main .comment-form .submit{min-height:48px;padding:0 24px;border-radius:999px;border:none;background:var(--rl-accent);color:#131313;font-weight:700;cursor:pointer}
+.rl-article__main .comment-list{list-style:none;margin:0;padding:0}
+.rl-article__main .comment-list .children{list-style:none;padding-left:20px}

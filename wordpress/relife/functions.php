@@ -18,5 +18,6 @@ define( 'RELIFE_URI', get_template_directory_uri() );
 require_once RELIFE_DIR . '/inc/setup.php';
 require_once RELIFE_DIR . '/inc/content-model.php';
 require_once RELIFE_DIR . '/inc/template-tags.php';
+require_once RELIFE_DIR . '/inc/embeds.php';
 require_once RELIFE_DIR . '/inc/customizer.php';
 require_once RELIFE_DIR . '/inc/demo-content.php';
