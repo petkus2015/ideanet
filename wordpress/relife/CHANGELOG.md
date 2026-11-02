@@ -2,6 +2,11 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.3.5
+- Obrázky v článkoch sú responzívne: vždy sa zmestia do stĺpca, zachovajú pomer strán, popisy (`wp-caption`) neprečnievajú, obrázky zarovnané vľavo/vpravo sa na mobile zaradia pod seba, galérie sa na mobile zoradia do jedného stĺpca, videá z YouTube a Vimeo majú pomer 16:9.
+- Správny `sizes` pre obrázky v texte (760 px alebo celá šírka na mobile).
+- Tabuľky a bloky kódu v článku sa posúvajú v sebe, nepredlžujú stránku.
+
 ## 1.3.4
 - Mobil: sekcie na úvodnej stránke majú opäť rozostup (nadpis „Čo dnes stojí za tvoju pozornosť?“ nebol natlačený na predchádzajúci blok). Mobilné pravidlo pre bočné okraje prepisovalo aj horný a dolný okraj. Oprava platí aj pre hlavičku článku.
 

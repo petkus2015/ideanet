@@ -213,3 +213,16 @@ function relife_custom_logo_attributes( array $attr ): array {
 	return $attr;
 }
 add_filter( 'get_custom_logo_image_attributes', 'relife_custom_logo_attributes' );
+
+/**
+ * Správny atribút `sizes` pre obrázky v texte článku, aby prehliadač nesťahoval zbytočne veľký súbor.
+ *
+ * @param string $sizes
+ */
+function relife_content_image_sizes( string $sizes ): string {
+	if ( is_singular( 'post' ) && in_the_loop() ) {
+		return '(max-width: 800px) 100vw, 760px';
+	}
+	return $sizes;
+}
+add_filter( 'wp_calculate_image_sizes', 'relife_content_image_sizes' );

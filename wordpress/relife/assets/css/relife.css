@@ -366,3 +366,28 @@ button{font:inherit;color:inherit}
 .rl-guide__title,.rl-card__title,.rl-quick__title,.rl-wide__title,.rl-tile__name,.rl-tile__line,.rl-list__title{overflow-wrap:anywhere}
 .rl-guide,.rl-card,.rl-tile,.rl-quick{min-width:0}
 @media (max-width:760px){.rl-guide__title{font-size:22px}}
+
+/* Obrázky a médiá v článku: vždy v šírke stĺpca, s pomerom strán */
+.rl-content img,.rl-content video,.rl-content canvas{max-width:100%;height:auto}
+.rl-content img{display:block;border-radius:16px}
+.rl-content figure,.rl-content .wp-caption,.rl-content .wp-block-image,.rl-content .wp-block-embed{max-width:100%;margin-left:0;margin-right:0}
+.rl-content .wp-caption{width:auto !important}
+.rl-content figure img,.rl-content .wp-caption img{width:100%}
+.rl-content figcaption,.rl-content .wp-caption-text{margin-top:10px;font-size:13px;line-height:1.5;color:var(--rl-muted)}
+.rl-content .alignnone,.rl-content .aligncenter,.rl-content .alignwide,.rl-content .alignfull{display:block;margin-left:auto;margin-right:auto;max-width:100%}
+.rl-content .alignleft{float:left;max-width:50%;margin:6px 28px 16px 0}
+.rl-content .alignright{float:right;max-width:50%;margin:6px 0 16px 28px}
+.rl-content .alignleft img,.rl-content .alignright img{width:100%}
+.rl-content::after{content:"";display:block;clear:both}
+.rl-content iframe,.rl-content embed,.rl-content object{max-width:100%;border:0}
+.rl-content iframe[src*="youtube"],.rl-content iframe[src*="youtu.be"],.rl-content iframe[src*="vimeo"],.rl-content .wp-block-embed__wrapper iframe{width:100%;height:auto;aspect-ratio:16/9;border-radius:16px}
+.rl-content .wp-block-gallery{display:flex;flex-wrap:wrap;gap:12px;margin:32px 0;padding:0;list-style:none}
+.rl-content .wp-block-gallery figure{flex:1 1 calc(50% - 6px);min-width:0;margin:0}
+.rl-content .wp-block-gallery img{height:100%;aspect-ratio:4/3;object-fit:cover}
+.rl-content table{display:block;max-width:100%;overflow-x:auto}
+.rl-content pre{max-width:100%;overflow-x:auto}
+@media (max-width:600px){
+	.rl-content .alignleft,.rl-content .alignright{float:none;max-width:100%;margin:24px auto}
+	.rl-content .wp-block-gallery figure{flex-basis:100%}
+	.rl-article__hero img{aspect-ratio:16/10}
+}
