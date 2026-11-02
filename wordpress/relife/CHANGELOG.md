@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.6.0
+- Logo v pätičke: vo Vzhľad → Prispôsobiť → RELIFE → Logo v pätičke (a Maximálna výška loga v pätičke). Bez vybraného loga sa zobrazí text RELIFE a heslo ako doteraz. Rozmery sa rezervujú vopred (bez posunu stránky).
+
 ## 1.5.0
 Optimalizácia Cumulative Layout Shift (CLS):
 - **Logo:** pomer strán a prirodzená výška loga sa zapíšu do CSS vopred, takže hlavička má pevnú výšku ešte pred načítaním obrázka. V teste sa tým odstránil jediný namerany posun (0,0059 → 0).

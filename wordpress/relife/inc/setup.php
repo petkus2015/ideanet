@@ -132,7 +132,17 @@ function relife_accent_css(): string {
 			$logo_vars = '--rl-logo-ratio:' . (int) $img[1] . '/' . (int) $img[2] . ';--rl-logo-nat-h:' . (int) $img[2] . 'px;';
 		}
 	}
-	return ':root{--rl-accent:' . $accent . ';--rl-logo-h:' . $logo_h . 'px;' . $logo_vars . '}';
+	// Logo v pätičke (rovnaká logika: rezervované miesto vopred).
+	$flogo_h    = max( 24, min( 140, (int) get_theme_mod( 'relife_footer_logo_height', 56 ) ) );
+	$flogo_vars = '';
+	$flogo_id   = (int) get_theme_mod( 'relife_footer_logo', 0 );
+	if ( $flogo_id > 0 ) {
+		$fimg = wp_get_attachment_image_src( $flogo_id, 'full' );
+		if ( is_array( $fimg ) && (int) $fimg[1] > 0 && (int) $fimg[2] > 0 ) {
+			$flogo_vars = '--rl-flogo-ratio:' . (int) $fimg[1] . '/' . (int) $fimg[2] . ';--rl-flogo-nat-h:' . (int) $fimg[2] . 'px;';
+		}
+	}
+	return ':root{--rl-accent:' . $accent . ';--rl-logo-h:' . $logo_h . 'px;' . $logo_vars . '--rl-flogo-h:' . $flogo_h . 'px;' . $flogo_vars . '}';
 }
 
 /**

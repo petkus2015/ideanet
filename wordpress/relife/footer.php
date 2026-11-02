@@ -19,8 +19,16 @@ $action = (string) get_theme_mod( 'relife_newsletter_action', '' );
 	<div class="rl-wrap">
 		<div class="rl-footer__grid">
 			<div>
-				<div class="rl-footer__mark"><?php echo esc_html( get_bloginfo( 'name' ) ?: 'RELIFE' ); ?></div>
-				<div class="rl-brand__tag"><?php echo esc_html( strtoupper( get_bloginfo( 'description' ) ?: 'Culture. Future. Better Living.' ) ); ?></div>
+				<?php
+				$footer_logo = (int) get_theme_mod( 'relife_footer_logo', 0 );
+				$footer_img  = $footer_logo > 0 ? wp_get_attachment_image( $footer_logo, 'full', false, array( 'class' => 'rl-footer__logo-img', 'alt' => get_bloginfo( 'name' ), 'loading' => 'lazy' ) ) : '';
+				?>
+				<?php if ( '' !== $footer_img ) : ?>
+					<a class="rl-footer__logo" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php echo $footer_img; // phpcs:ignore WordPress.Security.EscapeOutput ?></a>
+				<?php else : ?>
+					<div class="rl-footer__mark"><?php echo esc_html( get_bloginfo( 'name' ) ?: 'RELIFE' ); ?></div>
+					<div class="rl-brand__tag"><?php echo esc_html( strtoupper( get_bloginfo( 'description' ) ?: 'Culture. Future. Better Living.' ) ); ?></div>
+				<?php endif; ?>
 				<p class="rl-footer__text"><?php echo esc_html( (string) get_theme_mod( 'relife_tagline_footer', 'Digitálny magazín pre generáciu, ktorá chce vedieť viac, žiť lepšie a byť o krok vpred.' ) ); ?></p>
 			</div>
 

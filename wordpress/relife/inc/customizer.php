@@ -58,6 +58,43 @@ function relife_customize_register( WP_Customize_Manager $wp_customize ): void {
 	);
 
 	$wp_customize->add_setting(
+		'relife_footer_logo',
+		array(
+			'default'           => 0,
+			'sanitize_callback' => 'absint',
+		)
+	);
+	$wp_customize->add_control(
+		new WP_Customize_Media_Control(
+			$wp_customize,
+			'relife_footer_logo',
+			array(
+				'label'       => __( 'Logo v pätičke', 'relife' ),
+				'description' => __( 'Ak nie je vybrané, v pätičke sa zobrazí text RELIFE a heslo.', 'relife' ),
+				'section'     => 'relife_options',
+				'mime_type'   => 'image',
+			)
+		)
+	);
+
+	$wp_customize->add_setting(
+		'relife_footer_logo_height',
+		array(
+			'default'           => 56,
+			'sanitize_callback' => static fn( $v ): int => max( 24, min( 140, (int) $v ) ),
+		)
+	);
+	$wp_customize->add_control(
+		'relife_footer_logo_height',
+		array(
+			'label'       => __( 'Maximálna výška loga v pätičke (px)', 'relife' ),
+			'section'     => 'relife_options',
+			'type'        => 'number',
+			'input_attrs' => array( 'min' => 24, 'max' => 140, 'step' => 2 ),
+		)
+	);
+
+	$wp_customize->add_setting(
 		'relife_newsletter_action',
 		array(
 			'default'           => '',

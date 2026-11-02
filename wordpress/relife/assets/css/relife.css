@@ -425,3 +425,7 @@ html:not(.rl-ready) .js-today>.js-card:nth-child(n+5){display:none}
 html.rl-has-saved .js-saved-list{min-height:340px}
 html.rl-has-saved .js-saved-empty{display:none}
 .rl-card__media,.rl-wide__media{background-clip:padding-box}
+
+/* Logo v pätičke */
+.rl-footer__logo{display:block;width:fit-content;max-width:min(340px,100%);line-height:0}
+.rl-footer__logo-img{display:block;width:auto;height:min(var(--rl-flogo-h,56px),var(--rl-flogo-nat-h,9999px));max-width:100%;aspect-ratio:var(--rl-flogo-ratio,auto);object-fit:contain}
