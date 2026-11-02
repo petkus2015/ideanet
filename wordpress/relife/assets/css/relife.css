@@ -265,7 +265,10 @@ button{font:inherit;color:inherit}
 .rl-newsletter__title{font-family:var(--rl-display);font-weight:800;font-size:28px;margin:0 0 6px}
 .rl-newsletter p{margin:0 0 14px;font-size:14px}
 .rl-newsletter__form{display:flex;gap:10px;flex-wrap:wrap}
-.rl-newsletter__form input{flex:1 1 200px;min-height:48px;padding:0 16px;border-radius:12px;border:none;font:inherit;color:#131313}
+.rl-newsletter__form input[type="email"]{flex:1 1 200px;min-height:48px;padding:0 16px;border-radius:12px;border:2px solid transparent;font:inherit;font-size:16px;background:#fff !important;color:#131313 !important;-webkit-text-fill-color:#131313;caret-color:#131313;box-shadow:none}
+.rl-newsletter__form input[type="email"]::placeholder{color:#5A5A62;opacity:1;-webkit-text-fill-color:#5A5A62}
+.rl-newsletter__form input[type="email"]:focus{outline:none;border-color:var(--rl-accent);box-shadow:0 0 0 3px rgba(60,255,208,.35)}
+.rl-newsletter__form input[type="email"]:-webkit-autofill,.rl-newsletter__form input[type="email"]:-webkit-autofill:focus{-webkit-text-fill-color:#131313;box-shadow:0 0 0 100px #fff inset}
 .rl-newsletter__form button{min-height:48px;padding:0 24px;border-radius:12px;border:1.5px solid #fff;background:#131313;color:#fff;font-weight:700;cursor:pointer}
 .rl-footer__list{list-style:none;margin:0;padding:0}
 .rl-footer__list a{display:flex;align-items:center;min-height:36px;color:#E6E6EA}
