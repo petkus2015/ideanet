@@ -285,7 +285,8 @@ button{font:inherit;color:inherit}
 	.rl-toc{display:none}
 }
 @media (max-width:760px){
-	.rl-wrap{padding:0 16px}
+	.rl-wrap{padding-left:16px;padding-right:16px}
+	.rl-block{padding-top:36px}
 	.rl-header__row{padding-top:10px;padding-bottom:6px}
 	.rl-brand__mark{font-size:46px}
 	.rl-brand--logo{max-width:min(230px,55vw)}

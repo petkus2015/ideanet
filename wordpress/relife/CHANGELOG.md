@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.3.4
+- Mobil: sekcie na úvodnej stránke majú opäť rozostup (nadpis „Čo dnes stojí za tvoju pozornosť?“ nebol natlačený na predchádzajúci blok). Mobilné pravidlo pre bočné okraje prepisovalo aj horný a dolný okraj. Oprava platí aj pre hlavičku článku.
+
 ## 1.3.3
 - Logo v hlavičke je väčšie: predvolená výška 72 px (predtým 56), na mobile 54 px, najväčšia šírka 340 px (mobil 230 px). Výšku zmeníte v Customizeri (24 až 140 px). Ak ste tam výšku už nastavili, ostáva vaša hodnota.
 
