@@ -114,3 +114,53 @@ add_action( 'wp_enqueue_scripts', 'relife_dequeue_comment_script', 100 );
 /**
  * Hlavičky pre prehliadač: 103 Early Hints nie sú v PHP dostupné, preto aspoň dlhá cache pre statické súbory téme nadáva server (.htaccess ukážka v README).
  */
+
+/**
+ * Obrázky: nahrané JPEG/PNG sa ukladajú aj ako WebP (výrazne menšie súbory pri rovnakom vzhľade).
+ * Funguje len ak server WebP podporuje; inak WordPress nechá pôvodný formát. Vypnete filtrom `relife_optimize_images`.
+ * Týka sa nových nahratí a pregenerovaných miniatúr (Regenerate Thumbnails / `wp media regenerate --yes`).
+ *
+ * @param array<string, string> $formats
+ * @return array<string, string>
+ */
+function relife_image_output_formats( array $formats ): array {
+	if ( ! apply_filters( 'relife_optimize_images', true ) ) {
+		return $formats;
+	}
+	$target = (string) apply_filters( 'relife_image_format', 'image/webp' );
+	if ( wp_image_editor_supports( array( 'mime_type' => $target ) ) ) {
+		$formats['image/jpeg'] = $target;
+		$formats['image/png']  = $target;
+	}
+	return $formats;
+}
+add_filter( 'image_editor_output_format', 'relife_image_output_formats' );
+
+/**
+ * Kvalita kompresie: vizuálne bez straty, no podstatne menší súbor.
+ */
+function relife_image_quality( int $quality, string $mime ): int {
+	if ( ! apply_filters( 'relife_optimize_images', true ) ) {
+		return $quality;
+	}
+	return match ( $mime ) {
+		'image/webp' => 82,
+		'image/avif' => 60,
+		'image/jpeg' => 85,
+		default      => $quality,
+	};
+}
+add_filter( 'wp_editor_set_quality', 'relife_image_quality', 10, 2 );
+
+/**
+ * Obrázky pri nahratí nemajú byť väčšie než treba (predvolene 2560 px; tu 2000 px stačí pre magazín).
+ */
+function relife_big_image_threshold( int $threshold ): int {
+	return apply_filters( 'relife_optimize_images', true ) ? 2000 : $threshold;
+}
+add_filter( 'big_image_size_threshold', 'relife_big_image_threshold' );
+
+/**
+ * Obrázky pod záhybom sa načítavajú lenším spôsobom: prvé 2 obrázky v obsahu strany neláduj lenivo (môžu byť LCP), ostatné áno.
+ */
+add_filter( 'wp_omit_loading_attr_threshold', static fn(): int => 2 );

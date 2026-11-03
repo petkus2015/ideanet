@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.11.0
+- **Optimalizácia obrázkov bez viditeľnej straty kvality:** nahraté JPEG/PNG sa ukladajú ako WebP (kvalita 82; AVIF 60, JPEG 85), len ak ich server podporuje. Maximálny rozmer originálu 2000 px. Vypnutie: filter `relife_optimize_images`; iný formát: filter `relife_image_format` (napr. `image/avif`).
+- Lenivé načítanie (lazy) až od tretieho obrázka na stránke, prvé dva sa načítajú hneď.
+
 ## 1.10.0
 - **Výkon (Core Web Vitals, LCP a Speed Index na mobile):**
   - Písma Inter a Bricolage Grotesque sú teraz v téme (`assets/fonts`, latin + latin-ext pre slovenčinu) a `@font-face` je priamo v `<head>`; preload hlavných súborov. Preč je blokujúca požiadavka na Google Fonts.
