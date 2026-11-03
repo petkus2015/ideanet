@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.12.0
+- Karty článkov majú ďalšie veľkosti obrázkov (320 a 480 px) a presný `sizes`, takže mobil nesťahuje 640 px obrázok pre kartu širokú ~180 px. Po nahraní pregenerujte miniatúry.
+
 ## 1.11.0
 - **Optimalizácia obrázkov bez viditeľnej straty kvality:** nahraté JPEG/PNG sa ukladajú ako WebP (kvalita 82; AVIF 60, JPEG 85), len ak ich server podporuje. Maximálny rozmer originálu 2000 px. Vypnutie: filter `relife_optimize_images`; iný formát: filter `relife_image_format` (napr. `image/avif`).
 - Lenivé načítanie (lazy) až od tretieho obrázka na stránke, prvé dva sa načítajú hneď.

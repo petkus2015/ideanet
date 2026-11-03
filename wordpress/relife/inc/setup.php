@@ -40,6 +40,8 @@ function relife_setup(): void {
 	add_image_size( 'relife-card', 640, 600, true );
 	add_image_size( 'relife-hero', 1600, 900, true );
 	add_image_size( 'relife-hero-m', 800, 450, true );
+	add_image_size( 'relife-card-s', 320, 300, true );
+	add_image_size( 'relife-card-m', 480, 450, true );
 
 	register_nav_menus(
 		array(

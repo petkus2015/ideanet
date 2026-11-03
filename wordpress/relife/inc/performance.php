@@ -69,6 +69,10 @@ function relife_hero_image_sizes( array $attr, WP_Post $attachment, $size ): arr
 	if ( 'relife-hero' === $size && ! empty( $attr['fetchpriority'] ) ) {
 		$attr['sizes'] = is_front_page() ? '(max-width: 900px) 100vw, 800px' : '(max-width: 800px) 100vw, 1100px';
 	}
+	if ( 'relife-card' === $size ) {
+		// Karty: 4 stĺpce na desktope (~290 px), 2 na mobile (~50 vw), vedľa seba v širokých kartách ~38 %.
+		$attr['sizes'] = '(max-width: 760px) 60vw, 330px';
+	}
 	return $attr;
 }
 add_filter( 'wp_get_attachment_image_attributes', 'relife_hero_image_sizes', 20, 3 );
