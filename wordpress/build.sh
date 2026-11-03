@@ -9,7 +9,21 @@ theme_v=$(grep -m1 '^Version:' relife/style.css | awk '{print $2}')
 plugin_v=$(grep -m1 'Version:' relife-for-avada/relife-for-avada.php | awk '{print $NF}')
 
 rm -f relife-[0-9]*.zip relife.zip
-zip -qr "relife-${theme_v}.zip" relife -x 'relife/playground/*'
+# Do zipu ide kópia so skrátenými štýlmi (bez komentárov a medzier), zdrojový súbor v repozitári zostáva čitateľný.
+stage=$(mktemp -d)
+cp -r relife "$stage/relife"
+python3 - "$stage/relife/assets/css/relife.css" <<'MIN'
+import re, sys
+p = sys.argv[1]
+c = open(p, encoding='utf-8').read()
+c = re.sub(r'/\*.*?\*/', '', c, flags=re.S)
+c = re.sub(r'\s+', ' ', c)
+c = re.sub(r'\s*([{};,>])\s*', r'\1', c)
+c = c.replace(';}', '}')
+open(p, 'w', encoding='utf-8').write(c.strip())
+MIN
+(cd "$stage" && zip -qr "$OLDPWD/relife-${theme_v}.zip" relife -x 'relife/playground/*')
+rm -rf "$stage"
 
 # Plugin pre Avadu sa zabalí len na požiadanie: ./build.sh --avada
 if [[ "${1:-}" == "--avada" ]]; then
@@ -23,7 +37,7 @@ root = 'relife'
 def tree(path):
     d = {}
     for n in sorted(os.listdir(path)):
-        if n in ('playground', 'screenshot.png'):
+        if n in ('playground', 'screenshot.png', 'fonts'):
             continue
         fp = os.path.join(path, n)
         d[n] = tree(fp) if os.path.isdir(fp) else open(fp, encoding='utf-8').read()

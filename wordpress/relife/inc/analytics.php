@@ -35,6 +35,13 @@ function relife_google_tag_enabled(): bool {
 }
 
 /**
+ * Načíta skript Googlu až po načítaní stránky (nebrzdí LCP ani Speed Index). Meranie zostáva zachované.
+ */
+function relife_google_tag_loader( string $url ): void {
+	echo "<script>(function(){var u=" . wp_json_encode( $url ) . ";var l=function(){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s)};var r=function(){if('requestIdleCallback' in window){requestIdleCallback(l,{timeout:3000})}else{setTimeout(l,1500)}};if(document.readyState==='complete'){r()}else{window.addEventListener('load',r)}})();</script>\n"; // phpcs:ignore WordPress.Security.EscapeOutput
+}
+
+/**
  * Dôvod, prečo sa Google tag nevypísal (pre diagnostiku v zdrojovom kóde stránky), alebo prázdny reťazec.
  */
 function relife_google_tag_skip_reason(): string {
@@ -82,10 +89,10 @@ function relife_google_tag_head(): void {
 
 	if ( $is_gtm ) {
 		echo "dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});\n</script>\n";
-		echo '<script async src="https://www.googletagmanager.com/gtm.js?id=' . esc_attr( $url_param ) . "\"></script>\n";
+		relife_google_tag_loader( 'https://www.googletagmanager.com/gtm.js?id=' . rawurlencode( $url_param ) );
 	} else {
 		echo "gtag('js',new Date());gtag('config'," . $id_js . ");\n</script>\n"; // phpcs:ignore WordPress.Security.EscapeOutput
-		echo '<script async src="https://www.googletagmanager.com/gtag/js?id=' . esc_attr( $url_param ) . "\"></script>\n";
+		relife_google_tag_loader( 'https://www.googletagmanager.com/gtag/js?id=' . rawurlencode( $url_param ) );
 	}
 	echo "<!-- /Google tag -->\n";
 }

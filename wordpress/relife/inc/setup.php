@@ -39,6 +39,7 @@ function relife_setup(): void {
 
 	add_image_size( 'relife-card', 640, 600, true );
 	add_image_size( 'relife-hero', 1600, 900, true );
+	add_image_size( 'relife-hero-m', 800, 450, true );
 
 	register_nav_menus(
 		array(
@@ -61,17 +62,8 @@ add_action( 'after_setup_theme', 'relife_content_width', 0 );
  * Štýly a skripty.
  */
 function relife_enqueue_assets(): void {
-	if ( apply_filters( 'relife_load_google_fonts', true ) ) {
-		wp_enqueue_style(
-			'relife-fonts',
-			'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Inter:wght@400;500;600;700&display=swap',
-			array(),
-			null // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		);
-	}
-
 	wp_enqueue_style( 'relife', RELIFE_URI . '/assets/css/relife.css', array(), RELIFE_VERSION );
-	wp_add_inline_style( 'relife', relife_accent_css() );
+	wp_add_inline_style( 'relife', relife_fonts_css() . relife_accent_css() );
 
 	wp_enqueue_script( 'relife', RELIFE_URI . '/assets/js/relife.js', array(), RELIFE_VERSION, array( 'strategy' => 'defer', 'in_footer' => true ) );
 	wp_localize_script(
@@ -228,7 +220,6 @@ add_filter( 'get_the_archive_title', 'relife_archive_title' );
 function relife_custom_logo_attributes( array $attr ): array {
 	$attr['sizes']         = '(max-width: 760px) 190px, 260px';
 	$attr['loading']       = 'eager';
-	$attr['fetchpriority'] = 'high';
 	return $attr;
 }
 add_filter( 'get_custom_logo_image_attributes', 'relife_custom_logo_attributes' );
@@ -245,21 +236,6 @@ function relife_content_image_sizes( string $sizes ): string {
 	return $sizes;
 }
 add_filter( 'wp_calculate_image_sizes', 'relife_content_image_sizes' );
-
-/**
- * Predpripojenie k Google Fonts (rýchlejšie načítanie písma, menej výmen písma za behu).
- *
- * @param array<int, mixed> $urls
- * @return array<int, mixed>
- */
-function relife_resource_hints( array $urls, string $relation_type ): array {
-	if ( 'preconnect' === $relation_type && apply_filters( 'relife_load_google_fonts', true ) ) {
-		$urls[] = 'https://fonts.googleapis.com';
-		$urls[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' );
-	}
-	return $urls;
-}
-add_filter( 'wp_resource_hints', 'relife_resource_hints', 10, 2 );
 
 /**
  * Stav čitateľa (nálada, uložené) sa zistí ešte pred vykreslením, aby sa rozloženie nemenilo až po načítaní skriptu.

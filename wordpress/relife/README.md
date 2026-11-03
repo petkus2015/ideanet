@@ -5,7 +5,7 @@ Klasická PHP téma s `theme.json` (paleta, písma, šírky obsahu v editore blo
 
 - **WordPress:** 6.6 alebo novší
 - **PHP:** 8.1 – 8.4 (`declare(strict_types=1)`, bez zastaraných konštrukcií)
-- Bez build kroku, bez závislostí. Fonty (Bricolage Grotesque, Inter) idú z Google Fonts; vypnete ich filtrom `relife_load_google_fonts` a fonty si nahostujete sami.
+- Bez build kroku, bez závislostí. Fonty (Bricolage Grotesque, Inter) sú súčasťou témy (`assets/fonts`), nič sa nesťahuje z Google Fonts.
 
 ## Inštalácia
 
@@ -42,3 +42,7 @@ npx @wp-playground/cli server --php=8.4 --wp=latest \
   --blueprint=playground/blueprint.json \
   --mount=$(pwd):/wordpress/wp-content/themes/relife
 ```
+
+## Výkon (Core Web Vitals)
+
+Téma preloaduje LCP obrázok a písma, nemá blokujúce externé štýly a odstraňuje nepotrebné skripty WordPressu. Na serveri ešte pomôže: **cache stránok** (Starcache zapnúť, po nahraní témy vyprázdniť), **WebP/AVIF** pre obrázky, **dlhá cache** pre `/wp-content/themes/relife/assets/*` a **Gzip/Brotli**. Po nahraní 1.10.0 pregenerujte miniatúry (plugin Regenerate Thumbnails alebo `wp media regenerate --yes`), aby vznikla veľkosť `relife-hero-m`.

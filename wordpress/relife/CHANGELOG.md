@@ -2,6 +2,15 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.10.0
+- **Výkon (Core Web Vitals, LCP a Speed Index na mobile):**
+  - Písma Inter a Bricolage Grotesque sú teraz v téme (`assets/fonts`, latin + latin-ext pre slovenčinu) a `@font-face` je priamo v `<head>`; preload hlavných súborov. Preč je blokujúca požiadavka na Google Fonts.
+  - Preload LCP obrázka (hero na úvodnej stránke, titulný obrázok v článku) so správnym `srcset`/`sizes`; nová veľkosť `relife-hero-m` (800×450) pre mobil.
+  - Logo už nemá `fetchpriority=high`, aby nekonkurovalo LCP obrázku.
+  - Google tag sa načíta až po načítaní stránky (meranie ostáva).
+  - Odstránené nepotrebné veci WordPressu: emoji skripty, wp-embed, RSD/wlwmanifest/shortlink/generator, dashicons pre návštevníkov, blokové štýly mimo článkov.
+  - V zipe sú štýly skrátené (bez komentárov a medzier).
+
 ## 1.9.0
 - **Oprava: do Google Analytics nechodili dáta.** Režim súhlasu bol predvolene „odmietnuť“, ale téma nemala lištu, cez ktorú by návštevník mohol súhlasiť, takže sa nič nemerelo. Pridaná cookie lišta Prijať / Odmietnuť (Customizer → RELIFE → Zobraziť cookie lištu). Voľba sa pamätá a dá sa zmeniť cez „Nastavenia cookies“ v pätičke.
 - Diagnostika: ak je Google tag ID zadané, ale tag sa nevypísal, v zdrojovom kóde stránky je komentár `RELIFE Google tag: vypnuté, …` s dôvodom (napríklad prihlásený administrátor, neplatné ID).
