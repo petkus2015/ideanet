@@ -2,6 +2,12 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.13.0
+- **Reklamy Google AdSense:** Vzhľad → Prispôsobiť → RELIFE – Reklamy (AdSense). Zadáte ID vydavateľa (`ca-pub-…`) a ID reklamnej jednotky v texte; reklama sa vloží do každého článku približne do stredu (alebo po odseku č. N). Články s menej ako 4 odsekmi ju v texte nemajú.
+- Pri každom článku je box **Reklamy → Nezobrazovať reklamy v tomto článku** (vtedy sa nenačíta ani skript AdSense).
+- Skript AdSense sa načíta až po načítaní stránky; miesto reklamy je rezervované (bez posunu rozloženia) a nezaplnená reklama sa skryje.
+- `ads.txt` vytvorí téma sama (ak súbor na serveri neexistuje).
+
 ## 1.12.0
 - Karty článkov majú ďalšie veľkosti obrázkov (320 a 480 px) a presný `sizes`, takže mobil nesťahuje 640 px obrázok pre kartu širokú ~180 px. Po nahraní pregenerujte miniatúry.
 

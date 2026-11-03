@@ -21,5 +21,6 @@ require_once RELIFE_DIR . '/inc/template-tags.php';
 require_once RELIFE_DIR . '/inc/embeds.php';
 require_once RELIFE_DIR . '/inc/performance.php';
 require_once RELIFE_DIR . '/inc/analytics.php';
+require_once RELIFE_DIR . '/inc/ads.php';
 require_once RELIFE_DIR . '/inc/customizer.php';
 require_once RELIFE_DIR . '/inc/demo-content.php';
