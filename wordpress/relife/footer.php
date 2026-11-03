@@ -58,7 +58,7 @@ $action = (string) get_theme_mod( 'relife_newsletter_action', '' );
 		</div>
 		<div class="rl-footer__legal">
 			<span>© <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php echo esc_html( get_bloginfo( 'name' ) ); ?></span>
-			<span><?php esc_html_e( 'Ochrana súkromia · Cookies · Označenie spolupráce a affiliate odkazov', 'relife' ); ?></span>
+			<span><?php esc_html_e( 'Ochrana súkromia · Cookies · Označenie spolupráce a affiliate odkazov', 'relife' ); ?><?php if ( function_exists( 'relife_google_tag_enabled' ) && relife_google_tag_enabled() && get_theme_mod( 'relife_cookie_banner', true ) && get_theme_mod( 'relife_google_tag_consent', true ) ) : ?> · <button type="button" class="rl-linkbtn js-cookie-settings"><?php esc_html_e( 'Nastavenia cookies', 'relife' ); ?></button><?php endif; ?></span>
 		</div>
 	</div>
 </footer>

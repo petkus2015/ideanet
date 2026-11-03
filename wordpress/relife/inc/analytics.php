@@ -35,10 +35,35 @@ function relife_google_tag_enabled(): bool {
 }
 
 /**
+ * Dôvod, prečo sa Google tag nevypísal (pre diagnostiku v zdrojovom kóde stránky), alebo prázdny reťazec.
+ */
+function relife_google_tag_skip_reason(): string {
+	if ( '' === trim( (string) get_theme_mod( 'relife_google_tag_id', '' ) ) ) {
+		return 'ID nie je zadané';
+	}
+	if ( '' === relife_google_tag_id() ) {
+		return 'ID má neplatný tvar (použite G-XXXXXXXXXX, GTM-XXXXXXX alebo AW-XXXXXXXXX)';
+	}
+	if ( is_customize_preview() || is_preview() ) {
+		return 'náhľad v administrácii';
+	}
+	if ( get_theme_mod( 'relife_google_tag_skip_admins', true ) && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+		return 'ste prihlásený ako redaktor/administrátor (nesleduje sa); odhláste sa alebo vypnite voľbu v Customizeri';
+	}
+	return '';
+}
+
+/**
  * Tag v <head>: najprv predvolený súhlas (odmietnutý), potom načítanie tagu.
  */
 function relife_google_tag_head(): void {
 	if ( ! relife_google_tag_enabled() ) {
+		if ( ! is_admin() && '' !== trim( (string) get_theme_mod( 'relife_google_tag_id', '' ) ) ) {
+			$why = relife_google_tag_skip_reason();
+			if ( '' !== $why ) {
+				echo '<!-- RELIFE Google tag: vypnuté, ' . esc_html( $why ) . " -->\n"; // phpcs:ignore WordPress.Security.EscapeOutput
+			}
+		}
 		return;
 	}
 	$id        = relife_google_tag_id();
@@ -113,6 +138,17 @@ function relife_analytics_customize_register( WP_Customize_Manager $wp_customize
 		)
 	);
 
+	$wp_customize->add_setting( 'relife_cookie_banner', array( 'default' => true, 'sanitize_callback' => 'rest_sanitize_boolean' ) );
+	$wp_customize->add_control(
+		'relife_cookie_banner',
+		array(
+			'label'       => __( 'Zobraziť cookie lištu (Prijať / Odmietnuť)', 'relife' ),
+			'description' => __( 'Zapnuté len ak je zadané Google tag ID a zapnutý režim súhlasu. Vypnite, ak už používate cookie plugin.', 'relife' ),
+			'section'     => 'relife_options',
+			'type'        => 'checkbox',
+		)
+	);
+
 	$wp_customize->add_setting( 'relife_google_tag_skip_admins', array( 'default' => true, 'sanitize_callback' => 'rest_sanitize_boolean' ) );
 	$wp_customize->add_control(
 		'relife_google_tag_skip_admins',
@@ -124,3 +160,35 @@ function relife_analytics_customize_register( WP_Customize_Manager $wp_customize
 	);
 }
 add_action( 'customize_register', 'relife_analytics_customize_register' );
+
+/**
+ * Cookie lišta: súhlas návštevníka s meraním návštevnosti (Google Analytics).
+ */
+function relife_cookie_banner(): void {
+	if ( ! relife_google_tag_enabled() || ! get_theme_mod( 'relife_google_tag_consent', true ) || ! get_theme_mod( 'relife_cookie_banner', true ) ) {
+		return;
+	}
+	$privacy = function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : '';
+	?>
+	<div id="rl-cookie" class="rl-cookie" role="dialog" aria-live="polite" aria-label="<?php esc_attr_e( 'Súhlas s cookies', 'relife' ); ?>" hidden>
+		<p class="rl-cookie__text">
+			<?php esc_html_e( 'Používame cookies na meranie návštevnosti (Google Analytics), aby sme vedeli, čo čítate najviac. Súhlas môžete kedykoľvek zmeniť.', 'relife' ); ?>
+			<?php if ( '' !== $privacy ) : ?>
+				<a href="<?php echo esc_url( $privacy ); ?>"><?php esc_html_e( 'Viac informácií', 'relife' ); ?></a>
+			<?php endif; ?>
+		</p>
+		<div class="rl-cookie__actions">
+			<button type="button" class="rl-cookie__btn rl-cookie__btn--no" data-consent="deny"><?php esc_html_e( 'Odmietnuť', 'relife' ); ?></button>
+			<button type="button" class="rl-cookie__btn rl-cookie__btn--yes" data-consent="grant"><?php esc_html_e( 'Prijať', 'relife' ); ?></button>
+		</div>
+	</div>
+	<script>
+	(function(){var b=document.getElementById('rl-cookie');if(!b){return}var c=null;try{c=window.localStorage.getItem('relife.consent')}catch(e){}
+	if(!c){b.hidden=false}
+	b.addEventListener('click',function(e){var t=e.target.closest?e.target.closest('[data-consent]'):null;if(!t){return}var g=t.getAttribute('data-consent')==='grant';
+	if(window.relifeConsent){g?window.relifeConsent.grant():window.relifeConsent.deny()}else{try{window.localStorage.setItem('relife.consent',g?'granted':'denied')}catch(x){}}b.hidden=true});
+	document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.js-cookie-settings')){b.hidden=false}});})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'relife_cookie_banner', 30 );

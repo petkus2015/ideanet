@@ -481,3 +481,14 @@ html.rl-has-saved .js-saved-empty{display:none}
 	.rl-content ol.is-style-rl-steps>li{padding-left:58px}
 	.rl-content ul.is-style-rl-box,.rl-content ol.is-style-rl-box{padding:18px 16px}
 }
+
+/* Cookie lišta */
+.rl-cookie{position:fixed;left:16px;bottom:16px;z-index:70;max-width:440px;background:var(--rl-surface);color:var(--rl-ink);border:1.5px solid var(--rl-line);border-radius:18px;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.rl-cookie[hidden]{display:none !important}
+.rl-cookie__text{margin:0 0 14px;font-size:14px;line-height:1.5;color:var(--rl-soft)}
+.rl-cookie__text a{color:var(--rl-accent);text-decoration:underline}
+.rl-cookie__actions{display:flex;gap:10px}
+.rl-cookie__btn{flex:1;min-height:46px;padding:0 18px;border-radius:999px;font-weight:700;font-size:15px;cursor:pointer;border:1.5px solid var(--rl-ink);background:transparent;color:var(--rl-ink)}
+.rl-cookie__btn--yes{background:var(--rl-accent);border-color:var(--rl-accent);color:#131313}
+.rl-linkbtn{background:none;border:none;padding:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
+@media (max-width:760px){.rl-cookie{left:12px;right:12px;max-width:none;bottom:calc(88px + env(safe-area-inset-bottom))}}

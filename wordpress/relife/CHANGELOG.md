@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.9.0
+- **Oprava: do Google Analytics nechodili dáta.** Režim súhlasu bol predvolene „odmietnuť“, ale téma nemala lištu, cez ktorú by návštevník mohol súhlasiť, takže sa nič nemerelo. Pridaná cookie lišta Prijať / Odmietnuť (Customizer → RELIFE → Zobraziť cookie lištu). Voľba sa pamätá a dá sa zmeniť cez „Nastavenia cookies“ v pätičke.
+- Diagnostika: ak je Google tag ID zadané, ale tag sa nevypísal, v zdrojovom kóde stránky je komentár `RELIFE Google tag: vypnuté, …` s dôvodom (napríklad prihlásený administrátor, neplatné ID).
+
 ## 1.8.0
 - Odrážky a zoznamy v článkoch: odrážky v tvare kosoštvorca s akcentovou farbou, vnorené zoznamy s kruhovými a štvorcovými odrážkami, číslované zoznamy s číslom v kruhu (vnorené s písmenami a, b, c), zoznam pojmov.
 - Štýly zoznamu v editore blokov (Zoznam → Štýly): **Zaškrtnutia**, **Krížiky (bez)**, **Kroky (číslovaný)** s prepojenou čiarou a **V rámčeku**.
