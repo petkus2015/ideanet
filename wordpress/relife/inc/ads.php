@@ -27,8 +27,12 @@ function relife_adsense_slot(): string {
 /**
  * Smie sa na tejto stránke zobraziť reklama?
  */
+function relife_ads_code( string $which ): string {
+	return trim( (string) get_theme_mod( 'relife_ads_code_' . $which, '' ) );
+}
+
 function relife_ads_enabled(): bool {
-	if ( '' === relife_adsense_client() || is_admin() || is_feed() || is_customize_preview() || is_preview() ) {
+	if ( ( '' === relife_adsense_client() && '' === relife_ads_code( 'head' ) && '' === relife_ads_code( 'unit' ) ) || is_admin() || is_feed() || is_customize_preview() || is_preview() ) {
 		return false;
 	}
 	if ( get_theme_mod( 'relife_ads_skip_admins', false ) && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
@@ -44,6 +48,10 @@ function relife_ads_enabled(): bool {
  * HTML reklamnej jednotky (rezervované miesto, aby sa stránka neposúvala).
  */
 function relife_ad_unit_html(): string {
+	$code = relife_ads_code( 'unit' );
+	if ( '' !== $code ) {
+		return '<div class="rl-ad" aria-label="' . esc_attr__( 'Reklama', 'relife' ) . '"><span class="rl-ad__label">' . esc_html__( 'Reklama', 'relife' ) . '</span>' . $code . '</div>';
+	}
 	$slot = relife_adsense_slot();
 	return '<div class="rl-ad" aria-label="' . esc_attr__( 'Reklama', 'relife' ) . '"><span class="rl-ad__label">' . esc_html__( 'Reklama', 'relife' ) . '</span>'
 		. '<ins class="adsbygoogle" style="display:block;text-align:center" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="' . esc_attr( relife_adsense_client() ) . '" data-ad-slot="' . esc_attr( $slot ) . '"></ins></div>';
@@ -54,7 +62,7 @@ function relife_ad_unit_html(): string {
  * Beží pred spracovaním blokov, takže pracuje s vrchnými blokmi a nerozbije zoznamy ani citácie.
  */
 function relife_insert_ad_in_content( string $content ): string {
-	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() || ! relife_ads_enabled() || '' === relife_adsense_slot() ) {
+	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() || ! relife_ads_enabled() || ( '' === relife_adsense_slot() && '' === relife_ads_code( 'unit' ) ) ) {
 		return $content;
 	}
 	if ( ! apply_filters( 'relife_ad_in_content', true ) ) {
@@ -91,8 +99,15 @@ add_filter( 'the_content', 'relife_insert_ad_in_content', 8 );
 /**
  * Skript AdSense sa načíta až po načítaní stránky (nebrzdí LCP).
  */
+function relife_adsense_head_code(): void {
+	if ( '' !== relife_ads_code( 'head' ) && relife_ads_enabled() ) {
+		echo "<!-- AdSense -->\n" . relife_ads_code( 'head' ) . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- kód vkladá administrátor
+	}
+}
+add_action( 'wp_head', 'relife_adsense_head_code', 6 );
+
 function relife_adsense_loader(): void {
-	if ( ! relife_ads_enabled() ) {
+	if ( ! relife_ads_enabled() || '' === relife_adsense_client() || '' !== relife_ads_code( 'head' ) || '' !== relife_ads_code( 'unit' ) ) {
 		return;
 	}
 	$src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' . rawurlencode( relife_adsense_client() );
@@ -169,6 +184,22 @@ add_action( 'save_post_post', 'relife_ads_save' );
  */
 function relife_ads_customize( WP_Customize_Manager $wp_customize ): void {
 	$wp_customize->add_section( 'relife_ads', array( 'title' => __( 'RELIFE – Reklamy (AdSense)', 'relife' ), 'priority' => 31 ) );
+
+	$raw = static fn( $v ): string => current_user_can( 'unfiltered_html' ) ? (string) $v : wp_kses_post( (string) $v );
+	$wp_customize->add_setting( 'relife_ads_code_head', array( 'default' => '', 'sanitize_callback' => $raw ) );
+	$wp_customize->add_control( 'relife_ads_code_head', array(
+		'label'       => __( 'Celý kód AdSense do hlavičky (voliteľné)', 'relife' ),
+		'description' => __( 'Vložte celý skript z AdSense (<script async src="…adsbygoogle.js?client=ca-pub-…"></script>). Použije sa namiesto ID nižšie.', 'relife' ),
+		'section'     => 'relife_ads',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_setting( 'relife_ads_code_unit', array( 'default' => '', 'sanitize_callback' => $raw ) );
+	$wp_customize->add_control( 'relife_ads_code_unit', array(
+		'label'       => __( 'Celý kód reklamy do stredu článku', 'relife' ),
+		'description' => __( 'Vložte celý kód reklamnej jednotky z AdSense (<ins class="adsbygoogle" …></ins> a <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>). Vloží sa do stredu každého článku.', 'relife' ),
+		'section'     => 'relife_ads',
+		'type'        => 'textarea',
+	) );
 
 	$wp_customize->add_setting( 'relife_adsense_client', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
 	$wp_customize->add_control( 'relife_adsense_client', array(

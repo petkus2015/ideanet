@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.13.1
+- Reklamy: v Customizeri (RELIFE – Reklamy) sa dá vložiť **celý kód z AdSense** – skript do hlavičky aj celý kód reklamnej jednotky do stredu článku. ID vydavateľa a jednotky ostávajú ako alternatíva. Vypnutie pri článku funguje aj pre vložený kód.
+
 ## 1.13.0
 - **Reklamy Google AdSense:** Vzhľad → Prispôsobiť → RELIFE – Reklamy (AdSense). Zadáte ID vydavateľa (`ca-pub-…`) a ID reklamnej jednotky v texte; reklama sa vloží do každého článku približne do stredu (alebo po odseku č. N). Články s menej ako 4 odsekmi ju v texte nemajú.
 - Pri každom článku je box **Reklamy → Nezobrazovať reklamy v tomto článku** (vtedy sa nenačíta ani skript AdSense).
