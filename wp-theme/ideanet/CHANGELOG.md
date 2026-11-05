@@ -8,6 +8,14 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.15.0
+
+- Úvodná obrazovka má farebné pozadie — magenta, fialová a modrá sa
+  prelínajú okolo nadpisu a smerom nadol sa strácajú, takže zvyšok webu
+  zostáva tmavý. To isté má aj úvod podstránky s ponukou redizajnu.
+- Oprava: na podstránkach, kde je v hlavičke len značka a jedno
+  tlačidlo, tlačidlo lepilo na logo namiesto toho, aby bolo vpravo.
+
 ## 1.14.0
 
 - Stránka 404 je poriadna: okrem nadpisu má hľadanie, odkazy na hlavné
