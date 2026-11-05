@@ -8,6 +8,18 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.10.0
+
+- Oprava: podstránka s ponukou redizajnu vznikala len pri úplne prvej
+  aktivácii témy. Na weboch, ktoré tému mali zapnutú skôr, sa teda
+  nevytvorila nikdy — a keďže nebola, nepribudol ani odkaz v menu.
+  Teraz sa stránka, jedna ukážka aj odkazy v menu dorobia pri prvom
+  otvorení administrácie po aktualizácii.
+- Podstránka sa hľadá podľa šablóny, nie podľa adresy, takže sa dá
+  premenovať bez toho, aby sa stratila.
+- V IDEANET → Kde čo upraviť pribudol priamy odkaz na úpravu tej
+  podstránky.
+
 ## 1.9.0
 
 - Podstránka s ponukou redizajnu pribudla do horného menu (ako

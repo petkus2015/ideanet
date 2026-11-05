@@ -280,8 +280,18 @@ function ideanet_admin_page() {
 		array( $verzia, ideanet_check_now_link() ),
 		array( __( 'Menu — hore, spodná lišta na mobile, pätička', 'ideanet' ), admin_url( 'nav-menus.php' ) ),
 		array( __( 'Obrázky a videá v knižnici médií', 'ideanet' ), admin_url( 'upload.php' ) ),
-		array( __( 'Stránky — podstránka s ponukou redizajnu', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),
+		array( __( 'Stránky', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),
 	);
+
+	/* Priamy odkaz na podstránku s ponukou redizajnu — inak sa hľadá
+	   medzi stránkami a nie je jasné, ktorá to je. */
+	$redizajn = function_exists( 'ideanet_redizajn_stranka' ) ? ideanet_redizajn_stranka() : null;
+	if ( $redizajn ) {
+		$ostatne[] = array(
+			__( 'Podstránka s ponukou redizajnu webov', 'ideanet' ),
+			get_edit_post_link( $redizajn->ID, '' ),
+		);
+	}
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'IDEANET — kde čo upraviť', 'ideanet' ); ?></h1>

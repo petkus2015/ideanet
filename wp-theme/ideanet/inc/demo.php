@@ -324,6 +324,11 @@ function ideanet_seed_redizajn( $assets ) {
 		update_post_meta( $page_id, '_wp_page_template', 'page-templates/redizajn.php' );
 	}
 
+	/* Keď už nejaké ukážky sú, druhú sadu netreba. */
+	if ( get_posts( array( 'post_type' => 'ideanet_redizajn', 'post_status' => 'any', 'posts_per_page' => 1 ) ) ) {
+		return;
+	}
+
 	/* Jedna ukážka stačí — ostatné pribudnú, keď budú skutočné snímky. */
 	$ukazky = array(
 		array( 'Kaviareň', 'Z 5,8 sekundy načítania na 1,2 sekundy. Menu a otváracie hodiny sú na mobile hneď na prvej obrazovke.' ),
@@ -398,25 +403,72 @@ function ideanet_vloz_za( $polozky, $za, $url, $label ) {
 }
 
 /**
- * Jednorazové doplnenie podstránky s ponukou redizajnu do menu.
+ * Nájde podstránku s ponukou redizajnu.
  *
- * Menu vznikli pri aktivácii témy, takže na weboch, ktoré ju mali
- * zapnutú skôr, by odkaz na podstránku nepribudol. Toto ho doplní
- * do horného menu a do rozbaľovacieho menu na mobile (tlačidlo Viac).
- * Ak si ho tam niekto nepraje, vyhodí ho vo Vzhľad → Menu a späť sa
- * už nepridá.
+ * Hľadá podľa šablóny, nie podľa adresy — stránku si môže niekto
+ * premenovať a odkaz na ňu má zostať tam, kde je.
+ *
+ * @return WP_Post|null
  */
-function ideanet_redizajn_do_menu() {
-	if ( get_option( 'ideanet_redizajn_v_menu' ) ) {
+function ideanet_redizajn_stranka() {
+	$podla_sablony = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+			'posts_per_page' => 1,
+			'meta_key'       => '_wp_page_template', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- raz za čas, pri pár stránkach.
+			'meta_value'     => 'page-templates/redizajn.php', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- raz za čas, pri pár stránkach.
+		)
+	);
+
+	if ( $podla_sablony ) {
+		return $podla_sablony[0];
+	}
+
+	$podla_adresy = get_page_by_path( 'redizajn-webov' );
+
+	return $podla_adresy ? $podla_adresy : null;
+}
+
+/**
+ * Jednorazové dorobenie podstránky s ponukou redizajnu.
+ *
+ * Ukážkový obsah sa plní len pri prvej aktivácii témy. Weby, ktoré ju
+ * mali zapnutú skôr, než podstránka vznikla, by ju teda nikdy nedostali
+ * — ani stránku, ani odkaz v menu. Toto to dorobí pri prvom otvorení
+ * administrácie po aktualizácii.
+ *
+ * Keď si niekto stránku alebo položku menu zmaže, späť sa nepridá:
+ * číslo v nastavení ostáva uložené.
+ */
+function ideanet_redizajn_setup() {
+	if ( (int) get_option( 'ideanet_redizajn_setup' ) >= 2 ) {
 		return;
 	}
-	update_option( 'ideanet_redizajn_v_menu', 1 );
 
-	$stranka = get_page_by_path( 'redizajn-webov' );
+	$stranka = ideanet_redizajn_stranka();
+
 	if ( ! $stranka ) {
-		return;
+		ideanet_register_post_types();
+		ideanet_seed_redizajn( get_theme_file_uri( 'assets/media' ) );
+		$stranka = ideanet_redizajn_stranka();
 	}
 
+	if ( ! $stranka ) {
+		return; // nepodarilo sa; skúsi sa pri ďalšom načítaní.
+	}
+
+	ideanet_redizajn_do_menu( $stranka );
+	update_option( 'ideanet_redizajn_setup', 2 );
+}
+add_action( 'admin_init', 'ideanet_redizajn_setup' );
+
+/**
+ * Doplní odkaz na podstránku do horného menu a do menu na mobile.
+ *
+ * @param WP_Post $stranka Podstránka s ponukou redizajnu.
+ */
+function ideanet_redizajn_do_menu( $stranka ) {
 	$odkaz = get_permalink( $stranka );
 
 	$locations = get_nav_menu_locations();
@@ -480,8 +532,6 @@ function ideanet_redizajn_do_menu() {
 		);
 	}
 }
-add_action( 'admin_init', 'ideanet_redizajn_do_menu' );
-
 /**
  * Vytvorí menu a priradí ich k umiestneniam.
  */
