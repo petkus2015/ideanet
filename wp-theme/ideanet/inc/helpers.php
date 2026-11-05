@@ -110,8 +110,55 @@ function ideanet_tokens( $text ) {
 			'{email}'   => ideanet_opt( 'contact_email' ),
 			'{mesta}'   => ideanet_opt( 'calc_free_cities' ),
 			'{sadzba}'  => ideanet_opt( 'calc_km_rate' ),
+
+			/* Podstránka s ponukou redizajnu — cena, termín a počty sú
+			   uložené raz a do textov sa dopĺňajú, aby sa úvod, cenník
+			   a záverečná výzva nikdy nerozišli. */
+			'{cena}'       => ideanet_opt( 'red_price' ),
+			'{cena_pred}'  => ideanet_opt( 'red_price_pred' ),
+			'{termin}'     => ideanet_opt( 'red_term' ),
+			'{miest}'      => ideanet_opt( 'red_slots' ),
+			'{volnych}'    => ideanet_opt( 'red_slots_left' ),
+			'{podstranok}' => ideanet_opt( 'red_pages' ),
+			'{dni}'        => ideanet_opt( 'red_days' ),
 		)
 	);
+}
+
+/**
+ * Text z Prispôsobiť aj s doplnenými zástupnými hodnotami.
+ *
+ * @param string $key Kľúč nastavenia.
+ */
+function ideanet_red_text( $key ) {
+	echo wp_kses( ideanet_tokens( ideanet_opt( $key ) ), ideanet_kses() );
+}
+
+/**
+ * Riadky zoznamu s doplnenými zástupnými hodnotami.
+ *
+ * @param string $key Kľúč nastavenia.
+ * @return string[]
+ */
+function ideanet_red_lines( $key ) {
+	return array_map( 'ideanet_tokens', ideanet_lines( $key ) );
+}
+
+/**
+ * Stĺpcový zoznam s doplnenými zástupnými hodnotami.
+ *
+ * @param string $key   Kľúč nastavenia.
+ * @param int    $count Na koľko stĺpcov doplniť každý riadok.
+ * @return array<int,string[]>
+ */
+function ideanet_red_pairs( $key, $count = 2 ) {
+	$out = array();
+
+	foreach ( ideanet_pairs( $key, $count ) as $row ) {
+		$out[] = array_map( 'ideanet_tokens', $row );
+	}
+
+	return $out;
 }
 
 /**

@@ -186,6 +186,13 @@ function ideanet_form_options() {
 		}
 	}
 
+	/* Ponuka redizajnu webov — aby sa dopyt z podstránky dal rozlíšiť
+	   od dopytu na video. */
+	$web = ideanet_opt( 'red_form_option' );
+	if ( $web ) {
+		$out[ __( 'Weby', 'ideanet' ) ] = array( $web );
+	}
+
 	$out[ __( 'Vlastná zostava', 'ideanet' ) ] = array( __( 'Vlastná zostava podľa kalkulačky', 'ideanet' ) );
 	$out[ __( 'Iné', 'ideanet' ) ]             = array( __( 'Zatiaľ neviem, poraďte mi', 'ideanet' ) );
 

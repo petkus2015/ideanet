@@ -167,6 +167,7 @@ function ideanet_seed() {
 
 	ideanet_seed_baliky();
 	ideanet_seed_ponuky();
+	ideanet_seed_redizajn( $assets );
 	ideanet_seed_menus();
 }
 add_action( 'after_switch_theme', 'ideanet_seed' );
@@ -342,6 +343,51 @@ function ideanet_seed_ponuky() {
 }
 
 /**
+ * Podstránka s ponukou redizajnu webov a dve ukážky pred/po.
+ *
+ * Texty, cena aj počet miest sú v Prispôsobiť — tu vzniká len samotná
+ * stránka, aby ju nemusel nikto zakladať ručne a hľadať, ktorú šablónu
+ * jej priradiť.
+ *
+ * @param string $assets Adresa priečinka s ukážkovými súbormi.
+ */
+function ideanet_seed_redizajn( $assets ) {
+	$page_id = wp_insert_post(
+		array(
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'Redizajn webov',
+			'post_name'    => 'redizajn-webov',
+			'post_content' => '',
+		),
+		true
+	);
+
+	if ( ! is_wp_error( $page_id ) ) {
+		update_post_meta( $page_id, '_wp_page_template', 'page-templates/redizajn.php' );
+	}
+
+	$ukazky = array(
+		array( 'Kaviareň', 'Z 5,8 sekundy načítania na 1,2 — menu a otváracie hodiny sú na mobile hneď na prvej obrazovke.' ),
+		array( 'Stavebná firma', 'Namiesto ôsmich podstránok s tým istým textom jedna jasná ponuka a referencie, ktoré sa dajú prelistovať.' ),
+	);
+
+	foreach ( $ukazky as $i => $u ) {
+		$n = $i + 1;
+		ideanet_seed_post(
+			'ideanet_redizajn',
+			$u[0],
+			$u[1],
+			array(
+				'pred' => $assets . '/web/pred-' . $n . '.svg',
+				'po'   => $assets . '/web/po-' . $n . '.svg',
+			),
+			$i
+		);
+	}
+}
+
+/**
  * Vytvorí menu a priradí ich k umiestneniam.
  */
 function ideanet_seed_menus() {
@@ -354,6 +400,22 @@ function ideanet_seed_menus() {
 	);
 
 	$locations = get_theme_mod( 'nav_menu_locations', array() );
+
+	/* Podstránka s ponukou redizajnu nie je kotva na úvodnej stránke, tak
+	   sa do pätičky pridá ako odkaz na stránku — inak by sa na ňu nedalo
+	   nikde kliknúť. */
+	$pata = array(
+		'#portfolio' => 'Portfólio',
+		'#vizualy'   => 'Vizuály',
+		'#cennik'    => 'Cenník',
+		'#podmienky' => 'Podmienky',
+		'#kontakt'   => 'Kontakt',
+	);
+
+	$redizajn = get_page_by_path( 'redizajn-webov' );
+	if ( $redizajn ) {
+		$pata = array_slice( $pata, 0, 3, true ) + array( get_permalink( $redizajn ) => 'Redizajn webov' ) + array_slice( $pata, 3, null, true );
+	}
 
 	$menus = array(
 		'primary' => array( 'Hlavné menu', $sekcie ),
@@ -369,13 +431,7 @@ function ideanet_seed_menus() {
 		),
 		'footer'  => array(
 			'Pätička',
-			array(
-				'#portfolio' => 'Portfólio',
-				'#vizualy'   => 'Vizuály',
-				'#cennik'    => 'Cenník',
-				'#podmienky' => 'Podmienky',
-				'#kontakt'   => 'Kontakt',
-			),
+			$pata,
 		),
 	);
 
@@ -397,7 +453,7 @@ function ideanet_seed_menus() {
 				0,
 				array(
 					'menu-item-title'  => $label,
-					'menu-item-url'    => home_url( '/' ) . $url,
+					'menu-item-url'    => 0 === strpos( $url, 'http' ) ? $url : home_url( '/' ) . $url,
 					'menu-item-status' => 'publish',
 					'menu-item-type'   => 'custom',
 				)

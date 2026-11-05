@@ -45,6 +45,18 @@ function ideanet_post_types() {
 			),
 		),
 
+		'ideanet_redizajn' => array(
+			'labels'   => array( 'Ukážka pred / po', 'Redizajn — ukážky' ),
+			'menu'     => 'dashicons-admin-site-alt3',
+			'supports' => array( 'title', 'editor', 'page-attributes' ),
+			'help'     => 'Dvojica obrázkov k jednému webu pre podstránku s ponukou redizajnu. Nadpis je názov klienta alebo odboru, obsah je jedna veta o výsledku. Kým tu nič nie je, sekcia s ukážkami sa na podstránke nezobrazí.',
+			'fields'   => array(
+				'pred' => array( 'Obrázok — pôvodný web', 'media', 'Snímka obrazovky na šírku, ideálne v pomere 16:11.', 'image' ),
+				'po'   => array( 'Obrázok — nový web', 'media', 'Rovnaký výrez ako pri pôvodnom webe, aby sa dali porovnať.', 'image' ),
+				'url'  => array( 'Odkaz na web', 'text', 'Nepovinné. Ak vyplníte, názov ukážky bude odkaz.' ),
+			),
+		),
+
 		'ideanet_referencia' => array(
 			'labels'   => array( 'Referencia', 'Referencie' ),
 			'menu'     => 'dashicons-format-quote',
@@ -268,7 +280,7 @@ function ideanet_admin_page() {
 		array( $verzia, ideanet_check_now_link() ),
 		array( __( 'Menu — hore, spodná lišta na mobile, pätička', 'ideanet' ), admin_url( 'nav-menus.php' ) ),
 		array( __( 'Obrázky a videá v knižnici médií', 'ideanet' ), admin_url( 'upload.php' ) ),
-		array( __( 'Stránky s ponukou na jednu stranu', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),
+		array( __( 'Stránky — ponuka na jednu stranu, redizajn webov', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),
 	);
 	?>
 	<div class="wrap">

@@ -1,2 +1,5 @@
 # Snímky z testov, keď skriptu chýba cesta ku skladisku
 undefined/
+
+# Zabalená téma — patrí k vydaniu na GitHube, nie do repozitára
+wp-theme/ideanet-theme.zip

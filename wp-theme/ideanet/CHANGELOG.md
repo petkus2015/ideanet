@@ -8,6 +8,22 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.6.0
+
+- Pribudla podstránka **Ponuka redizajnu webov** — akčná ponuka na
+  redizajn prezentačného webu s cenou, termínom, počtom voľných miest,
+  ukážkami pred/po, častými otázkami a formulárom. Pri aktivácii sa
+  stránka založí sama a odkaz na ňu pribudne do pätičky.
+- Nový typ obsahu **Redizajn — ukážky**: dvojica obrázkov pred a po
+  s jednou vetou o výsledku.
+- Cena, termín a počty na tej podstránke sú uložené raz a do textov sa
+  dopĺňajú cez {cena}, {cena_pred}, {termin}, {miest}, {volnych},
+  {podstranok} a {dni}, takže sa úvod a cenník nemajú ako rozísť.
+- Vo výbere „o čo máte záujem" pribudla voľba pre redizajn webu
+  a na podstránke je prednastavená.
+- Formulár je teraz samostatná časť šablóny, používa ho úvodná stránka
+  aj nová podstránka.
+
 ## 1.5.0
 
 - Riadok nad nadpisom v úvode znie „Som videotvorca, grafik a content

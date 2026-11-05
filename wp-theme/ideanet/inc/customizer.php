@@ -241,6 +241,80 @@ function ideanet_customizer_map() {
 				'footer_text' => array( __( 'Text v pätičke', 'ideanet' ), 'area', __( '{rok} doplní aktuálny rok.', 'ideanet' ) ),
 			),
 		),
+
+		'redizajn' => array(
+			'title'       => __( '12 · Redizajn webov — ponuka a ceny', 'ideanet' ),
+			'description' => __( 'Tieto texty sú na podstránke s ponukou redizajnu, nie na úvodnej stránke. Náhľad vpravo na ňu prepnete tak, že v ňom dole v pätičke kliknete na Redizajn webov.', 'ideanet' ),
+			'fields'      => array(
+				'red_price'      => array( __( 'Akčná cena', 'ideanet' ), 'text', __( 'Doplní sa všade, kde je v texte {cena}.', 'ideanet' ) ),
+				'red_price_pred' => array( __( 'Cena pred akciou', 'ideanet' ), 'text', __( 'Zobrazí sa preškrtnutá. V texte {cena_pred}.', 'ideanet' ) ),
+				'red_price_unit' => array( __( 'Text pod cenou', 'ideanet' ), 'text' ),
+				'red_term'       => array( __( 'Dokedy ponuka platí', 'ideanet' ), 'text', __( 'Napríklad 26. – 30. 11. V texte {termin}.', 'ideanet' ) ),
+				'red_slots'      => array( __( 'Koľko miest je v ponuke', 'ideanet' ), 'number', __( 'V texte {miest}.', 'ideanet' ) ),
+				'red_slots_left' => array( __( 'Koľko miest ešte zostáva', 'ideanet' ), 'number', __( 'Toto číslo znižujte, ako sa miesta obsadzujú — ukazuje sa v záverečnej výzve. V texte {volnych}.', 'ideanet' ) ),
+				'red_pages'      => array( __( 'Koľko podstránok je v cene', 'ideanet' ), 'number', __( 'V texte {podstranok}.', 'ideanet' ) ),
+				'red_days'       => array( __( 'Za koľko dní je web hotový', 'ideanet' ), 'number', __( 'V texte {dni}.', 'ideanet' ) ),
+				'red_flag'       => array( __( 'Štítok nad nadpisom', 'ideanet' ), 'text', __( 'Prázdne = štítok sa nezobrazí.', 'ideanet' ) ),
+				'red_eyebrow'    => array( __( 'Malý riadok nad nadpisom', 'ideanet' ), 'text' ),
+				'red_title'      => array( __( 'Nadpis', 'ideanet' ), 'text', __( 'Nadpis na podstránke. Názov stránky — ten v menu a v karte prehliadača — sa mení priamo pri stránke v Stránky.', 'ideanet' ) ),
+				'red_title_hl'   => array( __( 'Nadpis — farebná časť', 'ideanet' ), 'text', __( 'Doplní sa na koniec nadpisu.', 'ideanet' ) ),
+				'red_lead'       => array( __( 'Odsek pod nadpisom', 'ideanet' ), 'area' ),
+				'red_cta'        => array( __( 'Hlavné tlačidlo', 'ideanet' ), 'text' ),
+				'red_cta2'       => array( __( 'Druhé tlačidlo', 'ideanet' ), 'text' ),
+				'red_facts'      => array( __( 'Tri fakty pod tlačidlami', 'ideanet' ), 'area', $cols ),
+				'red_cena_eyebrow' => array( __( 'Cena — malý riadok', 'ideanet' ), 'text' ),
+				'red_cena_title'   => array( __( 'Cena — nadpis', 'ideanet' ), 'text' ),
+				'red_deal_when'    => array( __( 'Cena — riadok s termínom', 'ideanet' ), 'text' ),
+				'red_cena_note'    => array( __( 'Cena — čo v nej nie je', 'ideanet' ), 'area' ),
+			),
+		),
+
+		'redizajn_sekcie' => array(
+			'title'       => __( '12a · Redizajn webov — sekcie', 'ideanet' ),
+			'description' => __( 'Tieto texty sú na podstránke s ponukou redizajnu, nie na úvodnej stránke. Náhľad vpravo na ňu prepnete tak, že v ňom dole v pätičke kliknete na Redizajn webov.', 'ideanet' ),
+			'fields'      => array(
+				'red_poznate_eyebrow' => array( __( 'Poznáte to? — malý riadok', 'ideanet' ), 'text' ),
+				'red_poznate_title'   => array( __( 'Poznáte to? — nadpis', 'ideanet' ), 'text' ),
+				'red_poznate_text'    => array( __( 'Poznáte to? — text', 'ideanet' ), 'area' ),
+
+				'red_gets_eyebrow' => array( __( 'Čo dostanete — malý riadok', 'ideanet' ), 'text' ),
+				'red_gets_title'   => array( __( 'Čo dostanete — nadpis', 'ideanet' ), 'text' ),
+				'red_gets_note'    => array( __( 'Čo dostanete — veta vpravo', 'ideanet' ), 'area' ),
+				'red_gets'         => array( __( 'Čo dostanete — zoznam', 'ideanet' ), 'area', $lines ),
+
+				'red_ako_eyebrow' => array( __( 'Ako to prebieha — malý riadok', 'ideanet' ), 'text' ),
+				'red_ako_title'   => array( __( 'Ako to prebieha — nadpis', 'ideanet' ), 'text' ),
+				'red_ako_note'    => array( __( 'Ako to prebieha — veta vpravo', 'ideanet' ), 'area' ),
+				'red_ako'         => array( __( 'Ako to prebieha — kroky', 'ideanet' ), 'area', $cols . ' ' . __( 'Čísla krokov sa doplnia samy.', 'ideanet' ) ),
+
+				'red_ukazky_eyebrow' => array( __( 'Pred a po — malý riadok', 'ideanet' ), 'text' ),
+				'red_ukazky_title'   => array( __( 'Pred a po — nadpis', 'ideanet' ), 'text' ),
+				'red_ukazky_note'    => array( __( 'Pred a po — veta vpravo', 'ideanet' ), 'area' ),
+				'red_ukazky_foot'    => array( __( 'Pred a po — poznámka pod ukážkami', 'ideanet' ), 'area', __( 'Prázdne = nezobrazí sa. Samotné ukážky pridávate v IDEANET → Redizajn — ukážky.', 'ideanet' ) ),
+				'red_label_pred'     => array( __( 'Pred a po — štítok na pôvodnom obrázku', 'ideanet' ), 'text' ),
+				'red_label_po'       => array( __( 'Pred a po — štítok na novom obrázku', 'ideanet' ), 'text' ),
+
+				'red_prekoho_eyebrow' => array( __( 'Pre koho — malý riadok', 'ideanet' ), 'text' ),
+				'red_prekoho_title'   => array( __( 'Pre koho — nadpis', 'ideanet' ), 'text' ),
+				'red_prekoho_note'    => array( __( 'Pre koho — veta vpravo', 'ideanet' ), 'area' ),
+				'red_prekoho'         => array( __( 'Pre koho — zoznam', 'ideanet' ), 'area', $lines ),
+				'red_prekoho_grab'    => array( __( 'Pre koho — veta o ponuke na mieru', 'ideanet' ), 'area', __( 'Prázdne = celý rámček sa nezobrazí.', 'ideanet' ) ),
+				'red_prekoho_cta'     => array( __( 'Pre koho — tlačidlo v rámčeku', 'ideanet' ), 'text' ),
+
+				'red_faq_eyebrow' => array( __( 'Otázky — malý riadok', 'ideanet' ), 'text' ),
+				'red_faq_title'   => array( __( 'Otázky — nadpis', 'ideanet' ), 'text' ),
+				'red_faq'         => array( __( 'Otázky a odpovede', 'ideanet' ), 'area', $cols . ' ' . __( 'Riadok: otázka | odpoveď. Ak chcete pri správe webu uviesť cenu, dopíšte ju rovno do odpovede.', 'ideanet' ) ),
+
+				'red_end_title' => array( __( 'Záverečná výzva — nadpis', 'ideanet' ), 'text' ),
+				'red_end_text'  => array( __( 'Záverečná výzva — text', 'ideanet' ), 'area' ),
+				'red_end_cta'   => array( __( 'Záverečná výzva — tlačidlo', 'ideanet' ), 'text' ),
+
+				'red_form_eyebrow' => array( __( 'Formulár — malý riadok', 'ideanet' ), 'text' ),
+				'red_form_title'   => array( __( 'Formulár — nadpis', 'ideanet' ), 'text' ),
+				'red_form_note'    => array( __( 'Formulár — text nad formulárom', 'ideanet' ), 'area' ),
+				'red_form_option'  => array( __( 'Formulár — predvolená voľba vo výbere', 'ideanet' ), 'text', __( 'Pridá sa do výberu „o čo máte záujem" a na podstránke je prednastavená. Prázdne = voľba sa nepridá.', 'ideanet' ) ),
+			),
+		),
 	);
 }
 
@@ -313,9 +387,10 @@ function ideanet_customize_register( $wp_customize ) {
 		$wp_customize->add_section(
 			'ideanet_' . $slug,
 			array(
-				'title'    => $section['title'],
-				'panel'    => 'ideanet',
-				'priority' => $priority,
+				'title'       => $section['title'],
+				'description' => isset( $section['description'] ) ? $section['description'] : '',
+				'panel'       => 'ideanet',
+				'priority'    => $priority,
 			)
 		);
 		$priority += 10;
@@ -522,8 +597,27 @@ function ideanet_edit_map() {
 
 		'.grab'             => array( 'podmienky_grab', 'ponuka_firmy_url', 'ponuka_firmy_label', 'ponuka_agentury_url', 'ponuka_agentury_label' ),
 
-		'.contact__copy'    => array( 'kontakt_eyebrow', 'kontakt_title', 'kontakt_note', 'contact_email', 'contact_phone', 'contact_social', 'contact_social_url', 'contact_facts' ),
-		'#contactForm'      => array( 'form_name', 'form_name_ph', 'form_email', 'form_email_ph', 'form_type', 'form_msg', 'form_msg_ph', 'form_submit', 'form_gdpr', 'form_to', 'form_subject', 'form_ok', 'form_err' ),
+		/* Kontakt je zúžený na #kontakt — rovnaké triedy má aj dopyt na
+		   podstránke s redizajnom, kde sa texty berú odinakiaľ. */
+		'#kontakt .contact__copy' => array( 'kontakt_eyebrow', 'kontakt_title', 'kontakt_note', 'contact_email', 'contact_phone', 'contact_social', 'contact_social_url', 'contact_facts' ),
+		'#kontakt #contactForm'   => array( 'form_name', 'form_name_ph', 'form_email', 'form_email_ph', 'form_type', 'form_msg', 'form_msg_ph', 'form_submit', 'form_gdpr', 'form_to', 'form_subject', 'form_ok', 'form_err' ),
+
+		/* podstránka s ponukou redizajnu */
+		'.offer__flag'      => array( 'red_flag' ),
+		'.offer .eyebrow'   => array( 'red_eyebrow' ),
+		'.offer h1'         => array( 'red_title', 'red_title_hl' ),
+		'.offer .lead'      => array( 'red_lead' ),
+		'.offer__cta'       => array( 'red_cta', 'red_cta2' ),
+		'.offer__meta'      => array( 'red_facts' ),
+		'#poznate'          => array( 'red_poznate_eyebrow', 'red_poznate_title', 'red_poznate_text' ),
+		'#dostanete'        => array( 'red_gets_eyebrow', 'red_gets_title', 'red_gets_note', 'red_gets' ),
+		'#ako'              => array( 'red_ako_eyebrow', 'red_ako_title', 'red_ako_note', 'red_ako' ),
+		'#ukazky'           => array( 'red_ukazky_eyebrow', 'red_ukazky_title', 'red_ukazky_note', 'red_ukazky_foot', 'red_label_pred', 'red_label_po' ),
+		'#cena'             => array( 'red_cena_eyebrow', 'red_cena_title', 'red_price', 'red_price_pred', 'red_price_unit', 'red_deal_when', 'red_cena_note', 'red_term', 'red_slots' ),
+		'#komu'             => array( 'red_prekoho_eyebrow', 'red_prekoho_title', 'red_prekoho_note', 'red_prekoho', 'red_prekoho_grab', 'red_prekoho_cta', 'red_pages' ),
+		'#otazky'           => array( 'red_faq_eyebrow', 'red_faq_title', 'red_faq' ),
+		'.slots'            => array( 'red_end_title', 'red_end_text', 'red_end_cta', 'red_slots_left' ),
+		'#dopyt .contact__copy' => array( 'red_form_eyebrow', 'red_form_title', 'red_form_note', 'red_form_option' ),
 
 		'.footer__inner p'  => array( 'footer_text' ),
 		'.footer .socials'  => array( 'social_instagram', 'social_tiktok', 'social_youtube', 'social_facebook' ),

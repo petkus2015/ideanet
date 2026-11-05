@@ -176,6 +176,40 @@ balíkov ako cenník, takže sa to nemá ako rozísť.
 Pri tlači (Ctrl+P → Uložiť ako PDF) sa tmavé pozadie, menu aj tlačidlá
 vypnú a strana vyjde čitateľná na bielom papieri.
 
+### Ponuka redizajnu webov
+
+Samostatná podstránka s akčnou ponukou na redizajn prezentačného webu.
+Vznikla pri aktivácii pod názvom **Redizajn webov** a používa šablónu
+**Ponuka redizajnu webov**. Odkaz na ňu je v pätičkovom menu.
+
+Texty sú v Prispôsobiť → IDEANET → **12 · Redizajn webov — ponuka a ceny**
+a **12a · Redizajn webov — sekcie**.
+
+Cena, termín a počty sú uložené len raz a do textov sa dopĺňajú samy:
+
+| V texte napíšete | Doplní sa |
+| --- | --- |
+| `{cena}` | akčná cena |
+| `{cena_pred}` | cena pred akciou (preškrtnutá) |
+| `{termin}` | dokedy ponuka platí |
+| `{miest}` | koľko miest je v ponuke |
+| `{volnych}` | koľko miest ešte zostáva |
+| `{podstranok}` | koľko podstránok je v cene |
+| `{dni}` | za koľko dní je web hotový |
+
+Keď sa teda zmení cena, stačí ju prepísať v jednom poli a zmení sa
+v úvode aj v cenníku naraz. **Koľko miest ešte zostáva** je vlastné
+pole — po každej objednávke ho znížte a záverečná výzva sa prepíše.
+
+Ukážky **pred a po** sa pridávajú v IDEANET → **Redizajn — ukážky**:
+nadpis je názov klienta alebo odboru, obsah je jedna veta o výsledku
+a do dvoch polí sa vyberú snímky pôvodného a nového webu. Kým tam nič
+nie je, sekcia s ukážkami sa na podstránke vôbec nezobrazí.
+
+Dopyt z tejto podstránky má vo výbere prednastavené **Redizajn
+prezentačného webu**, takže sa v prijatých dopytoch dá odlíšiť od dopytu
+na video. Názov tej voľby sa dá zmeniť v sekcii 12a.
+
 ## Ktorú verziu mám nainštalovanú
 
 Číslo verzie je v administrácii v **IDEANET → Kde čo upraviť → Verzia
