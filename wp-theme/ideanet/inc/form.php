@@ -188,7 +188,7 @@ function ideanet_form_options() {
 
 	/* Ponuka redizajnu webov — aby sa dopyt z podstránky dal rozlíšiť
 	   od dopytu na video. */
-	$web = ideanet_opt( 'red_form_option' );
+	$web = ideanet_red_opt( 'red_form_option' );
 	if ( $web ) {
 		$out[ __( 'Weby', 'ideanet' ) ] = array( $web );
 	}

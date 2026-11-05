@@ -20,13 +20,13 @@ $fakty  = ideanet_red_pairs( 'red_facts', 2 );
 $otazky = ideanet_red_pairs( 'red_faq', 2 );
 $gets   = ideanet_red_lines( 'red_gets' );
 $komu   = ideanet_red_lines( 'red_prekoho' );
-$flag   = ideanet_opt( 'red_flag' );
-$grab   = ideanet_opt( 'red_prekoho_grab' );
-$foot   = ideanet_opt( 'red_ukazky_foot' );
+$flag   = ideanet_red_opt( 'red_flag' );
+$grab   = ideanet_red_opt( 'red_prekoho_grab' );
+$foot   = ideanet_red_opt( 'red_ukazky_foot' );
 
 /* Vo výbere vo formulári má byť rovno redizajn — človek, ktorý sa sem
    dostal, nepíše kvôli videu. */
-$GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
+$GLOBALS['ideanet_form_type'] = ideanet_red_opt( 'red_form_option' );
 ?>
 <main id="top" class="redizajn">
 
@@ -35,19 +35,19 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 			<?php if ( $flag ) : ?>
 				<p class="offer__flag reveal"><?php echo esc_html( $flag ); ?></p>
 			<?php endif; ?>
-			<p class="eyebrow reveal"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_eyebrow' ) ); ?></p>
+			<p class="eyebrow reveal"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_eyebrow' ) ); ?></p>
 			<h1 class="reveal">
 				<?php ideanet_red_text( 'red_title' ); ?>
-				<?php if ( ideanet_opt( 'red_title_hl' ) ) : ?>
+				<?php if ( ideanet_red_opt( 'red_title_hl' ) ) : ?>
 					<span class="grad"><?php ideanet_red_text( 'red_title_hl' ); ?></span>
 				<?php endif; ?>
 			</h1>
 			<p class="lead reveal"><?php ideanet_red_text( 'red_lead' ); ?></p>
 
 			<div class="offer__cta reveal">
-				<a class="btn btn--primary" href="#dopyt"><?php echo esc_html( ideanet_opt( 'red_cta' ) ); ?></a>
-				<?php if ( ideanet_opt( 'red_cta2' ) ) : ?>
-					<a class="btn btn--ghost" href="#dostanete"><?php echo esc_html( ideanet_opt( 'red_cta2' ) ); ?> <span aria-hidden="true">↓</span></a>
+				<a class="btn btn--primary" href="#dopyt"><?php echo esc_html( ideanet_red_opt( 'red_cta' ) ); ?></a>
+				<?php if ( ideanet_red_opt( 'red_cta2' ) ) : ?>
+					<a class="btn btn--ghost" href="#dostanete"><?php echo esc_html( ideanet_red_opt( 'red_cta2' ) ); ?> <span aria-hidden="true">↓</span></a>
 				<?php endif; ?>
 			</div>
 
@@ -80,12 +80,12 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 	endwhile;
 	?>
 
-	<?php if ( ideanet_opt( 'red_poznate_text' ) ) : ?>
+	<?php if ( ideanet_red_opt( 'red_poznate_text' ) ) : ?>
 		<section class="section section--alt" id="poznate">
 			<div class="wrap">
 				<div class="section__head reveal">
 					<div>
-						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_poznate_eyebrow' ) ); ?></p>
+						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_poznate_eyebrow' ) ); ?></p>
 						<h2><?php ideanet_red_text( 'red_poznate_title' ); ?></h2>
 					</div>
 				</div>
@@ -99,10 +99,10 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 			<div class="wrap">
 				<div class="section__head reveal">
 					<div>
-						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_gets_eyebrow' ) ); ?></p>
+						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_gets_eyebrow' ) ); ?></p>
 						<h2><?php ideanet_red_text( 'red_gets_title' ); ?></h2>
 					</div>
-					<?php if ( ideanet_opt( 'red_gets_note' ) ) : ?>
+					<?php if ( ideanet_red_opt( 'red_gets_note' ) ) : ?>
 						<p class="section__note"><?php ideanet_red_text( 'red_gets_note' ); ?></p>
 					<?php endif; ?>
 				</div>
@@ -120,10 +120,10 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 			<div class="wrap">
 				<div class="section__head reveal">
 					<div>
-						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_ako_eyebrow' ) ); ?></p>
+						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_ako_eyebrow' ) ); ?></p>
 						<h2><?php ideanet_red_text( 'red_ako_title' ); ?></h2>
 					</div>
-					<?php if ( ideanet_opt( 'red_ako_note' ) ) : ?>
+					<?php if ( ideanet_red_opt( 'red_ako_note' ) ) : ?>
 						<p class="section__note"><?php ideanet_red_text( 'red_ako_note' ); ?></p>
 					<?php endif; ?>
 				</div>
@@ -145,10 +145,10 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 			<div class="wrap">
 				<div class="section__head reveal">
 					<div>
-						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_ukazky_eyebrow' ) ); ?></p>
+						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_ukazky_eyebrow' ) ); ?></p>
 						<h2><?php ideanet_red_text( 'red_ukazky_title' ); ?></h2>
 					</div>
-					<?php if ( ideanet_opt( 'red_ukazky_note' ) ) : ?>
+					<?php if ( ideanet_red_opt( 'red_ukazky_note' ) ) : ?>
 						<p class="section__note"><?php ideanet_red_text( 'red_ukazky_note' ); ?></p>
 					<?php endif; ?>
 				</div>
@@ -171,7 +171,7 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 											echo esc_attr( sprintf( __( 'Pôvodný web: %s', 'ideanet' ), $nazov ) );
 										?>" loading="lazy" decoding="async">
 									<?php endif; ?>
-									<figcaption><?php echo esc_html( ideanet_opt( 'red_label_pred' ) ); ?></figcaption>
+									<figcaption><?php echo esc_html( ideanet_red_opt( 'red_label_pred' ) ); ?></figcaption>
 								</figure>
 								<figure class="ba__fig ba__fig--po">
 									<?php if ( $po ) : ?>
@@ -180,7 +180,7 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 											echo esc_attr( sprintf( __( 'Nový web: %s', 'ideanet' ), $nazov ) );
 										?>" loading="lazy" decoding="async">
 									<?php endif; ?>
-									<figcaption><?php echo esc_html( ideanet_opt( 'red_label_po' ) ); ?></figcaption>
+									<figcaption><?php echo esc_html( ideanet_red_opt( 'red_label_po' ) ); ?></figcaption>
 								</figure>
 							</div>
 							<div class="ba__body">
@@ -210,31 +210,31 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 		<div class="wrap">
 			<div class="section__head reveal">
 				<div>
-					<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_cena_eyebrow' ) ); ?></p>
+					<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_cena_eyebrow' ) ); ?></p>
 					<h2><?php ideanet_red_text( 'red_cena_title' ); ?></h2>
 				</div>
 			</div>
 			<div class="deal reveal">
 				<div>
 					<p class="deal__price">
-						<?php if ( ideanet_opt( 'red_price_pred' ) ) : ?>
-							<span class="deal__old"><?php echo esc_html( ideanet_opt( 'red_price_pred' ) ); ?></span>
+						<?php if ( ideanet_red_opt( 'red_price_pred' ) ) : ?>
+							<span class="deal__old"><?php echo esc_html( ideanet_red_opt( 'red_price_pred' ) ); ?></span>
 						<?php endif; ?>
-						<span class="deal__now"><?php echo esc_html( ideanet_opt( 'red_price' ) ); ?></span>
+						<span class="deal__now"><?php echo esc_html( ideanet_red_opt( 'red_price' ) ); ?></span>
 					</p>
-					<?php if ( ideanet_opt( 'red_price_unit' ) ) : ?>
+					<?php if ( ideanet_red_opt( 'red_price_unit' ) ) : ?>
 						<p class="deal__unit"><?php ideanet_red_text( 'red_price_unit' ); ?></p>
 					<?php endif; ?>
 				</div>
 				<div class="deal__body">
-					<?php if ( ideanet_opt( 'red_deal_when' ) ) : ?>
+					<?php if ( ideanet_red_opt( 'red_deal_when' ) ) : ?>
 						<p class="deal__when"><span class="dot"></span> <?php ideanet_red_text( 'red_deal_when' ); ?></p>
 					<?php endif; ?>
-					<?php if ( ideanet_opt( 'red_cena_note' ) ) : ?>
+					<?php if ( ideanet_red_opt( 'red_cena_note' ) ) : ?>
 						<p class="deal__note"><?php ideanet_red_text( 'red_cena_note' ); ?></p>
 					<?php endif; ?>
 				</div>
-				<a class="btn btn--primary" href="#dopyt"><?php echo esc_html( ideanet_opt( 'red_cta' ) ); ?></a>
+				<a class="btn btn--primary" href="#dopyt"><?php echo esc_html( ideanet_red_opt( 'red_cta' ) ); ?></a>
 			</div>
 		</div>
 	</section>
@@ -244,10 +244,10 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 			<div class="wrap">
 				<div class="section__head reveal">
 					<div>
-						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_prekoho_eyebrow' ) ); ?></p>
+						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_prekoho_eyebrow' ) ); ?></p>
 						<h2><?php ideanet_red_text( 'red_prekoho_title' ); ?></h2>
 					</div>
-					<?php if ( ideanet_opt( 'red_prekoho_note' ) ) : ?>
+					<?php if ( ideanet_red_opt( 'red_prekoho_note' ) ) : ?>
 						<p class="section__note"><?php ideanet_red_text( 'red_prekoho_note' ); ?></p>
 					<?php endif; ?>
 				</div>
@@ -263,9 +263,9 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 				<?php if ( $grab ) : ?>
 					<div class="grab reveal">
 						<p><?php ideanet_red_text( 'red_prekoho_grab' ); ?></p>
-						<?php if ( ideanet_opt( 'red_prekoho_cta' ) ) : ?>
+						<?php if ( ideanet_red_opt( 'red_prekoho_cta' ) ) : ?>
 							<div class="grab__links">
-								<a class="btn btn--ghost" href="#dopyt"><?php echo esc_html( ideanet_opt( 'red_prekoho_cta' ) ); ?></a>
+								<a class="btn btn--ghost" href="#dopyt"><?php echo esc_html( ideanet_red_opt( 'red_prekoho_cta' ) ); ?></a>
 							</div>
 						<?php endif; ?>
 					</div>
@@ -279,7 +279,7 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 			<div class="wrap">
 				<div class="section__head reveal">
 					<div>
-						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_faq_eyebrow' ) ); ?></p>
+						<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_faq_eyebrow' ) ); ?></p>
 						<h2><?php ideanet_red_text( 'red_faq_title' ); ?></h2>
 					</div>
 				</div>
@@ -302,7 +302,7 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 					<h2><?php ideanet_red_text( 'red_end_title' ); ?></h2>
 					<p><?php ideanet_red_text( 'red_end_text' ); ?></p>
 				</div>
-				<a class="btn btn--primary" href="#dopyt"><?php echo esc_html( ideanet_opt( 'red_end_cta' ) ); ?></a>
+				<a class="btn btn--primary" href="#dopyt"><?php echo esc_html( ideanet_red_opt( 'red_end_cta' ) ); ?></a>
 			</div>
 		</div>
 	</section>
@@ -310,7 +310,7 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 	<section class="section section--contact" id="dopyt">
 		<div class="wrap contact">
 			<div class="contact__copy reveal">
-				<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_opt( 'red_form_eyebrow' ) ); ?></p>
+				<p class="eyebrow"><span class="dot"></span> <?php echo esc_html( ideanet_red_opt( 'red_form_eyebrow' ) ); ?></p>
 				<h2><?php ideanet_red_text( 'red_form_title' ); ?></h2>
 				<p class="lead"><?php ideanet_red_text( 'red_form_note' ); ?></p>
 

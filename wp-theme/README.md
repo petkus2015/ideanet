@@ -178,8 +178,20 @@ vyhoďte položku vo **Vzhľad → Menu**; sama sa späť nepridá.
 Priamy odkaz na úpravu tej stránky je v **IDEANET → Kde čo upraviť →
 Podstránka s ponukou redizajnu webov**.
 
-Texty sú v Prispôsobiť → IDEANET → **11 · Redizajn webov — ponuka a ceny**
-a **11a · Redizajn webov — sekcie**.
+**Texty sa upravujú priamo pri stránke**, nie v Prispôsobiť. Otvorte
+**Stránky → Redizajn webov** a pod editorom nájdete boxy v tom poradí,
+ako sekcie idú na webe: *Ponuka — cena, termín a počty*, *Úvod stránky*,
+*Poznáte to?*, *Čo dostanete*, *Ako to prebieha*, *Pred a po*, *Cena*,
+*Pre koho ponuka je*, *Časté otázky* a *Záverečná výzva a formulár*.
+
+Prázdne pole znamená, že sa použije predvolený text z témy. Pri
+niektorých poliach prázdna hodnota skryje celú sekciu — je to napísané
+pri danom poli.
+
+Táto jedna stránka sa otvára v klasickom editore. Blokový editor dáva
+takéto boxy do zasunutej lišty na spodku obrazovky, ktorú treba najprv
+vytiahnuť; v klasickom sú rovno pod sebou. Ostatných stránok sa to
+netýka.
 
 Cena, termín a počty sú uložené len raz a do textov sa dopĺňajú samy:
 
@@ -204,7 +216,7 @@ nie je, sekcia s ukážkami sa na podstránke vôbec nezobrazí.
 
 Dopyt z tejto podstránky má vo výbere prednastavené **Redizajn
 prezentačného webu**, takže sa v prijatých dopytoch dá odlíšiť od dopytu
-na video. Názov tej voľby sa dá zmeniť v sekcii 11a.
+na video. Názov tej voľby sa mení v boxe *Záverečná výzva a formulár*.
 
 ## Ktorú verziu mám nainštalovanú
 

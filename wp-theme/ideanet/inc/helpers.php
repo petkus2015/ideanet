@@ -114,13 +114,13 @@ function ideanet_tokens( $text ) {
 			/* Podstránka s ponukou redizajnu — cena, termín a počty sú
 			   uložené raz a do textov sa dopĺňajú, aby sa úvod, cenník
 			   a záverečná výzva nikdy nerozišli. */
-			'{cena}'       => ideanet_opt( 'red_price' ),
-			'{cena_pred}'  => ideanet_opt( 'red_price_pred' ),
-			'{termin}'     => ideanet_opt( 'red_term' ),
-			'{miest}'      => ideanet_opt( 'red_slots' ),
-			'{volnych}'    => ideanet_opt( 'red_slots_left' ),
-			'{podstranok}' => ideanet_opt( 'red_pages' ),
-			'{dni}'        => ideanet_opt( 'red_days' ),
+			'{cena}'       => ideanet_red_opt( 'red_price' ),
+			'{cena_pred}'  => ideanet_red_opt( 'red_price_pred' ),
+			'{termin}'     => ideanet_red_opt( 'red_term' ),
+			'{miest}'      => ideanet_red_opt( 'red_slots' ),
+			'{volnych}'    => ideanet_red_opt( 'red_slots_left' ),
+			'{podstranok}' => ideanet_red_opt( 'red_pages' ),
+			'{dni}'        => ideanet_red_opt( 'red_days' ),
 		)
 	);
 }
@@ -131,7 +131,7 @@ function ideanet_tokens( $text ) {
  * @param string $key Kľúč nastavenia.
  */
 function ideanet_red_text( $key ) {
-	echo wp_kses( ideanet_tokens( ideanet_opt( $key ) ), ideanet_kses() );
+	echo wp_kses( ideanet_tokens( ideanet_red_opt( $key ) ), ideanet_kses() );
 }
 
 /**
@@ -141,7 +141,16 @@ function ideanet_red_text( $key ) {
  * @return string[]
  */
 function ideanet_red_lines( $key ) {
-	return array_map( 'ideanet_tokens', ideanet_lines( $key ) );
+	$out = array();
+
+	foreach ( preg_split( '/\R/', (string) ideanet_red_opt( $key ) ) as $line ) {
+		$line = trim( $line );
+		if ( '' !== $line ) {
+			$out[] = ideanet_tokens( $line );
+		}
+	}
+
+	return $out;
 }
 
 /**
@@ -154,8 +163,9 @@ function ideanet_red_lines( $key ) {
 function ideanet_red_pairs( $key, $count = 2 ) {
 	$out = array();
 
-	foreach ( ideanet_pairs( $key, $count ) as $row ) {
-		$out[] = array_map( 'ideanet_tokens', $row );
+	foreach ( ideanet_red_lines( $key ) as $line ) {
+		$cols  = array_map( 'trim', explode( '|', $line ) );
+		$out[] = array_pad( array_slice( $cols, 0, $count ), $count, '' );
 	}
 
 	return $out;

@@ -442,7 +442,8 @@ function ideanet_redizajn_stranka() {
  * číslo v nastavení ostáva uložené.
  */
 function ideanet_redizajn_setup() {
-	if ( (int) get_option( 'ideanet_redizajn_setup' ) >= 2 ) {
+	$hotovo = (int) get_option( 'ideanet_redizajn_setup' );
+	if ( $hotovo >= 3 ) {
 		return;
 	}
 
@@ -458,8 +459,15 @@ function ideanet_redizajn_setup() {
 		return; // nepodarilo sa; skúsi sa pri ďalšom načítaní.
 	}
 
-	ideanet_redizajn_do_menu( $stranka );
-	update_option( 'ideanet_redizajn_setup', 2 );
+	if ( $hotovo < 2 ) {
+		ideanet_redizajn_do_menu( $stranka );
+	}
+
+	/* Texty sa už neupravujú v Prispôsobiť, ale pri stránke. */
+	ideanet_red_prefill( $stranka->ID );
+	update_option( 'ideanet_red_page', $stranka->ID, false );
+
+	update_option( 'ideanet_redizajn_setup', 3 );
 }
 add_action( 'admin_init', 'ideanet_redizajn_setup' );
 

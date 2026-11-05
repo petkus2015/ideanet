@@ -8,6 +8,18 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.11.0
+
+- Texty podstránky s ponukou redizajnu sa upravujú priamo pri stránke
+  v Stránky → Redizajn webov, v boxoch rozdelených po sekciách, nie
+  v Prispôsobiť. Sekcie 11 a 11a z Prispôsobiť zmizli.
+- Čo ste mali v Prispôsobiť prepísané, sa pri aktualizácii prekopíruje
+  k stránke, takže sa nič nestratí.
+- Tá jedna stránka sa otvára v klasickom editore — blokový editor dáva
+  takéto boxy do zasunutej lišty na spodku obrazovky.
+- Prázdne pole znamená predvolený text z témy; pri niektorých poliach
+  skryje celú sekciu.
+
 ## 1.10.0
 
 - Oprava: podstránka s ponukou redizajnu vznikala len pri úplne prvej
