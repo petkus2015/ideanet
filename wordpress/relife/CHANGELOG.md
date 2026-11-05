@@ -2,6 +2,11 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.17.0
+- **Stránka „Inzerujte u nás“** (`/inzercia/`, vytvorí sa sama): úvod, **interaktívny graf** zobrazení vo funkciách generatívnej AI (hover/dotyk/klávesnica, prepínač Mesačne/Spolu, dáta z Google Search Console), sekcia **Prečo publikovať u nás** (overené, zaujímavé, optimalizované pre AEO, transparentné), ponuka spolupráce a kontaktný formulár (e-mail správcu alebo adresa z Customizeru; ochrana pred spamom).
+- Údaje grafu a e-mail: Vzhľad → Prispôsobiť → RELIFE – Inzercia (riadok `mesiac|hodnota`).
+- Odkaz na stránku v **pätičke** a v **mobilnom menu**.
+
 ## 1.16.0
 - **Chyby 404 (Search Console):** téma samé presmeruje (301) staré adresy, ktoré neexistujú, ale ich článok/stránka existuje podľa názvu (slug), napr. `/kategoria/tech/clanok.html` → `/clanok/`; staré adresy kategórií a značiek; `sitemap.xml` → `wp-sitemap.xml`.
 - Ručné presmerovania: Vzhľad → Prispôsobiť → RELIFE → Presmerovania (riadok `/stara/ => /nova/`).
