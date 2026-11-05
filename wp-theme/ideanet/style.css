@@ -4,7 +4,7 @@ Theme URI: https://github.com/petkus2015/ideanet
 Author: Peter Miškus
 Author URI: https://ideanet.sk
 Description: Téma pre videotvorcu — vertikálne Reels, vizuály a identita, cenník s tromi pohľadmi, interaktívna kalkulačka a formulár na dopyt. Celý obsah, menu, videá, obrázky, texty aj ceny sa upravujú vo WordPresse, bez zásahu do kódu a bez ďalších pluginov.
-Version: 1.6.0
+Version: 1.7.0
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -1346,12 +1346,9 @@ body.is-locked{overflow:hidden}
 
 .form__gdpr{font-size:.84rem;color:var(--muted);margin:0 0 .4rem}
 
-/* ── ponuka na jednu stranu ─────────────────
-   Na obrazovke vyzerá ako zvyšok webu, na papieri musí byť čitateľná
-   bez pozadia — tlačiareň inak minie pol kazety na tmavú plochu. */
-.ponuka .plans,.ponuka .tiers{margin-top:1.4rem}
-.ponuka__foot{margin-top:2.4rem;color:var(--muted);font-size:.92rem}
-
+/* ── tlač ───────────────────────────────────
+   Na papieri musí byť stránka čitateľná bez pozadia — tlačiareň inak
+   minie pol kazety na tmavú plochu. */
 @media print{
   .nav,.tabbar,.mobile-menu,.footer,.bg,.glow,.progress,.skip,.lightbox,
   .tier__cta,.plan .btn,.grab{display:none !important}

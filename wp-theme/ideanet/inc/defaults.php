@@ -79,12 +79,11 @@ function ideanet_defaults() {
 
 		'cennik_eyebrow' => 'Cenník',
 		'cennik_title'   => 'Férové ceny',
-		'cennik_note'    => 'Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video vrátane natáčania, strihu aj dodania. Nie som platca DPH, k cene sa nič nepripočítava. Celý cenník aj s balíkmi je v ponuke na stiahnutie.',
+		'cennik_note'    => 'Poskladajte si zákazku a hneď vidíte, čo stojí jedno hotové video vrátane natáčania, strihu aj dodania. Nie som platca DPH, k cene sa nič nepripočítava.',
 
 		'podmienky_eyebrow' => 'Podmienky',
 		'podmienky_title'   => 'Férové podmienky',
-		'podmienky_note'    => 'Osem viet, ktoré si odsúhlasíme dopredu. Podrobnosti sú v ponuke na stiahnutie.',
-		'podmienky_grab'    => 'Celá ponuka aj s podmienkami na jednej strane — na prečítanie alebo uloženie do PDF:',
+		'podmienky_note'    => 'Osem viet, ktoré si odsúhlasíme dopredu.',
 
 		'kontakt_eyebrow' => 'Kontakt',
 		'kontakt_title'   => 'Napíšte mi, čo potrebujete',
@@ -136,11 +135,6 @@ function ideanet_defaults() {
 		'eventy_graf_title' => 'Grafika na event',
 		'eventy_graf_note'  => 'Aby event vyzeral jednotne ešte predtým, než sa začne natáčať.',
 		'eventy_foot'       => 'Video, ktoré vyjde ešte v ten večer, zachytí moment, keď majú ľudia akciu v hlave. O týždeň je z neho archív — preto je same-day drahší.',
-
-		'ponuka_firmy_label'    => 'Ponuka pre firmy',
-		'ponuka_firmy_url'      => '',
-		'ponuka_agentury_label' => 'Ponuka pre agentúry',
-		'ponuka_agentury_url'   => '',
 
 		/* ── kalkulačka ────────────────────────── */
 		'calc_first'      => '160',

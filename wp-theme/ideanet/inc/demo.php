@@ -166,7 +166,6 @@ function ideanet_seed() {
 	}
 
 	ideanet_seed_baliky();
-	ideanet_seed_ponuky();
 	ideanet_seed_redizajn( $assets );
 	ideanet_seed_menus();
 }
@@ -301,48 +300,6 @@ function ideanet_seed_baliky() {
 }
 
 /**
- * Dve stránky s celou ponukou na jednej strane — na prečítanie alebo
- * uloženie do PDF. Ceny si berú z rovnakých balíkov ako cenník, takže
- * sa to nemá ako rozísť.
- */
-function ideanet_seed_ponuky() {
-	$stranky = array(
-		'firmy'    => array(
-			'Ponuka pre firmy',
-			'Mesačná tvorba vertikálneho videa, jednorazová produkcia, podcast a vizuály. Ceny sú bez DPH — nie som platca DPH.',
-			'ponuka_firmy_url',
-		),
-		'agentury' => array(
-			'Ponuka pre agentúry',
-			'White-label produkcia Reels pre vašich klientov. S klientom komunikujete vy, faktúru dostávate odo mňa.',
-			'ponuka_agentury_url',
-		),
-	);
-
-	foreach ( $stranky as $group => $def ) {
-		list( $title, $intro, $mod ) = $def;
-
-		$page_id = wp_insert_post(
-			array(
-				'post_type'    => 'page',
-				'post_status'  => 'publish',
-				'post_title'   => $title,
-				'post_content' => '<!-- wp:paragraph --><p>' . esc_html( $intro ) . '</p><!-- /wp:paragraph -->',
-			),
-			true
-		);
-
-		if ( is_wp_error( $page_id ) ) {
-			continue;
-		}
-
-		update_post_meta( $page_id, '_wp_page_template', 'page-templates/ponuka.php' );
-		update_post_meta( $page_id, '_ideanet_ponuka_group', $group );
-		set_theme_mod( 'ideanet_' . $mod, get_permalink( $page_id ) );
-	}
-}
-
-/**
  * Podstránka s ponukou redizajnu webov a dve ukážky pred/po.
  *
  * Texty, cena aj počet miest sú v Prispôsobiť — tu vzniká len samotná
@@ -386,6 +343,40 @@ function ideanet_seed_redizajn( $assets ) {
 		);
 	}
 }
+
+/**
+ * Jednorazové upratanie po zrušených ponukách na jednu stranu.
+ *
+ * Šablóna „Ponuka na jednu stranu" v téme už nie je — cenník aj
+ * podmienky sú na úvodnej stránke. Stránky, ktoré tú šablónu používali,
+ * by inak zostali visieť ako prázdne. Idú do koša, nie natvrdo preč,
+ * takže sa dajú v Stránky → Kôš vrátiť.
+ */
+function ideanet_zrus_ponuky() {
+	if ( get_option( 'ideanet_ponuky_zrusene' ) ) {
+		return;
+	}
+	update_option( 'ideanet_ponuky_zrusene', 1 );
+
+	$stranky = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => 'any',
+			'posts_per_page' => 50,
+			'meta_key'       => '_wp_page_template', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- jednorazovo, pri pár stránkach.
+			'meta_value'     => 'page-templates/ponuka.php', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- jednorazovo, pri pár stránkach.
+		)
+	);
+
+	foreach ( $stranky as $stranka ) {
+		wp_trash_post( $stranka->ID );
+	}
+
+	foreach ( array( 'ideanet_ponuka_firmy_url', 'ideanet_ponuka_agentury_url' ) as $mod ) {
+		remove_theme_mod( $mod );
+	}
+}
+add_action( 'admin_init', 'ideanet_zrus_ponuky' );
 
 /**
  * Vytvorí menu a priradí ich k umiestneniam.

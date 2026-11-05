@@ -166,24 +166,14 @@ funguje; z podstránky odkaz vedie späť na úvod.
 Prispôsobiť → IDEANET → **Nadpisy sekcií**. Pri každej sekcii je
 zaškrtávacie políčko. Odškrtnutím zmizne zo stránky aj z náhľadu.
 
-### Ponuka na jednu stranu (PDF)
-
-Dve stránky, ktoré vznikli pri aktivácii. Používajú šablónu **Ponuka na
-jednu stranu (tlač / PDF)** a v boxe vpravo sa im nastavuje, ktorý cenník
-vypíšu. Text okolo napíšete normálne v editore. Ceny si berú z rovnakých
-balíkov ako cenník, takže sa to nemá ako rozísť.
-
-Pri tlači (Ctrl+P → Uložiť ako PDF) sa tmavé pozadie, menu aj tlačidlá
-vypnú a strana vyjde čitateľná na bielom papieri.
-
 ### Ponuka redizajnu webov
 
 Samostatná podstránka s akčnou ponukou na redizajn prezentačného webu.
 Vznikla pri aktivácii pod názvom **Redizajn webov** a používa šablónu
 **Ponuka redizajnu webov**. Odkaz na ňu je v pätičkovom menu.
 
-Texty sú v Prispôsobiť → IDEANET → **12 · Redizajn webov — ponuka a ceny**
-a **12a · Redizajn webov — sekcie**.
+Texty sú v Prispôsobiť → IDEANET → **11 · Redizajn webov — ponuka a ceny**
+a **11a · Redizajn webov — sekcie**.
 
 Cena, termín a počty sú uložené len raz a do textov sa dopĺňajú samy:
 
@@ -208,7 +198,7 @@ nie je, sekcia s ukážkami sa na podstránke vôbec nezobrazí.
 
 Dopyt z tejto podstránky má vo výbere prednastavené **Redizajn
 prezentačného webu**, takže sa v prijatých dopytoch dá odlíšiť od dopytu
-na video. Názov tej voľby sa dá zmeniť v sekcii 12a.
+na video. Názov tej voľby sa dá zmeniť v sekcii 11a.
 
 ## Ktorú verziu mám nainštalovanú
 
@@ -326,7 +316,7 @@ wp-theme/
     │   ├── updater.php        aktualizácie z vydaní na GitHube
     │   └── demo.php           ukážkový obsah po aktivácii
     ├── template-parts/    jednotlivé sekcie úvodnej stránky
-    ├── page-templates/    ponuka na jednu stranu
+    ├── page-templates/    šablóna podstránky s ponukou redizajnu
     └── assets/js/app.js   interakcie (pásy, kalkulačka, formulár)
 ```
 

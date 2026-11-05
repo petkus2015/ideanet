@@ -255,7 +255,7 @@ function ideanet_customize_link( $slug ) {
 /**
  * Rozcestník v administrácii.
  *
- * Panel v Prispôsobiť má sedemnásť sekcií a hľadať v ňom, kde sa mení
+ * Panel v Prispôsobiť má veľa sekcií a hľadať v ňom, kde sa mení
  * e-mail alebo formulár, je otrava. Tu je na každú priamy odkaz.
  */
 function ideanet_admin_page() {
@@ -280,7 +280,7 @@ function ideanet_admin_page() {
 		array( $verzia, ideanet_check_now_link() ),
 		array( __( 'Menu — hore, spodná lišta na mobile, pätička', 'ideanet' ), admin_url( 'nav-menus.php' ) ),
 		array( __( 'Obrázky a videá v knižnici médií', 'ideanet' ), admin_url( 'upload.php' ) ),
-		array( __( 'Stránky — ponuka na jednu stranu, redizajn webov', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),
+		array( __( 'Stránky — podstránka s ponukou redizajnu', 'ideanet' ), admin_url( 'edit.php?post_type=page' ) ),
 	);
 	?>
 	<div class="wrap">

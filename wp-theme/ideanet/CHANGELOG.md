@@ -8,6 +8,20 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.7.0
+
+- Ponuky na jednu stranu („Ponuka pre firmy" a „Ponuka pre agentúry")
+  sú preč — cenník aj podmienky sú na úvodnej stránke a dve kópie tých
+  istých čísel sa len rozchádzali. Zmizol odkaz na ne pod podmienkami,
+  šablóna stránky aj box, v ktorom sa vyberal cenník.
+- Stránky, ktoré tú šablónu používali, sa pri prvom otvorení
+  administrácie presunú do koša. Ak ich chcete späť, sú v Stránky → Kôš.
+- V Prispôsobiť zmizla sekcia „8 · Podmienky — pätka" a štyri polia
+  s odkazmi na ponuky v sekcii cenníka. Ostatné sekcie sa prečíslovali,
+  redizajn webov je teraz 11 a 11a.
+- Z viet pri cenníku a podmienkach vypadlo „Podrobnosti sú v ponuke na
+  stiahnutie".
+
 ## 1.6.0
 
 - Pribudla podstránka **Ponuka redizajnu webov** — akčná ponuka na

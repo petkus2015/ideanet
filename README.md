@@ -23,7 +23,7 @@ Nasadenie: nahrajte obsah priečinka na akýkoľvek statický hosting
 index.html          obsah stránky
 styles.css          dizajn (tmavá modrá → čierna, magenta akcent)
 app.js              interakcie, dáta portfólia, kalkulačka
-ponuka/             samostatné ponuky na poslanie klientovi
+redizajn/           podstránka s ponukou redizajnu webov
 docs/               stratégia a cenník v textovej podobe
 assets/posters/     náhľady kariet 9:16 (SVG)
 assets/videos/      videá portfólia
@@ -60,7 +60,7 @@ je `styles.css` s hlavičkou témy navrchu.
 | Proces | štyri kroky od zadania po dodanie |
 | Cenník | prepínač troch pohľadov — firmy, agentúry (white-label), eventy |
 | Kalkulačka | interaktívny konfigurátor — počet Reels, celodenná účasť, doplnky a doprava |
-| Podmienky | osem krátkych kariet + odkaz na plnú ponuku |
+| Podmienky | osem krátkych kariet |
 | Kontakt | dopytový formulár s predvyplneným balíkom |
 
 ## Odkazy na sociálne siete
@@ -117,7 +117,7 @@ Kalkulačka počíta jednorazovú produkciu z počtu Reels:
 - celodenná účasť (do 8 hodín): **420 € vrátane 3 Reels**, ďalšie +95 €
 
 Prírastok 95 € nie je náhodný — je odvodený z cenníka tak, aby
-3 Reels vyšli presne na 350 €, ako sú uvedené v ponuke.
+3 Reels vyšli presne na 350 €.
 
 Doplnky sú zaškrtávacie: same-day (+30 %) a RAW materiál (+20 €).
 
@@ -131,11 +131,10 @@ const FIRST = 160, NEXT = 95,
 
 ## Cenník
 
-Sekcia **Férové ceny** na stránke obsahuje kalkulačku, nie balíky. Celý
-cenník s balíkmi je v ponukách v priečinku `ponuka/`. Ceny sú na oboch
-miestach napísané priamo v texte — **pri zmene ceny upravte obe miesta.**
-(Vo WordPress téme to tak nie je: tam sú balíky položky obsahu a ťahá si
-ich z nich aj formulár aj ponuka.)
+Sekcia **Férové ceny** na stránke obsahuje kalkulačku, nie balíky.
+Ceny nižšie sú tu kvôli prehľadu — na statickej stránke sú napísané
+priamo v texte a v `app.js`. (Vo WordPress téme to tak nie je: tam sú
+balíky položky obsahu a ťahá si ich z nich aj cenník aj formulár.)
 
 **Firmy — mesačne:** START 390 € · GROW 690 € · PRO 990 €
 **Firmy — jednorazovo:** 1 Reel 160 € · 3 Reels 350 €
@@ -146,9 +145,6 @@ ich z nich aj formulár aj ponuka.)
 **Grafika na event:** 180 € za sadu formátov, 2 kolá revízií
 **Vizuály a identita:** Vizuály pre siete 280 € · Vizuálna identita 690 €
 
-Každé tlačidlo balíka v ponukách nesie `data-package` — po kliknutí
-predvyplní výber v kontaktnom formulári.
-
 ## Stratégia a ponuka v textovej podobe
 
 V priečinku `docs/` sú dva interné dokumenty — nie sú určené klientom.
@@ -157,25 +153,6 @@ V priečinku `docs/` sú dva interné dokumenty — nie sú určené klientom.
 |---|---|
 | `docs/strategia.md` | pozicionovanie, štyri zdroje príjmu, koho a ako oslovovať, white-label model, čo nerobiť, plán na prvý týždeň, čo ešte treba rozhodnúť |
 | `docs/ponuka.md` | celý cenník a podmienky v texte plus hotové texty na skopírovanie do správy alebo e-mailu |
-
-## Ponuky na poslanie klientovi
-
-V priečinku `ponuka/` sú dve samostatné jednostránkové ponuky. Sú úplne
-sebestačné — štýly majú vnútri súboru a nenačítavajú nič zvonku, takže sa dajú
-poslať e-mailom ako príloha, vytlačiť alebo uložiť do PDF (tlačidlo **Uložiť
-ako PDF** v hlavičke, pred tlačou sa automaticky rozbalia všetky otázky).
-
-| Súbor | Pre koho | Čím argumentuje |
-|---|---|---|
-| `ponuka/pre-firmy.html` | menšie firmy a živnostníci | mesačné balíky, priebeh spolupráce, FAQ pre klientov, ktorí video ešte nerobili |
-| `ponuka/pre-agentury.html` | agentúry a väčšie firmy | white-label model, rozdelenie práce, cenník produkcie, paušál Partner a výpočet marže |
-
-Obe majú `<meta name="robots" content="noindex">` — sú určené na priame
-poslanie, nie do vyhľadávania.
-
-**Pozor pri úprave cien:** každý súbor si nesie vlastnú kópiu štýlov aj čísel.
-Pri zmene cenníka treba upraviť obe ponuky v `ponuka/`; sadzby
-kalkulačky sú v `app.js`.
 
 ## Interakcie portfólia
 

@@ -35,12 +35,9 @@
 
 .form__gdpr{font-size:.84rem;color:var(--muted);margin:0 0 .4rem}
 
-/* ── ponuka na jednu stranu ─────────────────
-   Na obrazovke vyzerá ako zvyšok webu, na papieri musí byť čitateľná
-   bez pozadia — tlačiareň inak minie pol kazety na tmavú plochu. */
-.ponuka .plans,.ponuka .tiers{margin-top:1.4rem}
-.ponuka__foot{margin-top:2.4rem;color:var(--muted);font-size:.92rem}
-
+/* ── tlač ───────────────────────────────────
+   Na papieri musí byť stránka čitateľná bez pozadia — tlačiareň inak
+   minie pol kazety na tmavú plochu. */
 @media print{
   .nav,.tabbar,.mobile-menu,.footer,.bg,.glow,.progress,.skip,.lightbox,
   .tier__cta,.plan .btn,.grab{display:none !important}

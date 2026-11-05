@@ -91,10 +91,6 @@ function ideanet_customizer_map() {
 				'tab_eventy'       => array( __( 'Záložka 3 — názov', 'ideanet' ), 'text' ),
 				'tab_eventy_sub'   => array( __( 'Záložka 3 — podtitul', 'ideanet' ), 'text' ),
 				'eventy_intro'     => array( __( 'Záložka 3 — úvodná veta', 'ideanet' ), 'area' ),
-				'ponuka_firmy_url'    => array( __( 'Ponuka pre firmy — odkaz', 'ideanet' ), 'text', __( 'Prázdne = odkaz sa nezobrazí.', 'ideanet' ) ),
-				'ponuka_firmy_label'  => array( __( 'Ponuka pre firmy — názov tlačidla', 'ideanet' ), 'text' ),
-				'ponuka_agentury_url'   => array( __( 'Ponuka pre agentúry — odkaz', 'ideanet' ), 'text' ),
-				'ponuka_agentury_label' => array( __( 'Ponuka pre agentúry — názov tlačidla', 'ideanet' ), 'text' ),
 			),
 		),
 
@@ -188,15 +184,8 @@ function ideanet_customizer_map() {
 			),
 		),
 
-		'podmienky' => array(
-			'title'  => __( '8 · Podmienky — pätka', 'ideanet' ),
-			'fields' => array(
-				'podmienky_grab' => array( __( 'Veta nad odkazmi na ponuku', 'ideanet' ), 'area' ),
-			),
-		),
-
 		'kontakt' => array(
-			'title'  => __( '9 · Kontakt — e-mail, telefón, siete', 'ideanet' ),
+			'title'  => __( '8 · Kontakt — e-mail, telefón, siete', 'ideanet' ),
 			'fields' => array(
 				'contact_email'      => array( __( 'E-mail', 'ideanet' ), 'email' ),
 				'contact_phone'      => array( __( 'Telefón', 'ideanet' ), 'text' ),
@@ -207,7 +196,7 @@ function ideanet_customizer_map() {
 		),
 
 		'formular' => array(
-			'title'  => __( '9a · Formulár — kam chodia dopyty', 'ideanet' ),
+			'title'  => __( '8a · Formulár — kam chodia dopyty', 'ideanet' ),
 			'fields' => array(
 				'form_to'      => array( __( 'Kam chodia dopyty', 'ideanet' ), 'email', __( 'Prázdne = e-mail z kontaktu vyššie.', 'ideanet' ) ),
 				'form_subject' => array( __( 'Predmet e-mailu', 'ideanet' ), 'text' ),
@@ -226,7 +215,7 @@ function ideanet_customizer_map() {
 		),
 
 		'siete' => array(
-			'title'  => __( '10 · Sociálne siete', 'ideanet' ),
+			'title'  => __( '9 · Sociálne siete', 'ideanet' ),
 			'fields' => array(
 				'social_instagram' => array( 'Instagram', 'text', __( 'Prázdne = ikona sa nezobrazí.', 'ideanet' ) ),
 				'social_tiktok'    => array( 'TikTok', 'text' ),
@@ -236,14 +225,14 @@ function ideanet_customizer_map() {
 		),
 
 		'pata' => array(
-			'title'  => __( '11 · Pätička', 'ideanet' ),
+			'title'  => __( '10 · Pätička', 'ideanet' ),
 			'fields' => array(
 				'footer_text' => array( __( 'Text v pätičke', 'ideanet' ), 'area', __( '{rok} doplní aktuálny rok.', 'ideanet' ) ),
 			),
 		),
 
 		'redizajn' => array(
-			'title'       => __( '12 · Redizajn webov — ponuka a ceny', 'ideanet' ),
+			'title'       => __( '11 · Redizajn webov — ponuka a ceny', 'ideanet' ),
 			'description' => __( 'Tieto texty sú na podstránke s ponukou redizajnu, nie na úvodnej stránke. Náhľad vpravo na ňu prepnete tak, že v ňom dole v pätičke kliknete na Redizajn webov.', 'ideanet' ),
 			'fields'      => array(
 				'red_price'      => array( __( 'Akčná cena', 'ideanet' ), 'text', __( 'Doplní sa všade, kde je v texte {cena}.', 'ideanet' ) ),
@@ -270,7 +259,7 @@ function ideanet_customizer_map() {
 		),
 
 		'redizajn_sekcie' => array(
-			'title'       => __( '12a · Redizajn webov — sekcie', 'ideanet' ),
+			'title'       => __( '11a · Redizajn webov — sekcie', 'ideanet' ),
 			'description' => __( 'Tieto texty sú na podstránke s ponukou redizajnu, nie na úvodnej stránke. Náhľad vpravo na ňu prepnete tak, že v ňom dole v pätičke kliknete na Redizajn webov.', 'ideanet' ),
 			'fields'      => array(
 				'red_poznate_eyebrow' => array( __( 'Poznáte to? — malý riadok', 'ideanet' ), 'text' ),
@@ -594,8 +583,6 @@ function ideanet_edit_map() {
 		'.calc__form .addons' => array( 'calc_addons_label', 'calc_addons' ),
 		'.calc__out'          => array( 'calc_out_label', 'calc_unit', 'calc_cta', 'calc_disc', 'calc_tip' ),
 		'.stepper'            => array( 'calc_reels_label', 'calc_first', 'calc_next', 'calc_min', 'calc_max', 'calc_start' ),
-
-		'.grab'             => array( 'podmienky_grab', 'ponuka_firmy_url', 'ponuka_firmy_label', 'ponuka_agentury_url', 'ponuka_agentury_label' ),
 
 		/* Kontakt je zúžený na #kontakt — rovnaké triedy má aj dopyt na
 		   podstránke s redizajnom, kde sa texty berú odinakiaľ. */
