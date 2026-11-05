@@ -8,6 +8,15 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.9.0
+
+- Podstránka s ponukou redizajnu pribudla do horného menu (ako
+  „Redizajn") a do rozbaľovacieho menu na mobile pod tlačidlom Viac
+  (ako „Redizajn webov"). V oboch je hneď za cenníkom.
+- Na weboch, ktoré tému mali zapnutú skôr, sa odkaz doplní sám pri
+  prvom otvorení administrácie. Kto ho tam nechce, vyhodí ho vo
+  Vzhľad → Menu a späť sa už nepridá.
+
 ## 1.8.0
 
 - V ponuke redizajnu zmizli dlhé pomlčky, vety sú prepísané na bodky,

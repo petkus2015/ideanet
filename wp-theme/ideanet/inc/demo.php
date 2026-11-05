@@ -379,6 +379,110 @@ function ideanet_zrus_ponuky() {
 add_action( 'admin_init', 'ideanet_zrus_ponuky' );
 
 /**
+ * Vloží položku menu hneď za danú adresu.
+ *
+ * @param array  $polozky Položky ako adresa => názov.
+ * @param string $za      Adresa, za ktorú sa vkladá.
+ * @param string $url     Adresa novej položky.
+ * @param string $label   Názov novej položky.
+ * @return array
+ */
+function ideanet_vloz_za( $polozky, $za, $url, $label ) {
+	$kluce = array_keys( $polozky );
+	$kde   = array_search( $za, $kluce, true );
+	$kde   = ( false === $kde ) ? count( $kluce ) : $kde + 1;
+
+	return array_slice( $polozky, 0, $kde, true )
+		+ array( $url => $label )
+		+ array_slice( $polozky, $kde, null, true );
+}
+
+/**
+ * Jednorazové doplnenie podstránky s ponukou redizajnu do menu.
+ *
+ * Menu vznikli pri aktivácii témy, takže na weboch, ktoré ju mali
+ * zapnutú skôr, by odkaz na podstránku nepribudol. Toto ho doplní
+ * do horného menu a do rozbaľovacieho menu na mobile (tlačidlo Viac).
+ * Ak si ho tam niekto nepraje, vyhodí ho vo Vzhľad → Menu a späť sa
+ * už nepridá.
+ */
+function ideanet_redizajn_do_menu() {
+	if ( get_option( 'ideanet_redizajn_v_menu' ) ) {
+		return;
+	}
+	update_option( 'ideanet_redizajn_v_menu', 1 );
+
+	$stranka = get_page_by_path( 'redizajn-webov' );
+	if ( ! $stranka ) {
+		return;
+	}
+
+	$odkaz = get_permalink( $stranka );
+
+	$locations = get_nav_menu_locations();
+	$kam       = array(
+		'primary' => __( 'Redizajn', 'ideanet' ),
+		'mobile'  => __( 'Redizajn webov', 'ideanet' ),
+	);
+
+	foreach ( $kam as $location => $label ) {
+		if ( empty( $locations[ $location ] ) ) {
+			continue;
+		}
+
+		$menu_id = (int) $locations[ $location ];
+		$polozky = wp_get_nav_menu_items( $menu_id );
+		if ( ! is_array( $polozky ) ) {
+			continue;
+		}
+
+		/* Keď tam už odkaz je — či ako stránka, či ako ručne napísaná
+		   adresa —, druhý netreba. */
+		foreach ( $polozky as $polozka ) {
+			$je_stranka = 'post_type' === $polozka->type && (int) $polozka->object_id === $stranka->ID;
+			$je_adresa  = untrailingslashit( $polozka->url ) === untrailingslashit( $odkaz );
+			if ( $je_stranka || $je_adresa ) {
+				continue 2;
+			}
+		}
+
+		/* Hneď za cenník — ponuka patrí k cenám, nie na koniec. */
+		$kde = count( $polozky ) + 1;
+		foreach ( $polozky as $polozka ) {
+			if ( false !== strpos( $polozka->url, '#cennik' ) ) {
+				$kde = (int) $polozka->menu_order + 1;
+				break;
+			}
+		}
+
+		foreach ( $polozky as $polozka ) {
+			if ( (int) $polozka->menu_order >= $kde ) {
+				wp_update_post(
+					array(
+						'ID'         => $polozka->ID,
+						'menu_order' => (int) $polozka->menu_order + 1,
+					)
+				);
+			}
+		}
+
+		wp_update_nav_menu_item(
+			$menu_id,
+			0,
+			array(
+				'menu-item-title'     => $label,
+				'menu-item-object'    => 'page',
+				'menu-item-object-id' => $stranka->ID,
+				'menu-item-type'      => 'post_type',
+				'menu-item-status'    => 'publish',
+				'menu-item-position'  => $kde,
+			)
+		);
+	}
+}
+add_action( 'admin_init', 'ideanet_redizajn_do_menu' );
+
+/**
  * Vytvorí menu a priradí ich k umiestneniam.
  */
 function ideanet_seed_menus() {
@@ -390,11 +494,6 @@ function ideanet_seed_menus() {
 		'#kontakt'    => 'Kontakt',
 	);
 
-	$locations = get_theme_mod( 'nav_menu_locations', array() );
-
-	/* Podstránka s ponukou redizajnu nie je kotva na úvodnej stránke, tak
-	   sa do pätičky pridá ako odkaz na stránku — inak by sa na ňu nedalo
-	   nikde kliknúť. */
 	$pata = array(
 		'#portfolio' => 'Portfólio',
 		'#vizualy'   => 'Vizuály',
@@ -403,14 +502,25 @@ function ideanet_seed_menus() {
 		'#kontakt'   => 'Kontakt',
 	);
 
+	$locations = get_theme_mod( 'nav_menu_locations', array() );
+
+	/* Podstránka s ponukou redizajnu nie je kotva na úvodnej stránke, tak
+	   sa pridá ako odkaz na stránku — inak by sa na ňu nedalo nikde
+	   kliknúť. V hornom menu je skrátená, nech sa riadok nerozsype.
+	   V spodnej lište nie je: tam sú štyri ikony a tlačidlo Viac. */
+	$mobil    = $sekcie;
 	$redizajn = get_page_by_path( 'redizajn-webov' );
+
 	if ( $redizajn ) {
-		$pata = array_slice( $pata, 0, 3, true ) + array( get_permalink( $redizajn ) => 'Redizajn webov' ) + array_slice( $pata, 3, null, true );
+		$odkaz  = get_permalink( $redizajn );
+		$sekcie = ideanet_vloz_za( $sekcie, '#cennik', $odkaz, 'Redizajn' );
+		$mobil  = ideanet_vloz_za( $mobil, '#cennik', $odkaz, 'Redizajn webov' );
+		$pata   = ideanet_vloz_za( $pata, '#cennik', $odkaz, 'Redizajn webov' );
 	}
 
 	$menus = array(
 		'primary' => array( 'Hlavné menu', $sekcie ),
-		'mobile'  => array( 'Mobilné menu', $sekcie ),
+		'mobile'  => array( 'Mobilné menu', $mobil ),
 		'tabbar'  => array(
 			'Spodná lišta',
 			array(

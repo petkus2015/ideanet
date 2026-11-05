@@ -594,7 +594,11 @@
     restoreTabPill();
   };
 
-  const sections = links.map(a => $(a.getAttribute('href'))).filter(Boolean);
+  /* V menu je aj odkaz na podstránku, nie len kotva — querySelector by
+     na takej adrese spadol, tak berieme len to, čo začína mriežkou. */
+  const sections = links
+    .map(a => { const h = a.getAttribute('href') || ''; return h.startsWith('#') && h.length > 1 ? $(h) : null; })
+    .filter(Boolean);
   const spy = new IntersectionObserver((ents) => {
     ents.forEach(en => { if (en.isIntersecting) markActive(en.target.id); });
   }, { rootMargin: '-45% 0px -50%' });

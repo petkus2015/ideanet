@@ -170,7 +170,10 @@ zaškrtávacie políčko. Odškrtnutím zmizne zo stránky aj z náhľadu.
 
 Samostatná podstránka s akčnou ponukou na redizajn prezentačného webu.
 Vznikla pri aktivácii pod názvom **Redizajn webov** a používa šablónu
-**Ponuka redizajnu webov**. Odkaz na ňu je v pätičkovom menu.
+**Ponuka redizajnu webov**. Odkaz na ňu je v hornom menu, v rozbaľovacom
+menu na mobile (tlačidlo **Viac**) aj v pätičke. V spodnej lište na mobile
+nie je — tam sú štyri ikony a tlačidlo Viac. Ak ho niekde nechcete,
+vyhoďte položku vo **Vzhľad → Menu**; sama sa späť nepridá.
 
 Texty sú v Prispôsobiť → IDEANET → **11 · Redizajn webov — ponuka a ceny**
 a **11a · Redizajn webov — sekcie**.
