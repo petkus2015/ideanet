@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.15.0
+- **Stránka 404:** nový dizajn s veľkým obrysovým „404“, textom, vyhľadávaním, tlačidlami siedmich sekcií, tlačidlom späť na domov a štyrmi najnovšími článkami. Vráti správny stav 404 (nie je indexovaná).
+
 ## 1.14.0
 - **Tabuľky v článkoch:** tmavý dizajn v štýle témy (zaoblený rám, hlavička v akcentovej farbe, jemné pruhovanie, výrazný prvý stĺpec), na mobile sa tabuľka posúva do strany, ak je široká. Z vložených tabuliek (napr. zo starého builderu) sa odstránia pevné farby (červená hlavička, biele riadky) a šírky; prvý riadok s `<th>` sa stane hlavičkou.
 - Nový štýl bloku Tabuľka: **Porovnanie (Versus)** so zvýrazneným prvým stĺpcom a deličom stĺpcov. Popis tabuľky sa zobrazí pod ňou.
