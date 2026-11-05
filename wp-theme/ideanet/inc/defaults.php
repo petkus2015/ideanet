@@ -225,16 +225,16 @@ function ideanet_defaults() {
 		'red_gets_eyebrow' => 'V cene',
 		'red_gets_title'   => 'Čo dostanete',
 		'red_gets_note'    => 'Jeden balík, jedna cena. Nič z toho nie je príplatok.',
-		'red_gets'         => "Nový dizajn vášho WordPress webu až do {podstranok} podstránok\nMobilné zobrazenie a rýchle načítanie\nZachované pozície v Google — presmerovania a základné SEO\nKontaktný formulár, mapa, odkaz na recenzie a GDPR lišta\nŠkolenie v administrácii, aby ste si web vedeli upravovať sami\nOdovzdanie do {dni} pracovných dní od dodania podkladov",
+		'red_gets'         => "Nový dizajn vášho WordPress webu až do {podstranok} podstránok\nMobilné zobrazenie a rýchle načítanie\nKontaktný formulár, mapa, odkaz na recenzie a GDPR lišta\nŠkolenie v administrácii, aby ste si web vedeli upravovať sami\nOdovzdanie do {dni} pracovných dní od dodania podkladov",
 
 		'red_ako_eyebrow' => 'Postup',
 		'red_ako_title'   => 'Ako to prebieha',
 		'red_ako_note'    => 'Vopred viete, čo sa deje, kedy to bude a čo dostanete.',
-		'red_ako'         => "Pošlete adresu webu | Do 24 hodín sa vám ozvem s krátkou analýzou — čo na webe zlepšiť a čo z toho stihneme v balíku.\nDodáte podklady | Logo, texty, fotky a prístupy k webu. Čo nemáte, povieme si, ako to dorobiť.\nNávrh a schválenie | Hlavnú stránku vidíte do 2 dní. Pripomienky pošlete naraz v jednom kole.\nSpustenie | Web ide naživo do {dni} pracovných dní od dodania podkladov, vrátane presmerovaní.",
+		'red_ako'         => "Pošlete adresu webu | Do 24 hodín sa vám ozvem s krátkou analýzou: čo na webe zlepšiť a čo z toho stihneme v balíku.\nDodáte podklady | Logo, texty, fotky a prístupy k webu. Čo nemáte, povieme si, ako to dorobiť.\nNávrh a schválenie | Hlavnú stránku vidíte do 2 dní. Pripomienky pošlete naraz v jednom kole.\nSpustenie | Web ide naživo do {dni} pracovných dní od dodania podkladov, vrátane presmerovaní.",
 
 		'red_ukazky_eyebrow' => 'Ukážky',
 		'red_ukazky_title'   => 'Pred a po',
-		'red_ukazky_note'    => 'Rovnaká firma, rovnaká adresa — len prehľadnejšie, rýchlejšie a čitateľne na mobile.',
+		'red_ukazky_note'    => 'Rovnaká firma, rovnaká adresa, len prehľadnejšie, rýchlejšie a čitateľne na mobile.',
 		'red_ukazky_foot'    => '',
 		'red_label_pred'     => 'Pred',
 		'red_label_po'       => 'Po',
@@ -246,14 +246,14 @@ function ideanet_defaults() {
 
 		'red_prekoho_eyebrow' => 'Pre koho',
 		'red_prekoho_title'   => 'Pre koho ponuka je',
-		'red_prekoho_note'    => 'Ponuka je nacenená na jeden typ webu — preto môže mať fixnú cenu.',
+		'red_prekoho_note'    => 'Ponuka je nacenená na jeden typ webu, preto môže mať fixnú cenu.',
 		'red_prekoho'         => "WordPress prezentačné weby bez e-shopu, do {podstranok} podstránok\nFirmy, ktoré web majú a potrebujú ho zmodernizovať\nWeby, ktoré majú zostať na rovnakej adrese a udržať pozície v Google",
-		'red_prekoho_grab'    => 'Väčšie weby, e-shopy a viacjazyčné projekty rád nacením na mieru — napíšte mi rozsah.',
+		'red_prekoho_grab'    => 'Väčšie weby, e-shopy a viacjazyčné projekty rád nacením na mieru. Napíšte mi rozsah.',
 		'red_prekoho_cta'     => 'Napísať rozsah',
 
 		'red_faq_eyebrow' => 'Otázky',
 		'red_faq_title'   => 'Časté otázky',
-		'red_faq'         => "Stratím pozície v Google? | Nie. Adresy podstránok zostanú rovnaké, a kde sa zmenia, nastavím trvalé presmerovanie. Prenesiem aj nadpisy a popisy stránok a po spustení skontrolujem Search Console.\nČo ak nemám texty a fotky? | Použijem tie, ktoré sú na webe teraz, a poviem vám, čo sa oplatí dofotiť alebo prepísať. Písanie textov a fotenie nie sú v cene balíka, viem ich však dohodnúť zvlášť.\nOdkedy plynie tých {dni} dní? | Od chvíle, keď mám všetky podklady a prístupy — nie od objednávky. Preto je dobré mať logo, texty a prístupy pripravené dopredu.\nMôžem si web upravovať sám? | Áno. Web zostáva vo WordPresse a na konci si spolu prejdeme administráciu, aby ste vedeli meniť texty, obrázky aj podstránky bez mojej pomoci.\nPostaráte sa o web aj po spustení? | Správu webu — aktualizácie, zálohy a drobné úpravy — viem zabezpečiť mesačne. Povinná nie je a dohodneme ju až podľa toho, čo reálne potrebujete.",
+		'red_faq'         => "Stratím pozície v Google? | Nie. Adresy podstránok zostanú rovnaké, a kde sa zmenia, nastavím trvalé presmerovanie. Prenesiem aj nadpisy a popisy stránok a po spustení skontrolujem Search Console.\nČo ak nemám texty a fotky? | Použijem tie, ktoré sú na webe teraz, a poviem vám, čo sa oplatí dofotiť alebo prepísať. Písanie textov a fotenie nie sú v cene balíka, viem ich však dohodnúť zvlášť.\nOdkedy plynie tých {dni} dní? | Od chvíle, keď mám všetky podklady a prístupy, nie od objednávky. Preto je dobré mať logo, texty a prístupy pripravené dopredu.\nMôžem si web upravovať sám? | Áno. Web zostáva vo WordPresse a na konci si spolu prejdeme administráciu, aby ste vedeli meniť texty, obrázky aj podstránky bez mojej pomoci.\nPostaráte sa o web aj po spustení? | Správu webu (aktualizácie, zálohy a drobné úpravy) viem zabezpečiť mesačne. Povinná nie je a dohodneme ju až podľa toho, čo reálne potrebujete.",
 
 		'red_end_title' => 'Zostáva {volnych} z {miest} miest.',
 		'red_end_text'  => 'Pošlite adresu webu a dozviete sa, čo na ňom zlepšiť.',
@@ -261,7 +261,7 @@ function ideanet_defaults() {
 
 		'red_form_eyebrow' => 'Dopyt',
 		'red_form_title'   => 'Požiadať o miesto',
-		'red_form_note'    => 'Napíšte mi adresu webu a čo vám na ňom vadí. Do 24 hodín sa vám ozvem s krátkou analýzou — aj keď sa pre redizajn nerozhodnete.',
+		'red_form_note'    => 'Napíšte mi adresu webu a čo vám na ňom vadí. Do 24 hodín sa vám ozvem s krátkou analýzou, aj keď sa pre redizajn nerozhodnete.',
 		'red_form_option'  => 'Redizajn prezentačného webu',
 
 		/* ── pätička ───────────────────────────── */

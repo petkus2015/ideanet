@@ -324,9 +324,9 @@ function ideanet_seed_redizajn( $assets ) {
 		update_post_meta( $page_id, '_wp_page_template', 'page-templates/redizajn.php' );
 	}
 
+	/* Jedna ukážka stačí — ostatné pribudnú, keď budú skutočné snímky. */
 	$ukazky = array(
-		array( 'Kaviareň', 'Z 5,8 sekundy načítania na 1,2 — menu a otváracie hodiny sú na mobile hneď na prvej obrazovke.' ),
-		array( 'Stavebná firma', 'Namiesto ôsmich podstránok s tým istým textom jedna jasná ponuka a referencie, ktoré sa dajú prelistovať.' ),
+		array( 'Kaviareň', 'Z 5,8 sekundy načítania na 1,2 sekundy. Menu a otváracie hodiny sú na mobile hneď na prvej obrazovke.' ),
 	);
 
 	foreach ( $ukazky as $i => $u ) {

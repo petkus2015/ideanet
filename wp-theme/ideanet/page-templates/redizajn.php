@@ -168,7 +168,7 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 									<?php if ( $pred ) : ?>
 										<img src="<?php echo esc_url( $pred ); ?>" alt="<?php
 											/* translators: %s: názov ukážky. */
-											echo esc_attr( sprintf( __( 'Pôvodný web — %s', 'ideanet' ), $nazov ) );
+											echo esc_attr( sprintf( __( 'Pôvodný web: %s', 'ideanet' ), $nazov ) );
 										?>" loading="lazy" decoding="async">
 									<?php endif; ?>
 									<figcaption><?php echo esc_html( ideanet_opt( 'red_label_pred' ) ); ?></figcaption>
@@ -177,7 +177,7 @@ $GLOBALS['ideanet_form_type'] = ideanet_opt( 'red_form_option' );
 									<?php if ( $po ) : ?>
 										<img src="<?php echo esc_url( $po ); ?>" alt="<?php
 											/* translators: %s: názov ukážky. */
-											echo esc_attr( sprintf( __( 'Nový web — %s', 'ideanet' ), $nazov ) );
+											echo esc_attr( sprintf( __( 'Nový web: %s', 'ideanet' ), $nazov ) );
 										?>" loading="lazy" decoding="async">
 									<?php endif; ?>
 									<figcaption><?php echo esc_html( ideanet_opt( 'red_label_po' ) ); ?></figcaption>

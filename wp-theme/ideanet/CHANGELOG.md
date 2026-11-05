@@ -8,6 +8,15 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.8.0
+
+- V ponuke redizajnu zmizli dlhé pomlčky, vety sú prepísané na bodky,
+  čiarky a zátvorky.
+- Zo zoznamu „Čo dostanete" vypadol bod o zachovaných pozíciách
+  v Google. Otázka o pozíciách zostáva medzi častými otázkami.
+- Ukážka pred a po je pri aktivácii len jedna a je na celú šírku, takže
+  sa na snímkach dá naozaj niečo porovnať.
+
 ## 1.7.0
 
 - Ponuky na jednu stranu („Ponuka pre firmy" a „Ponuka pre agentúry")

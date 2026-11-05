@@ -1129,7 +1129,7 @@ body.is-locked{overflow:hidden}
 .nav--sub .nav__cta{display:inline-flex}
 
 /* ── čo dostanete ────────────────────────── */
-.gets{list-style:none;padding:0;margin:0;display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.gets{list-style:none;padding:0;margin:0;display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}
 .gets li{
   display:flex;gap:.8rem;align-items:flex-start;font-size:.94rem;
   padding:.95rem 1.1rem;border-radius:16px;border:1px solid var(--line);
