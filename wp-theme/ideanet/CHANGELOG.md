@@ -8,6 +8,13 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.13.0
+
+- Ukážka, ktorá má vyplnený odkaz na web, má pod textom tlačidlo, ktoré
+  ten web otvorí v novom okne. Názov tlačidla sa mení pri stránke
+  v boxe „Ukážky klientov"; predvolene je to „Pozrieť web".
+- Názov ukážky už nie je odkaz — odkazom je to tlačidlo.
+
 ## 1.12.0
 
 - Sekcia s ukážkami už neukazuje pôvodný web, len hotový. Volá sa

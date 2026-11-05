@@ -1155,6 +1155,7 @@ body.is-locked{overflow:hidden}
 .ba__body{padding:1.1rem 1.25rem 1.3rem}
 .ba__body h3{margin:0 0 .3rem;font-size:1.02rem}
 .ba__body p{margin:0;color:var(--muted);font-size:.9rem}
+.ba__body .btn{margin-top:.95rem}
 
 /* ── cena ────────────────────────────────── */
 .deal{
@@ -1207,6 +1208,12 @@ body.is-locked{overflow:hidden}
   .offer__cta .btn{flex:1 1 100%}
   .deal{flex-direction:column;align-items:flex-start}
   .deal .btn,.slots .btn{width:100%}
+}
+
+/* Text len pre čítačky obrazovky — viditeľný nie je, ale prečíta sa. */
+.screen-reader-text{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
 }
 
 /* ── reveal animácie ─────────────────────── */

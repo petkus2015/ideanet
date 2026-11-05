@@ -236,6 +236,7 @@ function ideanet_defaults() {
 		'red_ukazky_title'   => 'Ukážky klientov',
 		'red_ukazky_note'    => 'Weby, ktoré som robil. Prehľadné, rýchle a čitateľné na mobile.',
 		'red_ukazky_foot'    => '',
+		'red_ukazky_cta'     => 'Pozrieť web',
 
 		'red_cena_eyebrow' => 'Cena',
 		'red_cena_title'   => 'Fixná cena, nie odhad',

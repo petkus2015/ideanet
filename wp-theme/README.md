@@ -211,9 +211,15 @@ pole — po každej objednávke ho znížte a záverečná výzva sa prepíše.
 
 **Ukážky klientov** sa pridávajú v IDEANET → **Redizajn — ukážky
 klientov**: nadpis je názov klienta alebo odboru, obsah je jedna veta
-o výsledku a do poľa sa vyberie snímka hotového webu. Nepovinne sa dá
-doplniť odkaz na web — potom je názov ukážky odkazom. Kým tam nič nie je,
-sekcia s ukážkami sa na podstránke vôbec nezobrazí.
+o výsledku a do poľa sa vyberie snímka hotového webu. Keď vyplníte aj
+**Odkaz na web**, pod ukážkou pribudne tlačidlo, ktoré ten web otvorí
+v novom okne; ukážke bez odkazu tlačidlo nepribudne. Jeho názov sa mení
+v boxe *Ukážky klientov* pri stránke. Kým tam nič nie je, sekcia
+s ukážkami sa na podstránke vôbec nezobrazí.
+
+Snímka webu: pomer **16 : 11** na šírku, odporúčane 1600 × 1100 px.
+Čokoľvek nahráte sa oreže na tento pomer zhora, takže z vysokej snímky
+celej stránky zostane hlavička a prvá obrazovka.
 
 Dopyt z tejto podstránky má vo výbere prednastavené **Redizajn
 prezentačného webu**, takže sa v prijatých dopytoch dá odlíšiť od dopytu

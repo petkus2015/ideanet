@@ -23,6 +23,7 @@ $komu   = ideanet_red_lines( 'red_prekoho' );
 $flag   = ideanet_red_opt( 'red_flag' );
 $grab   = ideanet_red_opt( 'red_prekoho_grab' );
 $foot   = ideanet_red_opt( 'red_ukazky_foot' );
+$tlacidlo = ideanet_red_opt( 'red_ukazky_cta' );
 
 /* Vo výbere vo formulári má byť rovno redizajn — človek, ktorý sa sem
    dostal, nepíše kvôli videu. */
@@ -176,15 +177,16 @@ $GLOBALS['ideanet_form_type'] = ideanet_red_opt( 'red_form_option' );
 								</figure>
 							<?php endif; ?>
 							<div class="ba__body">
-								<h3>
-									<?php if ( $odkaz ) : ?>
-										<a href="<?php echo esc_url( $odkaz ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $nazov ); ?></a>
-									<?php else : ?>
-										<?php echo esc_html( $nazov ); ?>
-									<?php endif; ?>
-								</h3>
+								<h3><?php echo esc_html( $nazov ); ?></h3>
 								<?php if ( $veta ) : ?>
 									<p><?php echo esc_html( $veta ); ?></p>
+								<?php endif; ?>
+								<?php if ( $odkaz && $tlacidlo ) : ?>
+									<a class="btn btn--ghost btn--sm" href="<?php echo esc_url( $odkaz ); ?>" target="_blank" rel="noopener noreferrer">
+										<?php echo esc_html( $tlacidlo ); ?>
+										<span aria-hidden="true">↗</span>
+										<span class="screen-reader-text"><?php esc_html_e( '(otvorí sa v novom okne)', 'ideanet' ); ?></span>
+									</a>
 								<?php endif; ?>
 							</div>
 						</article>

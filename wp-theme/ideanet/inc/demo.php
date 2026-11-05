@@ -440,7 +440,7 @@ function ideanet_redizajn_stranka() {
  */
 function ideanet_redizajn_setup() {
 	$hotovo = (int) get_option( 'ideanet_redizajn_setup' );
-	if ( $hotovo >= 4 ) {
+	if ( $hotovo >= 5 ) {
 		return;
 	}
 
@@ -469,7 +469,7 @@ function ideanet_redizajn_setup() {
 	ideanet_red_prefill( $stranka->ID );
 	update_option( 'ideanet_red_page', $stranka->ID, false );
 
-	update_option( 'ideanet_redizajn_setup', 4 );
+	update_option( 'ideanet_redizajn_setup', 5 );
 }
 add_action( 'admin_init', 'ideanet_redizajn_setup' );
 
