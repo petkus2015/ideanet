@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.15.1
+- Téma sama vytvorí stránku **Stránka nenájdená** (`/stranka-404/`, šablóna „Stránka 404“, noindex) – pri aktivácii alebo po prvom otvorení administrácie po aktualizácii. Obsah je spoločný s chybovou stránkou 404 (`template-parts/not-found.php`). Neexistujúce adresy ďalej zobrazujú 404.php so stavom 404.
+
 ## 1.15.0
 - **Stránka 404:** nový dizajn s veľkým obrysovým „404“, textom, vyhľadávaním, tlačidlami siedmich sekcií, tlačidlom späť na domov a štyrmi najnovšími článkami. Vráti správny stav 404 (nie je indexovaná).
 

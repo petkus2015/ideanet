@@ -298,3 +298,64 @@ function relife_list_markers( string $content ): string {
 	return $apply( $content, '✗|✘|✕|☒|x-\\s', 'rl-li-no' );
 }
 add_filter( 'the_content', 'relife_list_markers', 12 );
+
+/**
+ * Po aktivácii témy vytvorí stránku „Stránka nenájdená“ (/stranka-404/), ak ešte neexistuje.
+ * Skutočná chyba 404 pre neexistujúce adresy sa zobrazuje sama (404.php), táto stránka je navyše.
+ */
+function relife_create_404_page(): void {
+	// WordPress slug „404“ nevie použiť (zmení ho na 404-2), preto stranka-404.
+	$existing = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => 'any',
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'meta_key'       => '_wp_page_template', // phpcs:ignore WordPress.DB.SlowDBQuery
+			'meta_value'     => 'template-404.php', // phpcs:ignore WordPress.DB.SlowDBQuery
+		)
+	);
+	if ( $existing ) {
+		return;
+	}
+	$id = wp_insert_post(
+		array(
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'Stránka nenájdená',
+			'post_name'    => 'stranka-404',
+			'post_content' => '',
+		)
+	);
+	if ( $id && ! is_wp_error( $id ) ) {
+		update_post_meta( (int) $id, '_wp_page_template', 'template-404.php' );
+	}
+}
+add_action( 'after_switch_theme', 'relife_create_404_page' );
+
+/**
+ * Stránka /404/ (šablóna Stránka 404) sa nemá indexovať.
+ *
+ * @param array<string, mixed> $robots
+ * @return array<string, mixed>
+ */
+function relife_404_page_noindex( array $robots ): array {
+	if ( is_page_template( 'template-404.php' ) ) {
+		$robots['noindex'] = true;
+		unset( $robots['index'] );
+	}
+	return $robots;
+}
+add_filter( 'wp_robots', 'relife_404_page_noindex' );
+
+/**
+ * Pri aktualizácii témy (bez opätovnej aktivácie) sa stránka vytvorí raz po prvom otvorení administrácie.
+ */
+function relife_maybe_create_404_page(): void {
+	if ( get_option( 'relife_404_page_done' ) || ! current_user_can( 'edit_pages' ) ) {
+		return;
+	}
+	relife_create_404_page();
+	update_option( 'relife_404_page_done', 1, false );
+}
+add_action( 'admin_init', 'relife_maybe_create_404_page' );
