@@ -4,7 +4,7 @@ Theme URI: https://github.com/petkus2015/ideanet
 Author: Peter Miškus
 Author URI: https://ideanet.sk
 Description: Téma pre videotvorcu — vertikálne Reels, vizuály a identita, cenník s tromi pohľadmi, interaktívna kalkulačka a formulár na dopyt. Celý obsah, menu, videá, obrázky, texty aj ceny sa upravujú vo WordPresse, bez zásahu do kódu a bez ďalších pluginov.
-Version: 1.13.0
+Version: 1.14.0
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -1233,6 +1233,23 @@ body.is-locked{overflow:hidden}
   .deal{flex-direction:column;align-items:flex-start}
   .deal .btn,.slots .btn{width:100%}
 }
+
+/* ── stránka 404 ─────────────────────────── */
+.lost{padding-top:clamp(4.5rem,10vw,7.5rem)}
+.lost h1{max-width:16ch}
+.lost .lead{max-width:54ch}
+.lost__search{display:flex;align-items:flex-end;gap:.6rem;flex-wrap:wrap;margin:2rem 0 0;max-width:34rem}
+.lost__search .field{flex:1 1 15rem}
+.lost__cta{display:flex;flex-wrap:wrap;gap:.8rem;margin:2rem 0 0}
+.lost__links{list-style:none;padding:0;margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.55rem}
+.lost__links li{margin:0}
+.lost__links a{
+  display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1rem;
+  border-radius:999px;border:1px solid var(--line);background:rgba(5,8,22,.5);
+  font-size:.9rem;transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+.lost__links a:hover{transform:translateY(-2px);box-shadow:0 18px 40px -26px rgba(255,45,148,.75)}
+.lost__sub{margin:2.6rem 0 0;font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);font-weight:600}
 
 /* Text len pre čítačky obrazovky — viditeľný nie je, ale prečíta sa. */
 .screen-reader-text{

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stránka sa nenašla | IDEANET</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#05060f">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23070a1a'/><path d='M12 9l12 7-12 7z' fill='%23ff2d94'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Cesty od koreňa webu: túto stránku servr podstrčí na hociktorej adrese. -->
+<link rel="stylesheet" href="/styles.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <span class="orb orb--1"></span>
+  <span class="orb orb--2"></span>
+  <span class="orb orb--3"></span>
+  <span class="grid"></span>
+  <span class="noise"></span>
+</div>
+
+<header class="nav nav--sub" id="nav">
+  <div class="wrap nav__inner">
+    <a class="brand" href="/" aria-label="Domov">
+      <span class="brand__mark"><img src="/assets/foto-peter.svg" alt="Peter Miškus" width="160" height="160" decoding="async"></span>
+      <span class="brand__text">
+        <span class="brand__name">Peter Miškus</span>
+        <span class="brand__co">IDEA<b>NET</b></span>
+      </span>
+    </a>
+    <a class="btn btn--sm btn--primary nav__cta" href="/#kontakt">Nezáväzný dopyt</a>
+  </div>
+</header>
+
+<main id="top" class="section lost">
+  <div class="wrap">
+    <p class="eyebrow reveal"><span class="dot"></span> Chyba 404</p>
+    <h1 class="reveal">Táto stránka tu nie je</h1>
+    <p class="lead reveal">
+      Možno sa presunula, alebo je v odkaze preklep. Skúste niektorý z odkazov nižšie,
+      alebo mi rovno napíšte.
+    </p>
+
+    <p class="lost__sub reveal">Kam ďalej</p>
+    <ul class="lost__links reveal" role="list">
+      <li><a href="/#portfolio">Portfólio</a></li>
+      <li><a href="/#sluzby">Služby</a></li>
+      <li><a href="/#cennik">Cenník</a></li>
+      <li><a href="/redizajn/">Redizajn webov</a></li>
+      <li><a href="/#podmienky">Podmienky</a></li>
+      <li><a href="/#kontakt">Kontakt</a></li>
+    </ul>
+
+    <div class="lost__cta reveal">
+      <a class="btn btn--primary" href="/">Späť na úvod</a>
+      <a class="btn btn--ghost" href="mailto:ahoj@ideanet.sk">ahoj@ideanet.sk</a>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <a class="brand" href="/">
+      <span class="brand__mark"><img src="/assets/foto-peter.svg" alt="Peter Miškus" width="160" height="160" decoding="async"></span>
+      <span class="brand__text">
+        <span class="brand__name">Peter Miškus</span>
+        <span class="brand__co">IDEA<b>NET</b></span>
+      </span>
+    </a>
+    <p>© <span id="year">2026</span> Peter Miškus — IDEANET · videotvorca, grafik a content creator.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const rok = document.getElementById('year');
+  if (rok) rok.textContent = new Date().getFullYear();
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 70 + 'ms';
+    requestAnimationFrame(() => el.classList.add('is-in'));
+  });
+})();
+</script>
+</body>
+</html>

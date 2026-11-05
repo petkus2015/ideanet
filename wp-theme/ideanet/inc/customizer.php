@@ -224,8 +224,23 @@ function ideanet_customizer_map() {
 			),
 		),
 
+		'chyba404' => array(
+			'title'       => __( '10 · Stránka 404', 'ideanet' ),
+			'description' => __( 'Zobrazí sa, keď niekto príde na adresu, ktorá na webe neexistuje. Odkazy pod textom sa berú z horného menu.', 'ideanet' ),
+			'fields'      => array(
+				'e404_eyebrow'     => array( __( 'Malý riadok nad nadpisom', 'ideanet' ), 'text' ),
+				'e404_title'       => array( __( 'Nadpis', 'ideanet' ), 'text' ),
+				'e404_text'        => array( __( 'Text pod nadpisom', 'ideanet' ), 'area' ),
+				'e404_search'      => array( __( 'Popis poľa na hľadanie', 'ideanet' ), 'text' ),
+				'e404_search_ph'   => array( __( 'Náhľadový text v poli', 'ideanet' ), 'text' ),
+				'e404_search_btn'  => array( __( 'Tlačidlo hľadania', 'ideanet' ), 'text' ),
+				'e404_links_title' => array( __( 'Nadpis nad odkazmi', 'ideanet' ), 'text', __( 'Prázdne = odkazy sa nezobrazia.', 'ideanet' ) ),
+				'e404_cta'         => array( __( 'Tlačidlo späť na úvod', 'ideanet' ), 'text' ),
+			),
+		),
+
 		'pata' => array(
-			'title'  => __( '10 · Pätička', 'ideanet' ),
+			'title'  => __( '11 · Pätička', 'ideanet' ),
 			'fields' => array(
 				'footer_text' => array( __( 'Text v pätičke', 'ideanet' ), 'area', __( '{rok} doplní aktuálny rok.', 'ideanet' ) ),
 			),

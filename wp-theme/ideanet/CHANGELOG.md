@@ -8,6 +8,14 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.14.0
+
+- Stránka 404 je poriadna: okrem nadpisu má hľadanie, odkazy na hlavné
+  sekcie (berú sa z horného menu) a kontakt. Doteraz na nej bola len
+  jedna veta a tlačidlo na úvod.
+- Jej texty sa upravujú v Prispôsobiť → IDEANET → 10 · Stránka 404.
+  Ostatné sekcie sa posunuli o jednu — pätička je teraz 11.
+
 ## 1.13.0
 
 - Ukážka, ktorá má vyplnený odkaz na web, má pod textom tlačidlo, ktoré

@@ -225,6 +225,21 @@ Dopyt z tejto podstránky má vo výbere prednastavené **Redizajn
 prezentačného webu**, takže sa v prijatých dopytoch dá odlíšiť od dopytu
 na video. Názov tej voľby sa mení v boxe *Záverečná výzva a formulár*.
 
+### Stránka 404
+
+Zobrazí sa, keď niekto príde na adresu, ktorá na webe neexistuje —
+preklep v odkaze, zmazaná stránka, starý odkaz z Googlu. Nie je to
+stránka v Stránkach, je to šablóna témy, takže sa nedá zmazať a je tam
+vždy.
+
+Okrem nadpisu má hľadanie a odkazy na hlavné sekcie, aby sa z nej dalo
+niekam kliknúť. Odkazy sa berú z **horného menu**, takže ich netreba
+udržiavať dvakrát. Texty sú v Prispôsobiť → IDEANET → **10 · Stránka
+404**; keby ste nechceli odkazy, vymažte *Nadpis nad odkazmi*.
+
+Vyskúšate ju tak, že si za adresu webu dopíšete nezmysel, napríklad
+`vasadomena.sk/toto-tu-nie-je`.
+
 ## Ktorú verziu mám nainštalovanú
 
 Číslo verzie je v administrácii v **IDEANET → Kde čo upraviť → Verzia

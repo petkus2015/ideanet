@@ -263,6 +263,16 @@ function ideanet_defaults() {
 		'red_form_note'    => 'Napíšte mi adresu webu a čo vám na ňom vadí. Do 24 hodín sa vám ozvem s krátkou analýzou, aj keď sa pre redizajn nerozhodnete.',
 		'red_form_option'  => 'Redizajn prezentačného webu',
 
+		/* ── stránka 404 ───────────────────────── */
+		'e404_eyebrow'     => 'Chyba 404',
+		'e404_title'       => 'Táto stránka tu nie je',
+		'e404_text'        => 'Možno sa presunula, alebo je v odkaze preklep. Skúste hľadanie, niektorý z odkazov nižšie, alebo mi rovno napíšte.',
+		'e404_search'      => 'Hľadať na webe',
+		'e404_search_ph'   => 'Napríklad cenník alebo Reels',
+		'e404_search_btn'  => 'Hľadať',
+		'e404_links_title' => 'Kam ďalej',
+		'e404_cta'         => 'Späť na úvod',
+
 		/* ── pätička ───────────────────────────── */
 		'footer_text' => '© {rok} Peter Miškus — IDEANET · videotvorca, grafik a content creator.',
 		'skip_label'  => 'Preskočiť na portfólio',
