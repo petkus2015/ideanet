@@ -8,6 +8,17 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.12.0
+
+- Sekcia s ukážkami už neukazuje pôvodný web, len hotový. Volá sa
+  „Ukážky klientov" a každá ukážka má jednu snímku namiesto dvojice.
+- Typ obsahu sa premenoval na „Redizajn — ukážky klientov" a zostalo mu
+  jedno pole na obrázok. Pri existujúcich ukážkach sa snímka hotového
+  webu presunie do nového poľa sama, tá pôvodná sa odpojí. V knižnici
+  médií zostávajú oba obrázky.
+- Nadpis sekcie sa prepíše len vtedy, keď ste ho nemenili. Vlastný text
+  zostáva.
+
 ## 1.11.0
 
 - Texty podstránky s ponukou redizajnu sa upravujú priamo pri stránke

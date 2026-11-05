@@ -340,10 +340,7 @@ function ideanet_seed_redizajn( $assets ) {
 			'ideanet_redizajn',
 			$u[0],
 			$u[1],
-			array(
-				'pred' => $assets . '/web/pred-' . $n . '.svg',
-				'po'   => $assets . '/web/po-' . $n . '.svg',
-			),
+			array( 'web' => $assets . '/web/web-' . $n . '.svg' ),
 			$i
 		);
 	}
@@ -443,7 +440,7 @@ function ideanet_redizajn_stranka() {
  */
 function ideanet_redizajn_setup() {
 	$hotovo = (int) get_option( 'ideanet_redizajn_setup' );
-	if ( $hotovo >= 3 ) {
+	if ( $hotovo >= 4 ) {
 		return;
 	}
 
@@ -463,13 +460,91 @@ function ideanet_redizajn_setup() {
 		ideanet_redizajn_do_menu( $stranka );
 	}
 
+	if ( $hotovo < 4 ) {
+		ideanet_redizajn_jeden_obrazok();
+		ideanet_redizajn_nadpisy_ukazok( $stranka->ID );
+	}
+
 	/* Texty sa už neupravujú v Prispôsobiť, ale pri stránke. */
 	ideanet_red_prefill( $stranka->ID );
 	update_option( 'ideanet_red_page', $stranka->ID, false );
 
-	update_option( 'ideanet_redizajn_setup', 3 );
+	update_option( 'ideanet_redizajn_setup', 4 );
 }
 add_action( 'admin_init', 'ideanet_redizajn_setup' );
+
+/**
+ * Premenovanie sekcie s ukážkami.
+ *
+ * Sekcia sa volala „Pred a po", lebo ukazovala aj pôvodný web. Teraz sú
+ * to ukážky hotových webov. Prepisuje sa len text, ktorý nikto nemenil
+ * — vlastný text zostáva, ako je.
+ *
+ * @param int $page_id ID podstránky.
+ */
+function ideanet_redizajn_nadpisy_ukazok( $page_id ) {
+	$texty = array(
+		'red_ukazky_eyebrow' => array(
+			array( 'Ukážky' ),
+			'Redizajn webu',
+		),
+		'red_ukazky_title'   => array(
+			array( 'Pred a po' ),
+			'Ukážky klientov',
+		),
+		'red_ukazky_note'    => array(
+			array(
+				'Rovnaká firma, rovnaká adresa, len prehľadnejšie, rýchlejšie a čitateľne na mobile.',
+				'Rovnaká firma, rovnaká adresa — len prehľadnejšie, rýchlejšie a čitateľne na mobile.',
+			),
+			'Weby, ktoré som robil. Prehľadné, rýchle a čitateľné na mobile.',
+		),
+	);
+
+	foreach ( $texty as $key => $def ) {
+		list( $stare, $nove ) = $def;
+		$teraz = (string) get_post_meta( $page_id, '_ideanet_' . $key, true );
+
+		if ( '' === $teraz || in_array( $teraz, $stare, true ) ) {
+			update_post_meta( $page_id, '_ideanet_' . $key, $nove );
+		}
+	}
+
+	/* Štítky Pred a Po už nemajú kde svietiť. */
+	delete_post_meta( $page_id, '_ideanet_red_label_pred' );
+	delete_post_meta( $page_id, '_ideanet_red_label_po' );
+}
+
+/**
+ * Z dvojice obrázkov zostáva jeden — hotový web.
+ *
+ * Ukážky najprv ukazovali web pred aj po. Pôvodný web sa už neukazuje,
+ * tak sa snímka hotového webu presunie do nového poľa a tá pôvodná
+ * zmizne. Obrázky v knižnici médií zostávajú nedotknuté.
+ */
+function ideanet_redizajn_jeden_obrazok() {
+	$ukazky = get_posts(
+		array(
+			'post_type'      => 'ideanet_redizajn',
+			'post_status'    => 'any',
+			'posts_per_page' => 100,
+		)
+	);
+
+	foreach ( $ukazky as $ukazka ) {
+		$po = (string) get_post_meta( $ukazka->ID, '_ideanet_po', true );
+
+		/* Ukážkový súbor v téme sa pri tej zmene premenoval. */
+		$po = str_replace( '/assets/media/web/po-', '/assets/media/web/web-', $po );
+
+		if ( '' !== $po && '' === (string) get_post_meta( $ukazka->ID, '_ideanet_web', true ) ) {
+			update_post_meta( $ukazka->ID, '_ideanet_web', $po );
+		}
+
+		delete_post_meta( $ukazka->ID, '_ideanet_po' );
+		delete_post_meta( $ukazka->ID, '_ideanet_pred' );
+	}
+}
 
 /**
  * Doplní odkaz na podstránku do horného menu a do menu na mobile.

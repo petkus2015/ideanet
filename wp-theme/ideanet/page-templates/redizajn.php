@@ -156,33 +156,25 @@ $GLOBALS['ideanet_form_type'] = ideanet_red_opt( 'red_form_option' );
 				<div class="ba">
 					<?php
 					foreach ( $ukazky as $ukazka ) :
-						$pred  = ideanet_media_url( ideanet_meta( $ukazka->ID, 'pred' ) );
-						$po    = ideanet_image( $ukazka, 'large', 'po' );
+						/* Starším položkám zostal obrázok v poli „po" z čias,
+						   keď sa ukazoval web pred aj po. */
+						$obrazok = ideanet_image( $ukazka, 'large', 'web' );
+						if ( ! $obrazok ) {
+							$obrazok = ideanet_media_url( ideanet_meta( $ukazka->ID, 'po' ) );
+						}
 						$nazov = get_the_title( $ukazka );
 						$odkaz = ideanet_meta( $ukazka->ID, 'url' );
 						$veta  = trim( wp_strip_all_tags( $ukazka->post_content ) );
 						?>
 						<article class="ba__item reveal">
-							<div class="ba__pair">
-								<figure class="ba__fig ba__fig--pred">
-									<?php if ( $pred ) : ?>
-										<img src="<?php echo esc_url( $pred ); ?>" alt="<?php
-											/* translators: %s: názov ukážky. */
-											echo esc_attr( sprintf( __( 'Pôvodný web: %s', 'ideanet' ), $nazov ) );
-										?>" loading="lazy" decoding="async">
-									<?php endif; ?>
-									<figcaption><?php echo esc_html( ideanet_red_opt( 'red_label_pred' ) ); ?></figcaption>
+							<?php if ( $obrazok ) : ?>
+								<figure class="ba__fig">
+									<img src="<?php echo esc_url( $obrazok ); ?>" alt="<?php
+										/* translators: %s: názov ukážky. */
+										echo esc_attr( sprintf( __( 'Ukážka webu: %s', 'ideanet' ), $nazov ) );
+									?>" loading="lazy" decoding="async">
 								</figure>
-								<figure class="ba__fig ba__fig--po">
-									<?php if ( $po ) : ?>
-										<img src="<?php echo esc_url( $po ); ?>" alt="<?php
-											/* translators: %s: názov ukážky. */
-											echo esc_attr( sprintf( __( 'Nový web: %s', 'ideanet' ), $nazov ) );
-										?>" loading="lazy" decoding="async">
-									<?php endif; ?>
-									<figcaption><?php echo esc_html( ideanet_red_opt( 'red_label_po' ) ); ?></figcaption>
-								</figure>
-							</div>
+							<?php endif; ?>
 							<div class="ba__body">
 								<h3>
 									<?php if ( $odkaz ) : ?>

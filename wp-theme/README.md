@@ -181,7 +181,7 @@ Podstránka s ponukou redizajnu webov**.
 **Texty sa upravujú priamo pri stránke**, nie v Prispôsobiť. Otvorte
 **Stránky → Redizajn webov** a pod editorom nájdete boxy v tom poradí,
 ako sekcie idú na webe: *Ponuka — cena, termín a počty*, *Úvod stránky*,
-*Poznáte to?*, *Čo dostanete*, *Ako to prebieha*, *Pred a po*, *Cena*,
+*Poznáte to?*, *Čo dostanete*, *Ako to prebieha*, *Ukážky klientov*, *Cena*,
 *Pre koho ponuka je*, *Časté otázky* a *Záverečná výzva a formulár*.
 
 Prázdne pole znamená, že sa použije predvolený text z témy. Pri
@@ -209,10 +209,11 @@ Keď sa teda zmení cena, stačí ju prepísať v jednom poli a zmení sa
 v úvode aj v cenníku naraz. **Koľko miest ešte zostáva** je vlastné
 pole — po každej objednávke ho znížte a záverečná výzva sa prepíše.
 
-Ukážky **pred a po** sa pridávajú v IDEANET → **Redizajn — ukážky**:
-nadpis je názov klienta alebo odboru, obsah je jedna veta o výsledku
-a do dvoch polí sa vyberú snímky pôvodného a nového webu. Kým tam nič
-nie je, sekcia s ukážkami sa na podstránke vôbec nezobrazí.
+**Ukážky klientov** sa pridávajú v IDEANET → **Redizajn — ukážky
+klientov**: nadpis je názov klienta alebo odboru, obsah je jedna veta
+o výsledku a do poľa sa vyberie snímka hotového webu. Nepovinne sa dá
+doplniť odkaz na web — potom je názov ukážky odkazom. Kým tam nič nie je,
+sekcia s ukážkami sa na podstránke vôbec nezobrazí.
 
 Dopyt z tejto podstránky má vo výbere prednastavené **Redizajn
 prezentačného webu**, takže sa v prijatých dopytoch dá odlíšiť od dopytu

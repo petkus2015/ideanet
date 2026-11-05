@@ -232,12 +232,10 @@ function ideanet_defaults() {
 		'red_ako_note'    => 'Vopred viete, čo sa deje, kedy to bude a čo dostanete.',
 		'red_ako'         => "Pošlete adresu webu | Do 24 hodín sa vám ozvem s krátkou analýzou: čo na webe zlepšiť a čo z toho stihneme v balíku.\nDodáte podklady | Logo, texty, fotky a prístupy k webu. Čo nemáte, povieme si, ako to dorobiť.\nNávrh a schválenie | Hlavnú stránku vidíte do 2 dní. Pripomienky pošlete naraz v jednom kole.\nSpustenie | Web ide naživo do {dni} pracovných dní od dodania podkladov, vrátane presmerovaní.",
 
-		'red_ukazky_eyebrow' => 'Ukážky',
-		'red_ukazky_title'   => 'Pred a po',
-		'red_ukazky_note'    => 'Rovnaká firma, rovnaká adresa, len prehľadnejšie, rýchlejšie a čitateľne na mobile.',
+		'red_ukazky_eyebrow' => 'Redizajn webu',
+		'red_ukazky_title'   => 'Ukážky klientov',
+		'red_ukazky_note'    => 'Weby, ktoré som robil. Prehľadné, rýchle a čitateľné na mobile.',
 		'red_ukazky_foot'    => '',
-		'red_label_pred'     => 'Pred',
-		'red_label_po'       => 'Po',
 
 		'red_cena_eyebrow' => 'Cena',
 		'red_cena_title'   => 'Fixná cena, nie odhad',

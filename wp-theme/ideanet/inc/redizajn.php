@@ -91,14 +91,12 @@ function ideanet_red_boxes() {
 		),
 
 		'ukazky' => array(
-			__( 'Sekcia „Pred a po"', 'ideanet' ),
+			__( 'Sekcia „Ukážky klientov"', 'ideanet' ),
 			array(
 				'red_ukazky_eyebrow' => array( __( 'Malý riadok', 'ideanet' ), 'text' ),
 				'red_ukazky_title'   => array( __( 'Nadpis', 'ideanet' ), 'text' ),
 				'red_ukazky_note'    => array( __( 'Veta vpravo', 'ideanet' ), 'area' ),
-				'red_ukazky_foot'    => array( __( 'Poznámka pod ukážkami', 'ideanet' ), 'area', __( 'Prázdne = nezobrazí sa. Samotné ukážky pridávate v IDEANET → Redizajn — ukážky.', 'ideanet' ) ),
-				'red_label_pred'     => array( __( 'Štítok na pôvodnom obrázku', 'ideanet' ), 'text' ),
-				'red_label_po'       => array( __( 'Štítok na novom obrázku', 'ideanet' ), 'text' ),
+				'red_ukazky_foot'    => array( __( 'Poznámka pod ukážkami', 'ideanet' ), 'area', __( 'Prázdne = nezobrazí sa. Samotné ukážky pridávate v IDEANET → Redizajn — ukážky klientov.', 'ideanet' ) ),
 			),
 		),
 

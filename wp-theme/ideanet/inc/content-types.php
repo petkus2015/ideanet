@@ -46,14 +46,13 @@ function ideanet_post_types() {
 		),
 
 		'ideanet_redizajn' => array(
-			'labels'   => array( 'Ukážka pred / po', 'Redizajn — ukážky' ),
+			'labels'   => array( 'Ukážka klienta', 'Redizajn — ukážky klientov' ),
 			'menu'     => 'dashicons-admin-site-alt3',
 			'supports' => array( 'title', 'editor', 'page-attributes' ),
-			'help'     => 'Dvojica obrázkov k jednému webu pre podstránku s ponukou redizajnu. Nadpis je názov klienta alebo odboru, obsah je jedna veta o výsledku. Kým tu nič nie je, sekcia s ukážkami sa na podstránke nezobrazí.',
+			'help'     => 'Hotové weby na podstránke s ponukou redizajnu. Nadpis je názov klienta alebo odboru, obsah je jedna veta o výsledku. Kým tu nič nie je, sekcia s ukážkami sa na podstránke nezobrazí.',
 			'fields'   => array(
-				'pred' => array( 'Obrázok — pôvodný web', 'media', 'Snímka obrazovky na šírku, ideálne v pomere 16:11.', 'image' ),
-				'po'   => array( 'Obrázok — nový web', 'media', 'Rovnaký výrez ako pri pôvodnom webe, aby sa dali porovnať.', 'image' ),
-				'url'  => array( 'Odkaz na web', 'text', 'Nepovinné. Ak vyplníte, názov ukážky bude odkaz.' ),
+				'web' => array( 'Snímka webu', 'media', 'Snímka obrazovky na šírku, ideálne v pomere 16:11. Ak položka nemá náhľadový obrázok, použije sa táto.', 'image' ),
+				'url' => array( 'Odkaz na web', 'text', 'Nepovinné. Ak vyplníte, názov ukážky bude odkaz.' ),
 			),
 		),
 
