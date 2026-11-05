@@ -2,6 +2,11 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.16.0
+- **Chyby 404 (Search Console):** téma samé presmeruje (301) staré adresy, ktoré neexistujú, ale ich článok/stránka existuje podľa názvu (slug), napr. `/kategoria/tech/clanok.html` → `/clanok/`; staré adresy kategórií a značiek; `sitemap.xml` → `wp-sitemap.xml`.
+- Ručné presmerovania: Vzhľad → Prispôsobiť → RELIFE → Presmerovania (riadok `/stara/ => /nova/`).
+- Protokol 404 adries: Nástroje → RELIFE 404 adresy (počet, čas, odkiaľ), aby bolo vidieť, čo treba presmerovať.
+
 ## 1.15.1
 - Téma sama vytvorí stránku **Stránka nenájdená** (`/stranka-404/`, šablóna „Stránka 404“, noindex) – pri aktivácii alebo po prvom otvorení administrácie po aktualizácii. Obsah je spoločný s chybovou stránkou 404 (`template-parts/not-found.php`). Neexistujúce adresy ďalej zobrazujú 404.php so stavom 404.
 
