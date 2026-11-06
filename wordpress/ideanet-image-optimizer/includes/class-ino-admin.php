@@ -13,6 +13,8 @@ class INO_Admin {
 		add_action( 'admin_init', array( __CLASS__, 'register' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'wp_ajax_ino_run', array( __CLASS__, 'ajax_run' ) );
+		add_action( 'wp_ajax_ino_scan', array( __CLASS__, 'ajax_scan' ) );
+		add_action( 'wp_ajax_ino_delete', array( __CLASS__, 'ajax_delete' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( INO_DIR . 'ideanet-image-optimizer.php' ), array( __CLASS__, 'links' ) );
 	}
 
@@ -79,6 +81,59 @@ class INO_Admin {
 		wp_send_json_success( array( 'items' => $items, 'cursor' => $cursor, 'done' => $done ) );
 	}
 
+	/** Vyhľadá nepoužité obrázky (nič nemaže). */
+	public static function ajax_scan() {
+		check_ajax_referer( 'ino_run', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Nedostatočné oprávnenie.', 403 );
+		}
+		@set_time_limit( 120 ); // phpcs:ignore
+		$days   = (int) INO_Converter::settings()['cleanup_days'];
+		$cursor = isset( $_POST['cursor'] ) ? absint( $_POST['cursor'] ) : 0;
+		$start  = microtime( true );
+		$items  = array();
+		$done   = false;
+		$seen   = 0;
+		while ( microtime( true ) - $start < 15 ) {
+			$ids = INO_Cleaner::image_ids( $cursor, 20, $days );
+			if ( ! $ids ) {
+				$done = true;
+				break;
+			}
+			foreach ( $ids as $id ) {
+				$cursor = $id;
+				++$seen;
+				if ( ! INO_Cleaner::is_used( $id ) ) {
+					$items[] = INO_Cleaner::describe( $id );
+				}
+				if ( microtime( true ) - $start >= 15 ) {
+					break 2;
+				}
+			}
+		}
+		wp_send_json_success( array( 'items' => $items, 'cursor' => $cursor, 'done' => $done, 'seen' => $seen ) );
+	}
+
+	/** Zmaže vybrané obrázky; každý sa pred zmazaním znova overí. */
+	public static function ajax_delete() {
+		check_ajax_referer( 'ino_run', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Nedostatočné oprávnenie.', 403 );
+		}
+		$days    = (int) INO_Converter::settings()['cleanup_days'];
+		$ids     = isset( $_POST['ids'] ) ? array_slice( array_map( 'absint', (array) wp_unslash( $_POST['ids'] ) ), 0, 25 ) : array();
+		$deleted = array();
+		$kept    = array();
+		foreach ( $ids as $id ) {
+			if ( $id && current_user_can( 'delete_post', $id ) && INO_Cleaner::is_deletable( $id, $days ) && wp_delete_attachment( $id, true ) ) {
+				$deleted[] = $id;
+			} else {
+				$kept[] = $id;
+			}
+		}
+		wp_send_json_success( array( 'deleted' => $deleted, 'kept' => $kept ) );
+	}
+
 	public static function render() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
@@ -124,6 +179,11 @@ class INO_Admin {
 						<td><label><input type="checkbox" name="ino_settings[only_used]" value="1" <?php checked( $s['only_used'] ); ?>> Len obrázky použité v článkoch (vrátane hlavného obrázka); stránky sa nepočítajú</label></td>
 					</tr>
 					<tr>
+						<th scope="row">Čistenie knižnice</th>
+						<td>Nemazať obrázky mladšie než <input type="number" min="0" max="3650" name="ino_settings[cleanup_days]" value="<?php echo esc_attr( $s['cleanup_days'] ); ?>" style="width:70px"> dní
+							<p class="description">Chráni čerstvo nahrané obrázky, ktoré ešte nie sú vložené do článku.</p></td>
+					</tr>
+					<tr>
 						<th scope="row">Staré súbory</th>
 						<td><label><input type="checkbox" name="ino_settings[delete_originals]" value="1" <?php checked( $s['delete_originals'] ); ?>> Po úspešnom nahradení natrvalo zmazať pôvodné súbory (aj všetky ich veľkosti)</label>
 							<p class="description"><strong>Zmazanie sa nedá vrátiť.</strong> Urobte si najprv zálohu webu.</p></td>
@@ -147,7 +207,20 @@ class INO_Admin {
 				<thead><tr><th>Obrázok</th><th>Výsledok</th><th>Veľkosť</th></tr></thead>
 				<tbody></tbody>
 			</table>
-			<p class="description">Z príkazového riadka: <code>wp ideanet-images optimize [--dry-run] [--id=&lt;ID&gt;]</code></p>
+			<hr>
+			<h2>Nepoužité obrázky</h2>
+			<p>Nájde obrázky v knižnici médií, ktoré nie sú použité v žiadnom článku, stránke, hlavnom obrázku, menu, logu ani nastaveniach. Najprv ich len zobrazí, nič sa nezmaže, kým nepotvrdíte.</p>
+			<p class="description"><strong>Plugin nevidí obrázky natvrdo vložené v súboroch témy ani údaje v tabuľkách iných pluginov.</strong> Zmazané obrázky sa nedajú obnoviť, spravte si zálohu.</p>
+			<p>
+				<button type="button" class="button" id="ino-scan">Vyhľadať nepoužité obrázky</button>
+				<button type="button" class="button button-link-delete" id="ino-del" hidden>Zmazať vybrané</button>
+				<span id="ino-scan-status" style="margin-left:10px"></span>
+			</p>
+			<table class="widefat striped" id="ino-unused" hidden style="max-width:900px">
+				<thead><tr><td class="check-column"><input type="checkbox" id="ino-all" checked></td><th>Náhľad</th><th>Obrázok</th><th>Nahraný</th><th>Veľkosť</th></tr></thead>
+				<tbody></tbody>
+			</table>
+			<p class="description">Z príkazového riadka: <code>wp ideanet-images optimize [--dry-run] [--id=&lt;ID&gt;]</code>, <code>wp ideanet-images cleanup [--dry-run] [--yes]</code></p>
 		</div>
 		<?php
 	}

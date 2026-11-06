@@ -17,6 +17,7 @@ class INO_Converter {
 			'max_width'        => 2000,   // 0 = bez zmenšovania
 			'delete_originals' => 1,
 			'only_used'        => 1,
+			'cleanup_days'     => 30,     // nemazať obrázky mladšie než N dní
 		);
 		$saved    = get_option( 'ino_settings', array() );
 		return array_merge( $defaults, is_array( $saved ) ? $saved : array() );
@@ -30,6 +31,7 @@ class INO_Converter {
 			'max_width'        => max( 0, min( 10000, (int) ( $in['max_width'] ?? 2000 ) ) ),
 			'delete_originals' => empty( $in['delete_originals'] ) ? 0 : 1,
 			'only_used'        => empty( $in['only_used'] ) ? 0 : 1,
+			'cleanup_days'     => max( 0, min( 3650, (int) ( $in['cleanup_days'] ?? 30 ) ) ),
 		);
 	}
 

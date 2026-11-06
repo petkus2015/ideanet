@@ -42,6 +42,44 @@ class INO_CLI {
 		}
 		WP_CLI::success( sprintf( 'Prevedených %d, preskočených %d, chýb %d, ušetrené %s.', $ok, $skipped, $err, size_format( $saved ) ) );
 	}
+
+	/**
+	 * Zmaže obrázky z knižnice, ktoré nie sú nikde použité.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--dry-run]
+	 * : Iba vypíše nepoužité obrázky.
+	 *
+	 * [--yes]
+	 * : Bez potvrdenia.
+	 */
+	public function cleanup( $args, $assoc ) {
+		$days   = (int) INO_Converter::settings()['cleanup_days'];
+		$cursor = 0;
+		$found  = array();
+		while ( $ids = INO_Cleaner::image_ids( $cursor, 200, $days ) ) {
+			foreach ( $ids as $id ) {
+				$cursor = $id;
+				if ( ! INO_Cleaner::is_used( $id ) ) {
+					$found[] = $id;
+					WP_CLI::log( sprintf( '#%d %s', $id, basename( (string) get_attached_file( $id ) ) ) );
+				}
+			}
+		}
+		WP_CLI::log( sprintf( 'Nepoužitých obrázkov: %d', count( $found ) ) );
+		if ( ! $found || ! empty( $assoc['dry-run'] ) ) {
+			return;
+		}
+		WP_CLI::confirm( 'Natrvalo zmazať tieto obrázky?', $assoc );
+		$n = 0;
+		foreach ( $found as $id ) {
+			if ( INO_Cleaner::is_deletable( $id, $days ) && wp_delete_attachment( $id, true ) ) {
+				++$n;
+			}
+		}
+		WP_CLI::success( sprintf( 'Zmazaných: %d.', $n ) );
+	}
 }
 
 WP_CLI::add_command( 'ideanet-images', 'INO_CLI' );

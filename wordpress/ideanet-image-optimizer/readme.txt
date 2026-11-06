@@ -17,6 +17,11 @@ Prevedie JPEG/PNG obrázky použité v článkoch na WebP alebo AVIF, opraví od
 * Nahradí odkazy v obsahu, excerptoch, post meta (vrátane serializovaných dát) a nastaveniach.
 * Po úspechu zmaže pôvodný súbor a všetky jeho veľkosti. Ak by bol nový súbor väčší, pôvodný ostane.
 
+== Čistenie nepoužitých obrázkov ==
+Médiá → Optimalizácia obrázkov → „Vyhľadať nepoužité obrázky“. Zobrazí obrázky, ktoré nie sú v žiadnom článku, stránke, hlavnom obrázku, post/term/user meta, menu, logu, ikone webu, widgetoch ani nastaveniach. Mažú sa až po potvrdení, každý obrázok sa pred zmazaním znova overí. Obrázky mladšie než zadaný počet dní (predvolene 30) sa nikdy nemažú.
+Plugin nevidí obrázky natvrdo v súboroch témy ani v tabuľkách iných pluginov; vlastné miesta použitia možno doplniť filtrom `ino_image_is_used`.
+CLI: `wp ideanet-images cleanup [--dry-run] [--yes]`.
+
 == Obmedzenia ==
 * Animované GIFy a SVG sa nemenia.
 * Odkazy na staré URL z iných webov prestanú fungovať.
