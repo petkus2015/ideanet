@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.18.1
+- Inzerujte u nás: sekcia „Ako sa môžeme spojiť“ je teraz **Naša ponuka** a obsahuje len **Publikovanie článkov** a **Písanie článkov na zadanú tému** (bannery a newsletter odstránené). Rovnako sa upravili možnosti vo formulári. Neupravená stránka z 1.18.0 sa po aktualizácii prepíše automaticky.
+
 ## 1.18.0
 - **Stránka „Inzerujte u nás“ sa upravuje priamo v Stránkach** (nie vo Vzhľad → Prispôsobiť): texty „Prečo publikovať u nás“ a „Ako sa môžeme spojiť“ sú bloky v editore stránky; úvodný text, údaje grafu a e-mail pre dopyty sú v poli „Inzerujte u nás: úvod, graf a kontakt“ pod editorom. Staršia stránka z 1.17.0 sa po aktualizácii doplní predvoleným obsahom. Sekcia „RELIFE – Inzercia“ v Customizeri zanikla.
 

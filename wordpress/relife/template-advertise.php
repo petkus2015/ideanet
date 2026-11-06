@@ -79,9 +79,8 @@ get_header();
 			<label class="rl-field"><span><?php esc_html_e( 'Firma (voliteľné)', 'relife' ); ?></span><input type="text" name="company" autocomplete="organization"></label>
 			<label class="rl-field"><span><?php esc_html_e( 'Záujem', 'relife' ); ?></span>
 				<select name="topic">
-					<option><?php esc_html_e( 'Sponzorovaný článok', 'relife' ); ?></option>
-					<option><?php esc_html_e( 'Bannery a reklamné plochy', 'relife' ); ?></option>
-					<option><?php esc_html_e( 'Newsletter Weekly', 'relife' ); ?></option>
+					<option><?php esc_html_e( 'Publikovanie článkov', 'relife' ); ?></option>
+					<option><?php esc_html_e( 'Písanie článkov na zadanú tému', 'relife' ); ?></option>
 					<option><?php esc_html_e( 'Iné', 'relife' ); ?></option>
 				</select>
 			</label>

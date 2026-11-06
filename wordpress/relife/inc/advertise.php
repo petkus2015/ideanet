@@ -162,15 +162,22 @@ function relife_adv_default_content(): string {
 		. $card( 'Zaujímavé', 'Píšeme o témach, ktoré ľudia naozaj hľadajú: technológie, zdravie, peniaze, cestovanie a štýl. Prehľadne, bez zbytočnej vaty.', '02' )
 		. $card( 'Optimalizované pre AEO', 'Každý článok začína odpoveďou v skratke, má jasnú štruktúru a štruktúrované dáta. Vďaka tomu ho Google a generatívne AI ľahko citujú a zobrazujú.', '03' )
 		. $card( 'Transparentné', 'Spoluprácu vždy jasne označíme. Čitatelia nám veria, a preto veria aj partnerom, ktorých odporúčame.', '04' );
-	$offers = $card( 'Sponzorovaný článok', 'Redakčne spracovaný obsah v štýle RELIFE, jasne označený ako spolupráca.' )
-		. $card( 'Bannery a reklamné plochy', 'Reklama v texte článkov a na úvodnej stránke, ktorá nenarúša čítanie.' )
-		. $card( 'Newsletter Weekly', 'Zmienka alebo odporúčanie vo výbere týždňa pre naše čitateľky a čitateľov.' );
-
 	return $h2( 'Prečo publikovať u nás' )
 		. "<!-- wp:paragraph {\"className\":\"rl-muted rl-lead\"} -->\n<p class=\"rl-muted rl-lead\">Nepíšeme do šuflíka. Každý článok je overený, zaujímavý a pripravený tak, aby ho našli ľudia aj odpoveďové systémy.</p>\n<!-- /wp:paragraph -->\n\n"
 		. "<!-- wp:group {\"className\":\"rl-grid rl-grid--4 rl-adv-why\"} -->\n<div class=\"wp-block-group rl-grid rl-grid--4 rl-adv-why\">" . $why . "</div>\n<!-- /wp:group -->\n\n"
-		. $h2( 'Ako sa môžeme spojiť' )
-		. "<!-- wp:group {\"className\":\"rl-grid rl-grid--3 rl-adv-offers\"} -->\n<div class=\"wp-block-group rl-grid rl-grid--3 rl-adv-offers\">" . $offers . "</div>\n<!-- /wp:group -->";
+		. relife_adv_offers_content();
+}
+
+/**
+ * Sekcia „Naša ponuka“ (bloky).
+ */
+function relife_adv_offers_content(): string {
+	$card = static fn( string $title, string $text ): string => "<!-- wp:group {\"className\":\"rl-adv-offer\"} -->\n<div class=\"wp-block-group rl-adv-offer\"><!-- wp:heading {\"level\":3} -->\n<h3 class=\"wp-block-heading\">{$title}</h3>\n<!-- /wp:heading -->\n\n<!-- wp:paragraph -->\n<p>{$text}</p>\n<!-- /wp:paragraph --></div>\n<!-- /wp:group -->\n\n";
+	return "<!-- wp:heading {\"className\":\"rl-sechead__title\"} -->\n<h2 class=\"wp-block-heading rl-sechead__title\">Naša ponuka</h2>\n<!-- /wp:heading -->\n\n"
+		. "<!-- wp:group {\"className\":\"rl-grid rl-grid--2 rl-adv-offers\"} -->\n<div class=\"wp-block-group rl-grid rl-grid--2 rl-adv-offers\">"
+		. $card( 'Publikovanie článkov', 'Váš článok zverejníme na RELIFE, redakčne upravený a jasne označený ako spolupráca.' )
+		. $card( 'Písanie článkov na zadanú tému', 'Napíšeme pre vás overený a zaujímavý článok na tému, ktorú si zadáte, optimalizovaný pre AEO.' )
+		. "</div>\n<!-- /wp:group -->";
 }
 
 
@@ -199,7 +206,7 @@ function relife_create_adv_page(): void {
 add_action( 'after_switch_theme', 'relife_create_adv_page' );
 
 function relife_maybe_create_adv_page(): void {
-	if ( get_option( 'relife_adv_page_done_2' ) || ! current_user_can( 'edit_pages' ) ) {
+	if ( get_option( 'relife_adv_page_done_3' ) || ! current_user_can( 'edit_pages' ) ) {
 		return;
 	}
 	relife_create_adv_page();
@@ -208,7 +215,13 @@ function relife_maybe_create_adv_page(): void {
 	if ( $pages && '' === trim( $pages[0]->post_content ) ) {
 		wp_update_post( array( 'ID' => $pages[0]->ID, 'post_content' => relife_adv_default_content() ) );
 	}
-	update_option( 'relife_adv_page_done_2', 1, false );
+	if ( $pages && false !== strpos( $pages[0]->post_content, 'Bannery a reklamné plochy' ) ) {
+		$cut = strpos( $pages[0]->post_content, '<!-- wp:heading {"className":"rl-sechead__title"} -->' . "\n" . '<h2 class="wp-block-heading rl-sechead__title">Ako sa môžeme spojiť</h2>' );
+		if ( false !== $cut ) {
+			wp_update_post( array( 'ID' => $pages[0]->ID, 'post_content' => substr( $pages[0]->post_content, 0, $cut ) . relife_adv_offers_content() ) );
+		}
+	}
+	update_option( 'relife_adv_page_done_3', 1, false );
 }
 add_action( 'admin_init', 'relife_maybe_create_adv_page' );
 
