@@ -12,7 +12,7 @@ Prevedie JPEG/PNG obrázky použité v článkoch na WebP alebo AVIF, opraví od
 3. Urobte zálohu a kliknite na „Optimalizovať obrázky“ (alebo `wp ideanet-images optimize`).
 
 == Čo plugin robí ==
-* Nájde JPEG/PNG prílohy použité ako hlavný obrázok alebo v obsahu príspevkov/stránok.
+* Nájde JPEG/PNG prílohy použité ako hlavný obrázok alebo v obsahu článkov (nie stránok). Ak je taký obrázok aj na stránke, odkaz sa tam len opraví.
 * Prevedie hlavný súbor a znova vygeneruje všetky veľkosti v novom formáte (ID prílohy ostáva rovnaké).
 * Nahradí odkazy v obsahu, excerptoch, post meta (vrátane serializovaných dát) a nastaveniach.
 * Po úspechu zmaže pôvodný súbor a všetky jeho veľkosti. Ak by bol nový súbor väčší, pôvodný ostane.

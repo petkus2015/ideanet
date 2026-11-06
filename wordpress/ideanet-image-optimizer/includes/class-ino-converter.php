@@ -99,18 +99,19 @@ class INO_Converter {
 		return array( 'count' => $count, 'saved' => $saved );
 	}
 
-	/** Je obrázok použitý ako hlavný obrázok alebo v obsahu nejakého príspevku/stránky? */
+	/** Je obrázok použitý ako hlavný obrázok alebo v obsahu nejakého článku (post)? Odkazy v stránkach sa pri konverzii len opravia. */
 	public static function is_used( $id, $old_file ) {
 		global $wpdb;
 
-		$excluded_types = "('attachment','revision','nav_menu_item','customize_changeset','oembed_cache')";
-		$excluded_state = "('trash','auto-draft','inherit')";
+		// Len články (typ "post"), nie stránky ani iné typy.
+				$excluded_state = "('trash','auto-draft','inherit')";
+		$post_only      = "= 'post'";
 
 		$featured = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT 1 FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id
 				 WHERE pm.meta_key = '_thumbnail_id' AND pm.meta_value = %d
-				   AND p.post_type NOT IN {$excluded_types} AND p.post_status NOT IN {$excluded_state} LIMIT 1",
+				   AND p.post_type {$post_only} AND p.post_status NOT IN {$excluded_state} LIMIT 1",
 				$id
 			)
 		);
@@ -124,7 +125,7 @@ class INO_Converter {
 			$conds[]  = 'post_content LIKE %s';
 			$params[] = '%' . $wpdb->esc_like( $stem ) . '%';
 		}
-		$sql = "SELECT 1 FROM {$wpdb->posts} WHERE post_type NOT IN {$excluded_types} AND post_status NOT IN {$excluded_state}
+		$sql = "SELECT 1 FROM {$wpdb->posts} WHERE post_type {$post_only} AND post_status NOT IN {$excluded_state}
 		        AND (" . implode( ' OR ', $conds ) . ') LIMIT 1';
 		return (bool) $wpdb->get_var( $wpdb->prepare( $sql, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL
 	}

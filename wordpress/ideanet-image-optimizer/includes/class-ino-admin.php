@@ -91,7 +91,7 @@ class INO_Admin {
 		?>
 		<div class="wrap">
 			<h1>Optimalizácia obrázkov</h1>
-			<p>Prevedie JPEG/PNG obrázky použité v článkoch a stránkach na moderný webový formát, v obsahu upraví odkazy a nahradené staré súbory zmaže.</p>
+			<p>Prevedie JPEG/PNG obrázky použité v článkoch na moderný webový formát, v obsahu upraví odkazy a nahradené staré súbory zmaže.</p>
 
 			<?php if ( ! $mime ) : ?>
 				<div class="notice notice-error"><p>Váš server nepodporuje WebP ani AVIF. Požiadajte hosting o PHP s GD alebo Imagick s podporou WebP.</p></div>
@@ -121,7 +121,7 @@ class INO_Admin {
 					</tr>
 					<tr>
 						<th scope="row">Rozsah</th>
-						<td><label><input type="checkbox" name="ino_settings[only_used]" value="1" <?php checked( $s['only_used'] ); ?>> Len obrázky použité v príspevkoch a stránkach (vrátane hlavného obrázka)</label></td>
+						<td><label><input type="checkbox" name="ino_settings[only_used]" value="1" <?php checked( $s['only_used'] ); ?>> Len obrázky použité v článkoch (vrátane hlavného obrázka); stránky sa nepočítajú</label></td>
 					</tr>
 					<tr>
 						<th scope="row">Staré súbory</th>
