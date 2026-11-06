@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.19.3
+- Vkladanie malých štýlov pluginov (kk Star Ratings a pod.) funguje aj pre štýly s relatívnymi adresami obrázkov/písiem (adresy sa prepíšu na úplné).
+- Štýl a skript kk Star Ratings sa načítavajú len v článkoch (nie na úvodnej, v archívoch a pod.).
+
 ## 1.19.2
 - Tmavé pozadie sa nastaví hneď na začiatku `<head>` (pred zvyškom štýlov), aby sa pri načítaní nezobrazovali biele snímky (Speed Index).
 
