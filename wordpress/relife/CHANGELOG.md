@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.19.1
+- Malé štýly pluginov (TablePress `tablepress-combined.min.css`, kk Star Ratings a pod., do 15 KB, bez relatívnych adries) sa vkladajú priamo do stránky namiesto samostatnej blokujúcej požiadavky. Vypnutie: filter `relife_inline_small_styles`; limit veľkosti: `relife_inline_style_max`.
+
 ## 1.19.0
 - **Výkon (blokovanie vykreslenia):** hlavný štýl témy sa vkladá priamo do `<head>` (bez blokujúcej požiadavky na `relife.css`); štýly blokov WordPressu (`wp-block-library`) sa v článkoch načítavajú neblokujúco. Vypnutie vkladania: filter `relife_inline_css` (`__return_false`).
 

@@ -186,3 +186,35 @@ function relife_defer_block_css( string $tag, string $handle ): string {
 	return $async . '<noscript>' . $tag . '</noscript>';
 }
 add_filter( 'style_loader_tag', 'relife_defer_block_css', 10, 2 );
+
+/**
+ * Malé lokálne štýly pluginov (TablePress, kk Star Ratings a pod.) sa vložia priamo do stránky namiesto samostatnej
+ * blokujúcej požiadavky. Preskočí sa, ak súbor nie je lokálny, je väčší než limit alebo odkazuje na relatívne adresy (obrázky, písma).
+ *
+ * @param string $tag
+ * @param string $handle
+ * @param string $href
+ */
+function relife_inline_small_styles( string $tag, string $handle, string $href ): string {
+	if ( is_admin() || ! apply_filters( 'relife_inline_small_styles', true ) || 'relife' === $handle || false === strpos( $tag, "media='all'" ) ) {
+		return $tag;
+	}
+	if ( in_array( $handle, array( 'wp-block-library', 'wp-block-library-theme', 'classic-theme-styles', 'dashicons', 'admin-bar' ), true ) ) {
+		return $tag;
+	}
+	$clean = strtok( $href, '?' );
+	$base  = trailingslashit( site_url() );
+	if ( false === $clean || 0 !== strpos( $clean, $base ) ) {
+		return $tag;
+	}
+	$file = wp_normalize_path( ABSPATH . substr( $clean, strlen( $base ) ) );
+	if ( '.css' !== substr( $file, -4 ) || false !== strpos( $file, '..' ) || ! is_readable( $file ) || filesize( $file ) > (int) apply_filters( 'relife_inline_style_max', 15360 ) ) {
+		return $tag;
+	}
+	$css = (string) file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	if ( preg_match( '/url\(\s*(?![\'"]?(?:data:|https?:|\/\/|\/))/i', $css ) || false !== stripos( $css, '@import' ) ) {
+		return $tag;
+	}
+	return '<style id="' . esc_attr( $handle ) . '-inline-css">' . str_replace( '</style', '<\\/style', $css ) . "</style>\n";
+}
+add_filter( 'style_loader_tag', 'relife_inline_small_styles', 20, 3 );
