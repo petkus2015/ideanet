@@ -64,8 +64,16 @@ add_action( 'after_setup_theme', 'relife_content_width', 0 );
  * Štýly a skripty.
  */
 function relife_enqueue_assets(): void {
-	wp_enqueue_style( 'relife', RELIFE_URI . '/assets/css/relife.css', array(), RELIFE_VERSION );
-	wp_add_inline_style( 'relife', relife_fonts_css() . relife_accent_css() );
+	// Hlavný štýl sa vloží priamo do <head> (bez blokujúcej požiadavky). Vypnutie: add_filter( 'relife_inline_css', '__return_false' ).
+	$css_file = RELIFE_DIR . '/assets/css/relife.css';
+	if ( apply_filters( 'relife_inline_css', true ) && is_readable( $css_file ) ) {
+		wp_register_style( 'relife', false, array(), RELIFE_VERSION );
+		wp_enqueue_style( 'relife' );
+		wp_add_inline_style( 'relife', relife_fonts_css() . (string) file_get_contents( $css_file ) . relife_accent_css() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	} else {
+		wp_enqueue_style( 'relife', RELIFE_URI . '/assets/css/relife.css', array(), RELIFE_VERSION );
+		wp_add_inline_style( 'relife', relife_fonts_css() . relife_accent_css() );
+	}
 
 	wp_enqueue_script( 'relife', RELIFE_URI . '/assets/js/relife.js', array(), RELIFE_VERSION, array( 'strategy' => 'defer', 'in_footer' => true ) );
 	wp_localize_script(

@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.19.0
+- **Výkon (blokovanie vykreslenia):** hlavný štýl témy sa vkladá priamo do `<head>` (bez blokujúcej požiadavky na `relife.css`); štýly blokov WordPressu (`wp-block-library`) sa v článkoch načítavajú neblokujúco. Vypnutie vkladania: filter `relife_inline_css` (`__return_false`).
+
 ## 1.18.1
 - Inzerujte u nás: sekcia „Ako sa môžeme spojiť“ je teraz **Naša ponuka** a obsahuje len **Publikovanie článkov** a **Písanie článkov na zadanú tému** (bannery a newsletter odstránené). Rovnako sa upravili možnosti vo formulári. Neupravená stránka z 1.18.0 sa po aktualizácii prepíše automaticky.
 

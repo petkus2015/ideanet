@@ -168,3 +168,21 @@ add_filter( 'big_image_size_threshold', 'relife_big_image_threshold' );
  * Obrázky pod záhybom sa načítavajú lenším spôsobom: prvé 2 obrázky v obsahu strany neláduj lenivo (môžu byť LCP), ostatné áno.
  */
 add_filter( 'wp_omit_loading_attr_threshold', static fn(): int => 2 );
+
+/**
+ * Štýly WordPressu pre bloky (v článkoch) sa nenačítavajú blokujúco: stránku sa vykreslí hneď, štýl sa doplní po načítaní.
+ *
+ * @param string $tag
+ * @param string $handle
+ */
+function relife_defer_block_css( string $tag, string $handle ): string {
+	if ( is_admin() || ! in_array( $handle, array( 'wp-block-library', 'wp-block-library-theme', 'classic-theme-styles' ), true ) ) {
+		return $tag;
+	}
+	if ( false === strpos( $tag, "media='all'" ) ) {
+		return $tag;
+	}
+	$async = str_replace( "media='all'", "media='print' onload=\"this.media='all'\"", $tag );
+	return $async . '<noscript>' . $tag . '</noscript>';
+}
+add_filter( 'style_loader_tag', 'relife_defer_block_css', 10, 2 );
