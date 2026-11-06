@@ -573,3 +573,8 @@ html.rl-has-saved .js-saved-empty{display:none}
 .rl-madv__t{display:grid;gap:2px}
 .rl-madv__t b{font-family:var(--rl-display);font-size:18px;color:var(--rl-accent)}
 .rl-madv__t small{color:var(--rl-soft);font-size:13px}
+.rl-adv-content>h2.rl-sechead__title{margin:44px 0 18px}
+.rl-adv-content>h2.rl-sechead__title:first-child{margin-top:0}
+.rl-adv-content>.rl-grid{margin-bottom:8px}
+.rl-adv-content .rl-adv-offer>p.rl-adv-why__n{margin:0 0 10px}
+.rl-adv-content .rl-grid>*{margin-block-start:0!important;margin-top:0!important}

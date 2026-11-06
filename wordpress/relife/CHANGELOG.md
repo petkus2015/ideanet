@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.18.0
+- **Stránka „Inzerujte u nás“ sa upravuje priamo v Stránkach** (nie vo Vzhľad → Prispôsobiť): texty „Prečo publikovať u nás“ a „Ako sa môžeme spojiť“ sú bloky v editore stránky; úvodný text, údaje grafu a e-mail pre dopyty sú v poli „Inzerujte u nás: úvod, graf a kontakt“ pod editorom. Staršia stránka z 1.17.0 sa po aktualizácii doplní predvoleným obsahom. Sekcia „RELIFE – Inzercia“ v Customizeri zanikla.
+
 ## 1.17.0
 - **Stránka „Inzerujte u nás“** (`/inzercia/`, vytvorí sa sama): úvod, **interaktívny graf** zobrazení vo funkciách generatívnej AI (hover/dotyk/klávesnica, prepínač Mesačne/Spolu, dáta z Google Search Console), sekcia **Prečo publikovať u nás** (overené, zaujímavé, optimalizované pre AEO, transparentné), ponuka spolupráce a kontaktný formulár (e-mail správcu alebo adresa z Customizeru; ochrana pred spamom).
 - Údaje grafu a e-mail: Vzhľad → Prispôsobiť → RELIFE – Inzercia (riadok `mesiac|hodnota`).

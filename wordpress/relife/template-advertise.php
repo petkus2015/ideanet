@@ -20,7 +20,7 @@ get_header();
 	<div class="rl-wrap">
 		<p class="rl-kicker"><?php esc_html_e( 'INZEROVANIE', 'relife' ); ?></p>
 		<h1 class="rl-pagetitle"><?php esc_html_e( 'Inzerujte u nás', 'relife' ); ?></h1>
-		<p class="rl-muted rl-lead"><?php esc_html_e( 'Publikujeme overené a zaujímavé články, optimalizované pre odpovede vyhľadávačov a generatívnej AI. Vaša značka sa tak objaví tam, kde ľudia hľadajú odpovede, a naša viditeľnosť rastie z mesiaca na mesiac.', 'relife' ); ?></p>
+		<p class="rl-muted rl-lead"><?php echo esc_html( relife_adv_meta( 'intro', relife_adv_default_intro() ) ); ?></p>
 		<a class="rl-pill rl-pill--accent" href="#kontakt"><?php esc_html_e( 'Pošlite nám dopyt', 'relife' ); ?></a>
 	</div>
 </section>
@@ -53,25 +53,11 @@ get_header();
 </section>
 <?php endif; ?>
 
-<section class="rl-wrap rl-block">
-	<div class="rl-sechead"><h2 class="rl-sechead__title"><?php esc_html_e( 'Prečo publikovať u nás', 'relife' ); ?></h2></div>
-	<p class="rl-muted rl-lead"><?php esc_html_e( 'Nepíšeme do šuflíka. Každý článok je overený, zaujímavý a pripravený tak, aby ho našli ľudia aj odpoveďové systémy.', 'relife' ); ?></p>
-	<div class="rl-grid rl-grid--4 rl-adv-why">
-		<div class="rl-adv-offer"><span class="rl-adv-why__n" aria-hidden="true">01</span><h3><?php esc_html_e( 'Overené', 'relife' ); ?></h3><p><?php esc_html_e( 'Tvrdenia podkladáme zdrojmi a uvádzame ich pod článkom. Čitateľ vie, odkiaľ informácia pochádza, a vaša značka stojí vedľa dôveryhodného obsahu.', 'relife' ); ?></p></div>
-		<div class="rl-adv-offer"><span class="rl-adv-why__n" aria-hidden="true">02</span><h3><?php esc_html_e( 'Zaujímavé', 'relife' ); ?></h3><p><?php esc_html_e( 'Píšeme o témach, ktoré ľudia naozaj hľadajú: technológie, zdravie, peniaze, cestovanie a štýl. Prehľadne, bez zbytočnej vaty.', 'relife' ); ?></p></div>
-		<div class="rl-adv-offer"><span class="rl-adv-why__n" aria-hidden="true">03</span><h3><?php esc_html_e( 'Optimalizované pre AEO', 'relife' ); ?></h3><p><?php esc_html_e( 'Každý článok začína odpoveďou v skratke, má jasnú štruktúru a štruktúrované dáta. Vďaka tomu ho Google a generatívne AI ľahko citujú a zobrazujú.', 'relife' ); ?></p></div>
-		<div class="rl-adv-offer"><span class="rl-adv-why__n" aria-hidden="true">04</span><h3><?php esc_html_e( 'Transparentné', 'relife' ); ?></h3><p><?php esc_html_e( 'Spoluprácu vždy jasne označíme. Čitatelia nám veria, a preto veria aj partnerom, ktorých odporúčame.', 'relife' ); ?></p></div>
-	</div>
+<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+<section class="rl-wrap rl-block rl-adv-content">
+	<?php the_content(); ?>
 </section>
-
-<section class="rl-wrap rl-block">
-	<div class="rl-sechead"><h2 class="rl-sechead__title"><?php esc_html_e( 'Ako sa môžeme spojiť', 'relife' ); ?></h2></div>
-	<div class="rl-grid rl-grid--3 rl-adv-offers">
-		<div class="rl-adv-offer"><h3><?php esc_html_e( 'Sponzorovaný článok', 'relife' ); ?></h3><p><?php esc_html_e( 'Redakčne spracovaný obsah v štýle RELIFE, jasne označený ako spolupráca.', 'relife' ); ?></p></div>
-		<div class="rl-adv-offer"><h3><?php esc_html_e( 'Bannery a reklamné plochy', 'relife' ); ?></h3><p><?php esc_html_e( 'Reklama v texte článkov a na úvodnej stránke, ktorá nenarúša čítanie.', 'relife' ); ?></p></div>
-		<div class="rl-adv-offer"><h3><?php esc_html_e( 'Newsletter Weekly', 'relife' ); ?></h3><p><?php esc_html_e( 'Zmienka alebo odporúčanie vo výbere týždňa pre naše čitateľky a čitateľov.', 'relife' ); ?></p></div>
-	</div>
-</section>
+<?php endwhile; endif; ?>
 
 <section id="kontakt" class="rl-wrap rl-block">
 	<div class="rl-sechead"><h2 class="rl-sechead__title"><?php esc_html_e( 'Kontakt', 'relife' ); ?></h2></div>
@@ -82,6 +68,7 @@ get_header();
 	<?php endif; ?>
 	<form class="rl-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 		<input type="hidden" name="action" value="relife_adv">
+		<input type="hidden" name="page_id" value="<?php echo (int) get_queried_object_id(); ?>">
 		<?php wp_nonce_field( 'relife_adv', 'relife_adv_nonce' ); ?>
 		<p class="rl-form__hp" aria-hidden="true"><label>Web <input type="text" name="website" tabindex="-1" autocomplete="off"></label></p>
 		<div class="rl-form__row">
