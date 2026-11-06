@@ -35,7 +35,7 @@ class INO_Admin {
 		if ( 'media_page_' . self::PAGE !== $hook ) {
 			return;
 		}
-		wp_enqueue_script( 'ino-admin', INO_URL . 'assets/admin.js', array(), INO_VERSION, true );
+		wp_enqueue_script( 'ino-admin', INO_URL . 'assets/admin.js', array(), INO_VERSION . '.' . filemtime( INO_DIR . 'assets/admin.js' ), true );
 		wp_localize_script( 'ino-admin', 'INO', array(
 			'ajax'  => admin_url( 'admin-ajax.php' ),
 			'nonce' => wp_create_nonce( 'ino_run' ),

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       IDEANET Optimalizácia obrázkov
  * Description:       Prevedie obrázky použité v článkoch (JPEG/PNG) na webové formáty WebP alebo AVIF, upraví odkazy v obsahu zmaže staré nahradené súbory a umožní vyčistiť nepoužité obrázky z knižnice médií.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'INO_VERSION', '1.0.0' );
+define( 'INO_VERSION', '1.1.0' );
 define( 'INO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'INO_URL', plugin_dir_url( __FILE__ ) );
 
