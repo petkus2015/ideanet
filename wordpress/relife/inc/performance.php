@@ -218,3 +218,11 @@ function relife_inline_small_styles( string $tag, string $handle, string $href )
 	return '<style id="' . esc_attr( $handle ) . '-inline-css">' . str_replace( '</style', '<\\/style', $css ) . "</style>\n";
 }
 add_filter( 'style_loader_tag', 'relife_inline_small_styles', 20, 3 );
+
+/**
+ * Tmené pozadie hneď na začiatku <head> (pred načítaním ostatného): žiadny biely záblesk, lepší Speed Index a pocit rýchlosti.
+ */
+function relife_early_background(): void {
+	echo '<style>html,body{background:#131313;color:#F5F5F2;color-scheme:dark}</style>' . "\n";
+}
+add_action( 'wp_head', 'relife_early_background', 0 );
