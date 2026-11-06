@@ -177,3 +177,8 @@ cez WP-Cron, cestovný poriadok GTFS raz denne. Ukladajú sa do
 python3 scripts/build_wp_plugin.py
 ```
 
+
+# WordPress plugin — `wordpress/ideanet-image-optimizer/`
+
+Prevedie JPEG/PNG obrázky použité v článkoch na WebP/AVIF, upraví odkazy v obsahu a zmaže nahradené staré súbory.
+Balík: **`wordpress/ideanet-image-optimizer.zip`**. Nastavenia a spustenie: Médiá → Optimalizácia obrázkov, alebo `wp ideanet-images optimize [--dry-run]`.
