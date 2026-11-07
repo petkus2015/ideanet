@@ -135,9 +135,9 @@ function updateBadge() { const n = savedIds().length, b = $('#badge'); b.hidden 
 let tt; function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2000); }
 
 /* ---------- Komponenty ---------- */
-const HEART = '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.600A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>';
+const BOOKMARK = '<svg viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M8 7h9v9"/></svg>';
-const saveBtn = (id, cls = '') => `<button class="save ${cls}" data-save="${id}" aria-pressed="${isSaved(id)}" aria-label="Uložiť článok">${HEART}</button>`;
+const saveBtn = (id, cls = '') => `<button class="save ${cls}" data-save="${id}" aria-pressed="${isSaved(id)}" aria-label="Uložiť článok">${BOOKMARK}</button>`;
 const city = a => a.place.split(',')[0];
 
 const cardSm = a => `<div class="card card--sm"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${scene(a.scene, a.id)}</a>${saveBtn(a.id)}
@@ -189,7 +189,7 @@ async function viewSaved() {
   const items = (await Promise.all(ids.map(async id => (await cacheLoad(id)) || byId(id)))).filter(Boolean);
   return `<div class="page"><h1>Uložené články</h1><p class="pill-note">Uložené vo vašom zariadení · čítate aj bez internetu</p>
     ${items.length ? `<div class="grid">${items.map(listCard).join('')}</div>` :
-      `<div class="empty"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.600A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg><b>Zatiaľ nič uložené</b>Ťuknite na srdiečko pri článku a nájdete ho tu.<br><a class="btn" href="#/explore">Objavovať články</a></div>`}</div>`;
+      `<div class="empty"><svg viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg><b>Zatiaľ nič uložené</b>Ťuknite na záložku pri článku a nájdete ho tu.<br><a class="btn" href="#/explore">Objavovať články</a></div>`}</div>`;
 }
 async function viewArticle(id) {
   const a = (await cacheLoad(id)) || byId(id);
@@ -198,7 +198,7 @@ async function viewArticle(id) {
   const more = ARTICLES.filter(x => x.id !== a.id && x.cat === a.cat).concat(ARTICLES.filter(x => x.cat !== a.cat)).slice(0, 4);
   return `<article><div class="article__hero"><div class="card__art">${scene(a.scene, a.id)}</div><div><small>${esc(a.place)} · ${a.min} min čítania</small><h1>${esc(a.title)}</h1></div></div>
     <div class="article__bar"><a class="back" href="javascript:history.back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Späť</a>
-      <button class="save save--pill" data-save="${a.id}" aria-pressed="${isSaved(a.id)}">${HEART.replace('<svg', '<svg width="18" height="18"')}<span class="lbl">${isSaved(a.id) ? 'Uložené' : 'Uložiť'}</span></button></div>
+      <button class="save save--pill" data-save="${a.id}" aria-pressed="${isSaved(a.id)}">${BOOKMARK.replace('<svg', '<svg width="18" height="18"')}<span class="lbl">${isSaved(a.id) ? 'Uložené' : 'Uložiť'}</span></button></div>
     <div class="article__body"><p><strong>${esc(a.lead)}</strong></p>${body}</div>
     <div class="wrap"><div class="section"><div class="section__head"><h2>Čítajte ďalej</h2></div><div class="rail">${more.map(cardSm).join('')}</div></div></div></article>`;
 }
