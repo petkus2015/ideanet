@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="sk" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adventuro — cestovateľský blog</title>
+<meta name="description" content="Cestovateľský blog: príbehy, tipy a miesta, ktoré stoja za objavenie. Ukladaj si články offline.">
+<meta name="theme-color" content="#16171a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23b8ea6c'/><path d='M7 22l6-10 4 6 3-4 5 8z' fill='%23132010'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>
+// Nastav tému ešte pred vykreslením, nech nebliká.
+try{var m=localStorage.getItem('ab:theme')||'auto',h=new Date().getHours();
+document.documentElement.dataset.theme=m==='auto'?((h>=19||h<7)?'dark':'light'):m;}catch(e){}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Preskočiť na obsah</a>
+
+<header class="top" id="top">
+  <a class="brand" href="#/" aria-label="Adventuro – domov">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l6-10 4 6 3-4 5 8z"/></svg>
+    <span>Adventuro</span>
+  </a>
+  <div class="top__actions">
+    <button class="theme" id="theme" type="button" aria-label="Zmeniť režim">
+      <span class="theme__icon" aria-hidden="true"></span>
+      <span class="theme__label" id="themeLabel">Auto</span>
+    </button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1"></main>
+
+<nav class="dock" aria-label="Hlavná navigácia">
+  <a href="#/" data-nav="home"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Domov</span></a>
+  <a href="#/explore" data-nav="explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span>Objavuj</span></a>
+  <a href="#/saved" data-nav="saved"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg><span>Uložené</span><b class="badge" id="badge" hidden>0</b></a>
+  <a href="#/about" data-nav="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg><span>O mne</span></a>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
