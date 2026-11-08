@@ -304,6 +304,50 @@
 			onScroll();
 		}
 
+		/* Plávajúca výzva na ďalší článok: len na mobile, v poslednej tretine čítania článku. */
+		var next = qs( '.js-next' );
+		var body = qs( '.rl-content' );
+		if ( next && body && window.matchMedia ) {
+			var mq = window.matchMedia( '(max-width: 760px)' );
+			var nkey = 'relife.next.' + next.getAttribute( 'data-post' );
+			var closed = false;
+			try { closed = window.sessionStorage.getItem( nkey ) === '1'; } catch ( e ) { /* nič */ }
+			var shown = false;
+			var footer = qs( '.rl-footer' );
+			var setNext = function ( on ) {
+				if ( on === shown ) { return; }
+				shown = on;
+				if ( on ) {
+					next.hidden = false;
+					window.requestAnimationFrame( function () { next.classList.add( 'is-on' ); } );
+					track( 'relife_next_shown', { article_id: Number( next.getAttribute( 'data-post' ) ) } );
+				} else {
+					next.classList.remove( 'is-on' );
+					window.setTimeout( function () { if ( ! shown ) { next.hidden = true; } }, 260 );
+				}
+			};
+			var checkNext = function () {
+				if ( closed || ! mq.matches ) { setNext( false ); return; }
+				var r = body.getBoundingClientRect();
+				var vh = window.innerHeight;
+				var progress = ( vh - r.top ) / r.height; /* kam až v texte siaha spodok obrazovky */
+				var footerVisible = footer && footer.getBoundingClientRect().top < vh;
+				setNext( progress >= 0.66 && ! footerVisible );
+			};
+			window.addEventListener( 'scroll', checkNext, { passive: true } );
+			window.addEventListener( 'resize', checkNext );
+			next.addEventListener( 'click', function ( ev ) {
+				if ( ev.target.closest && ev.target.closest( '.js-next-close' ) ) {
+					closed = true;
+					try { window.sessionStorage.setItem( nkey, '1' ); } catch ( e ) { /* nič */ }
+					setNext( false );
+				} else if ( ev.target.closest && ev.target.closest( '.rl-next__link' ) ) {
+					track( 'relife_next_click', { article_id: Number( next.getAttribute( 'data-post' ) ) } );
+				}
+			} );
+			checkNext();
+		}
+
 		var cls = document.body.classList;
 		qsa( '.js-tab' ).forEach( function ( a ) {
 			var m = a.getAttribute( 'data-match' );

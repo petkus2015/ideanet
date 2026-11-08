@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.22.0
+- **Plávajúca výzva na ďalší článok (mobil):** pri čítaní článku sa v poslednej tretine textu nad spodným menu zobrazí karta „Ďalší zaujímavý článok“ s obrázkom, sekciou a názvom. Vyberie sa článok z tej istej kategórie (z najnovších vyhráva ten, ktorý čitatelia najviac ukladajú). Dá sa zavrieť (pre danú návštevu už nevyskočí), skrýva sa pri päte stránky, na desktope sa nezobrazuje. Udalosti `relife_next_shown` a `relife_next_click` idú do Google tagu.
+
 ## 1.21.0
 - **Štatistika uložených článkov na Nástenke:** miniaplikácia „RELIFE – Najviac ukladané články (TOP 15)“ so zoradením od najviac uložených, sekciou a stĺpcovým ukazovateľom. Pri uložení/odstránení záložky pošle prehliadač len ID článku a smer (`POST /wp-json/relife/v1/save`), bez osobných údajov; ochrana proti zneužitiu (1 zmena za 5 s na článok, 60 za hodinu na zariadenie). Počet je orientačný a počíta sa od spustenia tejto verzie.
 
