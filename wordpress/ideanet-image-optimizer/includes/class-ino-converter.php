@@ -290,7 +290,7 @@ class INO_Converter {
 	}
 
 	/** Cesta v URL (bez hostiteľa) k súboru, napr. /wp-content/uploads/2026/11/foo.jpg */
-	private static function url_path( $abs_file ) {
+	public static function url_path( $abs_file ) {
 		$u    = wp_get_upload_dir();
 		$base = (string) wp_parse_url( $u['baseurl'], PHP_URL_PATH );
 		$rel  = ltrim( str_replace( '\\', '/', substr( $abs_file, strlen( $u['basedir'] ) ) ), '/' );
@@ -397,7 +397,7 @@ class INO_Converter {
 		return array( $value, false );
 	}
 
-	private static function replace_everywhere( $old_file, $old_meta, $map ) {
+	public static function replace_everywhere( $old_file, $old_meta, $map ) {
 		global $wpdb;
 		if ( ! $map ) {
 			return;

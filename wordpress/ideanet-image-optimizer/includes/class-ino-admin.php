@@ -15,6 +15,10 @@ class INO_Admin {
 		add_action( 'wp_ajax_ino_run', array( __CLASS__, 'ajax_run' ) );
 		add_action( 'wp_ajax_ino_scan', array( __CLASS__, 'ajax_scan' ) );
 		add_action( 'wp_ajax_ino_delete', array( __CLASS__, 'ajax_delete' ) );
+		add_action( 'wp_ajax_ino_sizes_scan', array( __CLASS__, 'ajax_sizes_scan' ) );
+		add_action( 'wp_ajax_ino_sizes_delete', array( __CLASS__, 'ajax_sizes_delete' ) );
+		add_action( 'wp_ajax_ino_orphans_scan', array( __CLASS__, 'ajax_orphans_scan' ) );
+		add_action( 'wp_ajax_ino_orphans_delete', array( __CLASS__, 'ajax_orphans_delete' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( INO_DIR . 'ideanet-image-optimizer.php' ), array( __CLASS__, 'links' ) );
 	}
 
@@ -134,6 +138,126 @@ class INO_Admin {
 		wp_send_json_success( array( 'deleted' => $deleted, 'kept' => $kept ) );
 	}
 
+	private static function guard() {
+		check_ajax_referer( 'ino_run', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Nedostatočné oprávnenie.', 403 );
+		}
+		@set_time_limit( 120 ); // phpcs:ignore
+	}
+
+	/** Príloha so zmenšeninami (nič nemaže). */
+	public static function ajax_sizes_scan() {
+		self::guard();
+		$cursor = isset( $_POST['cursor'] ) ? absint( $_POST['cursor'] ) : 0;
+		$start  = microtime( true );
+		$items  = array();
+		$seen   = 0;
+		$done   = false;
+		while ( microtime( true ) - $start < 15 ) {
+			$ids = INO_Sizes::image_ids( $cursor, 50 );
+			if ( ! $ids ) {
+				$done = true;
+				break;
+			}
+			foreach ( $ids as $id ) {
+				$cursor = $id;
+				++$seen;
+				$files = INO_Sizes::sized_files( $id );
+				if ( $files ) {
+					$items[] = INO_Sizes::describe( $id, $files );
+				}
+				if ( microtime( true ) - $start >= 15 ) {
+					break 2;
+				}
+			}
+		}
+		wp_send_json_success( array( 'items' => $items, 'cursor' => $cursor, 'done' => $done, 'seen' => $seen ) );
+	}
+
+	public static function ajax_sizes_delete() {
+		self::guard();
+		$ids     = isset( $_POST['ids'] ) ? array_slice( array_map( 'absint', (array) wp_unslash( $_POST['ids'] ) ), 0, 10 ) : array();
+		$deleted = array();
+		$kept    = array();
+		foreach ( $ids as $id ) {
+			if ( $id && current_user_can( 'edit_post', $id ) && INO_Sizes::remove( $id ) ) {
+				$deleted[] = $id;
+			} else {
+				$kept[] = $id;
+			}
+		}
+		wp_send_json_success( array( 'deleted' => $deleted, 'kept' => $kept ) );
+	}
+
+	/** Osirelé súbory v uploads; kurzor = index v zozname priečinkov. */
+	public static function ajax_orphans_scan() {
+		self::guard();
+		$cursor = isset( $_POST['cursor'] ) ? absint( $_POST['cursor'] ) : 0;
+		$dirs   = INO_Orphans::dirs();
+		$known  = INO_Orphans::known_set( 0 === $cursor );
+		$u      = wp_get_upload_dir();
+		$start  = microtime( true );
+		$items  = array();
+		$seen   = 0;
+		while ( $cursor < count( $dirs ) && microtime( true ) - $start < 15 ) {
+			$d = $dirs[ $cursor++ ];
+			foreach ( (array) @scandir( $u['basedir'] . '/' . $d ) as $n ) { // phpcs:ignore
+				$rel = $d . '/' . $n;
+				if ( ! is_file( $u['basedir'] . '/' . $rel ) ) {
+					continue;
+				}
+				++$seen;
+				if ( INO_Orphans::is_orphan( $rel, $known ) && ! INO_Cleaner::is_file_used( $rel ) ) {
+					$items[] = array(
+						'key'   => $rel,
+						'title' => $rel,
+						'thumb' => $u['baseurl'] . '/' . $rel,
+						'bytes' => (int) filesize( $u['basedir'] . '/' . $rel ),
+						'date'  => gmdate( 'j. n. Y', (int) filemtime( $u['basedir'] . '/' . $rel ) ),
+					);
+				}
+			}
+		}
+		wp_send_json_success( array( 'items' => $items, 'cursor' => $cursor, 'done' => $cursor >= count( $dirs ), 'seen' => $seen ) );
+	}
+
+	public static function ajax_orphans_delete() {
+		self::guard();
+		$files   = isset( $_POST['files'] ) ? array_slice( array_map( 'sanitize_text_field', (array) wp_unslash( $_POST['files'] ) ), 0, 25 ) : array();
+		$base    = wp_get_upload_dir()['basedir'];
+		$deleted = array();
+		$kept    = array();
+		foreach ( $files as $rel ) {
+			if ( INO_Orphans::is_deletable( $rel ) ) {
+				wp_delete_file( $base . '/' . $rel );
+				$deleted[] = $rel;
+			} else {
+				$kept[] = $rel;
+			}
+		}
+		wp_send_json_success( array( 'deleted' => $deleted, 'kept' => $kept ) );
+	}
+
+	/** Blok „vyhľadať → vybrať → zmazať“. */
+	private static function section( $key, $title, $desc, $cols, $btn ) {
+		?>
+		<hr>
+		<h2><?php echo esc_html( $title ); ?></h2>
+		<p><?php echo esc_html( $desc ); ?></p>
+		<p>
+			<button type="button" class="button" id="ino-<?php echo esc_attr( $key ); ?>-scan"><?php echo esc_html( $btn ); ?></button>
+			<button type="button" class="button button-link-delete" id="ino-<?php echo esc_attr( $key ); ?>-del" hidden>Zmazať vybrané</button>
+			<span id="ino-<?php echo esc_attr( $key ); ?>-st" style="margin-left:10px"></span>
+		</p>
+		<table class="widefat striped" id="ino-<?php echo esc_attr( $key ); ?>-table" hidden style="max-width:900px">
+			<thead><tr><td class="check-column"><input type="checkbox" id="ino-<?php echo esc_attr( $key ); ?>-all" checked></td><th>Náhľad</th>
+			<?php foreach ( $cols as $c ) { echo '<th>' . esc_html( $c ) . '</th>'; } ?></tr></thead>
+			<tbody></tbody>
+		</table>
+		<?php
+	}
+
 	public static function render() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
@@ -207,19 +331,12 @@ class INO_Admin {
 				<thead><tr><th>Obrázok</th><th>Výsledok</th><th>Veľkosť</th></tr></thead>
 				<tbody></tbody>
 			</table>
-			<hr>
-			<h2>Nepoužité obrázky</h2>
-			<p>Nájde obrázky v knižnici médií, ktoré nie sú použité v žiadnom článku, stránke, hlavnom obrázku, menu, logu ani nastaveniach. Najprv ich len zobrazí, nič sa nezmaže, kým nepotvrdíte.</p>
-			<p class="description"><strong>Plugin nevidí obrázky natvrdo vložené v súboroch témy ani údaje v tabuľkách iných pluginov.</strong> Zmazané obrázky sa nedajú obnoviť, spravte si zálohu.</p>
-			<p>
-				<button type="button" class="button" id="ino-scan">Vyhľadať nepoužité obrázky</button>
-				<button type="button" class="button button-link-delete" id="ino-del" hidden>Zmazať vybrané</button>
-				<span id="ino-scan-status" style="margin-left:10px"></span>
-			</p>
-			<table class="widefat striped" id="ino-unused" hidden style="max-width:900px">
-				<thead><tr><td class="check-column"><input type="checkbox" id="ino-all" checked></td><th>Náhľad</th><th>Obrázok</th><th>Nahraný</th><th>Veľkosť</th></tr></thead>
-				<tbody></tbody>
-			</table>
+			<?php
+			self::section( 'unused', 'Nepoužité obrázky', 'Nájde obrázky v knižnici médií, ktoré nie sú použité v žiadnom článku, stránke, hlavnom obrázku, menu, logu ani nastaveniach. Nič sa nezmaže, kým nepotvrdíte.', array( 'Obrázok', 'Nahraný', 'Veľkosť' ), 'Vyhľadať nepoužité obrázky' );
+			self::section( 'sizes', 'Zmenšeniny', 'Nájde súbory typu meno-300x200.jpg (aj osirelé po starých témach). Odkazy na ne v obsahu sa nahradia hlavným súborom a zmenšeniny sa zmažú, ostane len hlavný obrázok.', array( 'Obrázok', 'Zmenšenín', 'Uvoľní' ), 'Vyhľadať zmenšeniny' );
+			self::section( 'orphans', 'Osirelé súbory v uploads', 'Nájde obrázky v priečinkoch wp-content/uploads/RRRR/MM, ktoré nepatria žiadnej prílohe v knižnici a nikde sa nepoužívajú.', array( 'Súbor', 'Zmenený', 'Veľkosť' ), 'Vyhľadať osirelé súbory' );
+			?>
+			<p class="description"><strong>Plugin nevidí obrázky natvrdo vložené v súboroch témy ani údaje v tabuľkách iných pluginov.</strong> Zmazané súbory sa nedajú obnoviť, spravte si zálohu.</p>
 			<p class="description">Z príkazového riadka: <code>wp ideanet-images optimize [--dry-run] [--id=&lt;ID&gt;]</code>, <code>wp ideanet-images cleanup [--dry-run] [--yes]</code></p>
 		</div>
 		<?php

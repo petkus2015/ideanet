@@ -14,26 +14,44 @@ class INO_Cleaner {
 
 	/** Je obrázok niekde použitý? */
 	public static function is_used( $id ) {
-		global $wpdb;
-
 		$file = get_attached_file( $id );
 		if ( ! $file ) {
 			return true; // nevieme overiť → ponechať
 		}
-		$meta  = wp_get_attachment_metadata( $id );
+		$meta = wp_get_attachment_metadata( $id );
+		return self::referenced( self::likes( INO_Converter::stem_paths( $file, is_array( $meta ) ? $meta : array() ) ), (int) $id );
+	}
+
+	/** Odkazuje na konkrétny súbor (relatívna cesta v uploads, napr. 2026/11/foo-300x200.jpg) niečo v databáze? */
+	public static function is_file_used( $rel ) {
+		$u = wp_get_upload_dir();
+		return self::referenced( self::likes( array( INO_Converter::url_path( trailingslashit( $u['basedir'] ) . ltrim( $rel, '/' ) ) ) ), 0 );
+	}
+
+	private static function likes( $paths ) {
+		global $wpdb;
 		$likes = array();
-		foreach ( INO_Converter::stem_paths( $file, is_array( $meta ) ? $meta : array() ) as $stem ) {
+		foreach ( $paths as $stem ) {
 			$likes[] = '%' . $wpdb->esc_like( $stem ) . '%';
 			$likes[] = '%' . $wpdb->esc_like( str_replace( '/', '\/', $stem ) ) . '%'; // JSON
 		}
-		$id      = (int) $id;
-		$id_re   = '(^|[^0-9])' . $id . '([^0-9]|$)';
-		$content = array(
-			'wp-image-' . $id . '([^0-9]|$)',          // klasické a blokové obrázky
-			'[iI]d":' . $id . '([^0-9]|$)',            // "id":12, "mediaId":12 v blokoch
-			'ids.{1,3}([0-9, ]*[^0-9])?' . $id . '([^0-9]|$)', // [gallery ids="..."], "ids":[...]
-		);
-		$content_re = implode( '|', $content );
+		return $likes;
+	}
+
+	/** $id = 0: hľadá sa len podľa cesty súboru. */
+	private static function referenced( $likes, $id ) {
+		global $wpdb;
+
+		if ( $id ) {
+			$id_re      = '(^|[^0-9])' . $id . '([^0-9]|$)';
+			$content_re = implode( '|', array(
+				'wp-image-' . $id . '([^0-9]|$)',                  // klasické a blokové obrázky
+				'[iI]d":' . $id . '([^0-9]|$)',                    // "id":12, "mediaId":12 v blokoch
+				'ids.{1,3}([0-9, ]*[^0-9])?' . $id . '([^0-9]|$)', // [gallery ids="..."], "ids":[...]
+			) );
+		} else {
+			$id_re = $content_re = 'a^'; // nikdy nezodpovedá
+		}
 
 		$like_sql = function ( $col ) use ( $likes ) {
 			return '(' . implode( ' OR ', array_fill( 0, count( $likes ), "$col LIKE %s" ) ) . ')';
@@ -41,7 +59,7 @@ class INO_Cleaner {
 		$live = "post_status NOT IN ('trash','auto-draft') AND post_type NOT IN ('attachment','revision')";
 
 		// 1) hlavný obrázok
-		if ( $wpdb->get_var( $wpdb->prepare(
+		if ( $id && $wpdb->get_var( $wpdb->prepare(
 			"SELECT 1 FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id
 			 WHERE pm.meta_key = '_thumbnail_id' AND pm.meta_value = %d AND p.post_status NOT IN ('trash','auto-draft')
 			   AND p.post_type NOT IN ('attachment','revision') LIMIT 1", $id ) ) ) {
@@ -69,7 +87,7 @@ class INO_Cleaner {
 			return true;
 		}
 		$sql = "SELECT 1 FROM {$wpdb->usermeta} WHERE meta_value = %s OR " . $like_sql( 'meta_value' ) . ' LIMIT 1';
-		if ( $wpdb->get_var( $wpdb->prepare( $sql, array_merge( array( (string) $id ), $likes ) ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL
+		if ( $wpdb->get_var( $wpdb->prepare( $sql, array_merge( array( $id ? (string) $id : '-1' ), $likes ) ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL
 			return true;
 		}
 
@@ -79,13 +97,13 @@ class INO_Cleaner {
 		          AND ( " . $like_sql( 'option_value' ) . "
 		             OR (option_name IN ('site_icon','site_logo') AND option_value = %s)
 		             OR ((option_name LIKE 'theme\\_mods\\_%%' OR option_name LIKE 'widget\\_%%') AND option_value REGEXP %s) ) LIMIT 1";
-		$ser = 'i:' . $id . ';|' . $content_re;
-		if ( $wpdb->get_var( $wpdb->prepare( $sql, array_merge( $likes, array( (string) $id, $ser ) ) ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL
+		$ser = $id ? 'i:' . $id . ';|' . $content_re : 'a^';
+		if ( $wpdb->get_var( $wpdb->prepare( $sql, array_merge( $likes, array( $id ? (string) $id : '-1', $ser ) ) ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL
 			return true;
 		}
 
 		/** Umožní iným pluginom/témam označiť obrázok ako použitý (vlastné tabuľky, page buildery). */
-		return (bool) apply_filters( 'ino_image_is_used', false, $id );
+		return (bool) apply_filters( 'ino_image_is_used', false, $id, $likes );
 	}
 
 	/** Podmienky pre kandidáta na zmazanie: obrázok, dosť starý, nepoužitý. */
@@ -121,6 +139,7 @@ class INO_Cleaner {
 			}
 		}
 		return array(
+			'key'   => (int) $id,
 			'id'    => (int) $id,
 			'title' => get_the_title( $id ) ?: basename( (string) $file ),
 			'thumb' => (string) wp_get_attachment_image_url( $id, 'thumbnail' ),
