@@ -22,6 +22,7 @@ require_once RELIFE_DIR . '/inc/embeds.php';
 require_once RELIFE_DIR . '/inc/performance.php';
 require_once RELIFE_DIR . '/inc/analytics.php';
 require_once RELIFE_DIR . '/inc/adsense-check.php';
+require_once RELIFE_DIR . '/inc/stats.php';
 require_once RELIFE_DIR . '/inc/ads.php';
 require_once RELIFE_DIR . '/inc/tables.php';
 require_once RELIFE_DIR . '/inc/redirects.php';

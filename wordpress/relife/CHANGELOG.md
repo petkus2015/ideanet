@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.21.0
+- **Štatistika uložených článkov na Nástenke:** miniaplikácia „RELIFE – Najviac ukladané články (TOP 15)“ so zoradením od najviac uložených, sekciou a stĺpcovým ukazovateľom. Pri uložení/odstránení záložky pošle prehliadač len ID článku a smer (`POST /wp-json/relife/v1/save`), bez osobných údajov; ochrana proti zneužitiu (1 zmena za 5 s na článok, 60 za hodinu na zariadenie). Počet je orientačný a počíta sa od spustenia tejto verzie.
+
 ## 1.20.0
 - **Nástroj v administrácii: Nástroje → Kontrola AdSense (GDPR).** Jedným klikom otvorí web ako návštevník (v skrytom rámci), skontroluje skript AdSense, ID vydavateľa, požiadavku na Google Funding Choices, prvky lišty (aj „googlefcInactive“), TCF, uložený súhlas, konflikty s inými cookie lištami, ads.txt a región; zo servera overí HTML bez JavaScriptu, hlavičku CSP, cache, odpoveď Google pre ID vydavateľa a aktívne pluginy. Zobrazí **najpravdepodobnejšiu príčinu a návrh opravy**.
 - Test obchádza pravidlá „neukazovať prihláseným redaktorom“ (len pre test správcu), nepoužíva cache stránok a volitelne zmaže uložený súhlas v prehliadači.

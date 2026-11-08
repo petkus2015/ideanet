@@ -61,6 +61,19 @@
 			btn.setAttribute( 'aria-label', on ? ( i18n.unsave || 'Odstrániť z uložených' ) : ( i18n.save || 'Uložiť článok' ) );
 		} );
 	}
+	/* Anonymné počítadlo uložení pre štatistiku v administrácii: len ID článku a smer, bez osobných údajov. */
+	function countSave( id, action ) {
+		if ( ! data.saveUrl || ! window.fetch ) { return; }
+		try {
+			fetch( data.saveUrl, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify( { id: id, action: action } ),
+				keepalive: true,
+				credentials: 'omit'
+			} ).catch( function () {} );
+		} catch ( e ) { /* nič */ }
+	}
 	document.addEventListener( 'click', function ( ev ) {
 		var btn = ev.target.closest ? ev.target.closest( '.js-save' ) : null;
 		if ( ! btn ) { return; }
@@ -73,9 +86,11 @@
 			saved.push( id );
 			cacheUrl( url, true );
 			track( 'relife_save_article', { article_id: id } );
+			countSave( id, 'save' );
 		} else {
 			saved.splice( idx, 1 );
 			cacheUrl( url, false );
+			countSave( id, 'unsave' );
 		}
 		setSaved( saved );
 		if ( qs( '.js-saved-list' ) ) { renderSavedPage(); }

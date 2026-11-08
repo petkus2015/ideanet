@@ -82,6 +82,7 @@ function relife_enqueue_assets(): void {
 		array(
 			'restUrl'  => esc_url_raw( rest_url( 'wp/v2/posts' ) ),
 			'savedUrl' => esc_url_raw( relife_page_url_by_template( 'template-saved.php' ) ),
+			'saveUrl'  => esc_url_raw( rest_url( 'relife/v1/save' ) ),
 			'moods'    => relife_moods(),
 			'i18n'     => array(
 				'save'      => __( 'Uložiť článok', 'relife' ),
