@@ -7,3 +7,7 @@ Statický web bez závislostí. Spustenie: `python3 -m http.server 8000` v tomto
 - **Uložené články**: záložka pri článku → ID v `localStorage`, obsah v Cache API (`adventuro-saved-v1`); čítanie aj offline (`sw.js` cacheuje shell).
 - **Obrázky**: zatiaľ SVG ilustrácie (`scene()` v `app.js`); reálne fotky pridajte ako `<img>` do `.card__art`.
 - **Články**: pole `ARTICLES` v `app.js`.
+
+## Ako aplikácia
+Web je PWA: `manifest.webmanifest` + ikony, režim `standalone` (bez adresného riadku), úzky stĺpec šírky mobilu aj na desktope, offline cez `sw.js`.
+Nainštalovať ide po nasadení na HTTPS (Chrome/Android: tlačidlo Inštalovať v sekcii O blogu, iPhone: Zdieľať → Pridať na plochu).

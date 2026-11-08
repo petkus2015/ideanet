@@ -202,7 +202,9 @@ function viewAbout() {
   return `<div class="page about"><h1>O blogu</h1>
     <p>Adventuro je zbierka cestopisných zápiskov: kde sme boli, čo fungovalo a čo by sme urobili inak.</p>
     <p>Každý článok si môžeš uložiť záložkou a čítať ho aj bez pripojenia.</p>
-    <a class="btn" href="#/explore">Čítať články</a></div>`;
+    <a class="btn" href="#/explore">Čítať články</a>
+    <div class="install"><b>Nainštaluj si Adventuro</b><span id="installHint">V prehliadači otvor menu a zvoľ „Pridať na plochu“ (iPhone: Zdieľať, potom Pridať na plochu). Aplikácia sa otvorí na celú obrazovku a funguje aj offline.</span>
+    <button class="btn" id="installBtn" type="button" hidden>Inštalovať</button></div></div>`;
 }
 
 /* ---------- Router ---------- */
@@ -216,7 +218,7 @@ async function render() {
   else if (route === 'about') { html = viewAbout(); nav = 'about'; }
   else if (route === 'a') { html = await viewArticle(arg); nav = ''; }
   else html = viewHome();
-  main.innerHTML = html;
+  main.innerHTML = html; if (deferred && $('#installBtn')) $('#installBtn').hidden = false;
   document.querySelectorAll('.dock a').forEach(a => a.dataset.nav === nav ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   window.scrollTo(0, 0);
   document.title = route === 'a' && byId(arg) ? `${byId(arg).title} — Adventuro` : 'Adventuro — cestovateľský blog';
@@ -235,6 +237,11 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('input', e => { if (e.target.id === 'q') { exploreState.q = e.target.value; $('#results').innerHTML = exploreList(); } });
 document.addEventListener('submit', e => { if (e.target.id === 'heroSearch') { e.preventDefault(); exploreState.q = new FormData(e.target).get('q') || ''; exploreState.cat = 'all'; location.hash = '#/explore'; } });
+
+/* Inštalácia ako aplikácia */
+let deferred;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; const b = $('#installBtn'); if (b) b.hidden = false; });
+document.addEventListener('click', async e => { if (e.target.id === 'installBtn' && deferred) { deferred.prompt(); await deferred.userChoice; deferred = null; e.target.hidden = true; } });
 
 /* Offline shell */
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
