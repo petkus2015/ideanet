@@ -161,8 +161,8 @@
 
 	list( 'unused', { scan: 'ino_scan', del: 'ino_delete', param: 'ids', chunk: 25,
 		cells: function ( it ) { return [ '#' + it.id + ' ' + it.title, it.date, size( it.bytes ) ]; } } );
-	list( 'sizes', { scan: 'ino_sizes_scan', del: 'ino_sizes_delete', param: 'ids', chunk: 10,
-		cells: function ( it ) { return [ '#' + it.id + ' ' + it.title, String( it.count ), size( it.bytes ) ]; } } );
+	list( 'sizes', { scan: 'ino_sizes_scan', del: 'ino_sizes_delete', param: 'files', chunk: 10,
+		cells: function ( it ) { return [ it.title, String( it.count ), size( it.bytes ) ]; } } );
 	list( 'orphans', { scan: 'ino_orphans_scan', del: 'ino_orphans_delete', param: 'files', chunk: 25,
 		cells: function ( it ) { return [ it.title, it.date, size( it.bytes ) ]; } } );
 }() );

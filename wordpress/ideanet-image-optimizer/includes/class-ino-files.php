@@ -2,114 +2,138 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Zmenšeniny (súbory typu meno-300x200.jpg), ktoré sa dajú zmazať tak, aby ostal len hlavný súbor.
- * Odkazy na zmenšeniny sa v obsahu nahradia hlavným súborom, takže nič nezostane rozbité.
+ * Miniatúry (súbory typu meno-300x200.jpg) kdekoľvek pod wp-content/uploads.
+ * Miniatúra = názov meno-ŠxV.prípona, v rovnakom priečinku existuje väčší súbor meno.prípona,
+ * skutočné rozmery miniatúry sedia s názvom a nejde o hlavný súbor žiadnej prílohy.
+ * Odkazy na miniatúry sa v obsahu nahradia hlavným súborom, takže nič nezostane rozbité.
  */
 class INO_Sizes {
 
-	/** Zmenšeniny prílohy (z metadát aj osirelé súbory podľa názvu), absolútne cesty. */
-	public static function sized_files( $id ) {
-		global $wpdb;
-		$file = get_attached_file( $id );
-		if ( ! $file || ! is_file( $file ) ) {
-			return array();
+	/** Relatívne cesty všetkých priečinkov pod uploads ('' = koreň). */
+	public static function all_dirs() {
+		$base = wp_get_upload_dir()['basedir'];
+		$out  = array( '' );
+		if ( ! is_dir( $base ) ) {
+			return $out;
 		}
-		$meta = wp_get_attachment_metadata( $id );
-		$meta = is_array( $meta ) ? $meta : array();
-		$dir  = dirname( $file );
-		$keep = array( wp_normalize_path( $file ) );
-		$stems = array( pathinfo( $file, PATHINFO_FILENAME ) );
-		if ( ! empty( $meta['original_image'] ) ) {
-			$keep[]  = wp_normalize_path( $dir . '/' . $meta['original_image'] );
-			$stems[] = pathinfo( $meta['original_image'], PATHINFO_FILENAME );
-		}
-		$found = array();
-		foreach ( (array) ( $meta['sizes'] ?? array() ) as $sz ) {
-			if ( ! empty( $sz['file'] ) ) {
-				$found[ $dir . '/' . $sz['file'] ] = 1;
-			}
-			foreach ( (array) ( $sz['sources'] ?? array() ) as $src ) {
-				if ( ! empty( $src['file'] ) ) {
-					$found[ $dir . '/' . $src['file'] ] = 1;
+		$it = new RecursiveIteratorIterator(
+			new RecursiveCallbackFilterIterator(
+				new RecursiveDirectoryIterator( $base, FilesystemIterator::SKIP_DOTS ),
+				function ( $cur ) {
+					return $cur->isDir() && ! $cur->isLink() && '.' !== substr( $cur->getFilename(), 0, 1 );
 				}
-			}
+			),
+			RecursiveIteratorIterator::SELF_FIRST
+		);
+		foreach ( $it as $dir ) {
+			$out[] = ltrim( str_replace( '\\', '/', substr( $dir->getPathname(), strlen( $base ) ) ), '/' );
 		}
-		$ext = INO_Orphans::EXT; // zmenšeniny v ľubovoľnom obrázkovom formáte (napr. .jpg aj .png k jednému hlavnému súboru)
-		foreach ( (array) @scandir( $dir ) as $n ) { // phpcs:ignore
-			foreach ( $stems as $st ) {
-				if ( preg_match( '/^' . preg_quote( $st, '/' ) . '-\d+x\d+\.(?:' . $ext . ')$/i', $n ) ) {
-					$found[ $dir . '/' . $n ] = 1;
-				}
-			}
-		}
-		$out = array();
-		foreach ( array_keys( $found ) as $f ) {
-			if ( ! in_array( wp_normalize_path( $f ), $keep, true ) && is_file( $f ) ) {
-				$out[] = $f;
-			}
-		}
-		if ( $out ) { // súbory, ktoré sú hlavným súborom inej prílohy, nechať
-			$rels = array_map( '_wp_relative_upload_path', $out );
-			$in   = implode( ',', array_fill( 0, count( $rels ), '%s' ) );
-			$own  = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND post_id <> %d AND meta_value IN ($in)", array_merge( array( $id ), $rels ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL
-			if ( $own ) {
-				$out = array_values( array_filter( $out, function ( $f ) use ( $own ) {
-					return ! in_array( _wp_relative_upload_path( $f ), $own, true );
-				} ) );
-			}
-		}
+		sort( $out );
 		return $out;
 	}
 
-	public static function bytes( $files ) {
-		$t = 0;
-		foreach ( $files as $f ) {
-			$t += (int) @filesize( $f ); // phpcs:ignore
+	/** Hlavné súbory príloh (relatívne cesty). Cacheuje sa na hodinu. */
+	public static function main_set( $rebuild ) {
+		global $wpdb;
+		$set = $rebuild ? false : get_transient( 'ino_main_files' );
+		if ( ! is_array( $set ) ) {
+			$set = array_fill_keys( (array) $wpdb->get_col( "SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file'" ), 1 );
+			set_transient( 'ino_main_files', $set, HOUR_IN_SECONDS );
+		}
+		return $set;
+	}
+
+	/** Miniatúry v jednom priečinku zoskupené podľa hlavného súboru: [ base_rel => [ thumb_rel, ... ] ]. */
+	public static function thumbs_in_dir( $rel_dir, $main ) {
+		$u    = wp_get_upload_dir();
+		$abs  = $u['basedir'] . ( '' !== $rel_dir ? '/' . $rel_dir : '' );
+		$pre  = '' !== $rel_dir ? $rel_dir . '/' : '';
+		$list = @scandir( $abs ); // phpcs:ignore
+		if ( ! $list ) {
+			return array();
+		}
+		$have   = array_flip( $list );
+		$exts   = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'avif' );
+		$groups = array();
+		$dims   = array();
+		foreach ( $list as $n ) {
+			if ( ! preg_match( '/^(.+)-(\d+)x(\d+)\.(' . INO_Orphans::EXT . ')$/i', $n, $m ) || isset( $main[ $pre . $n ] ) ) {
+				continue;
+			}
+			$base_name = null;
+			foreach ( array_unique( array_merge( array( strtolower( $m[4] ), $m[4] ), $exts ) ) as $e ) {
+				$cand = $m[1] . '.' . $e;
+				if ( $cand !== $n && isset( $have[ $cand ] ) ) {
+					$base_name = $cand;
+					break;
+				}
+			}
+			if ( ! $base_name ) {
+				continue;
+			}
+			$d = @getimagesize( "$abs/$n" ); // phpcs:ignore
+			if ( ! $d || (int) $d[0] !== (int) $m[2] || (int) $d[1] !== (int) $m[3] ) {
+				continue; // rozmery nesedia s názvom → nie je to vygenerovaná miniatúra
+			}
+			if ( ! isset( $dims[ $base_name ] ) ) {
+				$dims[ $base_name ] = @getimagesize( "$abs/$base_name" ); // phpcs:ignore
+			}
+			$b = $dims[ $base_name ];
+			if ( ! $b || $b[0] < $d[0] || $b[1] < $d[1] || ( $b[0] === $d[0] && $b[1] === $d[1] ) ) {
+				continue; // hlavný súbor musí byť väčší
+			}
+			$groups[ $pre . $base_name ][] = $pre . $n;
+		}
+		return $groups;
+	}
+
+	public static function bytes( $rels ) {
+		$base = wp_get_upload_dir()['basedir'];
+		$t    = 0;
+		foreach ( $rels as $r ) {
+			$t += (int) @filesize( $base . '/' . $r ); // phpcs:ignore
 		}
 		return $t;
 	}
 
-	public static function image_ids( $after_id, $limit ) {
+	public static function valid_rel( $rel ) {
+		return is_string( $rel ) && '' !== $rel && false === strpos( $rel, '..' ) && 0 !== strpos( $rel, '/' )
+			&& preg_match( '/\.(' . INO_Orphans::EXT . ')$/i', $rel );
+	}
+
+	/** Nahradí odkazy na miniatúry hlavným súborom a miniatúry zmaže. Vráti počet zmazaných súborov. */
+	public static function remove( $base_rel ) {
 		global $wpdb;
-		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare(
-			"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%%' AND ID > %d ORDER BY ID ASC LIMIT %d",
-			$after_id, $limit
-		) ) );
-	}
-
-	public static function describe( $id, $files ) {
-		return array(
-			'key'   => (int) $id,
-			'id'    => (int) $id,
-			'title' => get_the_title( $id ) ?: basename( (string) get_attached_file( $id ) ),
-			'thumb' => (string) wp_get_attachment_image_url( $id, 'full' ),
-			'count' => count( $files ),
-			'bytes' => self::bytes( $files ),
-		);
-	}
-
-	/** Nahradí odkazy na zmenšeniny hlavným súborom a zmenšeniny zmaže. Vráti počet zmazaných súborov. */
-	public static function remove( $id ) {
-		$files = self::sized_files( $id );
-		if ( ! $files ) {
+		if ( ! self::valid_rel( $base_rel ) ) {
 			return 0;
 		}
-		$file = get_attached_file( $id );
-		$meta = wp_get_attachment_metadata( $id );
-		$meta = is_array( $meta ) ? $meta : array();
-		$full = INO_Converter::url_path( $file );
-		$map  = array();
-		foreach ( $files as $f ) {
-			$map[ INO_Converter::url_path( $f ) ] = $full;
+		$dir    = dirname( $base_rel );
+		$dir    = ( '.' === $dir ) ? '' : $dir;
+		$main   = self::main_set( true );
+		$groups = self::thumbs_in_dir( $dir, $main ); // nanovo overené, nespoliehame sa na zoznam z prehliadača
+		if ( empty( $groups[ $base_rel ] ) ) {
+			return 0;
+		}
+		$u     = wp_get_upload_dir();
+		$file  = $u['basedir'] . '/' . $base_rel;
+		$id    = (int) $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value = %s LIMIT 1", $base_rel ) );
+		$meta  = $id ? wp_get_attachment_metadata( $id ) : array();
+		$meta  = is_array( $meta ) ? $meta : array();
+		$full  = INO_Converter::url_path( $file );
+		$map   = array();
+		foreach ( $groups[ $base_rel ] as $t ) {
+			$map[ INO_Converter::url_path( $u['basedir'] . '/' . $t ) ] = $full;
 		}
 		INO_Converter::replace_everywhere( $file, $meta, INO_Converter::expand_map( $map ) );
-		foreach ( $files as $f ) {
-			wp_delete_file( $f );
+		foreach ( $groups[ $base_rel ] as $t ) {
+			wp_delete_file( $u['basedir'] . '/' . $t );
 		}
-		$meta['sizes'] = array();
-		wp_update_attachment_metadata( $id, $meta );
-		clean_post_cache( $id );
-		return count( $files );
+		if ( $id ) {
+			$meta['sizes'] = array();
+			wp_update_attachment_metadata( $id, $meta );
+			clean_post_cache( $id );
+		}
+		return count( $groups[ $base_rel ] );
 	}
 }
 

@@ -1,7 +1,7 @@
 === IDEANET Optimalizácia obrázkov ===
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPL-2.0-or-later
 
 Prevedie JPEG/PNG obrázky použité v článkoch na WebP alebo AVIF, opraví odkazy a zmaže staré súbory.
@@ -23,7 +23,7 @@ Plugin nevidí obrázky natvrdo v súboroch témy ani v tabuľkách iných plugi
 CLI: `wp ideanet-images cleanup [--dry-run] [--yes]`.
 
 == Zmenšeniny a osirelé súbory ==
-* „Zmenšeniny“: nájde súbory typu meno-300x200.jpg (aj osirelé po starých témach, ktoré už v knižnici nie sú), nahradí odkazy na ne hlavným súborom a zmenšeniny zmaže. Ostane len hlavný obrázok.
+* „Miniatúry v celom uploads“: prehľadá všetky priečinky pod wp-content/uploads, nájde miniatúry meno-300x200.jpg (aj .png, .webp…) s väčším hlavným súborom a skutočne zhodnými rozmermi, nahradí odkazy na ne hlavným súborom a miniatúry zmaže.
 * „Osirelé súbory“: obrázky v uploads/RRRR/MM, ktoré nepatria žiadnej prílohe a nikde sa nepoužívajú.
 Obe čistenia najprv zobrazia zoznam a mažú až po potvrdení.
 

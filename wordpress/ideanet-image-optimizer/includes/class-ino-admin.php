@@ -146,45 +146,41 @@ class INO_Admin {
 		@set_time_limit( 120 ); // phpcs:ignore
 	}
 
-	/** Príloha so zmenšeninami (nič nemaže). */
+	/** Miniatúry v celom uploads (nič nemaže); kurzor = index v zozname priečinkov. */
 	public static function ajax_sizes_scan() {
 		self::guard();
 		$cursor = isset( $_POST['cursor'] ) ? absint( $_POST['cursor'] ) : 0;
+		$dirs   = INO_Sizes::all_dirs();
+		$main   = INO_Sizes::main_set( 0 === $cursor );
+		$u      = wp_get_upload_dir();
 		$start  = microtime( true );
 		$items  = array();
 		$seen   = 0;
-		$done   = false;
-		while ( microtime( true ) - $start < 15 ) {
-			$ids = INO_Sizes::image_ids( $cursor, 50 );
-			if ( ! $ids ) {
-				$done = true;
-				break;
-			}
-			foreach ( $ids as $id ) {
-				$cursor = $id;
-				++$seen;
-				$files = INO_Sizes::sized_files( $id );
-				if ( $files ) {
-					$items[] = INO_Sizes::describe( $id, $files );
-				}
-				if ( microtime( true ) - $start >= 15 ) {
-					break 2;
-				}
+		while ( $cursor < count( $dirs ) && microtime( true ) - $start < 15 ) {
+			++$seen;
+			foreach ( INO_Sizes::thumbs_in_dir( $dirs[ $cursor++ ], $main ) as $base => $thumbs ) {
+				$items[] = array(
+					'key'   => $base,
+					'title' => $base,
+					'thumb' => $u['baseurl'] . '/' . $base,
+					'count' => count( $thumbs ),
+					'bytes' => INO_Sizes::bytes( $thumbs ),
+				);
 			}
 		}
-		wp_send_json_success( array( 'items' => $items, 'cursor' => $cursor, 'done' => $done, 'seen' => $seen ) );
+		wp_send_json_success( array( 'items' => $items, 'cursor' => $cursor, 'done' => $cursor >= count( $dirs ), 'seen' => $seen ) );
 	}
 
 	public static function ajax_sizes_delete() {
 		self::guard();
-		$ids     = isset( $_POST['ids'] ) ? array_slice( array_map( 'absint', (array) wp_unslash( $_POST['ids'] ) ), 0, 10 ) : array();
+		$files   = isset( $_POST['files'] ) ? array_slice( array_map( 'sanitize_text_field', (array) wp_unslash( $_POST['files'] ) ), 0, 10 ) : array();
 		$deleted = array();
 		$kept    = array();
-		foreach ( $ids as $id ) {
-			if ( $id && current_user_can( 'edit_post', $id ) && INO_Sizes::remove( $id ) ) {
-				$deleted[] = $id;
+		foreach ( $files as $rel ) {
+			if ( INO_Sizes::remove( $rel ) ) {
+				$deleted[] = $rel;
 			} else {
-				$kept[] = $id;
+				$kept[] = $rel;
 			}
 		}
 		wp_send_json_success( array( 'deleted' => $deleted, 'kept' => $kept ) );
@@ -333,7 +329,7 @@ class INO_Admin {
 			</table>
 			<?php
 			self::section( 'unused', 'Nepoužité obrázky', 'Nájde obrázky v knižnici médií, ktoré nie sú použité v žiadnom článku, stránke, hlavnom obrázku, menu, logu ani nastaveniach. Nič sa nezmaže, kým nepotvrdíte.', array( 'Obrázok', 'Nahraný', 'Veľkosť' ), 'Vyhľadať nepoužité obrázky' );
-			self::section( 'sizes', 'Zmenšeniny', 'Nájde súbory typu meno-300x200.jpg (aj osirelé po starých témach). Odkazy na ne v obsahu sa nahradia hlavným súborom a zmenšeniny sa zmažú, ostane len hlavný obrázok.', array( 'Obrázok', 'Zmenšenín', 'Uvoľní' ), 'Vyhľadať zmenšeniny' );
+			self::section( 'sizes', 'Miniatúry v celom uploads', 'Prehľadá všetky priečinky pod wp-content/uploads a nájde miniatúry typu meno-300x200.jpg (aj .png, .webp…), ku ktorým existuje väčší hlavný súbor. Odkazy na ne v obsahu sa nahradia hlavným súborom a miniatúry sa zmažú, ostane len hlavný obrázok.', array( 'Hlavný súbor', 'Miniatúr', 'Uvoľní' ), 'Vyhľadať miniatúry' );
 			self::section( 'orphans', 'Osirelé súbory v uploads', 'Nájde obrázky v priečinkoch wp-content/uploads/RRRR/MM, ktoré nepatria žiadnej prílohe v knižnici a nikde sa nepoužívajú.', array( 'Súbor', 'Zmenený', 'Veľkosť' ), 'Vyhľadať osirelé súbory' );
 			?>
 			<p class="description"><strong>Plugin nevidí obrázky natvrdo vložené v súboroch témy ani údaje v tabuľkách iných pluginov.</strong> Zmazané súbory sa nedajú obnoviť, spravte si zálohu.</p>
