@@ -11,3 +11,9 @@ Statický web bez závislostí. Spustenie: `python3 -m http.server 8000` v tomto
 ## Ako aplikácia
 Web je PWA: `manifest.webmanifest` + ikony, režim `standalone` (bez adresného riadku), úzky stĺpec šírky mobilu aj na desktope, offline cez `sw.js`.
 Nainštalovať ide po nasadení na HTTPS (Chrome/Android: tlačidlo Inštalovať v sekcii O blogu, iPhone: Zdieľať → Pridať na plochu).
+
+## Responzivita
+- ≤359 px: krytové displeje foldov a iPhone mini (menšie okraje, dock bez popisov)
+- iPhone na šírku: nižší hero, bezpečné okraje výrezu
+- ≥600 px: rozložený fold/tablet, stĺpec 820 px, karty v dvoch stĺpcoch
+- Dvojobrazovkové zariadenia (`horizontal-viewport-segments:2`, Surface Duo): obsah sa delí v ohybe; text vľavo, ilustrácia vpravo, karty sa nikdy nerozkladajú cez ohyb
