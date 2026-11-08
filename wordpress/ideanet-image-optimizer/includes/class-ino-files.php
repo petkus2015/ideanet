@@ -34,10 +34,10 @@ class INO_Sizes {
 				}
 			}
 		}
-		$ext = preg_quote( pathinfo( $file, PATHINFO_EXTENSION ), '/' );
+		$ext = INO_Orphans::EXT; // zmenšeniny v ľubovoľnom obrázkovom formáte (napr. .jpg aj .png k jednému hlavnému súboru)
 		foreach ( (array) @scandir( $dir ) as $n ) { // phpcs:ignore
 			foreach ( $stems as $st ) {
-				if ( preg_match( '/^' . preg_quote( $st, '/' ) . '-\d+x\d+\.' . $ext . '$/i', $n ) ) {
+				if ( preg_match( '/^' . preg_quote( $st, '/' ) . '-\d+x\d+\.(?:' . $ext . ')$/i', $n ) ) {
 					$found[ $dir . '/' . $n ] = 1;
 				}
 			}
@@ -204,8 +204,10 @@ class INO_Orphans {
 		}
 		if ( preg_match( '/^(.+)-\d+x\d+(\.[a-z0-9]+)$/i', $name, $m ) ) {
 			$d = dirname( $rel );
-			if ( is_file( "$base/$d/{$m[1]}{$m[2]}" ) ) {
-				return false; // zmenšenina súboru, ktorý existuje
+			foreach ( array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'avif' ) as $e ) {
+				if ( is_file( "$base/$d/{$m[1]}.$e" ) ) {
+					return false; // zmenšenina súboru, ktorý existuje (rieši INO_Sizes)
+				}
 			}
 		}
 		return true;
