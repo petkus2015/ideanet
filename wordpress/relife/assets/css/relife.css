@@ -595,3 +595,80 @@ html.rl-has-saved .js-saved-empty{display:none}
 	.rl-next__close{position:absolute;top:-10px;right:-4px;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--rl-line);background:#131313;color:var(--rl-ink);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 }
 @media (prefers-reduced-motion:reduce){.rl-next{transition:none}}
+
+/* ===== Responzivita: iPhone (výrez, Dynamic Island), skladacie telefóny, Surface Duo ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+/* Bezpečné okraje (výrez / Dynamic Island v krajine, zaoblené rohy): obsah nezasahuje pod výrez */
+.rl-wrap{padding-left:max(32px,env(safe-area-inset-left));padding-right:max(32px,env(safe-area-inset-right))}
+@media (max-width:760px){
+	.rl-wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+	.rl-tabbar{padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+	.rl-cookie{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}
+	.rl-next{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}
+	.rl-menu__inner{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+}
+
+/* Rozložený skladací telefón / malý tablet (761–1100 px): navigácia v samostatnom riadku, nezalamuje sa na tri riadky */
+@media (min-width:761px) and (max-width:1100px){
+	.rl-header__row{row-gap:6px;flex-wrap:wrap}
+	.rl-brand__mark{font-size:50px}
+	.rl-nav{order:3;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:6px}
+	.rl-nav::-webkit-scrollbar{display:none}
+	.rl-nav__list{flex-wrap:nowrap}
+	.rl-nav__list a{white-space:nowrap}
+	.rl-pagetitle{font-size:clamp(40px,7vw,60px)}
+}
+
+/* Stredná šírka (560–760 px: Duo jedna obrazovka, Fold rozložený, veľké telefóny): viac stĺpcov */
+@media (min-width:560px) and (max-width:760px){
+	.rl-grid--3,.rl-versus__cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+	.rl-adv-offers.rl-grid--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Úzke obrazovky (vonkajší displej Galaxy Z Fold ~280–344 px, iPhone SE ~320 px) */
+@media (max-width:360px){
+	.rl-wrap{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+	.rl-brand__mark{font-size:38px}
+	.rl-brand__tag{letter-spacing:.08em}
+	.rl-herocard__title{font-size:24px}
+	.rl-pagetitle{font-size:34px}
+	.rl-content h2{font-size:24px}
+	.rl-content blockquote{font-size:22px}
+	.rl-pill{padding:0 16px;font-size:14px}
+	.rl-tab{font-size:10px;gap:2px}
+	.rl-grid--4{grid-template-columns:minmax(0,1fr)}
+	.rl-next__media{flex-basis:52px;width:52px;height:52px}
+	.rl-chartcard{padding-left:10px;padding-right:10px}
+	.rl-form__row{grid-template-columns:1fr}
+}
+
+/* Telefón na šírku (iPhone, Pixel): nižšia hlavička, malá spodná lišta, cookie lišta sa dá posúvať */
+@media (orientation:landscape) and (max-height:500px){
+	.rl-header__row{padding-top:6px;padding-bottom:6px;row-gap:2px}
+	.rl-brand__mark{font-size:34px}
+	.rl-brand__tag{display:none}
+	.rl-brand--logo{max-width:min(170px,30vw)}
+	.rl-brand .custom-logo{height:min(calc(var(--rl-logo-h,72px) * .5),var(--rl-logo-nat-h,9999px)) !important}
+	.rl-nav__list a{min-height:36px;font-size:14px;padding:0 10px}
+	.rl-hero{padding-top:12px}
+	.rl-cookie{max-height:70vh;overflow:auto;max-width:min(440px,60vw)}
+	.rl-adv-hero{padding:24px 0 16px}
+	.rl-404{padding:24px 0 20px}
+	.rl-404__code{font-size:clamp(80px,22vh,160px)}
+}
+@media (max-width:760px) and (orientation:landscape) and (max-height:500px){
+	.rl-tabbar{padding-top:2px;padding-bottom:max(4px,env(safe-area-inset-bottom))}
+	.rl-tab{min-height:44px;flex-direction:row;gap:6px;justify-content:center}
+	.rl-tab--menu{margin-top:-10px}
+	.rl-tab__fab{width:44px;height:44px;border-radius:14px}
+	.rl-footer{padding-bottom:70px}
+	.rl-next{bottom:calc(56px + env(safe-area-inset-bottom));max-width:420px}
+	.rl-cookie{bottom:calc(56px + env(safe-area-inset-bottom))}
+}
+
+/* Microsoft Surface Duo (a podobné dvojobrazovkové zariadenia) rozložené cez dve obrazovky:
+   stredová medzera (záves) nemá padnúť do textu ani kariet */
+@media (horizontal-viewport-segments:2){
+	.rl-grid--2,.rl-grid--4,.rl-hero__grid,.rl-versus,.rl-footer__grid{column-gap:calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0))}
+}

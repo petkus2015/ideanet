@@ -2,6 +2,16 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.23.0
+- **Responzivita pre iPhone, skladacie telefóny a Surface Duo:**
+  - `viewport-fit=cover` a bezpečné okraje (`env(safe-area-inset-*)`) pre výrez/Dynamic Island v krajine: obsah, spodné menu, cookie lišta a karta ďalšieho článku nezasahujú pod výrez.
+  - Rozložený Fold / malý tablet (761–1100 px): navigácia sekcií je v samostatnom posuvnom riadku (už sa nezalamuje na tri riadky).
+  - 560–760 px (Duo jedna obrazovka, Fold rozložený): 2 stĺpce kariet.
+  - Úzke obrazovky (≤360 px, vonkajší displej Galaxy Z Fold, iPhone SE): menšie nadpisy a okraje, 1 stĺpec kariet.
+  - Telefón na šírku: nižšia hlavička, malá spodná lišta, posuvná cookie lišta.
+  - Surface Duo rozložený cez dve obrazovky: medzera kariet sa zhoduje so záves­om (`viewport-segment-*`).
+  - `text-size-adjust` proti nafúknutiu textu po otočení.
+
 ## 1.22.0
 - **Plávajúca výzva na ďalší článok (mobil):** pri čítaní článku sa v poslednej tretine textu nad spodným menu zobrazí karta „Ďalší zaujímavý článok“ s obrázkom, sekciou a názvom. Vyberie sa článok z tej istej kategórie (z najnovších vyhráva ten, ktorý čitatelia najviac ukladajú). Dá sa zavrieť (pre danú návštevu už nevyskočí), skrýva sa pri päte stránky, na desktope sa nezobrazuje. Udalosti `relife_next_shown` a `relife_next_click` idú do Google tagu.
 
