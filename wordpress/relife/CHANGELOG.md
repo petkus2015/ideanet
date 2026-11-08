@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.20.0
+- **Nástroj v administrácii: Nástroje → Kontrola AdSense (GDPR).** Jedným klikom otvorí web ako návštevník (v skrytom rámci), skontroluje skript AdSense, ID vydavateľa, požiadavku na Google Funding Choices, prvky lišty (aj „googlefcInactive“), TCF, uložený súhlas, konflikty s inými cookie lištami, ads.txt a región; zo servera overí HTML bez JavaScriptu, hlavičku CSP, cache, odpoveď Google pre ID vydavateľa a aktívne pluginy. Zobrazí **najpravdepodobnejšiu príčinu a návrh opravy**.
+- Test obchádza pravidlá „neukazovať prihláseným redaktorom“ (len pre test správcu), nepoužíva cache stránok a volitelne zmaže uložený súhlas v prehliadači.
+
 ## 1.19.3
 - Vkladanie malých štýlov pluginov (kk Star Ratings a pod.) funguje aj pre štýly s relatívnymi adresami obrázkov/písiem (adresy sa prepíšu na úplné).
 - Štýl a skript kk Star Ratings sa načítavajú len v článkoch (nie na úvodnej, v archívoch a pod.).

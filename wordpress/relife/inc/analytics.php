@@ -28,7 +28,7 @@ function relife_google_tag_enabled(): bool {
 	if ( '' === relife_google_tag_id() || is_admin() || is_feed() || is_robots() || is_customize_preview() || is_preview() ) {
 		return false;
 	}
-	if ( get_theme_mod( 'relife_google_tag_skip_admins', true ) && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+	if ( ! relife_is_cmp_test() && get_theme_mod( 'relife_google_tag_skip_admins', true ) && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
 		return false;
 	}
 	return (bool) apply_filters( 'relife_google_tag_enabled', true );

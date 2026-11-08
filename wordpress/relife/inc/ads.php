@@ -35,7 +35,7 @@ function relife_ads_enabled(): bool {
 	if ( ( '' === relife_adsense_client() && '' === relife_ads_code( 'head' ) && '' === relife_ads_code( 'unit' ) ) || is_admin() || is_feed() || is_customize_preview() || is_preview() ) {
 		return false;
 	}
-	if ( get_theme_mod( 'relife_ads_skip_admins', false ) && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+	if ( ! relife_is_cmp_test() && get_theme_mod( 'relife_ads_skip_admins', false ) && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
 		return false;
 	}
 	if ( is_singular() && get_post_meta( (int) get_queried_object_id(), 'relife_no_ads', true ) ) {
