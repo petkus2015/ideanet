@@ -11,12 +11,12 @@ const store = {
 
 /* ---------- Obsah ---------- */
 const CATS = [
-  { id: 'all', label: 'Všetko', icon: '✦' },
-  { id: 'plaze', label: 'Pláže', icon: '🏖' },
-  { id: 'hory', label: 'Hory', icon: '⛰' },
-  { id: 'lesy', label: 'Lesy', icon: '🌲' },
-  { id: 'pusta', label: 'Púšť', icon: '🏜' },
-  { id: 'mesta', label: 'Mestá', icon: '🏛' }
+  { id: 'all', label: 'Všetko' },
+  { id: 'plaze', label: 'Pláže' },
+  { id: 'hory', label: 'Hory' },
+  { id: 'lesy', label: 'Lesy' },
+  { id: 'pusta', label: 'Púšť' },
+  { id: 'mesta', label: 'Mestá' }
 ];
 const ARTICLES = [
   { id: 'marinha', cat: 'plaze', scene: 'cliffs', title: 'Praia da Marinha', place: 'Lagoa, Algarve, Portugalsko', min: 6, date: '2026-10-28', featured: true,
@@ -84,7 +84,7 @@ function scene(type, id = '') {
   }
   return `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <defs><linearGradient id="${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p[0]}"/><stop offset="1" stop-color="${p[1]}"/></linearGradient></defs>
-    <rect width="400" height="240" fill="url(#${u})"/><circle cx="${290 + j(7)}" cy="${70 + j(8)}" r="16" fill="#fff" opacity=".85"/><g transform="translate(0 120)">${g}</g></svg>`;
+    <rect width="400" height="240" fill="url(#${u})"/><g transform="translate(0 120)">${g}</g></svg>`;
 }
 
 /* ---------- Téma: auto / svetlá / tmavá ---------- */
@@ -100,7 +100,7 @@ function applyTheme() {
   const mode = store.get(THEME_KEY, 'auto');
   const t = mode === 'auto' ? (isNight() ? 'dark' : 'light') : mode;
   document.documentElement.dataset.theme = t;
-  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'dark' ? '#141517' : '#f2f4f9';
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'dark' ? '#111413' : '#eef1f0';
   $('#theme .theme__icon').innerHTML = ICONS[mode];
   $('#themeLabel').textContent = mode === 'auto' ? `Auto · ${t === 'dark' ? 'noc' : 'deň'}` : LABEL[mode];
   $('#theme').setAttribute('aria-label', `Režim: ${LABEL[mode]}. Kliknutím zmeníte.`);
@@ -142,20 +142,20 @@ const city = a => a.place.split(',')[0];
 
 const cardSm = a => `<div class="card card--sm"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${scene(a.scene, a.id)}</a>${saveBtn(a.id)}
   <a class="card__body" href="#/a/${a.id}"><h3>${esc(a.title)}</h3><p>${esc(a.place.split(',').slice(-2).join(','))}</p></a></div>`;
-const cardWide = a => `<div class="card card--wide"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${scene(a.scene, a.id)}</a><span class="tag">Nový príbeh</span>${saveBtn(a.id)}
+const cardWide = a => `<div class="card card--wide"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${scene(a.scene, a.id)}</a><span class="tag">Najnovšie</span>${saveBtn(a.id)}
   <a class="card__body" href="#/a/${a.id}"><h3>${esc(a.title)}</h3><p>${esc(a.place)}</p><div class="meta"><span>${a.min} min čítania</span>·<span>${fmtDate(a.date)}</span></div></a></div>`;
 const listCard = a => `<article class="list-card"><a class="list-card__art" href="#/a/${a.id}" tabindex="-1">${scene(a.scene, a.id)}</a>
   <a href="#/a/${a.id}"><h3>${esc(a.title)}</h3><p>${esc(a.place)} · ${a.min} min</p></a>${saveBtn(a.id)}</article>`;
 const fmtDate = d => new Date(d).toLocaleDateString('sk-SK', { day: 'numeric', month: 'long', year: 'numeric' });
-const chips = active => `<div class="chips" role="group" aria-label="Kategórie">${CATS.map(c => `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id === active}"><i>${c.icon}</i>${c.label}</button>`).join('')}</div>`;
+const chips = active => `<div class="chips" role="group" aria-label="Kategórie">${CATS.map(c => `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id === active}">${c.label}</button>`).join('')}</div>`;
 const greeting = () => { const h = new Date().getHours(); return h < 10 ? 'Dobré ráno' : h < 18 ? 'Ahoj' : 'Dobrý večer'; };
 
 /* ---------- Stránky ---------- */
 function viewHome() {
   const f = ARTICLES.find(a => a.featured), heroScene = isNight() ? 'forest' : 'cliffs';
   return `<section class="hero"><div class="hero__bg">${scene(heroScene, 'hero')}</div>
-    <div class="hello"><div class="avatar" aria-hidden="true">A</div><div><small>${greeting()}, cestovateľ</small><strong>Vitaj späť!</strong></div></div>
-    <h1>Pripravený na ďalšie <em>dobrodružstvo?</em></h1>
+    <p class="dateline">${new Date().toLocaleDateString('sk-SK', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+    <h1>Kam sa vyberieme ďalej?</h1>
     <form class="search" action="#/explore" role="search" id="heroSearch"><label><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input name="q" type="search" placeholder="Hľadaj miesto, krajinu, tip…" aria-label="Hľadať"></label>
     <a class="fab" href="#/explore" aria-label="Filtre"><svg viewBox="0 0 24 24"><path d="M5 4v16M12 4v16M19 4v16M3 9h4M10 14h4M17 8h4"/></svg></a></form></section>
   <div class="wrap">
@@ -163,12 +163,8 @@ function viewHome() {
     <div class="section"><div class="section__head"><h2>Obľúbené miesta</h2><a class="link" href="#/explore">Zobraziť všetko</a></div>
       <div class="rail" id="rail">${ARTICLES.slice(1, 7).map(cardSm).join('')}</div></div>
     <div class="section">${cardWide(f)}</div>
-    <div class="section"><div class="bento">
-      <div class="tile tile--accent"><b>${ARTICLES.length}+</b><span>Príbehov z ciest</span></div>
-      <div class="tile"><b>13</b><span>Navštívených krajín</span></div>
-      <div class="tile tile--wide"><div><b>${savedIds().length}</b> <span>&nbsp;uložených offline</span></div><a class="link" href="#/saved">Otvoriť →</a></div></div></div>
     <div class="section"><div class="section__head"><h2>Najnovšie články</h2></div><div class="grid">${[...ARTICLES].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4).map(listCard).join('')}</div></div>
-    <footer class="foot">© 2026 Adventuro · Cestuj pomaly, píš čestne.</footer></div>`;
+    <footer class="foot">© 2026 Adventuro</footer></div>`;
 }
 
 let exploreState = { cat: 'all', q: '' };
@@ -203,10 +199,10 @@ async function viewArticle(id) {
     <div class="wrap"><div class="section"><div class="section__head"><h2>Čítajte ďalej</h2></div><div class="rail">${more.map(cardSm).join('')}</div></div></div></article>`;
 }
 function viewAbout() {
-  return `<div class="page"><h1>O mne</h1><p>Ahoj, som cestovateľ, ktorý píše o miestach, kde sa oplatí spomaliť.</p>
-    <div class="bento"><div class="tile tile--accent"><b>13</b><span>krajín</span></div><div class="tile"><b>15K+</b><span>čitateľov</span></div>
-    <div class="tile tile--wide"><div><b>4.8/5</b> <span>&nbsp;hodnotenie čitateľov</span></div></div></div>
-    <div class="section"><a class="btn" href="mailto:ahoj@adventuro.example">Napíš mi</a> <a class="btn btn--ghost" href="#/explore">Čítať príbehy</a></div></div>`;
+  return `<div class="page about"><h1>O blogu</h1>
+    <p>Adventuro je zbierka cestopisných zápiskov: kde sme boli, čo fungovalo a čo by sme urobili inak.</p>
+    <p>Každý článok si môžeš uložiť záložkou a čítať ho aj bez pripojenia.</p>
+    <a class="btn" href="#/explore">Čítať články</a></div>`;
 }
 
 /* ---------- Router ---------- */
