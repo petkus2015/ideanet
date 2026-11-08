@@ -171,3 +171,7 @@ button:active,.chip:active,.dock a:active,.list-card:active,.btn:active,.back:ac
 .dateline{font-size:13px;opacity:.85;margin-bottom:10px;letter-spacing:.02em}
 .dateline::first-letter{text-transform:uppercase}
 .about p{max-width:60ch;margin-bottom:1em}
+
+/* Bez viditeľného posuvníka, ako v aplikáciách (skrolovanie funguje ďalej) */
+html,body,*{scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none;width:0;height:0}
