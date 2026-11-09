@@ -224,7 +224,8 @@ button{font:inherit;color:inherit}
 .rl-article__hero img{width:100%;aspect-ratio:21/9;object-fit:cover;border-radius:20px}
 .rl-article__hero figcaption{margin-top:10px;font-size:13px}
 .rl-article__cols{display:flex;gap:56px;align-items:flex-start;flex-wrap:wrap;padding-bottom:64px}
-.rl-toc{flex:0 0 220px;position:sticky;top:20px;font-size:14px}
+.rl-sidecol{flex:0 0 220px;align-self:flex-start;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin;font-size:14px}
+.rl-toc{font-size:14px}
 .rl-toc ol{list-style:none;margin:8px 0 0;padding:0;border-top:1.5px solid var(--rl-ink)}
 .rl-toc li a{display:block;padding:10px 0;border-bottom:1px solid var(--rl-line);color:var(--rl-muted);line-height:1.35}
 .rl-toc li a:hover{color:#fff}
@@ -286,7 +287,7 @@ button{font:inherit;color:inherit}
 	.rl-grid--4{grid-template-columns:repeat(2,minmax(0,1fr))}
 	.rl-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
 	.rl-footer__grid{grid-template-columns:1fr}
-	.rl-toc{display:none}
+	.rl-sidecol{display:none}
 }
 @media (max-width:760px){
 	.rl-wrap{padding-left:16px;padding-right:16px}
@@ -672,3 +673,13 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (horizontal-viewport-segments:2){
 	.rl-grid--2,.rl-grid--4,.rl-hero__grid,.rl-versus,.rl-footer__grid{column-gap:calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0))}
 }
+
+/* Odporúčané články v ľavom stĺpci pod obsahom článku (desktop) */
+.rl-rel{margin-top:28px}
+.rl-rel ul{list-style:none;margin:8px 0 0;padding:0;border-top:1.5px solid var(--rl-ink)}
+.rl-rel li{border-bottom:1px solid var(--rl-line)}
+.rl-rel__item{display:flex;gap:12px;align-items:center;padding:12px 0;color:var(--rl-soft)}
+.rl-rel__media{flex:0 0 72px;width:72px;height:72px;border-radius:12px;overflow:hidden;display:block}
+.rl-rel__media img{width:100%;height:100%;object-fit:cover;border-radius:0}
+.rl-rel__title{font-family:var(--rl-display);font-weight:800;font-size:15px;line-height:1.2;color:var(--rl-ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rl-rel__item:hover .rl-rel__title{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}

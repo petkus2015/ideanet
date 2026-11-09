@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.24.0
+- **Odporúčané články v ľavom stĺpci článku (desktop):** pod obsahom („V ČLÁNKU“) sa zobrazia 3 odporúčané články z tej istej kategórie (z najnovších vyhrávajú tie, ktoré čitatelia najviac ukladajú), s obrázkom a názvom. Celý ľavý stĺpec sa drží pri skrolovaní. Zobrazuje sa aj vtedy, keď článok nemá obsah z nadpisov. Na tablete a mobile sa stĺpec skrýva (na mobile je plávajúca výzva na ďalší článok).
+
 ## 1.23.0
 - **Responzivita pre iPhone, skladacie telefóny a Surface Duo:**
   - `viewport-fit=cover` a bezpečné okraje (`env(safe-area-inset-*)`) pre výrez/Dynamic Island v krajine: obsah, spodné menu, cookie lišta a karta ďalšieho článku nezasahujú pod výrez.

@@ -82,3 +82,44 @@ function relife_next_article_markup(): void {
 	<?php
 }
 add_action( 'wp_footer', 'relife_next_article_markup', 5 );
+
+/**
+ * Odporúčané články z hlavnej kategórie (n kusov): spomedzi najnovších vyhrávajú tie, ktoré čitatelia najviac ukladajú.
+ *
+ * @return int[]
+ */
+function relife_related_ids( int $post_id, int $n = 3 ): array {
+	$cache = 'relife_rel_' . $post_id . '_' . $n;
+	$hit   = get_transient( $cache );
+	if ( is_array( $hit ) ) {
+		return array_map( 'intval', $hit );
+	}
+	$section = relife_primary_section( $post_id );
+	$args    = array(
+		'post_type'           => 'post',
+		'post_status'         => 'publish',
+		'post__not_in'        => array( $post_id ),
+		'posts_per_page'      => 12,
+		'ignore_sticky_posts' => true,
+		'no_found_rows'       => true,
+		'fields'              => 'ids',
+		'orderby'             => 'date',
+		'order'               => 'DESC',
+	);
+	if ( $section instanceof WP_Term ) {
+		$args['cat'] = $section->term_id;
+	}
+	$ids = get_posts( $args );
+	$pos = array_flip( $ids );
+	usort(
+		$ids,
+		static function ( $a, $b ) use ( $pos ): int {
+			$sa = (int) get_post_meta( (int) $a, 'relife_saves', true );
+			$sb = (int) get_post_meta( (int) $b, 'relife_saves', true );
+			return $sb <=> $sa ?: $pos[ $a ] <=> $pos[ $b ];
+		}
+	);
+	$ids = array_slice( array_map( 'intval', $ids ), 0, $n );
+	set_transient( $cache, $ids, 10 * MINUTE_IN_SECONDS );
+	return $ids;
+}

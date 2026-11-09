@@ -63,14 +63,37 @@ while ( have_posts() ) :
 		<?php endif; ?>
 
 		<div class="rl-wrap rl-article__cols">
-			<?php if ( ! empty( $toc ) ) : ?>
-				<aside class="rl-toc" aria-label="<?php esc_attr_e( 'Obsah článku', 'relife' ); ?>">
-					<div class="rl-kicker"><?php esc_html_e( 'V ČLÁNKU', 'relife' ); ?></div>
-					<ol>
-						<?php foreach ( $toc as $item ) : ?>
-							<li><a href="#<?php echo esc_attr( $item['id'] ); ?>"><?php echo esc_html( $item['text'] ); ?></a></li>
-						<?php endforeach; ?>
-					</ol>
+			<?php $related = relife_related_ids( $post_id, 3 ); ?>
+			<?php if ( ! empty( $toc ) || ! empty( $related ) ) : ?>
+				<aside class="rl-sidecol" aria-label="<?php esc_attr_e( 'Obsah a odporúčané články', 'relife' ); ?>">
+					<?php if ( ! empty( $toc ) ) : ?>
+						<nav class="rl-toc" aria-label="<?php esc_attr_e( 'Obsah článku', 'relife' ); ?>">
+							<div class="rl-kicker"><?php esc_html_e( 'V ČLÁNKU', 'relife' ); ?></div>
+							<ol>
+								<?php foreach ( $toc as $item ) : ?>
+									<li><a href="#<?php echo esc_attr( $item['id'] ); ?>"><?php echo esc_html( $item['text'] ); ?></a></li>
+								<?php endforeach; ?>
+							</ol>
+						</nav>
+					<?php endif; ?>
+					<?php if ( ! empty( $related ) ) : ?>
+						<div class="rl-rel">
+							<div class="rl-kicker"><?php echo $section ? esc_html( sprintf( /* translators: %s section name */ __( 'ODPORÚČAME · %s', 'relife' ), $section->name ) ) : esc_html__( 'ODPORÚČAME', 'relife' ); ?></div>
+							<ul>
+								<?php foreach ( $related as $rid ) : ?>
+									<?php $rs = relife_primary_section( $rid ); ?>
+									<li>
+										<a class="rl-rel__item" href="<?php echo esc_url( (string) get_permalink( $rid ) ); ?>">
+											<span class="rl-rel__media" style="background:<?php echo esc_attr( relife_section_color( $rs ) ); ?>">
+												<?php if ( has_post_thumbnail( $rid ) ) { echo get_the_post_thumbnail( $rid, 'relife-card-s', array( 'alt' => '', 'loading' => 'lazy', 'sizes' => '72px' ) ); } // phpcs:ignore WordPress.Security.EscapeOutput ?>
+											</span>
+											<span class="rl-rel__title"><?php echo esc_html( get_the_title( $rid ) ); ?></span>
+										</a>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</div>
+					<?php endif; ?>
 				</aside>
 			<?php endif; ?>
 
