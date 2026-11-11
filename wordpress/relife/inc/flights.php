@@ -64,3 +64,21 @@ add_action( 'admin_init', 'relife_maybe_create_flights_page' );
  * Štýl a skript bloku sa načítajú len tam, kde je blok/shortcode (to rieši samotný blok); na stránke Lacné letenky nič navyše.
  * Hlavný štýl témy sa vkladá inline, preto blok dostane vlastný súbor len keď je potrebný.
  */
+
+/**
+ * Ľavý stĺpec článku (desktop) ako oblasť pre widgety: Vzhľad → Widgety → „Ľavý stĺpec článku“ (napr. widget Lacné letenky).
+ */
+function relife_register_sidebars(): void {
+	register_sidebar(
+		array(
+			'id'            => 'relife-article-left',
+			'name'          => __( 'Ľavý stĺpec článku', 'relife' ),
+			'description'   => __( 'Zobrazí sa na desktope pod odporúčanými článkami v ľavom stĺpci článku. Vhodný je widget „Lacné letenky“.', 'relife' ),
+			'before_widget' => '<section id="%1$s" class="rl-widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<div class="rl-kicker rl-widget__title">',
+			'after_title'   => '</div>',
+		)
+	);
+}
+add_action( 'widgets_init', 'relife_register_sidebars' );

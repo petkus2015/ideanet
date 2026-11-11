@@ -359,3 +359,25 @@ a.ll-row:hover .ll-row-go svg, .ll-row-go:hover svg { transform: translateX(2px)
 .ll-row-go { border: 1px solid var(--ll-line); }
 a.ll-row:hover .ll-row-go { border-color: var(--ll-accent); }
 @media (max-width: 760px) { .ll.ll .ll-title { font-size: clamp(26px, 8vw, 34px); } }
+
+/* ===== Úzka verzia do bočného stĺpca (widget / shortcode compact="1") ===== */
+.ll.ll-compact { gap: 12px; font-size: 14px; }
+.ll-compact .ll-toolbar, .ll-compact .ll-filter, .ll-compact .ll-navbar, .ll-compact .ll-feature, .ll-compact .ll-list-wrap,
+.ll-compact .ll-watch-empty, .ll-compact .ll-actions, .ll-compact .ll-foot, .ll-compact .ll-count, .ll-compact .ll-sub,
+.ll-compact .ll-sect ~ .ll-sect, .ll-compact .ll-rail::after { display: none !important; }
+.ll.ll-compact .ll-title { font-size: 20px; margin: 0; }
+.ll.ll-compact .ll-sect { gap: 8px; }
+.ll.ll-compact .ll-sect-title { font-size: 16px; }
+.ll.ll-compact .ll-grid { display: grid; grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: minmax(0, 1fr); overflow: visible; padding: 0; scroll-snap-type: none; gap: 8px; }
+.ll.ll-compact .ll-card { padding: 12px 14px; gap: 8px; border-radius: 16px; grid-template-rows: auto auto auto; }
+.ll.ll-compact .ll-card:hover { transform: none; }
+.ll.ll-compact .ll-card-top .ll-chip, .ll.ll-compact .ll-dates, .ll.ll-compact .ll-country, .ll.ll-compact .ll-wx { display: none; }
+.ll.ll-compact .ll-city { font-size: 16px; }
+.ll.ll-compact .ll-card-bottom { padding-top: 8px; align-items: center; }
+.ll.ll-compact .ll-price small { display: none; }
+.ll.ll-compact .ll-price strong { font-size: 20px; }
+.ll.ll-compact .ll-go { width: 32px; height: 32px; }
+.ll.ll-compact .ll-go svg { width: 14px; height: 14px; }
+.ll.ll-compact .ll-price-label { min-height: 0; }
+.ll-sidebar-more { display: inline-flex; margin-top: 10px; font-weight: 700; font-size: 13px; color: var(--ll-accent, #3CFFD0); }
+.ll-sidebar-more:hover { text-decoration: underline; text-underline-offset: 3px; }

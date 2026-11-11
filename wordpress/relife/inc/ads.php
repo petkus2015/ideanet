@@ -104,9 +104,29 @@ function relife_insert_ad_in_content( string $content ): string {
 	if ( count( $ends ) < $min ) {
 		return $content . "\n<!-- RELIFE reklama: preskočená, v článku je málo odsekov (" . count( $ends ) . ' < ' . $min . ') -->';
 	}
-	$n   = (int) get_theme_mod( 'relife_ads_after_paragraph', 0 );
-	$n   = $n > 0 ? min( $n, count( $ends ) - 1 ) : (int) floor( count( $ends ) / 2 );
-	$pos = $ends[ max( 1, $n ) - 1 ];
+	$last = count( $ends ) - 1; // za reklamou ostane vždy aspoň jeden odsek
+	$n    = (int) get_theme_mod( 'relife_ads_after_paragraph', 0 );
+	if ( $n > 0 ) {
+		$idx = min( $n, $last ) - 1;
+	} else {
+		// Poloha podľa dĺžky textu: predvolene v poslednej tretine (od ~67 % textu), alebo podľa nastavenia.
+		$frac  = (float) get_theme_mod( 'relife_ads_position', '0.67' );
+		$frac  = max( 0.2, min( 0.9, $frac ) );
+		$total = max( 1, strlen( wp_strip_all_tags( $content ) ) );
+		$idx   = $last - 1;
+		$prev  = 0;
+		$len   = 0;
+		foreach ( $ends as $k => $e ) {
+			$len += strlen( wp_strip_all_tags( substr( $content, $prev, $e - $prev ) ) );
+			$prev = $e;
+			if ( $len / $total >= $frac ) {
+				$idx = $k;
+				break;
+			}
+		}
+		$idx = min( $idx, $last - 1 );
+	}
+	$pos = $ends[ max( 0, $idx ) ];
 
 	return substr( $content, 0, $pos ) . "\n" . relife_ad_unit_html() . "\n" . substr( $content, $pos );
 }
@@ -233,10 +253,22 @@ function relife_ads_customize( WP_Customize_Manager $wp_customize ): void {
 		'type'        => 'text',
 	) );
 
+	$wp_customize->add_setting( 'relife_ads_position', array( 'default' => '0.67', 'sanitize_callback' => static fn( $v ): string => in_array( (string) $v, array( '0.34', '0.5', '0.67' ), true ) ? (string) $v : '0.67' ) );
+	$wp_customize->add_control( 'relife_ads_position', array(
+		'label'   => __( 'Poloha reklamy v článku', 'relife' ),
+		'section' => 'relife_ads',
+		'type'    => 'select',
+		'choices' => array(
+			'0.34' => __( 'Koniec prvej tretiny', 'relife' ),
+			'0.5'  => __( 'Stred článku', 'relife' ),
+			'0.67' => __( 'Posledná tretina (predvolené)', 'relife' ),
+		),
+	) );
+
 	$wp_customize->add_setting( 'relife_ads_after_paragraph', array( 'default' => 0, 'sanitize_callback' => 'absint' ) );
 	$wp_customize->add_control( 'relife_ads_after_paragraph', array(
 		'label'       => __( 'Vložiť reklamu po odseku číslo', 'relife' ),
-		'description' => __( '0 = približne v strede článku. Články s menej ako 4 odsekmi reklamu v texte nemajú.', 'relife' ),
+		'description' => __( '0 = podľa nastavenia „Poloha reklamy v článku“ vyššie. Články s menej ako 4 odsekmi reklamu v texte nemajú.', 'relife' ),
 		'section'     => 'relife_ads',
 		'type'        => 'number',
 		'input_attrs' => array( 'min' => 0, 'max' => 50 ),

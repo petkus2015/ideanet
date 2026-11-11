@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.27.0
+- **Reklama v článku sa vkladá do poslednej tretiny** (od ~67 % dĺžky textu; vždy zostane aspoň jeden odsek za ňou). Poloha sa dá zmeniť: Vzhľad → Prispôsobiť → RELIFE – Reklamy → Poloha reklamy v článku (koniec prvej tretiny / stred / posledná tretina). Pole „Vložiť reklamu po odseku číslo“ (ak je vyplnené) má prednosť.
+- **Ľavý stĺpec článku ako oblasť pre widgety** (Vzhľad → Widgety → Ľavý stĺpec článku, desktop, pod odporúčanými článkami). Widget **Lacné letenky** má v ňom úzku verziu (3 karty so zoznamom najlacnejších ponúk a odkazom na stránku Lacné letenky). Úzku verziu dá vložiť aj shortcode: `[lacne_letenky compact="1" limit="3"]`.
+
 ## 1.26.0
 - **Oprava: percentá v ankete.** Percentá sa doteraz počítali len zo základných počtov zadaných v administrácii, hlas čitateľa sa nikam nezapisoval, takže pri anketách bez zadaných počtov bolo všade 0 % a po hlasovaní sa nič nezmenilo. Teraz sa hlasy **skutočne počítajú na serveri** (`POST /wp-json/relife/v1/vote`) a pripočítavajú sa k základu z administrácie; po hlasovaní sa hneď ukážu aktuálne percentá, pri opätovnom otvorení (aj zo cache stránky) sa načítajú čerstvé. Limit 5 hlasov na anketu za 24 hodín z jedného zariadenia; uzavretá anketa hlasy neprijíma.
 - Staršie ankety (stránka Ankety) ukazujú výsledky vrátane hlasov čitateľov.

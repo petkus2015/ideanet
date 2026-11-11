@@ -33,7 +33,7 @@ class Lacne_Letenky_Render {
 
 	/** [lacne_letenky limit="8" title="Najlacnejšie letenky kamkoľvek"] */
 	public static function shortcode( $atts ) {
-		return self::html( shortcode_atts( array( 'limit' => '', 'title' => '' ), $atts, 'lacne_letenky' ) );
+		return self::html( shortcode_atts( array( 'limit' => '', 'title' => '', 'compact' => '' ), $atts, 'lacne_letenky' ) );
 	}
 
 	public static function html( $args ) {
@@ -60,6 +60,9 @@ class Lacne_Letenky_Render {
 		}
 		if ( $title ) {
 			$attrs['data-title'] = $title;
+		}
+		if ( ! empty( $args['compact'] ) && '0' !== (string) $args['compact'] ) {
+			$attrs['data-compact'] = '1'; // úzka verzia do bočného stĺpca
 		}
 		$attrs['data-fonts'] = 'false'; // písma ide z témy RELIFE, nič sa nesťahuje z Google Fonts
 		if ( 'theme' === $font ) {

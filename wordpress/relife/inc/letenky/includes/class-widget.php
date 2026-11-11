@@ -19,16 +19,20 @@ class Lacne_Letenky_Widget extends WP_Widget {
 		echo $args['before_widget']; // phpcs:ignore WordPress.Security.EscapeOutput -- výstup témy
 		echo Lacne_Letenky_Render::html( // phpcs:ignore WordPress.Security.EscapeOutput -- escapované v html()
 			array(
-				'limit' => isset( $instance['limit'] ) ? (int) $instance['limit'] : 4,
-				'title' => isset( $instance['title'] ) ? $instance['title'] : '',
+				'limit'   => isset( $instance['limit'] ) ? (int) $instance['limit'] : 3,
+				'title'   => isset( $instance['title'] ) ? $instance['title'] : '',
+				'compact' => 1,
 			)
 		);
+		if ( function_exists( 'relife_flights_url' ) && '' !== relife_flights_url() ) {
+			echo '<a class="ll-sidebar-more" href="' . esc_url( relife_flights_url() ) . '">' . esc_html__( 'Všetky lacné letenky', 'relife' ) . ' →</a>'; // phpcs:ignore WordPress.Security.EscapeOutput
+		}
 		echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 
 	public function form( $instance ) {
 		$title = isset( $instance['title'] ) ? $instance['title'] : '';
-		$limit = isset( $instance['limit'] ) ? (int) $instance['limit'] : 4;
+		$limit = isset( $instance['limit'] ) ? (int) $instance['limit'] : 3;
 		?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">Nadpis</label>

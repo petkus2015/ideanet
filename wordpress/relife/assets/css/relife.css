@@ -689,3 +689,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .rl-flights{padding-top:20px}
 .rl-madv--flights{margin-top:14px}
 @media (max-width:760px){.rl-flights-hero{padding:32px 0 8px}.rl-flights .ll{margin-left:-2px;margin-right:-2px}}
+
+/* Widgety v ľavom stĺpci článku */
+.rl-widgets{margin-top:28px;display:grid;gap:24px}
+.rl-widget__title{margin-bottom:8px}
+.rl-widget a{color:inherit}

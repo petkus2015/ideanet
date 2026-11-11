@@ -544,6 +544,7 @@
       var initial = null, init = el.querySelector('script[data-ll-initial]');
       if (init) { try { initial = JSON.parse(init.textContent); } catch (e) { initial = null; } }
       if (el.getAttribute('data-font') === 'inherit') el.classList.add('ll-inherit-font');
+      if (el.getAttribute('data-compact') === '1') el.classList.add('ll-compact');
       mount(el, {
         data: initial || undefined,
         src: el.getAttribute('data-src') || undefined,

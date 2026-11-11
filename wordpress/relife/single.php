@@ -64,7 +64,7 @@ while ( have_posts() ) :
 
 		<div class="rl-wrap rl-article__cols">
 			<?php $related = relife_related_ids( $post_id, 3 ); ?>
-			<?php if ( ! empty( $toc ) || ! empty( $related ) ) : ?>
+			<?php if ( ! empty( $toc ) || ! empty( $related ) || is_active_sidebar( 'relife-article-left' ) ) : ?>
 				<aside class="rl-sidecol" aria-label="<?php esc_attr_e( 'Obsah a odporúčané články', 'relife' ); ?>">
 					<?php if ( ! empty( $toc ) ) : ?>
 						<nav class="rl-toc" aria-label="<?php esc_attr_e( 'Obsah článku', 'relife' ); ?>">
@@ -93,6 +93,9 @@ while ( have_posts() ) :
 								<?php endforeach; ?>
 							</ul>
 						</div>
+					<?php endif; ?>
+					<?php if ( is_active_sidebar( 'relife-article-left' ) ) : ?>
+						<div class="rl-widgets"><?php dynamic_sidebar( 'relife-article-left' ); ?></div>
 					<?php endif; ?>
 				</aside>
 			<?php endif; ?>
