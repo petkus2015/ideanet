@@ -154,9 +154,26 @@
 			if ( note ) { note.textContent = voted ? ( i18n.thanks || '' ) : ( i18n.beforeVote || '' ); }
 		}
 
+		function applyResults( r ) {
+			if ( ! r || ! r.pct ) { return; }
+			opts.forEach( function ( o, i ) {
+				if ( typeof r.pct[ i ] === 'number' ) { o.setAttribute( 'data-pct', String( r.pct[ i ] ) ); }
+			} );
+		}
+		function fetchJson( url, init ) {
+			if ( ! window.fetch || ! url ) { return Promise.reject(); }
+			return window.fetch( url, init ).then( function ( r ) { if ( ! r.ok ) { throw new Error(); } return r.json(); } );
+		}
+
 		var stored = lsGet( key, '' );
 		var mine = stored === '' ? -1 : parseInt( stored, 10 );
 		show( mine >= 0, mine );
+		// Čitateľ už hlasoval: stránka môže byť z cache, preto načítame čerstvé percentá.
+		if ( mine >= 0 && data.pollUrl ) {
+			fetchJson( data.pollUrl + poll.getAttribute( 'data-poll' ), { credentials: 'omit', cache: 'no-store' } )
+				.then( function ( r ) { applyResults( r ); show( true, mine ); } )
+				.catch( function () {} );
+		}
 
 		opts.forEach( function ( o, i ) {
 			o.addEventListener( 'click', function () {
@@ -164,6 +181,17 @@
 				lsSet( key, String( i ) );
 				show( true, i );
 				track( 'relife_poll_vote', { poll_id: poll.getAttribute( 'data-poll' ), option_index: i } );
+				if ( ! data.voteUrl ) { return; }
+				fetchJson( data.voteUrl, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify( { poll: Number( poll.getAttribute( 'data-poll' ) ), option: i } ),
+					credentials: 'omit'
+				} ).then( function ( r ) { applyResults( r ); show( true, i ); } ).catch( function () {
+					// Server neodpovedal (offline): ak zatiaľ nie sú žiadne výsledky, ukážeme aspoň vlastný hlas ako 100 %.
+					var any = opts.some( function ( x ) { return Number( x.getAttribute( 'data-pct' ) ) > 0; } );
+					if ( ! any ) { o.setAttribute( 'data-pct', '100' ); show( true, i ); }
+				} );
 			} );
 		} );
 	}

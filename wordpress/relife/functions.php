@@ -23,6 +23,7 @@ require_once RELIFE_DIR . '/inc/performance.php';
 require_once RELIFE_DIR . '/inc/analytics.php';
 require_once RELIFE_DIR . '/inc/adsense-check.php';
 require_once RELIFE_DIR . '/inc/stats.php';
+require_once RELIFE_DIR . '/inc/polls.php';
 require_once RELIFE_DIR . '/inc/next-article.php';
 require_once RELIFE_DIR . '/inc/ads.php';
 require_once RELIFE_DIR . '/inc/tables.php';

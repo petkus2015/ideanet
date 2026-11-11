@@ -184,7 +184,7 @@ function relife_render_poll_metabox( WP_Post $post ): void {
 	$cat    = (string) get_post_meta( $post->ID, 'relife_poll_section', true );
 	?>
 	<p>
-		<label for="relife_poll_options"><strong><?php esc_html_e( 'Možnosti (každá na nový riadok: názov | počet hlasov)', 'relife' ); ?></strong></label><br>
+		<label for="relife_poll_options"><strong><?php esc_html_e( 'Možnosti (každá na nový riadok: názov | základný počet hlasov; hlasy čitateľov sa pripočítajú)', 'relife' ); ?></strong></label><br>
 		<textarea id="relife_poll_options" name="relife_poll_options" rows="6" class="widefat" placeholder="AI nástroje | 38&#10;Fitness a zdravie | 24"><?php echo esc_textarea( $raw ); ?></textarea>
 		<span class="description"><?php esc_html_e( 'Čitateľ hlasuje len vo svojom prehliadači. Počty hlasov tu zadáte sami (napr. z externého nástroja).', 'relife' ); ?></span>
 	</p>
@@ -243,6 +243,13 @@ function relife_poll_options( int $poll_id ): array {
 			'votes' => isset( $parts[1] ) ? max( 0, (int) $parts[1] ) : 0,
 			'pct'   => 0,
 		);
+	}
+	// K základu zadanému v administrácii sa pripočítajú skutočné hlasy čitateľov (pozri inc/polls.php).
+	$live = get_post_meta( $poll_id, 'relife_poll_votes', true );
+	if ( is_array( $live ) ) {
+		foreach ( $out as $i => $opt ) {
+			$out[ $i ]['votes'] += isset( $live[ $i ] ) ? max( 0, (int) $live[ $i ] ) : 0;
+		}
 	}
 	$total = array_sum( array_column( $out, 'votes' ) );
 	foreach ( $out as $i => $opt ) {

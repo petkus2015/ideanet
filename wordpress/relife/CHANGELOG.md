@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.26.0
+- **Oprava: percentá v ankete.** Percentá sa doteraz počítali len zo základných počtov zadaných v administrácii, hlas čitateľa sa nikam nezapisoval, takže pri anketách bez zadaných počtov bolo všade 0 % a po hlasovaní sa nič nezmenilo. Teraz sa hlasy **skutočne počítajú na serveri** (`POST /wp-json/relife/v1/vote`) a pripočítavajú sa k základu z administrácie; po hlasovaní sa hneď ukážu aktuálne percentá, pri opätovnom otvorení (aj zo cache stránky) sa načítajú čerstvé. Limit 5 hlasov na anketu za 24 hodín z jedného zariadenia; uzavretá anketa hlasy neprijíma.
+- Staršie ankety (stránka Ankety) ukazujú výsledky vrátane hlasov čitateľov.
+
 ## 1.25.0
 - **Lacné letenky zabudované v téme** (pôvodne samostatný plugin „Lacné letenky VIE · BTS“ 1.16.0): shortcode `[lacne_letenky]`, blok „Lacné letenky“ v editore, widget a nastavenia v *Nastavenia → Lacné letenky*. Vzhľad je prispôsobený dizajnu RELIFE (tmavé karty, tyrkysový akcent, písma a zaoblenie témy; nič sa nesťahuje z Google Fonts).
 - Stránka **Lacné letenky** (`/lacne-letenky/`, šablóna „Lacné letenky“) sa vytvorí sama; odkaz v pätičke a v mobilnom menu.
