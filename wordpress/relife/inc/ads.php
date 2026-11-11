@@ -62,39 +62,55 @@ function relife_ad_unit_html(): string {
  * Beží pred spracovaním blokov, takže pracuje s vrchnými blokmi a nerozbije zoznamy ani citácie.
  */
 function relife_insert_ad_in_content( string $content ): string {
-	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() || ! relife_ads_enabled() || ( '' === relife_adsense_slot() && '' === relife_ads_code( 'unit' ) ) ) {
+	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() || ! relife_ads_enabled() ) {
 		return $content;
+	}
+	if ( '' === relife_adsense_slot() && '' === relife_ads_code( 'unit' ) ) {
+		return $content . "\n<!-- RELIFE reklama: v strede článku sa nevkladá, lebo nie je zadané ID jednotky ani kód reklamy -->";
 	}
 	if ( ! apply_filters( 'relife_ad_in_content', true ) ) {
 		return $content;
 	}
-	$blocks = parse_blocks( $content );
-	$paras  = array();
-	foreach ( $blocks as $i => $b ) {
-		if ( 'core/paragraph' === $b['blockName'] ) {
-			$paras[] = $i;
+
+	/*
+	 * Pracuje s hotovým HTML (po bloku aj po wpautop), preto funguje pre blokový aj starý („klasický“, vložený z iného systému) obsah.
+	 * Odseky sa počítajú len na najvyššej úrovni (nie v zoznamoch, citáciách, tabuľkách ani obrázkoch).
+	 */
+	$void   = array( 'img', 'br', 'hr', 'input', 'meta', 'link', 'source', 'area', 'col', 'embed', 'param', 'track', 'wbr' );
+	$ends   = array(); // pozície konca odsekov na najvyššej úrovni
+	$depth  = 0;
+	if ( preg_match_all( '#<script\b.*?</script>|<style\b.*?</style>|<!--.*?-->|<(/?)([a-z][a-z0-9]*)\b[^>]*?(/?)>#is', $content, $m, PREG_SET_ORDER | PREG_OFFSET_CAPTURE ) ) {
+		foreach ( $m as $t ) {
+			if ( ! isset( $t[2] ) || '' === $t[2][0] ) {
+				continue; // skript, štýl alebo komentár
+			}
+			$tag     = strtolower( $t[2][0] );
+			$closing = '/' === $t[1][0];
+			$self    = '/' === $t[3][0];
+			if ( in_array( $tag, $void, true ) || $self ) {
+				continue;
+			}
+			if ( $closing ) {
+				$depth = max( 0, $depth - 1 );
+				if ( 'p' === $tag && 0 === $depth ) {
+					$ends[] = $t[0][1] + strlen( $t[0][0] );
+				}
+			} else {
+				++$depth;
+			}
 		}
 	}
 	$min = (int) apply_filters( 'relife_ad_min_paragraphs', 4 );
-	if ( count( $paras ) < $min ) {
-		return $content; // krátky článok bez reklamy v texte
+	if ( count( $ends ) < $min ) {
+		return $content . "\n<!-- RELIFE reklama: preskočená, v článku je málo odsekov (" . count( $ends ) . ' < ' . $min . ') -->';
 	}
-	$n = (int) get_theme_mod( 'relife_ads_after_paragraph', 0 );
-	$n = $n > 0 ? min( $n, count( $paras ) - 1 ) : (int) floor( count( $paras ) / 2 );
-	$at = $paras[ max( 1, $n ) - 1 ];
+	$n   = (int) get_theme_mod( 'relife_ads_after_paragraph', 0 );
+	$n   = $n > 0 ? min( $n, count( $ends ) - 1 ) : (int) floor( count( $ends ) / 2 );
+	$pos = $ends[ max( 1, $n ) - 1 ];
 
-	$ad = array(
-		'blockName'    => 'core/html',
-		'attrs'        => array(),
-		'innerBlocks'  => array(),
-		'innerHTML'    => relife_ad_unit_html(),
-		'innerContent' => array( relife_ad_unit_html() ),
-	);
-	array_splice( $blocks, $at + 1, 0, array( $ad ) );
-
-	return serialize_blocks( $blocks );
+	return substr( $content, 0, $pos ) . "\n" . relife_ad_unit_html() . "\n" . substr( $content, $pos );
 }
-add_filter( 'the_content', 'relife_insert_ad_in_content', 8 );
+add_filter( 'the_content', 'relife_insert_ad_in_content', 20 );
 
 /**
  * Skript AdSense sa načíta až po načítaní stránky (nebrzdí LCP).

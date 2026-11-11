@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.24.1
+- **Oprava: reklama v strede článku sa nezobrazovala** pri článkoch, ktoré nie sú napísané v blokovom editore (obsah vložený z iného systému, napr. tagDiv, je „klasický“ HTML bez blokov). Vkladanie reklamy teraz pracuje s hotovým HTML, takže funguje pre blokový aj klasický obsah; odseky v zoznamoch, citáciách, tabuľkách a pod obrázkami sa nepočítajú.
+- Ak sa reklama nevloží, v zdrojovom kóde článku je komentár `RELIFE reklama: …` s dôvodom (málo odsekov alebo chýba ID jednotky/kód reklamy).
+
 ## 1.24.0
 - **Odporúčané články v ľavom stĺpci článku (desktop):** pod obsahom („V ČLÁNKU“) sa zobrazia 3 odporúčané články z tej istej kategórie (z najnovších vyhrávajú tie, ktoré čitatelia najviac ukladajú), s obrázkom a názvom. Celý ľavý stĺpec sa drží pri skrolovaní. Zobrazuje sa aj vtedy, keď článok nemá obsah z nadpisov. Na tablete a mobile sa stĺpec skrýva (na mobile je plávajúca výzva na ďalší článok).
 
