@@ -33,7 +33,7 @@ $today_q = new WP_Query(
 /** @var array<int,int> $today */
 $today = array_map( 'intval', $today_q->posts );
 
-$versus = relife_posts_by_format( 'versus', 1 );
+$versus = relife_versus_posts();
 $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 ?>
 
@@ -53,7 +53,7 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 						<span class="rl-herocard__big" aria-hidden="true"><?php echo esc_html( $h_sec ? mb_substr( $h_sec->name, 0, 2 ) : 'RE' ); ?></span>
 					<?php endif; ?>
 				</span>
-				<span class="rl-badge"><?php esc_html_e( 'VÝBER REDAKCIE', 'relife' ); ?></span>
+				<span class="rl-badge"><?php echo esc_html( relife_home_text( 'hero_badge' ) ); ?></span>
 				<span class="rl-herocard__body">
 					<h1 class="rl-herocard__title"><?php echo esc_html( get_the_title( $hero ) ); ?></h1>
 					<span class="rl-herocard__meta">
@@ -72,8 +72,8 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 <?php if ( ! empty( $quick ) ) : ?>
 <section class="rl-wrap rl-block">
 	<div class="rl-sechead">
-		<h2 class="rl-sechead__title rl-accent">QUICK TAKE</h2>
-		<span class="rl-muted"><?php esc_html_e( 'Najnovšie za 60 sekúnd', 'relife' ); ?></span>
+		<h2 class="rl-sechead__title rl-accent"><?php echo esc_html( relife_home_text( 'quick_title' ) ); ?></h2>
+		<span class="rl-muted"><?php echo esc_html( relife_home_text( 'quick_note' ) ); ?></span>
 	</div>
 	<div class="rl-grid rl-grid--4 rl-scroll-m">
 		<?php foreach ( $quick as $id ) : ?>
@@ -92,9 +92,9 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 
 <section class="rl-wrap rl-block rl-light-ish" id="dnes">
 	<div class="rl-sechead">
-		<h2 class="rl-sechead__title js-today-title" data-default="<?php esc_attr_e( 'Čo dnes stojí za tvoju pozornosť?', 'relife' ); ?>" data-mood="<?php esc_attr_e( 'Pre tvoju náladu', 'relife' ); ?>"><?php esc_html_e( 'Čo dnes stojí za tvoju pozornosť?', 'relife' ); ?></h2>
+		<h2 class="rl-sechead__title js-today-title" data-default="<?php echo esc_attr( relife_home_text( 'today_title' ) ); ?>" data-mood="<?php echo esc_attr( relife_home_text( 'today_mood' ) ); ?>"><?php echo esc_html( relife_home_text( 'today_title' ) ); ?></h2>
 		<?php $posts_page = (int) get_option( 'page_for_posts' ); ?>
-		<a class="rl-link" href="<?php echo esc_url( $posts_page > 0 ? (string) get_permalink( $posts_page ) : home_url( '/#dnes' ) ); ?>"><?php esc_html_e( 'Všetky články →', 'relife' ); ?></a>
+		<a class="rl-link" href="<?php echo esc_url( $posts_page > 0 ? (string) get_permalink( $posts_page ) : home_url( '/#dnes' ) ); ?>"><?php echo esc_html( relife_home_text( 'today_link' ) ); ?></a>
 	</div>
 	<script>(function(){var t=document.querySelector('.js-today-title');if(t&&t.dataset.mood&&document.documentElement.classList.contains('rl-has-mood')){t.textContent=t.dataset.mood}})();</script>
 	<div class="rl-moodstatus js-mood-status" hidden>
@@ -111,8 +111,8 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 
 <?php if ( ! empty( $explained ) ) : ?>
 <section class="rl-wrap rl-block">
-	<h2 class="rl-sechead__title"><?php esc_html_e( 'Vysvetlené jednoducho', 'relife' ); ?></h2>
-	<p class="rl-muted rl-lead"><?php esc_html_e( 'Formáty Explained a How to: odpovede na otázky, ktoré skutočne hľadáš.', 'relife' ); ?></p>
+	<h2 class="rl-sechead__title"><?php echo esc_html( relife_home_text( 'explained_title' ) ); ?></h2>
+	<p class="rl-muted rl-lead"><?php echo esc_html( relife_home_text( 'explained_lead' ) ); ?></p>
 	<div class="rl-grid rl-grid--2">
 		<?php foreach ( $explained as $id ) : ?>
 			<?php $es = relife_primary_section( $id ); ?>
@@ -131,8 +131,8 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 
 <section class="rl-wrap rl-block">
 	<div class="rl-sechead">
-		<h2 class="rl-sechead__title"><?php esc_html_e( 'Vedieť viac. Žiť lepšie.', 'relife' ); ?></h2>
-		<p class="rl-muted rl-sechead__note"><?php esc_html_e( 'Tri hlavné témy RELIFE.', 'relife' ); ?></p>
+		<h2 class="rl-sechead__title"><?php echo esc_html( relife_home_text( 'pillars_title' ) ); ?></h2>
+		<p class="rl-muted rl-sechead__note"><?php echo esc_html( relife_home_text( 'pillars_note' ) ); ?></p>
 	</div>
 	<div class="rl-grid rl-grid--3">
 		<?php foreach ( relife_pillars() as $pillar ) : ?>
@@ -163,21 +163,30 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 <section class="rl-wrap rl-block">
 	<div class="rl-versus">
 		<div>
-			<span class="rl-badge rl-badge--accent">VERSUS</span>
+			<span class="rl-badge rl-badge--accent"><?php echo esc_html( relife_home_text( 'versus_badge' ) ); ?></span>
 			<h2 class="rl-versus__title"><?php echo esc_html( get_the_title( $versus[0] ) ); ?></h2>
 			<p class="rl-muted"><?php echo esc_html( wp_trim_words( (string) get_the_excerpt( $versus[0] ), 30 ) ); ?></p>
-			<a class="rl-pill rl-pill--accent" href="<?php echo esc_url( (string) get_permalink( $versus[0] ) ); ?>"><?php esc_html_e( 'Prečítať porovnanie →', 'relife' ); ?></a>
+			<a class="rl-pill rl-pill--accent" href="<?php echo esc_url( (string) get_permalink( $versus[0] ) ); ?>"><?php echo esc_html( relife_home_text( 'versus_button' ) ); ?></a>
 		</div>
 		<div class="rl-versus__cards">
-			<div class="rl-vs rl-vs--a"><h3>ETF</h3><dl><dt><?php esc_html_e( 'RIZIKO', 'relife' ); ?></dt><dd><?php esc_html_e( 'Vyššie, hodnota kolíše', 'relife' ); ?></dd><dt><?php esc_html_e( 'ČASOVÝ HORIZONT', 'relife' ); ?></dt><dd><?php esc_html_e( 'Skôr roky než mesiace', 'relife' ); ?></dd><dt><?php esc_html_e( 'HODÍ SA NA', 'relife' ); ?></dt><dd><?php esc_html_e( 'Dlhodobé ciele', 'relife' ); ?></dd></dl></div>
-			<div class="rl-vs rl-vs--b"><h3><?php esc_html_e( 'Sporiaci účet', 'relife' ); ?></h3><dl><dt><?php esc_html_e( 'RIZIKO', 'relife' ); ?></dt><dd><?php esc_html_e( 'Nízke', 'relife' ); ?></dd><dt><?php esc_html_e( 'ČASOVÝ HORIZONT', 'relife' ); ?></dt><dd><?php esc_html_e( 'Kedykoľvek', 'relife' ); ?></dd><dt><?php esc_html_e( 'HODÍ SA NA', 'relife' ); ?></dt><dd><?php esc_html_e( 'Rezervu a krátke ciele', 'relife' ); ?></dd></dl></div>
+			<?php foreach ( array( 'a', 'b' ) as $vw ) : ?>
+				<?php $vc = relife_versus_card( $vw ); ?>
+				<div class="rl-vs rl-vs--<?php echo esc_attr( $vw ); ?>">
+					<h3><?php echo esc_html( $vc['title'] ); ?></h3>
+					<dl>
+						<?php foreach ( $vc['rows'] as $row ) : ?>
+							<dt><?php echo esc_html( $row[0] ); ?></dt><dd><?php echo esc_html( $row[1] ); ?></dd>
+						<?php endforeach; ?>
+					</dl>
+				</div>
+			<?php endforeach; ?>
 		</div>
 	</div>
 </section>
 <?php endif; ?>
 
 <section class="rl-wrap rl-block" id="sekcie">
-	<h2 class="rl-sechead__title"><?php esc_html_e( 'Objav svoj ďalší krok', 'relife' ); ?></h2>
+	<h2 class="rl-sechead__title"><?php echo esc_html( relife_home_text( 'tiles_title' ) ); ?></h2>
 	<div class="rl-tiles">
 		<?php foreach ( $sections as $slug => $sec ) : ?>
 			<?php $term = relife_section_term( $slug ); ?>
@@ -192,7 +201,7 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 
 <section class="rl-band rl-band--surface">
 	<div class="rl-wrap">
-		<h2 class="rl-sechead__title"><?php esc_html_e( 'Okolo sveta a okolo teba', 'relife' ); ?></h2>
+		<h2 class="rl-sechead__title"><?php echo esc_html( relife_home_text( 'around_title' ) ); ?></h2>
 		<div class="rl-grid rl-grid--4">
 			<?php foreach ( array( 'trendy', 'travel', 'style', 'life' ) as $slug ) : ?>
 				<?php
@@ -214,7 +223,7 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 
 <section class="rl-band rl-band--black">
 	<div class="rl-wrap">
-		<h2 class="rl-sechead__title"><?php esc_html_e( 'Šesť formátov. Vždy vieš, čo dostaneš.', 'relife' ); ?></h2>
+		<h2 class="rl-sechead__title"><?php echo esc_html( relife_home_text( 'formats_title' ) ); ?></h2>
 		<div class="rl-grid rl-grid--3 rl-formats">
 			<?php $n = 0; foreach ( $formats as $slug => $f ) : ++$n; ?>
 				<a class="rl-format" href="<?php echo esc_url( (string) get_term_link( $slug, 'relife_format' ) ); ?>">
@@ -229,7 +238,7 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 
 <?php if ( ! empty( $guides ) ) : ?>
 <section class="rl-wrap rl-block">
-	<h2 class="rl-sechead__title">Ultimate Guides</h2>
+	<h2 class="rl-sechead__title"><?php echo esc_html( relife_home_text( 'guides_title' ) ); ?></h2>
 	<div class="rl-grid rl-grid--4">
 		<?php foreach ( $guides as $id ) : ?>
 			<?php $gs = relife_primary_section( $id ); ?>

@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.33.0
+- **Úvodná stránka: názvy sekcií sa upravujú v administrácii** (Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka): štítok hlavného článku, Quick Take (nadpis aj popis), „Čo dnes stojí za tvoju pozornosť?“ (aj nadpis pri vybranej nálade a text odkazu), Vysvetlené jednoducho, Vedieť viac. Žiť lepšie., Versus (štítok a text tlačidla), Objav svoj ďalší krok, Okolo sveta a okolo teba, Šesť formátov a Ultimate Guides. Prázdne pole = predvolený text.
+- **Versus: výber článku** (zoznam 120 najnovších článkov alebo „Automaticky“ = najnovší vo formáte Versus) a **obsah dvoch kariet porovnania** (prvý riadok názov, ďalšie „POPIS | hodnota“).
+
 ## 1.32.0
 - **Letenky v bočnom stĺpci – nové rozloženie bez posuvníka:** jedna zaoblená karta so zoznamom riadkov (mesto + trasa + termín vľavo, cena vpravo, štítok „Najlacnejšie“), ikona lietadla v nadpise a odkaz „Všetky lacné letenky →“. Počet riadkov presne zodpovedá nastaveniu widgetu (predvolene 3).
 - **Ľavý stĺpec článku už nemá posuvník:** pripne sa pri skrolovaní len vtedy, keď sa celý zmestí na obrazovku (zistí skript), inak plynie spolu so stránkou.
