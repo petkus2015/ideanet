@@ -299,3 +299,21 @@ function relife_posts_by_section( string $slug, int $count, array $exclude = arr
 	$ids = array_map( 'intval', $q->posts );
 	return $ids;
 }
+
+/**
+ * Stránkovanie v štýle RELIFE (vycentrované, tlačidlá Predchádzajúca / číslo / Ďalšia).
+ */
+function relife_pagination(): void {
+	$arrow_l = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
+	$arrow_r = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+	the_posts_pagination(
+		array(
+			'mid_size'           => 1,
+			'end_size'           => 1,
+			'prev_text'          => $arrow_l . '<span class="rl-pg__label">' . esc_html__( 'Späť', 'relife' ) . '</span>',
+			'next_text'          => '<span class="rl-pg__label">' . esc_html__( 'Ďalej', 'relife' ) . '</span>' . $arrow_r,
+			'screen_reader_text' => __( 'Stránkovanie', 'relife' ),
+			'aria_label'         => __( 'Stránkovanie', 'relife' ),
+		)
+	);
+}

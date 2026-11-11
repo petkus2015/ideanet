@@ -28,13 +28,7 @@ get_header();
 			?>
 		</div>
 		<?php
-		the_posts_pagination(
-			array(
-				'mid_size'  => 1,
-				'prev_text' => '←',
-				'next_text' => '→',
-			)
-		);
+		relife_pagination();
 		?>
 	<?php else : ?>
 		<p class="rl-muted"><?php esc_html_e( 'Nič sa nenašlo.', 'relife' ); ?></p>

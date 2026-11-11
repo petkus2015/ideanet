@@ -76,10 +76,18 @@ $action = (string) get_theme_mod( 'relife_newsletter_action', '' );
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
 		<?php esc_html_e( 'Domov', 'relife' ); ?>
 	</a>
-	<button type="button" class="rl-tab js-search-toggle" aria-expanded="false" aria-controls="rl-search">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
-		<?php esc_html_e( 'Hľadať', 'relife' ); ?>
-	</button>
+	<?php $tab_fl = function_exists( 'relife_flights_url' ) ? relife_flights_url() : ''; ?>
+	<?php if ( '' !== $tab_fl ) : ?>
+		<a class="rl-tab js-tab" data-match="flights" href="<?php echo esc_url( $tab_fl ); ?>">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+			<?php esc_html_e( 'Letenky', 'relife' ); ?>
+		</a>
+	<?php else : ?>
+		<button type="button" class="rl-tab js-search-toggle" aria-expanded="false" aria-controls="rl-search">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+			<?php esc_html_e( 'Hľadať', 'relife' ); ?>
+		</button>
+	<?php endif; ?>
 	<button type="button" class="rl-tab rl-tab--menu js-menu-toggle" aria-expanded="false" aria-controls="rl-menu" aria-label="<?php esc_attr_e( 'Otvoriť menu', 'relife' ); ?>" data-open-label="<?php esc_attr_e( 'Zavrieť menu', 'relife' ); ?>" data-closed-label="<?php esc_attr_e( 'Otvoriť menu', 'relife' ); ?>">
 		<span class="rl-tab__fab">
 			<svg class="ico-menu" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>

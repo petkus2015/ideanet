@@ -34,7 +34,7 @@ $color = $term instanceof WP_Term && 'category' === $term->taxonomy ? relife_sec
 			}
 			?>
 		</div>
-		<?php the_posts_pagination( array( 'mid_size' => 1, 'prev_text' => '←', 'next_text' => '→' ) ); ?>
+		<?php relife_pagination(); ?>
 	<?php else : ?>
 		<p class="rl-muted"><?php esc_html_e( 'V tejto sekcii zatiaľ nič nemáme.', 'relife' ); ?></p>
 	<?php endif; ?>

@@ -379,7 +379,7 @@
 		var cls = document.body.classList;
 		qsa( '.js-tab' ).forEach( function ( a ) {
 			var m = a.getAttribute( 'data-match' );
-			var active = ( 'home' === m && cls.contains( 'home' ) ) || ( 'saved' === m && cls.contains( 'page-template-template-saved' ) );
+			var active = ( 'home' === m && cls.contains( 'home' ) ) || ( 'saved' === m && cls.contains( 'page-template-template-saved' ) ) || ( 'flights' === m && cls.contains( 'page-template-template-flights' ) );
 			a.classList.toggle( 'is-active', active );
 		} );
 	}

@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.28.0
+- **Stránkovanie** (kategórie, archívy, hľadanie): vycentrované moderné tlačidlá – „Späť“, čísla strán v kruhoch (aktuálna strana v akcentovej farbe), „Ďalej“; na mobile len šípky a čísla.
+- **Mobilné spodné menu:** položka „Hľadať“ je nahradená položkou **Letenky** (odkaz na stránku Lacné letenky, aktívna na tej stránke). Hľadanie ostáva v ikone lupy v hlavičke. Ak stránka Lacné letenky neexistuje, ostáva „Hľadať“.
+
 ## 1.27.0
 - **Reklama v článku sa vkladá do poslednej tretiny** (od ~67 % dĺžky textu; vždy zostane aspoň jeden odsek za ňou). Poloha sa dá zmeniť: Vzhľad → Prispôsobiť → RELIFE – Reklamy → Poloha reklamy v článku (koniec prvej tretiny / stred / posledná tretina). Pole „Vložiť reklamu po odseku číslo“ (ak je vyplnené) má prednosť.
 - **Ľavý stĺpec článku ako oblasť pre widgety** (Vzhľad → Widgety → Ľavý stĺpec článku, desktop, pod odporúčanými článkami). Widget **Lacné letenky** má v ňom úzku verziu (3 karty so zoznamom najlacnejších ponúk a odkazom na stránku Lacné letenky). Úzku verziu dá vložiť aj shortcode: `[lacne_letenky compact="1" limit="3"]`.

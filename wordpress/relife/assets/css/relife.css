@@ -694,3 +694,21 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .rl-widgets{margin-top:28px;display:grid;gap:24px}
 .rl-widget__title{margin-bottom:8px}
 .rl-widget a{color:inherit}
+
+/* Stránkovanie (kategórie, archívy, hľadanie): vycentrované, moderné tlačidlá */
+.navigation.pagination{display:flex;justify-content:center;margin:48px 0 16px}
+.navigation.pagination .nav-links{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px}
+.page-numbers{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:46px;height:46px;padding:0 14px;border-radius:999px;border:1.5px solid var(--rl-line);background:transparent;color:var(--rl-ink);font-weight:700;font-size:15px;line-height:1;font-variant-numeric:tabular-nums;transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .15s ease}
+a.page-numbers:hover{border-color:var(--rl-accent);color:var(--rl-accent);transform:translateY(-1px)}
+.page-numbers.current{background:var(--rl-accent);border-color:var(--rl-accent);color:#131313}
+.page-numbers.dots{border-color:transparent;min-width:28px;padding:0;color:var(--rl-muted)}
+.page-numbers.prev,.page-numbers.next{padding:0 18px;background:var(--rl-surface)}
+.page-numbers.prev svg,.page-numbers.next svg{flex:none}
+a.page-numbers:focus-visible{outline:3px solid var(--rl-accent);outline-offset:2px}
+@media (max-width:600px){
+	.navigation.pagination{margin:36px 0 8px}
+	.navigation.pagination .nav-links{gap:6px}
+	.page-numbers{min-width:44px;height:44px;padding:0 10px;font-size:14px}
+	.page-numbers.prev,.page-numbers.next{padding:0 12px}
+	.page-numbers .rl-pg__label{display:none}
+}
