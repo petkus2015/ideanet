@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "lacne-letenky/offers",
+  "title": "Lacné letenky",
+  "category": "widgets",
+  "icon": "airplane",
+  "description": "Najlacnejšie letenky z Viedne a Bratislavy: Bangkok, Dubaj, Abu Dhabí a kamkoľvek (momondo, Ryanair, Wizz Air).",
+  "keywords": ["letenky", "lety", "momondo", "ryanair", "wizz"],
+  "textdomain": "lacne-letenky",
+  "attributes": {
+    "limit": { "type": "number", "default": 0 },
+    "title": { "type": "string", "default": "" }
+  },
+  "supports": { "html": false, "align": ["wide", "full"] }
+}

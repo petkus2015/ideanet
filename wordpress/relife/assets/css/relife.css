@@ -683,3 +683,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .rl-rel__media img{width:100%;height:100%;object-fit:cover;border-radius:0}
 .rl-rel__title{font-family:var(--rl-display);font-weight:800;font-size:15px;line-height:1.2;color:var(--rl-ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .rl-rel__item:hover .rl-rel__title{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
+
+/* Lacné letenky (stránka) */
+.rl-flights-hero{padding:48px 0 12px}
+.rl-flights{padding-top:20px}
+.rl-madv--flights{margin-top:14px}
+@media (max-width:760px){.rl-flights-hero{padding:32px 0 8px}.rl-flights .ll{margin-left:-2px;margin-right:-2px}}

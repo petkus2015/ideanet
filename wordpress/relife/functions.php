@@ -28,5 +28,6 @@ require_once RELIFE_DIR . '/inc/ads.php';
 require_once RELIFE_DIR . '/inc/tables.php';
 require_once RELIFE_DIR . '/inc/redirects.php';
 require_once RELIFE_DIR . '/inc/advertise.php';
+require_once RELIFE_DIR . '/inc/flights.php';
 require_once RELIFE_DIR . '/inc/customizer.php';
 require_once RELIFE_DIR . '/inc/demo-content.php';

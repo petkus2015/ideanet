@@ -2,6 +2,11 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.25.0
+- **Lacné letenky zabudované v téme** (pôvodne samostatný plugin „Lacné letenky VIE · BTS“ 1.16.0): shortcode `[lacne_letenky]`, blok „Lacné letenky“ v editore, widget a nastavenia v *Nastavenia → Lacné letenky*. Vzhľad je prispôsobený dizajnu RELIFE (tmavé karty, tyrkysový akcent, písma a zaoblenie témy; nič sa nesťahuje z Google Fonts).
+- Stránka **Lacné letenky** (`/lacne-letenky/`, šablóna „Lacné letenky“) sa vytvorí sama; odkaz v pätičke a v mobilnom menu.
+- Ak je zároveň aktívny samostatný plugin, téma svoju kópiu nenačíta (bez duplicít). Ak predvolený zdroj cien (`HEAD`) ešte nemá súbor, použije sa záložný zo vetvy s pluginom.
+
 ## 1.24.1
 - **Oprava: reklama v strede článku sa nezobrazovala** pri článkoch, ktoré nie sú napísané v blokovom editore (obsah vložený z iného systému, napr. tagDiv, je „klasický“ HTML bez blokov). Vkladanie reklamy teraz pracuje s hotovým HTML, takže funguje pre blokový aj klasický obsah; odseky v zoznamoch, citáciách, tabuľkách a pod obrázkami sa nepočítajú.
 - Ak sa reklama nevloží, v zdrojovom kóde článku je komentár `RELIFE reklama: …` s dôvodom (málo odsekov alebo chýba ID jednotky/kód reklamy).
