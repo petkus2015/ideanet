@@ -406,3 +406,59 @@ a.ll-row:hover .ll-row-go { border-color: var(--ll-accent); }
 .ll.ll-compact .ll-price strong { font-size: 19px; }
 .ll-sidebar-more { display: inline-flex; margin-top: 10px; font-weight: 700; font-size: 13px; color: var(--ll-accent, #3CFFD0); }
 .ll-sidebar-more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ===== RELIFE: farby témy a doplnkové farby (sekcie, letiská) ===== */
+.ll {
+  --ll-pink: #FF3D8B; --ll-lime: #A6FF4D; --ll-yellow: #FFE14D; --ll-orange: #FF7A2B; --ll-purple: #8F5CFF; --ll-mint: #3CFFD0; --ll-uv: #5200FF;
+  --ll-o-VIE: var(--ll-pink); --ll-o-BTS: var(--ll-lime); --ll-o-BUD: var(--ll-purple);
+}
+/* každá sekcia má vlastnú farbu: víkend = tyrkysová, dlhší pobyt = žltá, Ázia a Emiráty = ružová */
+.ll-sect    { --ll-sect: var(--ll-mint); }
+.ll-weekend { --ll-sect: var(--ll-mint); }
+.ll-long    { --ll-sect: var(--ll-yellow); }
+.ll-asia    { --ll-sect: var(--ll-pink); }
+
+.ll.ll .ll-sect-title { position: relative; padding-left: 16px; }
+.ll.ll .ll-sect-title::before { content: ""; position: absolute; left: 0; top: .12em; bottom: .12em; width: 5px; border-radius: 3px; background: var(--ll-sect); }
+.ll-count { background: color-mix(in srgb, var(--ll-sect) 16%, transparent); color: var(--ll-sect); }
+
+/* karty: farebný pásik hore, odznaky a zvýraznenia v farbe sekcie, kód letiska v farbe odletu */
+.ll-card { box-shadow: inset 0 4px 0 var(--ll-sect); }
+.ll-card:hover { border-color: var(--ll-sect); box-shadow: inset 0 4px 0 var(--ll-sect), 0 0 0 1px var(--ll-sect), var(--ll-shadow-hi); }
+.ll-best { background: var(--ll-sect); color: #131313; }
+.ll-card:hover .ll-go { background: var(--ll-sect); color: #131313; }
+.ll-go { color: var(--ll-sect); }
+.ll-route svg { color: var(--ll-sect); }
+.ll-card[data-origin="VIE"] .ll-route { color: var(--ll-o-VIE); }
+.ll-card[data-origin="BTS"] .ll-route { color: var(--ll-o-BTS); }
+.ll-card[data-origin="BUD"] .ll-route { color: var(--ll-o-BUD); }
+.ll-chip { background: color-mix(in srgb, var(--ll-sect) 14%, transparent); color: var(--ll-ink); border-color: color-mix(in srgb, var(--ll-sect) 40%, var(--ll-line)); }
+.ll-change.is-down { color: var(--ll-lime); background: color-mix(in srgb, var(--ll-lime) 15%, transparent); }
+
+/* filter oblasti pod dlhším pobytom v žltej, zoznam Ázie v ružovej */
+.ll-long .ll-filter button[aria-pressed="true"] { background: var(--ll-yellow); color: #131313; }
+.ll-asia .ll-row-go { color: var(--ll-pink); border-color: color-mix(in srgb, var(--ll-pink) 45%, var(--ll-line)); }
+.ll-asia a.ll-row:hover .ll-row-go { background: var(--ll-pink); color: #131313; border-color: var(--ll-pink); }
+.ll-asia .ll-list { border-color: color-mix(in srgb, var(--ll-pink) 35%, var(--ll-line)); }
+.ll-asia .ll-list-toggle { color: var(--ll-pink); }
+.ll-asia .ll-row-sub .ll-alt-origin { color: var(--ll-pink); }
+
+/* karta Bangkoku: fialový prechod ako hero na úvodnej, ružové a žlté akcenty */
+.ll-feature { background: linear-gradient(135deg, var(--ll-uv) 0%, #2B0A8C 55%, #A1005E 120%); }
+.ll-feature-kicker::before { background: var(--ll-pink); box-shadow: 0 0 0 0 rgba(255, 61, 139, .55); }
+.ll-feature-cta { background: var(--ll-yellow); color: #131313; }
+.ll-feature-side strong { color: var(--ll-yellow); }
+.ll-feature .ll-route svg { color: var(--ll-yellow); }
+
+/* tlačidlo „Vyhľadaj aktuálne…“: tyrkysové; pätička a štítok čerstvosti */
+.ll-refresh { background: var(--ll-mint); }
+.ll-fresh i { background: var(--ll-lime); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ll-lime) 22%, transparent); }
+
+/* úzka verzia (bočný stĺpec): farba odletu ako pásik vľavo */
+.ll.ll-compact .ll-card { box-shadow: none; border-left: 4px solid var(--ll-sect); }
+.ll.ll-compact .ll-card[data-origin="VIE"] { border-left-color: var(--ll-o-VIE); }
+.ll.ll-compact .ll-card[data-origin="BTS"] { border-left-color: var(--ll-o-BTS); }
+.ll.ll-compact .ll-card[data-origin="BUD"] { border-left-color: var(--ll-o-BUD); }
+.ll.ll-compact .ll-card:hover { box-shadow: none; }
+.ll.ll-compact .ll-sect-title::before { content: ""; position: static; width: 28px; height: 28px; border-radius: 50%; background-color: var(--ll-sect); }
+.ll.ll-compact .ll-sect-title { padding-left: 0; }

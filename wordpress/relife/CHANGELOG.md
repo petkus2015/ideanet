@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.34.0
+- **Stránka Lacné letenky v plnej farebnej palete RELIFE:** každá sekcia má vlastnú farbu – predĺžený víkend tyrkysová, dlhší pobyt žltá, Ázia a Emiráty ružová (farebný pásik pri nadpise, pásik hore na kartách, štítok „Najlacnejšie“, počet ponúk, filtre, tlačidlá). Kód letiska je vo farbe odletu (VIE ružová, BTS limetková, BUD fialová) a pod nadpisom je legenda letísk. Karta Bangkoku má fialovo-ružový prechod so žltou cenou a tlačidlom. Hero stránky má jemnú farebnú žiaru. V bočnom stĺpci je farba odletu ako pásik vľavo.
+
 ## 1.33.0
 - **Úvodná stránka: názvy sekcií sa upravujú v administrácii** (Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka): štítok hlavného článku, Quick Take (nadpis aj popis), „Čo dnes stojí za tvoju pozornosť?“ (aj nadpis pri vybranej nálade a text odkazu), Vysvetlené jednoducho, Vedieť viac. Žiť lepšie., Versus (štítok a text tlačidla), Objav svoj ďalší krok, Okolo sveta a okolo teba, Šesť formátov a Ultimate Guides. Prázdne pole = predvolený text.
 - **Versus: výber článku** (zoznam 120 najnovších článkov alebo „Automaticky“ = najnovší vo formáte Versus) a **obsah dvoch kariet porovnania** (prvý riadok názov, ďalšie „POPIS | hodnota“).

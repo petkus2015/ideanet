@@ -243,7 +243,7 @@
     function cardHtml(d, best) {
       var from = cities[d.origin] || d.origin;
       var drop = changeHtml(d, false);
-      return '<li><a class="ll-card" ' + linkAttrs(d) + ' aria-label="' +
+      return '<li><a class="ll-card" data-origin="' + esc(d.origin) + '" ' + linkAttrs(d) + ' aria-label="' +
           esc(d.city + ', ' + d.country + ', let z ' + from + ' od ' + money(d.price, d.currency) + '. Otvoriť na ' + sourceName(d)) + '">' +
         '<div class="ll-card-top"><span class="ll-card-id"><span class="ll-route">' + esc(d.origin) + ' ' + PLANE + ' ' + esc(d.dest) + '</span>' +
           '</span>' +

@@ -16,7 +16,7 @@ if ( defined( 'LACNE_LETENKY_VERSION' ) ) {
 	return; // Aktívny je samostatný plugin.
 }
 
-define( 'LACNE_LETENKY_VERSION', '1.16.0-relife.3' );
+define( 'LACNE_LETENKY_VERSION', '1.16.0-relife.4' );
 define( 'LACNE_LETENKY_FILE', __FILE__ );
 define( 'LACNE_LETENKY_DIR', trailingslashit( __DIR__ ) );
 define( 'LACNE_LETENKY_URL', trailingslashit( RELIFE_URI . '/inc/letenky' ) );
