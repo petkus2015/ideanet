@@ -33,7 +33,33 @@ class Lacne_Letenky_Render {
 
 	/** [lacne_letenky limit="8" title="Najlacnejšie letenky kamkoľvek"] */
 	public static function shortcode( $atts ) {
-		return self::html( shortcode_atts( array( 'limit' => '', 'title' => '', 'compact' => '' ), $atts, 'lacne_letenky' ) );
+		return self::html( shortcode_atts( array( 'limit' => '', 'title' => '', 'compact' => '', 'sections' => '', 'sekcie' => '' ), $atts, 'lacne_letenky' ) );
+	}
+
+	/**
+	 * Sekcie na zobrazenie: weekend (predĺžený víkend), long (dlhší pobyt), asia (Ázia a Emiráty).
+	 * Zadajú sa ako sections="weekend,long" (alebo sekcie="vikend,pobyt,azia"); prázdne = všetky.
+	 */
+	public static function sections( $args ) {
+		$raw = '';
+		foreach ( array( 'sections', 'sekcie' ) as $k ) {
+			if ( isset( $args[ $k ] ) && '' !== $args[ $k ] ) {
+				$raw = is_array( $args[ $k ] ) ? implode( ',', $args[ $k ] ) : (string) $args[ $k ];
+				break;
+			}
+		}
+		$map = array(
+			'weekend' => 'weekend', 'vikend' => 'weekend', 'víkend' => 'weekend', 'predlzeny-vikend' => 'weekend',
+			'long' => 'long', 'pobyt' => 'long', 'dlhsi-pobyt' => 'long',
+			'asia' => 'asia', 'azia' => 'asia', 'ázia' => 'asia', 'emiraty' => 'asia',
+		);
+		$out = array();
+		foreach ( preg_split( '/[\s,;]+/', strtolower( $raw ) ) as $part ) {
+			if ( isset( $map[ $part ] ) ) {
+				$out[ $map[ $part ] ] = $map[ $part ];
+			}
+		}
+		return array_values( $out );
 	}
 
 	public static function html( $args ) {
@@ -60,6 +86,10 @@ class Lacne_Letenky_Render {
 		}
 		if ( $title ) {
 			$attrs['data-title'] = $title;
+		}
+		$sections = self::sections( $args );
+		if ( $sections ) {
+			$attrs['data-sections'] = implode( ',', $sections );
 		}
 		if ( ! empty( $args['compact'] ) && '0' !== (string) $args['compact'] ) {
 			$attrs['data-compact'] = '1'; // úzka verzia do bočného stĺpca

@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.31.0
+- **Lacné letenky: výber sekcií.** Dá sa zobraziť len vybraná sekcia – napr. iba najlacnejšie letenky **na predĺžený víkend**: shortcode `[lacne_letenky sections="weekend"]` (aj `sekcie="vikend"`), `sections="long"` / `pobyt` = dlhší pobyt do 3 mesiacov, `sections="asia"` / `azia` = Ázia a Emiráty; viac sekcií oddelíte čiarkou (`sections="weekend,long"`). Widget Lacné letenky má zaškrtávacie políčka sekcií (v úzkom ľavom stĺpci predvolene predĺžený víkend). Bez zadania sa ukážu všetky sekcie ako doteraz. Ak sekcia víkendu nemá ponuky, ukáže sa správa namiesto prázdneho bloku.
+
 ## 1.30.0
 - **Výber kategórií pre úvodnú stránku:** Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka. Pre každý z troch stĺpcov sekcie „Vedieť viac. Žiť lepšie.“ vyberiete ľubovoľnú kategóriu (v zozname je počet článkov) alebo ponecháte „Automaticky“ (TECH, HEALTH, MONEY). Názov, popis (z popisu kategórie), farba (pri úprave kategórie: „Farba sekcie“) a odkaz sa berú z vybranej kategórie.
 

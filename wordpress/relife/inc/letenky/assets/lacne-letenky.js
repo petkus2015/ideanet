@@ -400,13 +400,19 @@
     var hasWx = allDeals.concat(weekendDeals, watch.map(function (w) { return w.deal; }), listed.map(function (w) { return w.deal; }))
       .some(function (d) { return d && d.weather; });
 
+    // Ktoré sekcie sa majú zobraziť (shortcode sections="weekend,long,asia"): predĺžený víkend, dlhší pobyt, Ázia a Emiráty.
+    var wantList = (opts.sections && opts.sections.length) ? opts.sections : ['weekend', 'long', 'asia'];
+    function want(k) { return wantList.indexOf(k) !== -1; }
+    var onlyWeekendEmpty = wantList.length === 1 && wantList[0] === 'weekend' && !weekendDeals.length;
+
     // Blok začína rovno ponukami; nadpis sa ukáže, len ak ho web zadá (data-title / Nadpis v nastaveniach).
     el.innerHTML =
       (opts.title ? '<h2 class="ll-title">' + esc(opts.title) + '</h2>' : '') +
       (hasAny || weekendDeals.length ? toolbarHtml() : '') +
-      weekendHtml() +   // 1. predĺžený víkend
-      longHtml() +      // 2. dlhší pobyt do 3 mesiacov
-      asiaHtml() +      // 3. Ázia a Emiráty
+      (want('weekend') ? weekendHtml() : '') +   // 1. predĺžený víkend
+      (want('long') ? longHtml() : '') +         // 2. dlhší pobyt do 3 mesiacov
+      (want('asia') ? asiaHtml() : '') +         // 3. Ázia a Emiráty
+      (onlyWeekendEmpty ? '<div class="ll-empty"><b>Na predĺžený víkend práve nemáme ponuky</b><span>Nové ceny pribudnú pri najbližšom hľadaní o 7:00, 12:00 alebo 18:00.</span></div>' : '') +
       '<div class="ll-actions">' +
         '<button type="button" class="ll-refresh" data-refresh>' + REFRESH + '<span>Vyhľadaj aktuálne lacné letenky</span></button>' +
         '<p class="ll-msg" role="status" aria-live="polite"' + (note ? '' : ' hidden') + '>' + esc(note) + '</p>' +
@@ -552,6 +558,7 @@
         title: el.getAttribute('data-title') || undefined,
         affiliate: (function () { try { return JSON.parse(el.getAttribute('data-affiliate') || '') || undefined; } catch (e) { return undefined; } })(),
         fonts: el.getAttribute('data-fonts') !== 'false',
+        sections: (el.getAttribute('data-sections') || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean),
         autoRefresh: el.hasAttribute('data-autoload')
       });
     });
