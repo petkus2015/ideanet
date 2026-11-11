@@ -125,7 +125,7 @@ $other_slugs   = array( 'trendy', 'travel', 'style', 'life' );
 				continue;
 			}
 			$sec  = $menu_sections[ $slug ];
-			$term = get_category_by_slug( $slug );
+			$term = relife_section_term( $slug );
 			?>
 			<a class="rl-mpillar" style="background:<?php echo esc_attr( $sec['color'] ); ?>" href="<?php echo esc_url( $term instanceof WP_Term ? (string) get_category_link( $term ) : home_url( '/' ) ); ?>">
 				<span class="rl-mpillar__initial" aria-hidden="true"><?php echo esc_html( mb_substr( $sec['name'], 0, 1 ) ); ?></span>
@@ -150,7 +150,7 @@ $other_slugs   = array( 'trendy', 'travel', 'style', 'life' );
 					continue;
 				}
 				$sec  = $menu_sections[ $slug ];
-				$term = get_category_by_slug( $slug );
+				$term = relife_section_term( $slug );
 				$tops = array_slice( array_filter( array_map( 'trim', explode( '•', $sec['topics'] ) ) ), 0, 2 );
 				?>
 				<a class="rl-mtile" style="background:<?php echo esc_attr( $sec['color'] ); ?>" href="<?php echo esc_url( $term instanceof WP_Term ? (string) get_category_link( $term ) : home_url( '/' ) ); ?>">

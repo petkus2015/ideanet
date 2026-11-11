@@ -147,12 +147,14 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 			<div class="rl-pillar">
 				<div class="rl-pillar__bar" style="background:<?php echo esc_attr( $sec['color'] ); ?>"></div>
 				<div class="rl-pillar__head">
-					<?php $pterm = get_category_by_slug( $slug ); ?>
+					<?php $pterm = relife_section_term( $slug ); ?>
 					<a href="<?php echo esc_url( $pterm instanceof WP_Term ? (string) get_category_link( $pterm ) : home_url( '/' ) ); ?>"><h3><?php echo esc_html( $sec['name'] ); ?></h3></a>
 				</div>
 				<p class="rl-muted"><?php echo esc_html( $sec['desc'] ); ?></p>
 				<?php if ( $lead ) : ?>
 					<?php relife_card( (int) $lead, array( 'save' => true ) ); ?>
+				<?php elseif ( current_user_can( 'manage_categories' ) ) : ?>
+					<p class="rl-muted rl-pillar__empty"><?php echo esc_html( sprintf( /* translators: %s section name */ __( 'Admin: v sekcii %s zatiaľ nie sú články. Priraďte články do kategórie so slugom „%s“ (alebo kategóriu premenujte).', 'relife' ), $sec['name'], $slug ) ); ?></p>
 				<?php endif; ?>
 				<div class="rl-list">
 					<?php foreach ( $ids as $id ) { relife_list_item( (int) $id ); } ?>
@@ -183,7 +185,7 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 	<h2 class="rl-sechead__title"><?php esc_html_e( 'Objav svoj ďalší krok', 'relife' ); ?></h2>
 	<div class="rl-tiles">
 		<?php foreach ( $sections as $slug => $sec ) : ?>
-			<?php $term = get_category_by_slug( $slug ); ?>
+			<?php $term = relife_section_term( $slug ); ?>
 			<a class="rl-tile" style="background:<?php echo esc_attr( $sec['color'] ); ?>" href="<?php echo esc_url( $term instanceof WP_Term ? (string) get_category_link( $term ) : home_url( '/' ) ); ?>">
 				<span class="rl-tile__initial" aria-hidden="true"><?php echo esc_html( mb_substr( $sec['name'], 0, 1 ) ); ?></span>
 				<span class="rl-tile__name"><?php echo esc_html( ucfirst( strtolower( $sec['name'] ) ) ); ?></span>

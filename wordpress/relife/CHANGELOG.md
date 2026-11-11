@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.29.0
+- **Oprava: sekcia „Vedieť viac. Žiť lepšie.“ nenačítala HEALTH a MONEY.** Téma hľadala články len v kategóriách s presným slugom `tech`, `health`, `money`. Ak majú kategórie na webe iný slug alebo názov (napr. „zdravie“, „peniaze“, „health-2“), stĺpec ostal prázdny. Teraz sa kategória nájde aj podľa prezývky/názvu/slugu s číslom a berie sa tá s najviac článkami (`relife_section_term`, rozšíriteľné filtrom `relife_section_aliases`). Platí pre sekciu na úvodnej, odkazy v menu, farby sekcií a odporúčané články.
+- Ak je pilier stále prázdny, administrátorovi sa ukáže poznámka, aký slug kategórie má použiť.
+
 ## 1.28.0
 - **Stránkovanie** (kategórie, archívy, hľadanie): vycentrované moderné tlačidlá – „Späť“, čísla strán v kruhoch (aktuálna strana v akcentovej farbe), „Ďalej“; na mobile len šípky a čísla.
 - **Mobilné spodné menu:** položka „Hľadať“ je nahradená položkou **Letenky** (odkaz na stránku Lacné letenky, aktívna na tej stránke). Hľadanie ostáva v ikone lupy v hlavičke. Ak stránka Lacné letenky neexistuje, ostáva „Hľadať“.

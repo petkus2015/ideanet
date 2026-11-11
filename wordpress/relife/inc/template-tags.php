@@ -12,6 +12,78 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Prezývky kategórií: ak na webe kategória nemá slug z RELIFE zoznamu (napr. „zdravie“ namiesto „health“),
+ * nájde sa podľa názvu/slugu. Rozšíriteľné filtrom `relife_section_aliases`.
+ *
+ * @return array<string, string[]>
+ */
+function relife_section_aliases(): array {
+	return (array) apply_filters(
+		'relife_section_aliases',
+		array(
+			'trendy' => array( 'trend', 'trendy', 'trendy-a-kultura', 'kultura' ),
+			'tech'   => array( 'technologie', 'technologia', 'tech-news', 'technika', 'it' ),
+			'health' => array( 'zdravie', 'zdravi', 'zdravie-a-fitness', 'zdravy-zivot', 'fitness' ),
+			'money'  => array( 'peniaze', 'financie', 'finance', 'osobne-financie', 'investovanie', 'ekonomika' ),
+			'travel' => array( 'cestovanie', 'cestovatel', 'cestovatelstvo' ),
+			'style'  => array( 'styl', 'lifestyle', 'moda', 'dizajn' ),
+			'life'   => array( 'zivot', 'zivotny-styl', 'osobny-rozvoj' ),
+		)
+	);
+}
+
+/**
+ * Kategória, ktorá zodpovedá sekcii RELIFE (tech, health, money, …). Preferuje presný slug, ak v ňom sú články,
+ * inak nájde kategóriu s prezývkou alebo slugom s číslom (health-2) a s najviac článkami.
+ */
+function relife_section_term( string $slug ): ?WP_Term {
+	static $map = null;
+	if ( null === $map ) {
+		$map   = array();
+		$all   = get_categories( array( 'hide_empty' => false ) );
+		$aliases = relife_section_aliases();
+		$norm  = static fn( string $v ): string => strtolower( remove_accents( $v ) );
+		foreach ( array_keys( relife_sections() ) as $sec ) {
+			$cands = array_merge( array( $sec ), array_map( $norm, $aliases[ $sec ] ?? array() ) );
+			$exact = null;
+			$best  = null;
+			foreach ( $all as $t ) {
+				if ( $t->slug === $sec ) {
+					$exact = $t;
+					continue;
+				}
+				$slug_n = $norm( $t->slug );
+				$name_n = sanitize_title( $norm( $t->name ) );
+				$hit    = in_array( $slug_n, $cands, true ) || in_array( $name_n, $cands, true ) || (bool) preg_match( '/^' . preg_quote( $sec, '/' ) . '-\d+$/', $slug_n );
+				if ( $hit && ( null === $best || $t->count > $best->count ) ) {
+					$best = $t;
+				}
+			}
+			if ( $exact instanceof WP_Term && ( $exact->count > 0 || null === $best ) ) {
+				$map[ $sec ] = $exact;
+			} else {
+				$map[ $sec ] = $best;
+			}
+		}
+	}
+	$t = $map[ $slug ] ?? null;
+	return $t instanceof WP_Term ? $t : null;
+}
+
+/**
+ * Slug sekcie RELIFE, do ktorej kategória patrí (alebo prázdny reťazec).
+ */
+function relife_term_section_slug( WP_Term $term ): string {
+	foreach ( array_keys( relife_sections() ) as $sec ) {
+		$t = relife_section_term( $sec );
+		if ( $t instanceof WP_Term && $t->term_id === $term->term_id ) {
+			return $sec;
+		}
+	}
+	return '';
+}
+
+/**
  * Hlavná sekcia (kategória) článku. Prednosť má sekcia z RELIFE zoznamu.
  */
 function relife_primary_section( int $post_id = 0 ): ?WP_Term {
@@ -22,7 +94,7 @@ function relife_primary_section( int $post_id = 0 ): ?WP_Term {
 	}
 	$known = array_keys( relife_sections() );
 	foreach ( $terms as $term ) {
-		if ( in_array( $term->slug, $known, true ) ) {
+		if ( in_array( $term->slug, $known, true ) || '' !== relife_term_section_slug( $term ) ) {
 			return $term;
 		}
 	}
@@ -47,7 +119,8 @@ function relife_section_color( ?WP_Term $term ): string {
 		return $custom;
 	}
 	$sections = relife_sections();
-	return $sections[ $term->slug ]['color'] ?? '#3CFFD0';
+	$sec      = isset( $sections[ $term->slug ] ) ? $term->slug : relife_term_section_slug( $term );
+	return $sections[ $sec ]['color'] ?? '#3CFFD0';
 }
 
 /**
@@ -292,7 +365,8 @@ function relife_posts_by_section( string $slug, int $count, array $exclude = arr
 			'no_found_rows'       => true,
 			'fields'              => 'ids',
 			'post__not_in'        => $exclude,
-			'category_name'       => $slug,
+			'cat'                 => ( relife_section_term( $slug ) instanceof WP_Term ) ? relife_section_term( $slug )->term_id : 0,
+			'category_name'       => ( relife_section_term( $slug ) instanceof WP_Term ) ? '' : $slug,
 		)
 	);
 	/** @var array<int,int> $ids */

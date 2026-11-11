@@ -33,7 +33,7 @@ $latest = get_posts(
 		<ul class="rl-404__sections" aria-label="<?php esc_attr_e( 'Sekcie', 'relife' ); ?>">
 			<?php foreach ( relife_sections() as $slug => $s ) : ?>
 				<?php
-				$term = get_category_by_slug( $slug );
+				$term = relife_section_term( $slug );
 				$url  = $term instanceof WP_Term ? get_category_link( $term ) : '';
 				if ( '' === $url || is_wp_error( $url ) ) {
 					continue;
