@@ -132,29 +132,24 @@ $guides = relife_posts_by_format( 'ultimate-guide', 4 );
 <section class="rl-wrap rl-block">
 	<div class="rl-sechead">
 		<h2 class="rl-sechead__title"><?php esc_html_e( 'Vedieť viac. Žiť lepšie.', 'relife' ); ?></h2>
-		<p class="rl-muted rl-sechead__note"><?php esc_html_e( 'Tri piliere RELIFE: technológie, zdravie a peniaze.', 'relife' ); ?></p>
+		<p class="rl-muted rl-sechead__note"><?php esc_html_e( 'Tri hlavné témy RELIFE.', 'relife' ); ?></p>
 	</div>
 	<div class="rl-grid rl-grid--3">
-		<?php foreach ( array( 'tech', 'health', 'money' ) as $slug ) : ?>
+		<?php foreach ( relife_pillars() as $pillar ) : ?>
 			<?php
-			$sec = $sections[ $slug ] ?? null;
-			if ( null === $sec ) {
-				continue;
-			}
-			$ids  = relife_posts_by_section( $slug, 4 );
+			$ids  = $pillar['ids'];
 			$lead = array_shift( $ids );
 			?>
 			<div class="rl-pillar">
-				<div class="rl-pillar__bar" style="background:<?php echo esc_attr( $sec['color'] ); ?>"></div>
+				<div class="rl-pillar__bar" style="background:<?php echo esc_attr( $pillar['color'] ); ?>"></div>
 				<div class="rl-pillar__head">
-					<?php $pterm = relife_section_term( $slug ); ?>
-					<a href="<?php echo esc_url( $pterm instanceof WP_Term ? (string) get_category_link( $pterm ) : home_url( '/' ) ); ?>"><h3><?php echo esc_html( $sec['name'] ); ?></h3></a>
+					<a href="<?php echo esc_url( $pillar['url'] ); ?>"><h3><?php echo esc_html( $pillar['name'] ); ?></h3></a>
 				</div>
-				<p class="rl-muted"><?php echo esc_html( $sec['desc'] ); ?></p>
+				<p class="rl-muted"><?php echo esc_html( $pillar['desc'] ); ?></p>
 				<?php if ( $lead ) : ?>
 					<?php relife_card( (int) $lead, array( 'save' => true ) ); ?>
 				<?php elseif ( current_user_can( 'manage_categories' ) ) : ?>
-					<p class="rl-muted rl-pillar__empty"><?php echo esc_html( sprintf( /* translators: %s section name */ __( 'Admin: v sekcii %s zatiaľ nie sú články. Priraďte články do kategórie so slugom „%s“ (alebo kategóriu premenujte).', 'relife' ), $sec['name'], $slug ) ); ?></p>
+					<p class="rl-muted rl-pillar__empty"><?php echo esc_html( sprintf( /* translators: %s section name */ __( 'Admin: v stĺpci %s zatiaľ nie sú články. Kategóriu vyberiete vo Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka.', 'relife' ), $pillar['name'] ) ); ?></p>
 				<?php endif; ?>
 				<div class="rl-list">
 					<?php foreach ( $ids as $id ) { relife_list_item( (int) $id ); } ?>

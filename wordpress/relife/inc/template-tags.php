@@ -391,3 +391,64 @@ function relife_pagination(): void {
 		)
 	);
 }
+
+/**
+ * Články z konkrétnej kategórie (podľa ID, vrátane podkategórií).
+ *
+ * @param int[] $exclude
+ * @return int[]
+ */
+function relife_posts_by_term( int $term_id, int $count, array $exclude = array() ): array {
+	$q = new WP_Query(
+		array(
+			'posts_per_page'      => $count,
+			'ignore_sticky_posts' => true,
+			'no_found_rows'       => true,
+			'fields'              => 'ids',
+			'post__not_in'        => $exclude,
+			'cat'                 => $term_id,
+		)
+	);
+	return array_map( 'intval', $q->posts );
+}
+
+/**
+ * Tri piliere na úvodnej stránke („Vedieť viac. Žiť lepšie.“). Každý je buď kategória vybraná v Customizeri
+ * (Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka), alebo automaticky TECH / HEALTH / MONEY.
+ *
+ * @return array<int, array{name:string,desc:string,color:string,url:string,ids:int[]}>
+ */
+function relife_pillars(): array {
+	$sections = relife_sections();
+	$auto     = array( 1 => 'tech', 2 => 'health', 3 => 'money' );
+	$out      = array();
+	foreach ( $auto as $i => $slug ) {
+		$chosen = (int) get_theme_mod( 'relife_pillar_' . $i, 0 );
+		$term   = $chosen > 0 ? get_term( $chosen, 'category' ) : null;
+		if ( $term instanceof WP_Term ) {
+			$sec_slug = isset( $sections[ $term->slug ] ) ? $term->slug : relife_term_section_slug( $term );
+			$desc     = '' !== trim( (string) $term->description ) ? wp_strip_all_tags( (string) $term->description ) : (string) ( $sections[ $sec_slug ]['desc'] ?? '' );
+			$out[]    = array(
+				'name'  => '' !== $sec_slug ? (string) $sections[ $sec_slug ]['name'] : mb_strtoupper( $term->name ),
+				'desc'  => $desc,
+				'color' => relife_section_color( $term ),
+				'url'   => (string) get_category_link( $term ),
+				'ids'   => relife_posts_by_term( $term->term_id, 4 ),
+			);
+			continue;
+		}
+		if ( ! isset( $sections[ $slug ] ) ) {
+			continue;
+		}
+		$t     = relife_section_term( $slug );
+		$out[] = array(
+			'name'  => (string) $sections[ $slug ]['name'],
+			'desc'  => (string) $sections[ $slug ]['desc'],
+			'color' => (string) $sections[ $slug ]['color'],
+			'url'   => $t instanceof WP_Term ? (string) get_category_link( $t ) : home_url( '/' ),
+			'ids'   => relife_posts_by_section( $slug, 4 ),
+			'slug'  => $slug,
+		);
+	}
+	return $out;
+}

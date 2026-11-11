@@ -111,6 +111,33 @@ function relife_customize_register( WP_Customize_Manager $wp_customize ): void {
 		)
 	);
 
+	// Úvodná stránka: ktoré kategórie sa zobrazia v troch pilieroch „Vedieť viac. Žiť lepšie.“.
+	$cats    = array( 0 => __( 'Automaticky (predvolená sekcia RELIFE)', 'relife' ) );
+	foreach ( get_categories( array( 'hide_empty' => false ) ) as $cat ) {
+		$cats[ (int) $cat->term_id ] = sprintf( '%s (%d)', $cat->name, (int) $cat->count );
+	}
+	$wp_customize->add_section(
+		'relife_home',
+		array(
+			'title'       => __( 'RELIFE – Úvodná stránka', 'relife' ),
+			'description' => __( 'Vyberte kategórie, ktoré sa zobrazia v sekcii „Vedieť viac. Žiť lepšie.“ na úvodnej stránke. Číslo v zátvorke je počet článkov.', 'relife' ),
+			'priority'    => 29,
+		)
+	);
+	foreach ( array( 1 => 'TECH', 2 => 'HEALTH', 3 => 'MONEY' ) as $i => $default_name ) {
+		$wp_customize->add_setting( 'relife_pillar_' . $i, array( 'default' => 0, 'sanitize_callback' => 'absint' ) );
+		$wp_customize->add_control(
+			'relife_pillar_' . $i,
+			array(
+				/* translators: 1: pillar number, 2: default section */
+				'label'   => sprintf( __( 'Stĺpec %1$d (predvolene %2$s)', 'relife' ), $i, $default_name ),
+				'section' => 'relife_home',
+				'type'    => 'select',
+				'choices' => $cats,
+			)
+		);
+	}
+
 	$wp_customize->add_setting(
 		'relife_tagline_footer',
 		array(
