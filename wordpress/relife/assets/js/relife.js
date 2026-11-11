@@ -376,6 +376,19 @@
 			checkNext();
 		}
 
+		/* Ľavý stĺpec článku: pripne sa len ak sa celý zmestí na obrazovku (bez vnútorného posuvníka). */
+		var side = qs( '.rl-sidecol' );
+		if ( side ) {
+			var fitSide = function () {
+				var fits = window.innerWidth > 1100 && side.offsetHeight + 40 <= window.innerHeight;
+				side.classList.toggle( 'is-stuck', fits );
+			};
+			fitSide();
+			window.addEventListener( 'resize', fitSide );
+			window.addEventListener( 'load', fitSide );
+			window.setTimeout( fitSide, 1500 ); /* po dokreslení widgetu (letenky) sa zmení výška */
+		}
+
 		var cls = document.body.classList;
 		qsa( '.js-tab' ).forEach( function ( a ) {
 			var m = a.getAttribute( 'data-match' );

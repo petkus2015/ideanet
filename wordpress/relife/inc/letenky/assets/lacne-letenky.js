@@ -205,7 +205,7 @@
     // predĺžený víkend: odlet štvrtok/piatok, návrat nedeľa/pondelok (zostavuje scripts/update_deals.py)
     var weekendDeals = fresh
       ? (data.weekend || []).filter(function (d) { return d['return'] && inWindow(d) && fromOrigin(d); })
-          .sort(function (a, b) { return a.price - b.price; }).slice(0, Math.max(limit, 8)).sort(order)
+          .sort(function (a, b) { return a.price - b.price; }).slice(0, opts.compact ? limit : Math.max(limit, 8)).sort(order)
       : [];
 
     function datesText(d) {
@@ -558,6 +558,7 @@
         title: el.getAttribute('data-title') || undefined,
         affiliate: (function () { try { return JSON.parse(el.getAttribute('data-affiliate') || '') || undefined; } catch (e) { return undefined; } })(),
         fonts: el.getAttribute('data-fonts') !== 'false',
+        compact: el.getAttribute('data-compact') === '1',
         sections: (el.getAttribute('data-sections') || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean),
         autoRefresh: el.hasAttribute('data-autoload')
       });

@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.32.0
+- **Letenky v bočnom stĺpci – nové rozloženie bez posuvníka:** jedna zaoblená karta so zoznamom riadkov (mesto + trasa + termín vľavo, cena vpravo, štítok „Najlacnejšie“), ikona lietadla v nadpise a odkaz „Všetky lacné letenky →“. Počet riadkov presne zodpovedá nastaveniu widgetu (predvolene 3).
+- **Ľavý stĺpec článku už nemá posuvník:** pripne sa pri skrolovaní len vtedy, keď sa celý zmestí na obrazovku (zistí skript), inak plynie spolu so stránkou.
+
 ## 1.31.0
 - **Lacné letenky: výber sekcií.** Dá sa zobraziť len vybraná sekcia – napr. iba najlacnejšie letenky **na predĺžený víkend**: shortcode `[lacne_letenky sections="weekend"]` (aj `sekcie="vikend"`), `sections="long"` / `pobyt` = dlhší pobyt do 3 mesiacov, `sections="asia"` / `azia` = Ázia a Emiráty; viac sekcií oddelíte čiarkou (`sections="weekend,long"`). Widget Lacné letenky má zaškrtávacie políčka sekcií (v úzkom ľavom stĺpci predvolene predĺžený víkend). Bez zadania sa ukážu všetky sekcie ako doteraz. Ak sekcia víkendu nemá ponuky, ukáže sa správa namiesto prázdneho bloku.
 
