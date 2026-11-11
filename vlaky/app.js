@@ -428,7 +428,7 @@
   let stopCount = null, stopCountFor = null;
   function importantVia(names, max = 6) {
     if (!names || names.length <= max) return names || [];
-    if (stopCountFor !== state.tt) {
+    if (!stopCount || stopCountFor !== state.tt) {
       stopCountFor = state.tt;
       stopCount = new Map();
       (state.tt?.trips || []).forEach(x => x[3].forEach(([si]) => { const n = state.tt.stations[si][0]; stopCount.set(n, (stopCount.get(n) || 0) + 1); }));
@@ -473,7 +473,7 @@
   function tripOf(t) {
     const tt = state.tt;
     if (!tt || !t) return null;
-    if (tripIdxFor !== tt) {
+    if (!tripIdx || tripIdxFor !== tt) {
       tripIdxFor = tt;
       tripIdx = new Map();
       tt.trips.forEach(x => numKeys(x[1]).forEach(k => { if (!tripIdx.has(k)) tripIdx.set(k, []); tripIdx.get(k).push(x); }));
@@ -851,6 +851,7 @@
       hint.innerHTML = 'Presné časy odchodov a príchodov ukáže až cestovný poriadok, ktorý sa zatiaľ nenačítal. Zatiaľ vidíte vlaky na trati '
         + (state.boardMode === 'dep' ? 'smerom k stanici, ktoré budú pokračovať ďalej' : 'smerom do stanice')
         + '. Rýchliky nemusia v každej stanici zastaviť.'
+        + (CFG.ttError ? ` <b>Chyba pri zostavení:</b> ${esc(CFG.ttError)}` : '')
         + (CFG.adminUrl ? ` <a href="${esc(CFG.adminUrl)}" target="_top">Nahrať cestovný poriadok (vidí len správca webu)</a>` : '');
       $('fidsNote').textContent = '';
     }

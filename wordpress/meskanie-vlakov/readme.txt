@@ -3,7 +3,7 @@ Tags: vlaky, meškanie, odchody, ŽSR, cestovný poriadok
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 
 Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku.
@@ -53,6 +53,10 @@ Vymažte cache optimalizačného pluginu a Cloudflare. Ak to nepomôže, v nasta
 Písma z Google Fonts sa dajú vypnúť v nastaveniach. Plugin nič neukladá o návštevníkoch; v prehliadači si pamätá len vybranú stanicu a veľkosť písma.
 
 == Changelog ==
+
+= 1.3.1 =
+* Oprava chyby „Cannot read properties of null (reading 'get')“ na tabuli, keď chýba cestovný poriadok.
+* Správca webu vidí priamo na stránke dôvod, prečo sa cestovný poriadok nezostavil.
 
 = 1.3.0 =
 * Cestovný poriadok ŽSR (GTFS, platí do 12. 12. 2026) je pribalený k pluginu: tabuľa odchodov a príchodov funguje hneď, aj keď sťahovanie zo zsr.sk zlyhá a nič nie je nahraté.
