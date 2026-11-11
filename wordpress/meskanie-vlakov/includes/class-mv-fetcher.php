@@ -550,10 +550,11 @@ class MV_Fetcher {
 
 	/** Odkaz na ZIP s GTFS na stránke (prednostne s „gtfs“ v adrese), ako absolútna adresa. */
 	private static function zip_link( $html, $base ) {
-		if ( ! preg_match_all( '/href\s*=\s*["\']([^"\'#]+?\.zip(?:\?[^"\']*)?)["\']/i', $html, $m ) ) {
+		// odkaz v href aj adresa v skripte alebo atribúte data-*: akýkoľvek reťazec v úvodzovkách končiaci na .zip
+		if ( ! preg_match_all( '/["\'(]((?:https?:)?[^"\'()\s<>]*?\.zip(?:\?[^"\'()\s<>]*)?)["\')]/i', $html, $m ) ) {
 			return '';
 		}
-		$links = array_map( 'html_entity_decode', $m[1] );
+		$links = array_values( array_unique( array_map( fn( $l ) => str_replace( '\\/', '/', html_entity_decode( $l ) ), $m[1] ) ) );
 		usort( $links, fn( $a, $b ) => (int) ( false === stripos( $a, 'gtfs' ) ) <=> (int) ( false === stripos( $b, 'gtfs' ) ) );
 		$link = $links[0];
 		if ( preg_match( '#^https?://#i', $link ) ) {

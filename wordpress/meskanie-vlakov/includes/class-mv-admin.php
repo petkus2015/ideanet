@@ -152,7 +152,7 @@ class MV_Admin {
 							<?php if ( ! empty( $st['tt_count'] ) ) : ?>
 								(<?php echo (int) $st['tt_count']; ?> spojov na dnes)
 							<?php endif; ?>
-							<?php if ( ! empty( $st['tt_error'] ) ) : ?>
+							<?php if ( ! empty( $st['tt_error'] ) && (int) ( $st['tt_error_at'] ?? 0 ) >= (int) ( $st['tt_ok'] ?? 0 ) ) : ?>
 								<br><strong style="color:#b32d2e">Posledná chyba (<?php echo self::when( $st['tt_error_at'] ?? 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>): <?php echo esc_html( $st['tt_error'] ); ?></strong>
 							<?php endif; ?>
 							<?php if ( ! empty( $st['tt_note'] ) ) : ?>

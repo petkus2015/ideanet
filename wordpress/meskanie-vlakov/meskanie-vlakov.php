@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Meškanie vlakov
  * Description:       Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku. Na stránku vložte shortcode [meskanie_vlakov].
- * Version:           1.3.1
+ * Version:           1.3.2
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MV_VERSION', '1.3.1' );
+define( 'MV_VERSION', '1.3.2' );
 define( 'MV_FILE', __FILE__ );
 define( 'MV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MV_URL', plugin_dir_url( __FILE__ ) );
@@ -53,6 +53,17 @@ function mv_schedule_events() {
 	}
 	if ( ! wp_next_scheduled( 'mv_fetch_trains' ) ) {
 		wp_schedule_event( time(), 'mv_2min', 'mv_fetch_trains' );
+	}
+	// po aktualizácii pluginu: zabudnúť starú chybu (inak sa ďalší pokus čaká hodinu) a hneď zostaviť cestovný poriadok
+	if ( get_option( 'mv_version' ) !== MV_VERSION ) {
+		update_option( 'mv_version', MV_VERSION, false );
+		$st = (array) get_option( 'mv_status', array() );
+		unset( $st['tt_error'], $st['tt_error_at'] );
+		update_option( 'mv_status', $st, false );
+		delete_transient( 'mv_tt_running' );
+		if ( ! wp_next_scheduled( 'mv_build_timetable' ) ) {
+			wp_schedule_single_event( time(), 'mv_build_timetable' );
+		}
 	}
 }
 
