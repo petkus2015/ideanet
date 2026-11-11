@@ -301,12 +301,15 @@
   };
   const flap = txt => [...txt].map(ch => (ch === ':' ? '<i>:</i>' : `<span>${ch}</span>`)).join('');
   // čas posledného hlásenia polohy: pole Cas zo ŽSR, inak čas v texte hlásenia („Odchod Žilina 12:31“)
-  const TIME_RE = /\b([01]?\d|2[0-3])[:.]([0-5]\d)\b/;
+  // dátum „11.11.2026“ alebo „11. 11.“ sa nesmie prečítať ako čas 11:11
+  const DATE_RE = /\b\d{1,2}\.\s?\d{1,2}\.(?:\s?\d{2,4})?/g;
+  const TIME_RE = /\b([01]?\d|2[0-3])[:.]([0-5]\d)\b(?!\.\d)/;
   function reportTime(t) {
     for (const v of [t.time, t.info]) {
-      const str = String(v || '');
-      const ms = str.match(/Date\((\d{10,})/) || (/^\d{4}-\d\d-\d\dT/.test(str) ? [0, Date.parse(str)] : null);
+      const raw = String(v || '');
+      const ms = raw.match(/Date\((\d{10,})/) || (/^\d{4}-\d\d-\d\dT/.test(raw) ? [0, Date.parse(raw)] : null);
       if (ms && Number(ms[1])) return TZ_FMT.format(new Date(Number(ms[1])));
+      const str = raw.replace(DATE_RE, ' ');
       const m = str.match(TIME_RE);
       if (m) return `${m[1].padStart(2, '0')}:${m[2]}`;
     }
@@ -937,7 +940,7 @@
       const time = reportTime(t);
       // bez vlastného času hlásenia ukážeme, kedy sme polohu stiahli (údaje sa obnovujú každé 2 minúty)
       const dataTime = state.updated && !isNaN(state.updated) ? TZ_FMT.format(state.updated) : '--:--';
-      const where = String(t.info || '').replace(TIME_RE, '').replace(/\s+/g, ' ').trim();
+      const where = String(t.info || '').replace(DATE_RE, ' ').replace(new RegExp(TIME_RE.source, 'g'), '').replace(/\s+/g, ' ').trim();
       // udalosť hlásenia („Odchod Trenčín“) a pri meškaní pôvodný čas: CasPlan zo ŽSR, inak skutočný čas mínus meškanie
       const event = time && where ? where.charAt(0).toLowerCase() + where.slice(1) : '';
       const planned = time && t.delay > 5
