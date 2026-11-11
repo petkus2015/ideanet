@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Meškanie vlakov
  * Description:       Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku. Na stránku vložte shortcode [meskanie_vlakov].
- * Version:           1.3.2
+ * Version:           1.3.3
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MV_VERSION', '1.3.2' );
+define( 'MV_VERSION', '1.3.3' );
 define( 'MV_FILE', __FILE__ );
 define( 'MV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MV_URL', plugin_dir_url( __FILE__ ) );
@@ -30,7 +30,11 @@ function mv_settings() {
 		'quick_stations' => 'Bratislava, Žilina, Košice, Banská Bystrica, Poprad-Tatry, Nové Zámky',
 		'gtfs_url'       => MV_Fetcher::GTFS_URL,
 	);
-	return wp_parse_args( (array) get_option( 'mv_settings', array() ), $defaults );
+	$settings = wp_parse_args( (array) get_option( 'mv_settings', array() ), $defaults );
+	if ( MV_Fetcher::GTFS_URL_ZSR === $settings['gtfs_url'] ) {
+		$settings['gtfs_url'] = MV_Fetcher::GTFS_URL; // predvolená adresa uložená staršou verziou
+	}
+	return $settings;
 }
 
 /* ---------- plánovač: poloha vlakov každé 2 minúty, cestovný poriadok raz denne ---------- */

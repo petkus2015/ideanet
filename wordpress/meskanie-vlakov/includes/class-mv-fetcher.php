@@ -16,7 +16,10 @@ class MV_Fetcher {
 	const BASE         = 'https://mapa.zsr.sk';
 	const API          = 'https://mapa.zsr.sk/api/action';
 	const GTFS_BUNDLED = MV_DIR . 'data/gtfs-zsr.zip';
-	const GTFS_URL     = 'https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip';
+	// dátová sada ŽSR „Grafikon vlakovej dopravy“ (GTFS) na ArcGIS (odkaz z data.gov.sk)
+	const GTFS_URL     = 'https://www.arcgis.com/sharing/rest/content/items/aba12fd2cbac4843bc7406151bc66106/data';
+	// pôvodná adresa na zsr.sk (teraz vracia stránku „GTFS info“), skúša sa ako záložná
+	const GTFS_URL_ZSR = 'https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip';
 	const HISTORY_LEN  = 720; // 24 h po 2 min
 	const TT_FORMAT    = 3;   // 2 = stanice s kódmi, 3 = názvy vlakov z route_long_name
 	const UA           = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36';
@@ -593,9 +596,19 @@ class MV_Fetcher {
 		$note   = '';
 		$source = $url;
 		if ( ! $local_only ) {
-			try {
-				$tmp = self::download_gtfs( $url );
-			} catch ( RuntimeException $e ) {
+			// adresa z nastavení, potom ArcGIS a zsr.sk; prvý platný ZIP vyhráva
+			$e = null;
+			foreach ( array_unique( array( $url, self::GTFS_URL, self::GTFS_URL_ZSR ) ) as $try ) {
+				try {
+					$tmp    = self::download_gtfs( $try );
+					$source = $try;
+					$e      = null;
+					break;
+				} catch ( RuntimeException $err ) {
+					$e = $e ? $e : $err; // hlásime chybu prvej (hlavnej) adresy
+				}
+			}
+			if ( $e ) {
 				if ( ! self::is_zip( $copy ) ) {
 					throw $e;
 				}

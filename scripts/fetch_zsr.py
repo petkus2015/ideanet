@@ -31,7 +31,9 @@ from zoneinfo import ZoneInfo
 
 BASE = "https://mapa.zsr.sk"
 API = BASE + "/api/action"
-GTFS_URL = "https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip"
+# dátová sada ŽSR „Grafikon vlakovej dopravy“ (GTFS) na ArcGIS (odkaz z data.gov.sk); zsr.sk ako záloha
+GTFS_URL = "https://www.arcgis.com/sharing/rest/content/items/aba12fd2cbac4843bc7406151bc66106/data"
+GTFS_URL_ZSR = "https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip"
 TZ = ZoneInfo("Europe/Bratislava")
 INTERVAL = 120
 HISTORY_LEN = 720  # 24 h po 2 min
@@ -287,12 +289,21 @@ def build_timetable(out_path, url=GTFS_URL):
     {"date", "stations": [[názov, lat, lon, [kódy]]], "trips": [[typ, číslo, názov, [[stanica, príchod, odchod]], dopravca]]}
     """
     today = datetime.now(TZ).date()
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=180) as r:
-        data, ctype = r.read(), r.headers.get("Content-Type", "neznámy typ")
-    if not data.startswith(b"PK\x03\x04"):
+    errors = []
+    for u in dict.fromkeys([url, GTFS_URL, GTFS_URL_ZSR]):
+        try:
+            req = urllib.request.Request(u, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=180) as r:
+                data, ctype = r.read(), r.headers.get("Content-Type", "neznámy typ")
+        except OSError as e:
+            errors.append(f"{u}: {e}")
+            continue
+        if data.startswith(b"PK\x03\x04"):
+            break
         text = re.sub(r"<[^>]+>|\s+", " ", data[:2000].decode("utf-8", "replace")).strip()[:160]
-        raise RuntimeError(f"server nevrátil ZIP s cestovným poriadkom ({ctype}, {len(data)} B): {text!r}")
+        errors.append(f"{u}: server nevrátil ZIP ({ctype}, {len(data)} B): {text!r}")
+    else:
+        raise RuntimeError("cestovný poriadok sa nepodarilo stiahnuť: " + " | ".join(errors))
     z = zipfile.ZipFile(io.BytesIO(data))
 
     def rows(name):
