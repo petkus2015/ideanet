@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Meškanie vlakov
  * Description:       Tabuľa odchodov a príchodov s aktuálnym meškaním vlakov na Slovensku. Na stránku vložte shortcode [meskanie_vlakov].
- * Version:           1.2.11
+ * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            IDEANET
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MV_VERSION', '1.2.11' );
+define( 'MV_VERSION', '1.3.0' );
 define( 'MV_FILE', __FILE__ );
 define( 'MV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MV_URL', plugin_dir_url( __FILE__ ) );
@@ -76,6 +76,43 @@ register_deactivation_hook(
 add_action( 'init', 'mv_schedule_events' );
 add_action( 'mv_fetch_trains', array( 'MV_Fetcher', 'cron_trains' ) );
 add_action( 'mv_build_timetable', array( 'MV_Fetcher', 'build_timetable' ) );
+
+/* ---------- obnovenie pri návšteve: WP-Cron na málo navštevovaných weboch často mešká ---------- */
+
+add_action(
+	'rest_api_init',
+	function () {
+		register_rest_route(
+			'meskanie-vlakov/v1',
+			'/obnovit',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => '__return_true',
+				'callback'            => 'mv_rest_refresh',
+			)
+		);
+	}
+);
+
+/**
+ * Stiahne čerstvé údaje, ak sú staršie ako 2 minúty. Zámok na minútu: ŽSR dostane najviac jeden dopyt za minútu,
+ * nech stránku otvorí koľkokoľvek ľudí.
+ */
+function mv_rest_refresh() {
+	$st  = (array) get_option( 'mv_status', array() );
+	$age = time() - (int) ( $st['trains_ok'] ?? 0 );
+	if ( mv_settings()['demo'] || $age < 110 || get_transient( 'mv_refresh_lock' ) ) {
+		return array( 'refreshed' => false );
+	}
+	set_transient( 'mv_refresh_lock', 1, MINUTE_IN_SECONDS );
+	MV_Fetcher::cron_trains();
+	// chýbajúci alebo včerajší cestovný poriadok zostavíme hneď (má vlastný zámok proti súbežnému behu)
+	if ( wp_next_scheduled( 'mv_build_timetable' ) ) {
+		wp_clear_scheduled_hook( 'mv_build_timetable' );
+		MV_Fetcher::build_timetable();
+	}
+	return array( 'refreshed' => true );
+}
 
 /* ---------- shortcode [meskanie_vlakov] ---------- */
 
@@ -168,6 +205,7 @@ function mv_shortcode( $atts ) {
 		'trainsUrl'     => MV_Fetcher::file_url( 'trains.json' ),
 		'historyUrl'    => MV_Fetcher::file_url( 'history.json' ),
 		'timetableUrl'  => MV_Fetcher::file_url( 'timetable.json' ),
+		'refreshUrl'    => rest_url( 'meskanie-vlakov/v1/obnovit' ),
 		'cssUrl'        => MV_URL . 'assets/app.css?ver=' . MV_VERSION,
 		'demo'          => (bool) $settings['demo'],
 		'quickStations' => array_values( array_filter( array_map( 'trim', explode( ',', $stations ) ) ) ),

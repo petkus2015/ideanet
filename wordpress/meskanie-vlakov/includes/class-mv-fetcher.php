@@ -15,6 +15,7 @@ class MV_Fetcher {
 
 	const BASE         = 'https://mapa.zsr.sk';
 	const API          = 'https://mapa.zsr.sk/api/action';
+	const GTFS_BUNDLED = MV_DIR . 'data/gtfs-zsr.zip';
 	const GTFS_URL     = 'https://www.zsr.sk/files/pre-cestujucich/cestovny-poriadok/gtfs/gtfs.zip';
 	const HISTORY_LEN  = 720; // 24 h po 2 min
 	const TT_FORMAT    = 3;   // 2 = stanice s kódmi, 3 = názvy vlakov z route_long_name
@@ -582,6 +583,11 @@ class MV_Fetcher {
 		wp_mkdir_p( self::dir() );
 		$url    = mv_settings()['gtfs_url'];
 		$copy   = self::gtfs_copy();
+		// bez vlastnej kópie použijeme cestovný poriadok pribalený k pluginu (platí do 12. 12. 2026)
+		$bundled = ! self::is_zip( $copy ) && self::is_zip( self::GTFS_BUNDLED );
+		if ( $bundled ) {
+			$copy = self::GTFS_BUNDLED;
+		}
 		$tmp    = null;
 		$note   = '';
 		$source = $url;
@@ -593,13 +599,13 @@ class MV_Fetcher {
 					throw $e;
 				}
 				// sťahovanie zlyhalo, ale máme uloženú kópiu: cestovný poriadok platí celý rok
-				$note = 'Sťahovanie zlyhalo, použil sa uložený súbor. ' . $e->getMessage();
+				$note = ( $bundled ? 'Sťahovanie zlyhalo, použil sa cestovný poriadok pribalený k pluginu. ' : 'Sťahovanie zlyhalo, použil sa uložený súbor. ' ) . $e->getMessage();
 			}
 		} elseif ( ! self::is_zip( $copy ) ) {
 			throw new RuntimeException( 'Nahratý súbor GTFS chýba.' );
 		}
 		if ( ! $tmp ) {
-			$source = 'gtfs.zip (uložená kópia z ' . wp_date( 'j. n. Y', (int) filemtime( $copy ) ) . ')';
+			$source = $bundled ? 'GTFS pribalený k pluginu' : 'gtfs.zip (uložená kópia z ' . wp_date( 'j. n. Y', (int) filemtime( $copy ) ) . ')';
 		}
 
 		$zip = new ZipArchive();
@@ -697,7 +703,7 @@ class MV_Fetcher {
 			$zip->close();
 			if ( $tmp ) {
 				// platný čerstvý súbor si necháme ako zálohu pre prípad, že ďalšie sťahovanie zlyhá
-				if ( ! @copy( $tmp, $copy ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				if ( ! @copy( $tmp, self::gtfs_copy() ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 					$note = trim( $note . ' Zálohu GTFS sa nepodarilo uložiť.' );
 				}
 				wp_delete_file( $tmp );

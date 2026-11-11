@@ -175,12 +175,21 @@
 
   function load() { return loadData().catch(showFatal); }
 
+  let lastRefreshAsk = 0;
   async function loadData() {
     $('refresh').classList.add('is-busy');
     const before = state.trains.length ? summarizeAll(state.trains) : null;
     try {
       if (FORCE_DEMO) throw new Error('demo');
-      const data = await getJSON(DATA_URL);
+      let data = await getJSON(DATA_URL);
+      // staré údaje (plánovač WordPressu nebežal): požiadame server o čerstvé a načítame znova
+      if (CFG.refreshUrl && Date.now() - new Date(data.updated) > 3 * 60 * 1000 && Date.now() - lastRefreshAsk > 60 * 1000) {
+        lastRefreshAsk = Date.now();
+        try {
+          const r = await fetch(CFG.refreshUrl, { method: 'POST', cache: 'no-store' });
+          if (r.ok && (await r.json()).refreshed) { data = await getJSON(DATA_URL); state.tt = null; }
+        } catch { /* ponecháme, čo máme */ }
+      }
       if (!Array.isArray(data.trains)) throw new Error('neplatný formát');
       state.trains = data.trains.map(t => ({ ...t, delay: Math.max(0, Number(t.delay) || 0), carrier: shortCarrier(t.carrier) }));
       state.stats24 = data.stats24 && data.stats24.all ? data.stats24 : null;
