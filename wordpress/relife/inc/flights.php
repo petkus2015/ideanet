@@ -12,7 +12,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Zabudovaný blok (shortcode [lacne_letenky], blok v editore, widget, Nastavenia → Lacné letenky).
+// Ak je aktívny aj samostatný plugin (načíta sa pred témou), téma použije jeho kód a doplní len vzhľad RELIFE.
+define( 'RELIFE_FLIGHTS_STANDALONE', defined( 'LACNE_LETENKY_VERSION' ) );
 require_once RELIFE_DIR . '/inc/letenky/letenky.php';
+
+/**
+ * Pri samostatnom plugine: vzhľad RELIFE (farby sekcií a odletov) sa načíta po štýle pluginu.
+ */
+function relife_flights_skin(): void {
+	if ( ! RELIFE_FLIGHTS_STANDALONE ) {
+		return;
+	}
+	$post = get_post();
+	$need = is_page_template( 'template-flights.php' )
+		|| is_active_widget( false, false, 'lacne_letenky' )
+		|| ( $post instanceof WP_Post && has_shortcode( $post->post_content, 'lacne_letenky' ) );
+	if ( $need ) {
+		wp_enqueue_style( 'relife-letenky-skin', RELIFE_URI . '/inc/letenky/assets/letenky-skin.css', array( 'lacne-letenky' ), RELIFE_VERSION );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'relife_flights_skin', 30 );
+
+/**
+ * Upozornenie v administrácii: samostatný plugin nemá úzky widget, výber sekcií ani plný vzhľad RELIFE.
+ */
+function relife_flights_standalone_notice(): void {
+	if ( ! RELIFE_FLIGHTS_STANDALONE || ! current_user_can( 'activate_plugins' ) || get_user_meta( get_current_user_id(), 'relife_flights_notice_off', true ) ) {
+		return;
+	}
+	$dismiss = wp_nonce_url( add_query_arg( 'relife_flights_notice_off', '1' ), 'relife_flights_notice' );
+	echo '<div class="notice notice-warning"><p><strong>RELIFE:</strong> ' . esc_html__( 'Je aktívny samostatný plugin „Lacné letenky“. Téma RELIFE má vlastnú vylepšenú kópiu (výber sekcií, úzky widget do bočného stĺpca, vzhľad RELIFE). Deaktivujte samostatný plugin v Pluginy – nastavenia aj ceny sa zachovajú.', 'relife' ) . ' <a href="' . esc_url( admin_url( 'plugins.php' ) ) . '">' . esc_html__( 'Otvoriť Pluginy', 'relife' ) . '</a> · <a href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Skryť upozornenie', 'relife' ) . '</a></p></div>';
+}
+add_action( 'admin_notices', 'relife_flights_standalone_notice' );
+
+function relife_flights_notice_dismiss(): void {
+	if ( isset( $_GET['relife_flights_notice_off'] ) && check_admin_referer( 'relife_flights_notice' ) ) {
+		update_user_meta( get_current_user_id(), 'relife_flights_notice_off', 1 );
+	}
+}
+add_action( 'admin_init', 'relife_flights_notice_dismiss' );
 
 /**
  * Adresa stránky Lacné letenky alebo prázdny reťazec.

@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.37.0
+- **Oprava: farby leteniek sa nezobrazovali, keď je na webe aktívny samostatný plugin „Lacné letenky“.** Téma vtedy nenačíta svoju zabudovanú kópiu (aby sa nič neduplikovalo), takže ostal pôvodný vzhľad pluginu. Teraz téma po štýle pluginu doplní vzhľad RELIFE (`letenky-skin.css`: farebné pásiky sekcií, farby sekcií, tmavý dizajn aj pri tmavom režime systému) a farba odletu sa nastaví skriptom z kódu trasy (VIE, BTS, BUD).
+- V administrácii sa ukáže upozornenie, že samostatný plugin nemá úzky widget do bočného stĺpca ani výber sekcií (`sections`, `compact`); odporúčané je plugin deaktivovať – nastavenia aj ceny sa zachovajú (rovnaké nastavenia).
+
 ## 1.36.0
 - **Lacné letenky: návrat k tmavému vzhľadu kariet z 1.34.0** (tmavé karty s farebným pásikom hore, farby sekcií a odletov) – plné farebné bloky z 1.35.0 sú odstránené. Fialová žiara v hlavičke stránky zostáva odstránená.
 

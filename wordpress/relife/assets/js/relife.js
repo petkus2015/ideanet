@@ -133,6 +133,22 @@
 		} ).catch( function () { if ( empty ) { empty.hidden = false; } } );
 	}
 
+	/* Lacné letenky: farba odletu sa nastaví z kódu trasy (VIE, BTS, BUD), aj keď karty vykresľuje samostatný plugin. */
+	function initFlightsOrigin() {
+		var mark = function () {
+			qsa( '.ll-card:not([data-origin])' ).forEach( function ( c ) {
+				var r = qs( '.ll-route', c );
+				var m = r ? /^\s*([A-Z]{3})/.exec( r.textContent ) : null;
+				if ( m ) { c.setAttribute( 'data-origin', m[ 1 ] ); }
+			} );
+		};
+		if ( ! qs( '[data-lacne-letenky]' ) ) { return; }
+		mark();
+		if ( window.MutationObserver ) {
+			new MutationObserver( mark ).observe( document.body, { childList: true, subtree: true } );
+		}
+	}
+
 	/* ---------- Anketa ---------- */
 	function initPoll() {
 		var poll = qs( '.js-poll' );
@@ -430,6 +446,7 @@
 		initPollFilters();
 		initMisc();
 		initMenu();
+		initFlightsOrigin();
 		renderSavedPage();
 		document.documentElement.classList.add( 'rl-ready' );
 	}
