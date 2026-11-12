@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.35.0
+- **Lacné letenky podľa návrhu RELIFE:** karty ponúk sú plné farebné bloky ako dlaždice sekcií a Ultimate Guides – tyrkysové (predĺžený víkend) a žlté (dlhší pobyt) s tmavým textom, veľkým bledým kódom letiska na pozadí, tmavým štítkom „Najlacnejšie“ a tmavým tlačidlom so šípkou; farba odletu (VIE ružová, BTS limetková, BUD fialová) je bodka pri trase.
+- Odstránená fialová kruhová žiara v hlavičke stránky Lacné letenky.
+
 ## 1.34.0
 - **Stránka Lacné letenky v plnej farebnej palete RELIFE:** každá sekcia má vlastnú farbu – predĺžený víkend tyrkysová, dlhší pobyt žltá, Ázia a Emiráty ružová (farebný pásik pri nadpise, pásik hore na kartách, štítok „Najlacnejšie“, počet ponúk, filtre, tlačidlá). Kód letiska je vo farbe odletu (VIE ružová, BTS limetková, BUD fialová) a pod nadpisom je legenda letísk. Karta Bangkoku má fialovo-ružový prechod so žltou cenou a tlačidlom. Hero stránky má jemnú farebnú žiaru. V bočnom stĺpci je farba odletu ako pásik vľavo.
 
