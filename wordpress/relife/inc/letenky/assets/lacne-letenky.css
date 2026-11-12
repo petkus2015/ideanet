@@ -462,37 +462,3 @@ a.ll-row:hover .ll-row-go { border-color: var(--ll-accent); }
 .ll.ll-compact .ll-card:hover { box-shadow: none; }
 .ll.ll-compact .ll-sect-title::before { content: ""; position: static; width: 28px; height: 28px; border-radius: 50%; background-color: var(--ll-sect); }
 .ll.ll-compact .ll-sect-title { padding-left: 0; }
-
-/* ===== RELIFE návrh: plné farebné bloky ako dlaždice sekcií a Ultimate Guides (tmavý text na farbe sekcie, veľký bledý kód letiska) ===== */
-.ll:not(.ll-compact) .ll-card {
-  position: relative; overflow: hidden; isolation: isolate;
-  background: var(--ll-sect); color: #131313; border-color: transparent; box-shadow: none;
-}
-.ll:not(.ll-compact) .ll-card::before {
-  content: attr(data-dest); position: absolute; right: -4px; top: -16px; z-index: -1;
-  font: 800 92px/1 var(--ll-head); letter-spacing: -.04em; color: #131313; opacity: .11; pointer-events: none;
-}
-.ll:not(.ll-compact) .ll-card:hover { background: var(--ll-sect); border-color: transparent; transform: translateY(-4px); box-shadow: 0 16px 30px -14px color-mix(in srgb, var(--ll-sect) 70%, transparent); }
-.ll:not(.ll-compact) .ll-card .ll-city,
-.ll:not(.ll-compact) .ll-card .ll-price strong { color: #131313; }
-.ll:not(.ll-compact) .ll-card .ll-country,
-.ll:not(.ll-compact) .ll-card .ll-dates,
-.ll:not(.ll-compact) .ll-card .ll-price small,
-.ll:not(.ll-compact) .ll-card .ll-source { color: rgba(19, 19, 19, .72); }
-.ll:not(.ll-compact) .ll-card .ll-route { color: #131313; }
-.ll:not(.ll-compact) .ll-card .ll-route::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--ll-o, #131313); box-shadow: 0 0 0 2px #131313; margin-right: 4px; }
-.ll:not(.ll-compact) .ll-card[data-origin="VIE"] .ll-route::before { --ll-o: var(--ll-pink); }
-.ll:not(.ll-compact) .ll-card[data-origin="BTS"] .ll-route::before { --ll-o: var(--ll-lime); }
-.ll:not(.ll-compact) .ll-card[data-origin="BUD"] .ll-route::before { --ll-o: var(--ll-purple); }
-.ll:not(.ll-compact) .ll-card .ll-route svg { color: #131313; }
-.ll:not(.ll-compact) .ll-card .ll-chip { background: rgba(19, 19, 19, .12); color: #131313; border: 0; font-weight: 700; }
-.ll:not(.ll-compact) .ll-card .ll-wx { background: rgba(19, 19, 19, .12); color: #131313; border: 0; }
-.ll:not(.ll-compact) .ll-card .ll-card-bottom { border-top-color: rgba(19, 19, 19, .22); }
-.ll:not(.ll-compact) .ll-card .ll-best { background: #131313; color: var(--ll-sect); }
-.ll:not(.ll-compact) .ll-card .ll-change.is-down { background: rgba(19, 19, 19, .14); color: #131313; }
-.ll:not(.ll-compact) .ll-card .ll-change.is-up { background: rgba(19, 19, 19, .08); color: rgba(19, 19, 19, .7); }
-.ll:not(.ll-compact) .ll-card .ll-source[data-src]::before { box-shadow: 0 0 0 1.5px #131313; }
-.ll:not(.ll-compact) .ll-card .ll-go { background: #131313; color: var(--ll-sect); }
-.ll:not(.ll-compact) .ll-card:hover .ll-go { background: #131313; color: var(--ll-sect); }
-/* počet ponúk v pílulke s farbou sekcie a tmavým textom */
-.ll-count { background: var(--ll-sect); color: #131313; }

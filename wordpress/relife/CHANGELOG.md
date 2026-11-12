@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.36.0
+- **Lacné letenky: návrat k tmavému vzhľadu kariet z 1.34.0** (tmavé karty s farebným pásikom hore, farby sekcií a odletov) – plné farebné bloky z 1.35.0 sú odstránené. Fialová žiara v hlavičke stránky zostáva odstránená.
+
 ## 1.35.0
 - **Lacné letenky podľa návrhu RELIFE:** karty ponúk sú plné farebné bloky ako dlaždice sekcií a Ultimate Guides – tyrkysové (predĺžený víkend) a žlté (dlhší pobyt) s tmavým textom, veľkým bledým kódom letiska na pozadí, tmavým štítkom „Najlacnejšie“ a tmavým tlačidlom so šípkou; farba odletu (VIE ružová, BTS limetková, BUD fialová) je bodka pri trase.
 - Odstránená fialová kruhová žiara v hlavičke stránky Lacné letenky.
