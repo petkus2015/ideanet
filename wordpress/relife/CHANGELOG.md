@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.38.0
+- **Kategória Travel (Cestovanie): štvorcová dlaždica Lacné letenky.** Na prvej strane kategórie je ako prvý blok farebná dlaždica (farba sekcie Travel, lietadlo v pozadí, nadpis, krátky popis a tlačidlo so šípkou) s odkazom na stránku Lacné letenky. Ak sú v uloženej kópii aktuálne ceny (nie staršie ako 36 hodín), ukáže aj „od 30 €“. Dlaždica sa zobrazí, len ak stránka Lacné letenky existuje.
+
 ## 1.37.0
 - **Oprava: farby leteniek sa nezobrazovali, keď je na webe aktívny samostatný plugin „Lacné letenky“.** Téma vtedy nenačíta svoju zabudovanú kópiu (aby sa nič neduplikovalo), takže ostal pôvodný vzhľad pluginu. Teraz téma po štýle pluginu doplní vzhľad RELIFE (`letenky-skin.css`: farebné pásiky sekcií, farby sekcií, tmavý dizajn aj pri tmavom režime systému) a farba odletu sa nastaví skriptom z kódu trasy (VIE, BTS, BUD).
 - V administrácii sa ukáže upozornenie, že samostatný plugin nemá úzky widget do bočného stĺpca ani výber sekcií (`sections`, `compact`); odporúčané je plugin deaktivovať – nastavenia aj ceny sa zachovajú (rovnaké nastavenia).

@@ -26,8 +26,16 @@ $color = $term instanceof WP_Term && 'category' === $term->taxonomy ? relife_sec
 
 <div class="rl-wrap rl-block">
 	<?php if ( have_posts() ) : ?>
+		<?php
+		// Kategória Travel (Cestovanie): na prvej strane štvorcová dlaždica s odkazom na Lacné letenky.
+		$show_flights = $term instanceof WP_Term && 'category' === $term->taxonomy && ! is_paged()
+			&& function_exists( 'relife_flights_tile' ) && 'travel' === ( isset( relife_sections()[ $term->slug ] ) ? $term->slug : relife_term_section_slug( $term ) );
+		?>
 		<div class="rl-grid rl-grid--4">
 			<?php
+			if ( $show_flights ) {
+				relife_flights_tile( $color );
+			}
 			while ( have_posts() ) {
 				the_post();
 				relife_card( (int) get_the_ID() );

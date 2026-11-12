@@ -120,3 +120,52 @@ function relife_register_sidebars(): void {
 	);
 }
 add_action( 'widgets_init', 'relife_register_sidebars' );
+
+/**
+ * Najnižšia cena zo zobrazených ponúk (len z uloženej kópie, bez sieťovej požiadavky; staršie než 36 hodín sa nezobrazí).
+ */
+function relife_flights_cheapest(): string {
+	$data = get_transient( 'lacne_letenky_data' );
+	if ( ! is_array( $data ) ) {
+		$data = get_option( 'lacne_letenky_last_good' );
+	}
+	if ( ! is_array( $data ) || empty( $data['updatedAt'] ) ) {
+		return '';
+	}
+	$ts = strtotime( (string) $data['updatedAt'] );
+	if ( ! $ts || time() - $ts > 36 * HOUR_IN_SECONDS ) {
+		return '';
+	}
+	$best = null;
+	foreach ( array_merge( (array) ( $data['weekend'] ?? array() ), (array) ( $data['deals'] ?? array() ) ) as $d ) {
+		if ( isset( $d['price'] ) && is_numeric( $d['price'] ) && ( null === $best || (float) $d['price'] < $best ) ) {
+			$best = (float) $d['price'];
+		}
+	}
+	return null === $best ? '' : sprintf( /* translators: %s price in euro */ __( 'od %s €', 'relife' ), number_format_i18n( $best, 0 ) );
+}
+
+/**
+ * Štvorcová dlaždica s odkazom na stránku Lacné letenky (kategória Travel).
+ */
+function relife_flights_tile( string $color ): void {
+	$url = relife_flights_url();
+	if ( '' === $url ) {
+		return;
+	}
+	$price = relife_flights_cheapest();
+	?>
+	<a class="rl-flight-tile" href="<?php echo esc_url( $url ); ?>" style="background:<?php echo esc_attr( $color ); ?>">
+		<svg class="rl-flight-tile__plane" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+		<span class="rl-flight-tile__kicker"><?php esc_html_e( 'TRAVEL · LETENKY', 'relife' ); ?></span>
+		<span class="rl-flight-tile__body">
+			<span class="rl-flight-tile__title"><?php esc_html_e( 'Lacné letenky', 'relife' ); ?></span>
+			<span class="rl-flight-tile__line"><?php esc_html_e( 'Najlacnejšie lety z Viedne, Bratislavy a Budapešti kamkoľvek.', 'relife' ); ?></span>
+		</span>
+		<span class="rl-flight-tile__foot">
+			<?php if ( '' !== $price ) : ?><b class="rl-flight-tile__price"><?php echo esc_html( $price ); ?></b><?php else : ?><span></span><?php endif; ?>
+			<span class="rl-flight-tile__go" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+		</span>
+	</a>
+	<?php
+}

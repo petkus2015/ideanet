@@ -721,3 +721,17 @@ a.page-numbers:focus-visible{outline:3px solid var(--rl-accent);outline-offset:2
 .rl-flights-legend{display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:18px 0 0;padding:0}
 .rl-flights-legend li{display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 10px;border-radius:999px;border:1.5px solid var(--c);color:var(--rl-soft);font-size:13px;font-weight:600}
 .rl-flights-legend b{display:inline-flex;padding:2px 8px;border-radius:999px;background:var(--c);color:#131313;font-size:11px;letter-spacing:.06em}
+
+/* Dlaždica Lacné letenky v kategórii Travel (štvorec, plná farba sekcie ako ostatné dlaždice) */
+.rl-flight-tile{position:relative;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;min-height:230px;padding:20px;border-radius:20px;overflow:hidden;color:#131313;isolation:isolate;transition:transform .2s ease,box-shadow .2s ease}
+.rl-flight-tile:hover{transform:translateY(-4px);box-shadow:0 18px 34px -16px rgba(255,122,43,.55)}
+.rl-flight-tile__plane{position:absolute;right:-22px;top:-14px;width:150px;height:150px;opacity:.14;transform:rotate(18deg);z-index:-1}
+.rl-flight-tile__kicker{font-size:11px;font-weight:800;letter-spacing:.12em}
+.rl-flight-tile__body{display:grid;gap:6px}
+.rl-flight-tile__title{font-family:var(--rl-display);font-weight:800;font-size:clamp(26px,2.4vw,34px);line-height:1;letter-spacing:-.03em}
+.rl-flight-tile__line{font-size:13px;line-height:1.35;font-weight:500}
+.rl-flight-tile__foot{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rl-flight-tile__price{font-family:var(--rl-display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.rl-flight-tile__go{width:44px;height:44px;border-radius:50%;background:#131313;color:#fff;display:flex;align-items:center;justify-content:center;transition:transform .2s ease}
+.rl-flight-tile:hover .rl-flight-tile__go{transform:translateX(3px)}
+@media (max-width:760px){.rl-flight-tile{aspect-ratio:auto;min-height:190px}}
