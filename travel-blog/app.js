@@ -48,6 +48,11 @@ const ARTICLES = [
     body: ['Ak chcete vidieť Kjóto také, aké bolo, vstaňte skôr. Brány torii na Fushimi Inari sú o šiestej prázdne a svetlo je mäkké.', ['t', ['Kúpte si IC kartu na MHD', 'Obedy vo všedný deň sú lacnejšie', 'Rezervujte čajový obrad vopred']]] }
 ];
 const byId = id => ARTICLES.find(a => a.id === id);
+const PHOTOS = {};   // voliteľné: id -> data URI (používa náhľad v jednom súbore)
+const CREDITS = {};  // autori fotiek z Wikimedia Commons
+/* Fotka z priečinka img/ s ilustráciou ako záložným stavom (keď súbor chýba). */
+const art = a => scene(a.scene, a.id) + `<img class="art-img" src="${PHOTOS[a.id] || 'img/' + a.id + '.jpg'}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`;
+const credit = id => CREDITS[id] ? `<p class="credit">Foto: ${esc(CREDITS[id].author)} · ${esc(CREDITS[id].license)} · Wikimedia Commons</p>` : '';
 
 /* ---------- Ilustrácie (SVG, bez externých obrázkov) ---------- */
 const PAL = {
@@ -140,11 +145,11 @@ const ARROW = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
 const saveBtn = (id, cls = '') => `<button class="save ${cls}" data-save="${id}" aria-pressed="${isSaved(id)}" aria-label="Uložiť článok">${BOOKMARK}</button>`;
 const city = a => a.place.split(',')[0];
 
-const cardSm = a => `<div class="card card--sm"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${scene(a.scene, a.id)}</a>${saveBtn(a.id)}
+const cardSm = a => `<div class="card card--sm"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${art(a)}</a>${saveBtn(a.id)}
   <a class="card__body" href="#/a/${a.id}"><h3>${esc(a.title)}</h3><p>${esc(a.place.split(',').slice(-2).join(','))}</p></a></div>`;
-const cardWide = a => `<div class="card card--wide"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${scene(a.scene, a.id)}</a><span class="tag">Najnovšie</span>${saveBtn(a.id)}
+const cardWide = a => `<div class="card card--wide"><a class="card__art" href="#/a/${a.id}" aria-label="${esc(a.title)}">${art(a)}</a><span class="tag">Najnovšie</span>${saveBtn(a.id)}
   <a class="card__body" href="#/a/${a.id}"><h3>${esc(a.title)}</h3><p>${esc(a.place)}</p><div class="meta"><span>${a.min} min čítania</span>·<span>${fmtDate(a.date)}</span></div></a></div>`;
-const listCard = a => `<article class="list-card"><a class="list-card__art" href="#/a/${a.id}" tabindex="-1">${scene(a.scene, a.id)}</a>
+const listCard = a => `<article class="list-card"><a class="list-card__art" href="#/a/${a.id}" tabindex="-1">${art(a)}</a>
   <a href="#/a/${a.id}"><h3>${esc(a.title)}</h3><p>${esc(a.place)} · ${a.min} min</p></a>${saveBtn(a.id)}</article>`;
 const fmtDate = d => new Date(d).toLocaleDateString('sk-SK', { day: 'numeric', month: 'long', year: 'numeric' });
 const chips = active => `<div class="chips" role="group" aria-label="Kategórie">${CATS.map(c => `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id === active}">${c.label}</button>`).join('')}</div>`;
@@ -153,7 +158,7 @@ const greeting = () => { const h = new Date().getHours(); return h < 10 ? 'Dobr�
 /* ---------- Stránky ---------- */
 function viewHome() {
   const f = ARTICLES.find(a => a.featured), heroScene = isNight() ? 'forest' : 'cliffs';
-  return `<section class="hero"><div class="hero__bg">${scene(heroScene, 'hero')}</div>
+  return `<section class="hero"><div class="hero__bg">${art(byId(isNight() ? 'borneo' : 'marinha'))}</div>
     <p class="dateline">${new Date().toLocaleDateString('sk-SK', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
     <h1>Kam sa vyberieme ďalej?</h1>
     <form class="search" action="#/explore" role="search" id="heroSearch"><label><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input name="q" type="search" placeholder="Hľadaj miesto, krajinu, tip…" aria-label="Hľadať"></label>
@@ -192,10 +197,10 @@ async function viewArticle(id) {
   if (!a) return `<div class="page"><div class="empty"><b>Článok sa nenašiel</b><a class="btn" href="#/">Domov</a></div></div>`;
   const body = a.body.map(b => typeof b === 'string' ? `<p>${esc(b)}</p>` : b[0] === 'q' ? `<blockquote>${esc(b[1])}</blockquote>` : b[0] === 'h' ? `<h2>${esc(b[1])}</h2>` : `<ul class="tips">${b[1].map(t => `<li>${esc(t)}</li>`).join('')}</ul>`).join('');
   const more = ARTICLES.filter(x => x.id !== a.id && x.cat === a.cat).concat(ARTICLES.filter(x => x.cat !== a.cat)).slice(0, 4);
-  return `<article><div class="article__hero"><div class="card__art">${scene(a.scene, a.id)}</div><div><small>${esc(a.place)} · ${a.min} min čítania</small><h1>${esc(a.title)}</h1></div></div>
+  return `<article><div class="article__hero"><div class="card__art">${art(a)}</div><div><small>${esc(a.place)} · ${a.min} min čítania</small><h1>${esc(a.title)}</h1></div></div>
     <div class="article__bar"><a class="back" href="javascript:history.back()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Späť</a>
       <button class="save save--pill" data-save="${a.id}" aria-pressed="${isSaved(a.id)}">${BOOKMARK.replace('<svg', '<svg width="18" height="18"')}<span class="lbl">${isSaved(a.id) ? 'Uložené' : 'Uložiť'}</span></button></div>
-    <div class="article__body"><p><strong>${esc(a.lead)}</strong></p>${body}</div>
+    <div class="article__body"><p><strong>${esc(a.lead)}</strong></p>${body}${credit(a.id)}</div>
     <div class="wrap"><div class="section"><div class="section__head"><h2>Čítajte ďalej</h2></div><div class="rail">${more.map(cardSm).join('')}</div></div></div></article>`;
 }
 function viewAbout() {
