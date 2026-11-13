@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.41.0
+- **Podstránka Kam na jedlo v BA** (`/kam-na-jedlo-v-ba/`, vytvorí sa sama): zoznam podnikov s fotkou, hodnotením (★), kategóriami, cenovou hladinou, krátkym popisom, adresou a odkazom do Máp. **Filtrovanie** podľa kategórie a ceny, hľadanie podľa názvu a zoradenie (najlepšie hodnotené / A–Z) bez načítania stránky. Tlačidlo „Celý zoznam v Google Mapách“ (adresa sa mení vo Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka).
+- Nový typ obsahu **Podniky (jedlo)** v administrácii (hodnotenie, cena, adresa, odkaz do Máp; fotka = obrázok k príspevku, popis = úryvok, kategórie) a **hromadný import** (Nástroje → Import podnikov): riadky `Názov | Kategória | Hodnotenie | Popis | Adresa | Odkaz | URL fotky` alebo CSV z Google Takeout.
+
 ## 1.40.0
 - **Graf sa do článku pridáva interaktívne:** blok RELIFE graf má v editore vlastné ovládanie riadkov namiesto písania textu – pre každý riadok pole Názov, **posuvník** hodnoty (pri Hodnotení), pole Popis, prepínač „Rizikový riadok“, tlačidlá presunúť vyššie/nižšie a odstrániť, a tlačidlo **+ Pridať riadok**. Pod tým je živý náhľad podľa vzhľadu webu. Zápis ostáva rovnaký (`Názov | hodnota | popis`), takže funguje aj shortcode `[relife_graf]`.
 
