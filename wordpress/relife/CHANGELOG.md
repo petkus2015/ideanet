@@ -2,6 +2,10 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.43.0
+- **Kam na jedlo: aktualizácia zoznamu z Google Máp na vyžiadanie.** Keď do zdieľaného zoznamu v Mapách niečo pridáš, v administrácii klikni *Nástroje → Import podnikov → Aktualizovať zoznam z Google Máp* (tlačidlo je aj v zozname Podniky). Pridajú sa len nové miesta (kategória „Ostatné“) a doplní sa chýbajúca adresa/odkaz; existujúce podniky, hodnotenia, popisy, fotky a kategórie sa nemenia. Voliteľne sa do koša presunú miesta, ktoré si zo zoznamu odstránil (len tie pridané touto aktualizáciou). Odkaz na zoznam sa berie z Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka.
+- Zo stránky Kam na jedlo je odstránené hľadanie podľa názvu a zoradenie hore; ostávajú filtre podľa kategórie a ceny.
+
 ## 1.42.0
 - **Zoznam „Bratislava kam na jedlo“ z Google Máp je súčasťou témy:** 32 miest (názov, adresa, odkaz do Máp) načítaných zo zdieľaného zoznamu. V administrácii stačí kliknúť *Nástroje → Import podnikov → Načítať zoznam do webu*. Kategórie (Bistro, Kaviareň, Bar, Talianska, Ázijská, Pekáreň, Pizza …) sú navrhnuté len podľa názvu, tam kde sa dať nepoznať je „Ostatné“; skontrolujte ich. Hodnotenie, popis a fotku doplníte pri podniku.
 - Stránka Kam na jedlo sa zoraďuje predvolene podľa názvu, kým žiadny podnik nemá hodnotenie.

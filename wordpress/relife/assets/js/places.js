@@ -10,7 +10,7 @@
 	var sortSel = root.querySelector( '.js-places-sort' );
 	var nEl = root.querySelector( '.js-places-n' );
 	var empty = root.querySelector( '.js-places-empty' );
-	var state = { cat: '', price: '', q: '', sort: sortSel ? sortSel.value : 'name' };
+	var state = { cat: '', price: '', q: '', sort: root.getAttribute( 'data-sort' ) === 'rating' ? 'rating' : 'name' };
 
 	function setPressed( btns, attr, val ) {
 		btns.forEach( function ( b ) {

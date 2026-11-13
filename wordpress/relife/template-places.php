@@ -37,26 +37,15 @@ get_header();
 	<div class="rl-wrap">
 		<p class="rl-kicker"><?php esc_html_e( 'BRATISLAVA · JEDLO', 'relife' ); ?></p>
 		<h1 class="rl-pagetitle"><?php the_title(); ?></h1>
-		<p class="rl-muted rl-lead"><?php esc_html_e( 'Overené podniky v Bratislave, kam sa oplatí zájsť na jedlo. Vyber si kategóriu, hľadaj podľa názvu alebo si zoraď podľa hodnotenia.', 'relife' ); ?></p>
+		<p class="rl-muted rl-lead"><?php esc_html_e( 'Overené podniky v Bratislave, kam sa oplatí zájsť na jedlo. Vyber si kategóriu alebo cenu a nájdeš to pravé miesto.', 'relife' ); ?></p>
 		<?php if ( '' !== $maps_url ) : ?>
 			<a class="rl-pill rl-pill--outline" href="<?php echo esc_url( $maps_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Celý zoznam v Google Mapách ↗', 'relife' ); ?></a>
 		<?php endif; ?>
 	</div>
 </section>
 
-<section class="rl-wrap rl-block rl-places js-places">
+<section class="rl-wrap rl-block rl-places js-places" data-sort="<?php echo $any_rating ? 'rating' : 'name'; ?>">
 	<?php if ( $places ) : ?>
-		<div class="rl-places__bar">
-			<label class="rl-places__search"><span class="screen-reader-text"><?php esc_html_e( 'Hľadať podnik', 'relife' ); ?></span>
-				<input type="search" class="js-places-q" placeholder="<?php esc_attr_e( 'Hľadať podnik…', 'relife' ); ?>" autocomplete="off">
-			</label>
-			<label class="rl-places__sort"><span class="screen-reader-text"><?php esc_html_e( 'Zoradiť', 'relife' ); ?></span>
-				<select class="js-places-sort">
-					<?php if ( $any_rating ) : ?><option value="rating"><?php esc_html_e( 'Najlepšie hodnotené', 'relife' ); ?></option><?php endif; ?>
-					<option value="name"><?php esc_html_e( 'Podľa názvu A–Z', 'relife' ); ?></option>
-				</select>
-			</label>
-		</div>
 		<div class="rl-places__chips" role="group" aria-label="<?php esc_attr_e( 'Kategórie', 'relife' ); ?>">
 			<button type="button" class="rl-chip is-on js-places-cat" data-cat="" aria-pressed="true"><?php esc_html_e( 'Všetko', 'relife' ); ?> <small><?php echo (int) count( $places ); ?></small></button>
 			<?php foreach ( $cat_counts as $slug => $c ) : ?>

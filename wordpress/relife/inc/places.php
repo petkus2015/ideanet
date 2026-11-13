@@ -261,6 +261,166 @@ function relife_places_seed_handle(): void {
 }
 add_action( 'admin_post_relife_places_seed', 'relife_places_seed_handle' );
 
+
+/* ---------- Aktualizácia zo zdieľaného zoznamu Google Máp (na vyžiadanie) ---------- */
+
+/**
+ * Načíta zdieľaný zoznam z Google Máp (adresa z Customizeru) a vráti jeho miesta.
+ *
+ * @return array<int, array{name:string,address:string,url:string}>|WP_Error
+ */
+function relife_places_fetch_gmaps_list( string $share_url ) {
+	$share_url = trim( $share_url );
+	if ( '' === $share_url || ! preg_match( '#^https://(maps\.app\.goo\.gl|www\.google\.[a-z.]+/maps|maps\.google\.[a-z.]+|goo\.gl/maps)#i', $share_url ) ) {
+		return new WP_Error( 'relife_places_url', __( 'Odkaz na zoznam v Google Mapách nie je zadaný alebo nie je platný (Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka).', 'relife' ) );
+	}
+	$args = array(
+		'timeout'    => 25,
+		'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+		'headers'    => array( 'Accept-Language' => 'sk,en;q=0.8', 'Cookie' => 'CONSENT=YES+cb; SOCS=CAI' ),
+	);
+	$res = wp_remote_get( $share_url, $args );
+	if ( is_wp_error( $res ) ) {
+		return new WP_Error( 'relife_places_http', __( 'Zoznam sa nepodarilo načítať z Google Máp: ', 'relife' ) . $res->get_error_message() );
+	}
+	$html = (string) wp_remote_retrieve_body( $res );
+	$list = '';
+	if ( preg_match( '#<link href="(/maps/preview/entitylist/getlist[^"]+)"#', $html, $m ) ) {
+		$list = 'https://www.google.com' . html_entity_decode( $m[1], ENT_QUOTES, 'UTF-8' );
+	} else {
+		// Záloha: ID zoznamu z konečnej adresy po presmerovaní.
+		$final = '';
+		if ( isset( $res['http_response'] ) && is_object( $res['http_response'] ) && method_exists( $res['http_response'], 'get_response_object' ) ) {
+			$obj   = $res['http_response']->get_response_object();
+			$final = isset( $obj->url ) ? (string) $obj->url : '';
+		}
+		if ( preg_match( '#placelists/list/([A-Za-z0-9_-]+)#', $final . ' ' . $html, $m ) ) {
+			$list = 'https://www.google.com/maps/preview/entitylist/getlist?authuser=0&hl=sk&pb=' . rawurlencode( '!1m1!1s' . $m[1] . '!2e2!3e2!4i500' );
+		}
+	}
+	if ( '' === $list ) {
+		return new WP_Error( 'relife_places_parse', __( 'V odpovedi Google Máp sa nenašiel zoznam. Skontrolujte, či je zoznam zdieľaný („Každý s odkazom“).', 'relife' ) );
+	}
+	$res2 = wp_remote_get( $list, $args );
+	if ( is_wp_error( $res2 ) ) {
+		return new WP_Error( 'relife_places_http', __( 'Zoznam sa nepodarilo načítať z Google Máp: ', 'relife' ) . $res2->get_error_message() );
+	}
+	$body = (string) wp_remote_retrieve_body( $res2 );
+	$json = json_decode( (string) preg_replace( '/^\)\]\}\'\s*/', '', $body ), true );
+	if ( ! is_array( $json ) || ! isset( $json[0][8] ) || ! is_array( $json[0][8] ) ) {
+		return new WP_Error( 'relife_places_parse', __( 'Odpoveď Google Máp má iný tvar, než očakávame. Zoznam sa nedá načítať automaticky; použite import (CSV z Google Takeout).', 'relife' ) );
+	}
+	$out = array();
+	foreach ( $json[0][8] as $it ) {
+		$name = isset( $it[2] ) ? trim( (string) $it[2] ) : '';
+		if ( '' === $name ) {
+			continue;
+		}
+		$addr   = isset( $it[1][4] ) ? trim( (string) $it[1][4] ) : '';
+		$out[]  = array(
+			'name'    => $name,
+			'address' => $addr,
+			'url'     => 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $name . ' ' . ( '' !== $addr ? $addr : 'Bratislava' ) ),
+		);
+	}
+	return $out;
+}
+
+/**
+ * Zosúladí podniky so zoznamom: nové pridá, pri existujúcich doplní adresu a odkaz, ak chýbajú.
+ *
+ * @return array{added:int,updated:int,total:int}|WP_Error
+ */
+function relife_places_sync( bool $remove_missing = false ) {
+	$items = relife_places_fetch_gmaps_list( (string) get_theme_mod( 'relife_places_maps_url', 'https://maps.app.goo.gl/JgE1WtDw7LtKG1dD8?g_st=i' ) );
+	if ( is_wp_error( $items ) ) {
+		return $items;
+	}
+	$added   = 0;
+	$updated = 0;
+	$seen    = array();
+	foreach ( $items as $it ) {
+		$seen[] = mb_strtolower( $it['name'] );
+		$dup    = get_posts( array( 'post_type' => 'relife_place', 'post_status' => 'any', 'title' => $it['name'], 'posts_per_page' => 1, 'fields' => 'ids' ) );
+		if ( $dup ) {
+			$changed = false;
+			foreach ( array( 'address' => $it['address'], 'url' => $it['url'] ) as $k => $v ) {
+				if ( '' !== $v && '' === (string) get_post_meta( (int) $dup[0], '_rl_place_' . $k, true ) ) {
+					update_post_meta( (int) $dup[0], '_rl_place_' . $k, esc_url_raw( $v ) === $v ? $v : sanitize_text_field( $v ) );
+					$changed = true;
+				}
+			}
+			$updated += $changed ? 1 : 0;
+			continue;
+		}
+		if ( relife_places_create( array( 'name' => $it['name'], 'cat' => 'Ostatné', 'rating' => '', 'desc' => '', 'address' => $it['address'], 'url' => $it['url'], 'img' => '' ) ) ) {
+			$new = get_posts( array( 'post_type' => 'relife_place', 'title' => $it['name'], 'posts_per_page' => 1, 'fields' => 'ids' ) );
+			if ( $new ) {
+				update_post_meta( (int) $new[0], '_rl_place_source', 'gmaps' );
+			}
+			++$added;
+		}
+	}
+	if ( $remove_missing ) {
+		foreach ( get_posts( array( 'post_type' => 'relife_place', 'post_status' => 'publish', 'posts_per_page' => 500, 'meta_key' => '_rl_place_source', 'meta_value' => 'gmaps' ) ) as $p ) { // phpcs:ignore WordPress.DB.SlowDBQuery
+			if ( ! in_array( mb_strtolower( $p->post_title ), $seen, true ) ) {
+				wp_trash_post( $p->ID );
+			}
+		}
+	}
+	update_option( 'relife_places_last_sync', time(), false );
+	return array( 'added' => $added, 'updated' => $updated, 'total' => count( $items ) );
+}
+
+function relife_places_sync_handle(): void {
+	if ( ! current_user_can( 'edit_pages' ) ) {
+		wp_die( esc_html__( 'Nemáte oprávnenie.', 'relife' ), 403 );
+	}
+	check_admin_referer( 'relife_places_sync' );
+	$remove = ! empty( $_POST['remove_missing'] );
+	$res    = relife_places_sync( $remove );
+	$args   = array( 'page' => 'relife-places-import' );
+	if ( is_wp_error( $res ) ) {
+		$args['sync_err'] = rawurlencode( $res->get_error_message() );
+	} else {
+		$args['sync_added']   = $res['added'];
+		$args['sync_updated'] = $res['updated'];
+		$args['sync_total']   = $res['total'];
+	}
+	wp_safe_redirect( add_query_arg( $args, admin_url( 'tools.php' ) ) );
+	exit;
+}
+add_action( 'admin_post_relife_places_sync', 'relife_places_sync_handle' );
+
+/**
+ * Tlačidlo na aktualizáciu zoznamu (zdieľa ho stránka importu aj zoznam podnikov).
+ */
+function relife_places_sync_box(): void {
+	$last = (int) get_option( 'relife_places_last_sync', 0 );
+	?>
+	<div class="notice notice-info inline" style="padding:12px 16px;margin:16px 0">
+		<p><strong><?php esc_html_e( 'Aktualizovať zoznam podľa odkazu z Google Máp', 'relife' ); ?></strong><br>
+		<?php esc_html_e( 'Načíta zdieľaný zoznam (odkaz sa nastavuje vo Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka) a pridá podniky, ktoré v ňom pribudli. Existujúce podniky, hodnotenia, popisy a fotky sa nemenia.', 'relife' ); ?>
+		<?php if ( $last ) : ?><br><em><?php echo esc_html( sprintf( /* translators: %s date */ __( 'Naposledy aktualizované: %s', 'relife' ), wp_date( 'j. n. Y H:i', $last ) ) ); ?></em><?php endif; ?></p>
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<input type="hidden" name="action" value="relife_places_sync">
+			<?php wp_nonce_field( 'relife_places_sync' ); ?>
+			<p><label><input type="checkbox" name="remove_missing" value="1"> <?php esc_html_e( 'Presunúť do koša aj podniky, ktoré som zo zoznamu v Mapách odstránil (len tie, čo sa pridali aktualizáciou)', 'relife' ); ?></label></p>
+			<?php submit_button( __( 'Aktualizovať zoznam z Google Máp', 'relife' ), 'primary', 'submit', false ); ?>
+		</form>
+	</div>
+	<?php
+}
+add_action(
+	'admin_notices',
+	static function (): void {
+		$screen = get_current_screen();
+		if ( $screen && 'edit-relife_place' === $screen->id ) {
+			relife_places_sync_box();
+		}
+	}
+);
+
 /* ---------- Import (Nástroje → Import podnikov) ---------- */
 
 function relife_places_import_menu(): void {
@@ -277,6 +437,12 @@ function relife_places_import_page(): void {
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Import podnikov (Kam na jedlo)', 'relife' ); ?></h1>
+		<?php if ( isset( $_GET['sync_err'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification ?>
+			<div class="notice notice-error"><p><?php echo esc_html( rawurldecode( sanitize_text_field( wp_unslash( $_GET['sync_err'] ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification ?></p></div>
+		<?php elseif ( isset( $_GET['sync_total'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification ?>
+			<div class="notice notice-success"><p><?php echo esc_html( sprintf( /* translators: 1: total, 2: added, 3: updated */ __( 'Zoznam z Google Máp: %1$d miest. Pridaných nových: %2$d, doplnených: %3$d.', 'relife' ), (int) $_GET['sync_total'], (int) ( $_GET['sync_added'] ?? 0 ), (int) ( $_GET['sync_updated'] ?? 0 ) ) ); // phpcs:ignore WordPress.Security.NonceVerification ?></p></div>
+		<?php endif; ?>
+		<?php relife_places_sync_box(); ?>
 		<?php if ( $done >= 0 ) : ?>
 			<div class="notice notice-success"><p><?php echo esc_html( sprintf( /* translators: 1: imported, 2: skipped */ __( 'Pridaných podnikov: %1$d, preskočených (už existujú): %2$d.', 'relife' ), $done, $skip ) ); ?></p></div>
 		<?php endif; ?>
