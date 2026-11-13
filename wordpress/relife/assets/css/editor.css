@@ -8,3 +8,34 @@ body.editor-styles-wrapper{background:#131313;color:#F5F5F2;font-family:'Inter',
 .editor-styles-wrapper li::marker{color:#3CFFD0;font-weight:800}
 .editor-styles-wrapper ul.is-style-rl-check{list-style:"✓  "}
 .editor-styles-wrapper ul.is-style-rl-cross{list-style:"✗  "}
+
+/* Interaktívne grafy v článkoch (blok RELIFE graf, shortcode [relife_graf]) */
+.rl-chart{margin:32px 0;padding:24px 26px 22px;background:#1F1F1F;border:1px solid var(--rl-line,#3D3D3D);border-radius:22px}
+.rl-chart__head{margin-bottom:16px}
+.rl-chart__title{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--rl-muted,#A6A6A6);margin-bottom:6px}
+.rl-chart__score{font-family:var(--rl-display,'Bricolage Grotesque',sans-serif);font-weight:800;font-size:clamp(40px,7vw,56px);line-height:1;letter-spacing:-.03em;color:#fff}
+.rl-chart__score span{color:var(--rl-soft,#C9C9CF);font-weight:600}
+.rl-chart__rows{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.rl-chart__btn{display:block;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left}
+button.rl-chart__btn{cursor:pointer;border-radius:10px}
+button.rl-chart__btn:focus-visible{outline:3px solid var(--rl-accent,#3CFFD0);outline-offset:4px}
+.rl-chart__top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:8px}
+.rl-chart__label{font-size:17px;line-height:1.25;color:var(--rl-ink,#F5F5F2)}
+.rl-chart__val{font-weight:800;font-size:18px;white-space:nowrap;font-variant-numeric:tabular-nums;color:#fff}
+.rl-chart__track{display:block;height:11px;border-radius:999px;background:#2B2B2B;overflow:hidden}
+.rl-chart__bar{display:block;height:100%;width:var(--w);border-radius:999px;background:var(--c)}
+.rl-chart__row.has-desc .rl-chart__label::after{content:"+";display:inline-block;margin-left:8px;width:18px;height:18px;line-height:17px;text-align:center;border-radius:50%;border:1.5px solid var(--rl-line,#3D3D3D);color:var(--rl-muted,#A6A6A6);font-size:13px;font-weight:700;vertical-align:2px;transition:transform .2s ease}
+.rl-chart__row.has-desc .rl-chart__btn[aria-expanded="true"] .rl-chart__label::after{content:"–"}
+.rl-chart__row:hover .rl-chart__bar,.rl-chart__btn:focus-visible .rl-chart__bar{filter:brightness(1.15)}
+.rl-chart__desc{margin:10px 0 0;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.05);font-size:15px;line-height:1.5;color:var(--rl-soft,#C9C9CF);border-left:3px solid var(--c)}
+.rl-chart__note{margin-top:20px;font-size:14px;line-height:1.5;color:var(--rl-muted,#A6A6A6)}
+/* animácia: pruhy sa roztiahnu po zobrazení na obrazovke (bez JavaScriptu sú hneď plné) */
+.rl-chart.is-anim .rl-chart__bar{width:0;transition:width .9s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--i) * 70ms)}
+.rl-chart.is-anim.is-in .rl-chart__bar{width:var(--w)}
+@media (prefers-reduced-motion:reduce){.rl-chart.is-anim .rl-chart__bar{transition:none;width:var(--w)}}
+@media (max-width:600px){.rl-chart{padding:20px 18px 18px;border-radius:18px;margin-left:-4px;margin-right:-4px}.rl-chart__label{font-size:16px}.rl-chart__val{font-size:17px}}
+
+.rl-chart-edit .components-textarea-control__input{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:#1F1F1F;color:#F5F5F2}
+.rl-chart-edit .components-base-control__label,.rl-chart-edit .components-base-control__help{color:#C9C9CF}
+.editor-styles-wrapper .rl-chart__rows,.editor-styles-wrapper .rl-chart__rows>li{list-style:none;padding-left:0;margin-left:0}
+.editor-styles-wrapper .rl-chart__rows>li::marker{content:""}

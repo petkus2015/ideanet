@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.39.0
+- **Interaktívne grafy v článkoch:** nový blok **RELIFE graf** v editore blokov (Pridať blok → Widgety → RELIFE graf) a shortcode `[relife_graf]` pre klasický editor. Dva typy: **Hodnotenie** (karta s celkovým skóre a pruhmi, farba podľa výsledku: limetková / žltá / červená, riziková hodnota s `!`) a **Hodnoty** (percentá, čísla, farby z palety RELIFE). Riadky sa píšu priamo v bloku v tvare `Názov | hodnota | popis`; popis sa rozbalí klepnutím. Pruhy sa po zobrazení na obrazovke animovane roztiahnu. Nastavenia v pravom paneli: typ, nadpis, maximum, celkové skóre (automaticky priemer alebo ručne), poznámka pod grafom.
+
 ## 1.38.0
 - **Kategória Travel (Cestovanie): štvorcová dlaždica Lacné letenky.** Na prvej strane kategórie je ako prvý blok farebná dlaždica (farba sekcie Travel, lietadlo v pozadí, nadpis, krátky popis a tlačidlo so šípkou) s odkazom na stránku Lacné letenky. Ak sú v uloženej kópii aktuálne ceny (nie staršie ako 36 hodín), ukáže aj „od 30 €“. Dlaždica sa zobrazí, len ak stránka Lacné letenky existuje.
 

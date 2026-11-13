@@ -149,6 +149,32 @@
 		}
 	}
 
+	/* Interaktívne grafy: animácia pruhov po zobrazení a rozbalenie popisu klepnutím na riadok. */
+	function initCharts() {
+		var charts = qsa( '.rl-chart' );
+		if ( ! charts.length ) { return; }
+		charts.forEach( function ( ch ) {
+			qsa( 'button.rl-chart__btn', ch ).forEach( function ( b ) {
+				b.addEventListener( 'click', function () {
+					var d = document.getElementById( b.getAttribute( 'aria-controls' ) );
+					var open = b.getAttribute( 'aria-expanded' ) === 'true';
+					b.setAttribute( 'aria-expanded', open ? 'false' : 'true' );
+					if ( d ) { d.hidden = open; }
+				} );
+			} );
+		} );
+		if ( ! window.IntersectionObserver ) { return; }
+		var io = new IntersectionObserver( function ( entries ) {
+			entries.forEach( function ( en ) {
+				if ( en.isIntersecting ) { en.target.classList.add( 'is-in' ); io.unobserve( en.target ); }
+			} );
+		}, { threshold: 0.25 } );
+		charts.forEach( function ( ch ) {
+			ch.classList.add( 'is-anim' );
+			io.observe( ch );
+		} );
+	}
+
 	/* ---------- Anketa ---------- */
 	function initPoll() {
 		var poll = qs( '.js-poll' );
@@ -447,6 +473,7 @@
 		initMisc();
 		initMenu();
 		initFlightsOrigin();
+		initCharts();
 		renderSavedPage();
 		document.documentElement.classList.add( 'rl-ready' );
 	}
