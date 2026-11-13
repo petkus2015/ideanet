@@ -31,6 +31,25 @@ foreach ( array_keys( $cat_counts ) as $slug ) {
 	$cat_color[ $slug ] = $palette[ $ci++ % count( $palette ) ];
 }
 
+/**
+ * Ikona podľa názvu kategórie (emoji, bez ďalších súborov).
+ */
+$cat_icon = static function ( string $name ): string {
+	$n   = remove_accents( mb_strtolower( $name ) );
+	$map = array(
+		'kaviaren' => '☕', 'kava' => '☕', 'bistro' => '🥗', 'bar' => '🍸', 'pub' => '🍺', 'pivo' => '🍺', 'vino' => '🍷',
+		'pizza' => '🍕', 'talian' => '🍝', 'azijsk' => '🍜', 'sushi' => '🍣', 'burg' => '🍔', 'pekaren' => '🥐', 'cukrar' => '🍰',
+		'zdrav' => '🥑', 'vegan' => '🌱', 'ranajk' => '🍳', 'obed' => '🍽️', 'vecer' => '🌙', 'zmrzlin' => '🍦', 'street' => '🌮', 'mexick' => '🌮',
+		'steak' => '🥩', 'maso' => '🥩', 'ryb' => '🐟', 'slovensk' => '🥘', 'restaur' => '🍽️',
+	);
+	foreach ( $map as $k => $icon ) {
+		if ( false !== strpos( $n, $k ) ) {
+			return $icon;
+		}
+	}
+	return '📍';
+};
+
 get_header();
 ?>
 <section class="rl-places-hero">
@@ -47,9 +66,9 @@ get_header();
 <section class="rl-wrap rl-block rl-places js-places" data-sort="<?php echo $any_rating ? 'rating' : 'name'; ?>">
 	<?php if ( $places ) : ?>
 		<div class="rl-places__chips" role="group" aria-label="<?php esc_attr_e( 'Kategórie', 'relife' ); ?>">
-			<button type="button" class="rl-chip is-on js-places-cat" data-cat="" aria-pressed="true"><?php esc_html_e( 'Všetko', 'relife' ); ?> <small><?php echo (int) count( $places ); ?></small></button>
+			<button type="button" class="rl-chip is-on js-places-cat" data-cat="" aria-pressed="true"><span class="rl-chip__ic" aria-hidden="true">🍴</span><?php esc_html_e( 'Všetko', 'relife' ); ?> <small><?php echo (int) count( $places ); ?></small></button>
 			<?php foreach ( $cat_counts as $slug => $c ) : ?>
-				<button type="button" class="rl-chip js-places-cat" data-cat="<?php echo esc_attr( $slug ); ?>" aria-pressed="false" style="--c:<?php echo esc_attr( $cat_color[ $slug ] ); ?>"><?php echo esc_html( $c['name'] ); ?> <small><?php echo (int) $c['n']; ?></small></button>
+				<button type="button" class="rl-chip js-places-cat" data-cat="<?php echo esc_attr( $slug ); ?>" aria-pressed="false" style="--c:<?php echo esc_attr( $cat_color[ $slug ] ); ?>"><span class="rl-chip__ic" aria-hidden="true"><?php echo esc_html( $cat_icon( $c['name'] ) ); ?></span><?php echo esc_html( $c['name'] ); ?> <small><?php echo (int) $c['n']; ?></small></button>
 			<?php endforeach; ?>
 		</div>
 		<?php if ( $has_price ) : ?>
@@ -80,7 +99,7 @@ get_header();
 					</div>
 					<div class="rl-place__body">
 						<?php if ( $pl['cats'] ) : ?>
-							<div class="rl-place__tags"><?php foreach ( $pl['cats'] as $t ) : ?><span class="rl-place__tag"><?php echo esc_html( $t->name ); ?></span><?php endforeach; ?></div>
+							<div class="rl-place__tags"><?php foreach ( $pl['cats'] as $t ) : ?><span class="rl-place__tag"><?php echo esc_html( $cat_icon( $t->name ) . ' ' . $t->name ); ?></span><?php endforeach; ?></div>
 						<?php endif; ?>
 						<h2 class="rl-place__name"><?php echo esc_html( $pl['name'] ); ?><?php if ( $pl['price'] > 0 ) : ?> <small class="rl-place__price"><?php echo esc_html( str_repeat( '€', $pl['price'] ) ); ?></small><?php endif; ?></h2>
 						<?php if ( '' !== $pl['desc'] ) : ?><p class="rl-place__desc"><?php echo esc_html( $pl['desc'] ); ?></p><?php endif; ?>

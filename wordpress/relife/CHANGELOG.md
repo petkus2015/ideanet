@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.43.1
+- **Kam na jedlo:** pred názvom kategórie vo filtri (aj na štítkoch v kartách) je ikona podľa druhu (☕ Kaviareň, 🍕 Pizza, 🍸 Bar, 🍝 Talianska …, ostatné 📍). Karty pri prejdení myšou už nemajú orámovanie ani posun, len sa jemne zmení farba podkladu.
+
 ## 1.43.0
 - **Kam na jedlo: aktualizácia zoznamu z Google Máp na vyžiadanie.** Keď do zdieľaného zoznamu v Mapách niečo pridáš, v administrácii klikni *Nástroje → Import podnikov → Aktualizovať zoznam z Google Máp* (tlačidlo je aj v zozname Podniky). Pridajú sa len nové miesta (kategória „Ostatné“) a doplní sa chýbajúca adresa/odkaz; existujúce podniky, hodnotenia, popisy, fotky a kategórie sa nemenia. Voliteľne sa do koša presunú miesta, ktoré si zo zoznamu odstránil (len tie pridané touto aktualizáciou). Odkaz na zoznam sa berie z Vzhľad → Prispôsobiť → RELIFE – Úvodná stránka.
 - Zo stránky Kam na jedlo je odstránené hľadanie podľa názvu a zoradenie hore; ostávajú filtre podľa kategórie a ceny.
