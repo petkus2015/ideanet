@@ -24,6 +24,7 @@ foreach ( $places as $pl ) {
 }
 uasort( $cat_counts, static fn( $a, $b ): int => $b['n'] <=> $a['n'] );
 $has_price = (bool) array_filter( $places, static fn( $p ): bool => $p['price'] > 0 );
+$any_rating = (bool) array_filter( $places, static fn( $p ): bool => '' !== $p['rating'] );
 $cat_color = array();
 $ci        = 0;
 foreach ( array_keys( $cat_counts ) as $slug ) {
@@ -51,7 +52,7 @@ get_header();
 			</label>
 			<label class="rl-places__sort"><span class="screen-reader-text"><?php esc_html_e( 'Zoradiť', 'relife' ); ?></span>
 				<select class="js-places-sort">
-					<option value="rating"><?php esc_html_e( 'Najlepšie hodnotené', 'relife' ); ?></option>
+					<?php if ( $any_rating ) : ?><option value="rating"><?php esc_html_e( 'Najlepšie hodnotené', 'relife' ); ?></option><?php endif; ?>
 					<option value="name"><?php esc_html_e( 'Podľa názvu A–Z', 'relife' ); ?></option>
 				</select>
 			</label>

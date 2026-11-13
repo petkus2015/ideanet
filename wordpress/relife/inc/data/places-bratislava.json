@@ -1,0 +1,258 @@
+[
+ {
+  "name": "Soupa Bistro",
+  "address": "Račianska 22/A, 831 02 Nové Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Soupa%20Bistro%20Ra%C4%8Dianska%2022/A%2C%20831%2002%20Nov%C3%A9%20Mesto",
+  "cat": "Bistro",
+  "lat": 48.1604739,
+  "lng": 17.1230208
+ },
+ {
+  "name": "UDC_Bratislava",
+  "address": "Mikovíniho 3211, 831 02 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=UDC_Bratislava%20Mikov%C3%ADniho%203211%2C%20831%2002%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.161207,
+  "lng": 17.118351999999998
+ },
+ {
+  "name": "SÁNG",
+  "address": "Košická 19/821 09, 821 09 Ružinov",
+  "url": "https://www.google.com/maps/search/?api=1&query=S%C3%81NG%20Ko%C5%A1ick%C3%A1%2019/821%2009%2C%20821%2009%20Ru%C5%BEinov",
+  "cat": "Ostatné",
+  "lat": 48.1468612,
+  "lng": 17.1326724
+ },
+ {
+  "name": "Esterháziho palác",
+  "address": "Panská 245/13, 811 01 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Esterh%C3%A1ziho%20pal%C3%A1c%20Pansk%C3%A1%20245/13%2C%20811%2001%20Star%C3%A9%20Mesto",
+  "cat": "Ostatné",
+  "lat": 48.142496099999995,
+  "lng": 17.1079083
+ },
+ {
+  "name": "Pizzeria Terra Mia3",
+  "address": "Košická 4984/44, 821 08 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Pizzeria%20Terra%20Mia3%20Ko%C5%A1ick%C3%A1%204984/44%2C%20821%2008%20Bratislava",
+  "cat": "Pizza, Talianska",
+  "lat": 48.150633199999994,
+  "lng": 17.1353573
+ },
+ {
+  "name": "BULKI FIRE",
+  "address": "Križovatka Karadžičova, Záhradnícka 821/08, 821 08 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=BULKI%20FIRE%20Kri%C5%BEovatka%20Karad%C5%BEi%C4%8Dova%2C%20Z%C3%A1hradn%C3%ADcka%20821/08%2C%20821%2008%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.1534451,
+  "lng": 17.1258707
+ },
+ {
+  "name": "Warung",
+  "address": "Trnavské mýto, 831 04 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Warung%20Trnavsk%C3%A9%20m%C3%BDto%2C%20831%2004%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.157577499999995,
+  "lng": 17.1260212
+ },
+ {
+  "name": "SiSi Bratislava",
+  "address": "Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=SiSi%20Bratislava%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.1696331,
+  "lng": 17.1425651
+ },
+ {
+  "name": "Buenos.",
+  "address": "Kvačalova 998/22, 821 08 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Buenos.%20Kva%C4%8Dalova%20998/22%2C%20821%2008%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.1505697,
+  "lng": 17.132970999999998
+ },
+ {
+  "name": "Zen Garden - Brunch & Sushi",
+  "address": "Račianska 26D, 831 02 Nové Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Zen%20Garden%20-%20Brunch%20%26%20Sushi%20Ra%C4%8Dianska%2026D%2C%20831%2002%20Nov%C3%A9%20Mesto",
+  "cat": "Raňajky, Ázijská",
+  "lat": 48.1631445,
+  "lng": 17.125134799999998
+ },
+ {
+  "name": "Teremtete",
+  "address": "Uršulínska 436/9, 811 01 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Teremtete%20Ur%C5%A1ul%C3%ADnska%20436/9%2C%20811%2001%20Star%C3%A9%20Mesto",
+  "cat": "Ostatné",
+  "lat": 48.144040499999996,
+  "lng": 17.110247299999997
+ },
+ {
+  "name": "Biela 6",
+  "address": "Biela 419/6, 811 01 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Biela%206%20Biela%20419/6%2C%20811%2001%20Star%C3%A9%20Mesto",
+  "cat": "Ostatné",
+  "lat": 48.1441723,
+  "lng": 17.1076536
+ },
+ {
+  "name": "Faust",
+  "address": "Radničná 577/1, 811 01 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Faust%20Radni%C4%8Dn%C3%A1%20577/1%2C%20811%2001%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.143437899999995,
+  "lng": 17.1090698
+ },
+ {
+  "name": "Mullet Bar",
+  "address": "Laurinská 19, 811 01 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Mullet%20Bar%20Laurinsk%C3%A1%2019%2C%20811%2001%20Star%C3%A9%20Mesto",
+  "cat": "Bar",
+  "lat": 48.144241699999995,
+  "lng": 17.1121001
+ },
+ {
+  "name": "6:57a.m.",
+  "address": "Medená 108/19, 811 02 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=6%3A57a.m.%20Meden%C3%A1%20108/19%2C%20811%2002%20Star%C3%A9%20Mesto",
+  "cat": "Ostatné",
+  "lat": 48.1413673,
+  "lng": 17.1121353
+ },
+ {
+  "name": "Dosirak Korean Bistro",
+  "address": "Šancová 3132/112, 831 04 Nové Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Dosirak%20Korean%20Bistro%20%C5%A0ancov%C3%A1%203132/112%2C%20831%2004%20Nov%C3%A9%20Mesto",
+  "cat": "Bistro, Ázijská",
+  "lat": 48.157092999999996,
+  "lng": 17.1259411
+ },
+ {
+  "name": "Ty Somaru",
+  "address": "Miletičova 563/27, 821 09 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Ty%20Somaru%20Mileti%C4%8Dova%20563/27%2C%20821%2009%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.151068099999996,
+  "lng": 17.1392149
+ },
+ {
+  "name": "Káva a čau",
+  "address": "Košická 15, 821 09 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=K%C3%A1va%20a%20%C4%8Dau%20Ko%C5%A1ick%C3%A1%2015%2C%20821%2009%20Bratislava",
+  "cat": "Kaviareň",
+  "lat": 48.1462814,
+  "lng": 17.1323008
+ },
+ {
+  "name": "Oli's Italiano",
+  "address": "Kozia 610/21, 811 03 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Oli%27s%20Italiano%20Kozia%20610/21%2C%20811%2003%20Star%C3%A9%20Mesto",
+  "cat": "Talianska",
+  "lat": 48.1471516,
+  "lng": 17.1018871
+ },
+ {
+  "name": "Street Good - Healthy bistro in Bratislava",
+  "address": "Palisády 34, 811 06 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Street%20Good%20-%20Healthy%20bistro%20in%20Bratislava%20Palis%C3%A1dy%2034%2C%20811%2006%20Bratislava",
+  "cat": "Bistro, Zdravé",
+  "lat": 48.148911999999996,
+  "lng": 17.103386399999998
+ },
+ {
+  "name": "MOYO bistro",
+  "address": "Gorkého 201/11, 811 01 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=MOYO%20bistro%20Gork%C3%A9ho%20201/11%2C%20811%2001%20Star%C3%A9%20Mesto",
+  "cat": "Bistro",
+  "lat": 48.1432455,
+  "lng": 17.1114489
+ },
+ {
+  "name": "Chlieb a Láska - Zwirn",
+  "address": "Košická 35, 821 09 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Chlieb%20a%20L%C3%A1ska%20-%20Zwirn%20Ko%C5%A1ick%C3%A1%2035%2C%20821%2009%20Bratislava",
+  "cat": "Pekáreň",
+  "lat": 48.1487736,
+  "lng": 17.1338018
+ },
+ {
+  "name": "Bistro SOHO Dunajská",
+  "address": "Dunajská 2311/20, 811 08 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Bistro%20SOHO%20Dunajsk%C3%A1%20Dunajsk%C3%A1%202311/20%2C%20811%2008%20Bratislava",
+  "cat": "Bistro",
+  "lat": 48.144652699999995,
+  "lng": 17.116119899999998
+ },
+ {
+  "name": "Martineum café",
+  "address": "Rudnayovo námestie 4550/3, 811 01 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Martineum%20caf%C3%A9%20Rudnayovo%20n%C3%A1mestie%204550/3%2C%20811%2001%20Bratislava",
+  "cat": "Kaviareň",
+  "lat": 48.141680099999995,
+  "lng": 17.1050261
+ },
+ {
+  "name": "RIVA Bar & Bites",
+  "address": "Rázusovo nábrežie, 811 02 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=RIVA%20Bar%20%26%20Bites%20R%C3%A1zusovo%20n%C3%A1bre%C5%BEie%2C%20811%2002%20Bratislava",
+  "cat": "Bar",
+  "lat": 48.139384799999995,
+  "lng": 17.1067526
+ },
+ {
+  "name": "Viecha pod hradom",
+  "address": "Zámocké schody 5, 811 01 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Viecha%20pod%20hradom%20Z%C3%A1mock%C3%A9%20schody%205%2C%20811%2001%20Bratislava",
+  "cat": "Ostatné",
+  "lat": 48.1416336,
+  "lng": 17.1034984
+ },
+ {
+  "name": "Víno Chvostek",
+  "address": "Alstrova 6026/55, 831 06 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=V%C3%ADno%20Chvostek%20Alstrova%206026/55%2C%20831%2006%20Bratislava",
+  "cat": "Bar, Víno",
+  "lat": 48.2106868,
+  "lng": 17.1460705
+ },
+ {
+  "name": "Kaviareň Jungle",
+  "address": "Továrenská 12, 811 09 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Kaviare%C5%88%20Jungle%20Tov%C3%A1rensk%C3%A1%2012%2C%20811%2009%20Bratislava",
+  "cat": "Kaviareň",
+  "lat": 48.1441826,
+  "lng": 17.1255557
+ },
+ {
+  "name": "Backstage Bar",
+  "address": "Šafárikovo námestie 7, 811 02 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Backstage%20Bar%20%C5%A0af%C3%A1rikovo%20n%C3%A1mestie%207%2C%20811%2002%20Star%C3%A9%20Mesto",
+  "cat": "Bar",
+  "lat": 48.141591399999996,
+  "lng": 17.1155963
+ },
+ {
+  "name": "Cat Cafe MON AMI",
+  "address": "Rázusovo nábrežie 6, 811 02 Staré Mesto",
+  "url": "https://www.google.com/maps/search/?api=1&query=Cat%20Cafe%20MON%20AMI%20R%C3%A1zusovo%20n%C3%A1bre%C5%BEie%206%2C%20811%2002%20Star%C3%A9%20Mesto",
+  "cat": "Kaviareň",
+  "lat": 48.140001999999996,
+  "lng": 17.1077437
+ },
+ {
+  "name": "Cukráreň Konditorei Kormuth",
+  "address": "",
+  "url": "https://www.google.com/maps/search/?api=1&query=Cukr%C3%A1re%C5%88%20Konditorei%20Kormuth%20Bratislava",
+  "cat": "Kaviareň",
+  "lat": 48.143508399999995,
+  "lng": 17.1073554
+ },
+ {
+  "name": "Le Due Sicilie",
+  "address": "Župné námestie 588/9, 811 03 Bratislava",
+  "url": "https://www.google.com/maps/search/?api=1&query=Le%20Due%20Sicilie%20%C5%BDupn%C3%A9%20n%C3%A1mestie%20588/9%2C%20811%2003%20Bratislava",
+  "cat": "Talianska",
+  "lat": 48.1450933,
+  "lng": 17.1056511
+ }
+]
