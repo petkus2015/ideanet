@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.40.0
+- **Graf sa do článku pridáva interaktívne:** blok RELIFE graf má v editore vlastné ovládanie riadkov namiesto písania textu – pre každý riadok pole Názov, **posuvník** hodnoty (pri Hodnotení), pole Popis, prepínač „Rizikový riadok“, tlačidlá presunúť vyššie/nižšie a odstrániť, a tlačidlo **+ Pridať riadok**. Pod tým je živý náhľad podľa vzhľadu webu. Zápis ostáva rovnaký (`Názov | hodnota | popis`), takže funguje aj shortcode `[relife_graf]`.
+
 ## 1.39.0
 - **Interaktívne grafy v článkoch:** nový blok **RELIFE graf** v editore blokov (Pridať blok → Widgety → RELIFE graf) a shortcode `[relife_graf]` pre klasický editor. Dva typy: **Hodnotenie** (karta s celkovým skóre a pruhmi, farba podľa výsledku: limetková / žltá / červená, riziková hodnota s `!`) a **Hodnoty** (percentá, čísla, farby z palety RELIFE). Riadky sa píšu priamo v bloku v tvare `Názov | hodnota | popis`; popis sa rozbalí klepnutím. Pruhy sa po zobrazení na obrazovke animovane roztiahnu. Nastavenia v pravom paneli: typ, nadpis, maximum, celkové skóre (automaticky priemer alebo ručne), poznámka pod grafom.
 

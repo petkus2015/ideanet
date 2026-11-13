@@ -39,3 +39,15 @@ button.rl-chart__btn:focus-visible{outline:3px solid var(--rl-accent,#3CFFD0);ou
 .rl-chart-edit .components-base-control__label,.rl-chart-edit .components-base-control__help{color:#C9C9CF}
 .editor-styles-wrapper .rl-chart__rows,.editor-styles-wrapper .rl-chart__rows>li{list-style:none;padding-left:0;margin-left:0}
 .editor-styles-wrapper .rl-chart__rows>li::marker{content:""}
+.rl-chart-edit{border:1.5px dashed #3D3D3D;border-radius:18px;padding:16px;margin:24px 0;background:rgba(255,255,255,.02)}
+.rl-chart-edit__title{font-family:'Inter',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#3CFFD0;margin-bottom:12px}
+.rl-chart-rows{display:grid;gap:12px;margin-bottom:16px}
+.rl-chart-rows__row{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid #3D3D3D;border-radius:14px;background:#1A1A1A}
+.rl-chart-rows__main{flex:1;display:grid;gap:10px;min-width:0}
+.rl-chart-rows__tools{display:flex;flex-direction:column;gap:2px}
+.rl-chart-rows__row .components-base-control__label,.rl-chart-rows__row .components-toggle-control__label{color:#C9C9CF;font-size:12px}
+.rl-chart-rows__row .components-text-control__input{background:#131313;color:#F5F5F2;border-color:#3D3D3D}
+.rl-chart-rows__row .components-button{color:#F5F5F2}
+.rl-chart-rows__add{margin-top:4px}
+.rl-chart-edit__preview{margin-top:8px}
+.rl-chart-edit__preview .rl-chart{margin:0}
