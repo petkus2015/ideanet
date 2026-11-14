@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.43.2
+- **Kam na jedlo:** emoji ikony nahradené jednoduchými vektorovými (SVG obrys, farba podľa textu): kaviareň, bistro, bar, pub, víno, pizza, príbor, ázijská, sushi, burger, pekáreň, dezert, zdravé, raňajky, zmrzlina, street food, ryby; pre neznáme kategórie ikona miesta.
+
 ## 1.43.1
 - **Kam na jedlo:** pred názvom kategórie vo filtri (aj na štítkoch v kartách) je ikona podľa druhu (☕ Kaviareň, 🍕 Pizza, 🍸 Bar, 🍝 Talianska …, ostatné 📍). Karty pri prejdení myšou už nemajú orámovanie ani posun, len sa jemne zmení farba podkladu.
 

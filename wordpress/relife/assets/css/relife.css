@@ -785,7 +785,10 @@ button.rl-chart__btn:focus-visible{outline:3px solid var(--rl-accent,#3CFFD0);ou
 .rl-place{display:flex;flex-direction:column;background:var(--rl-surface);border:1px solid var(--rl-line);border-radius:22px;overflow:hidden;box-shadow:inset 0 4px 0 var(--c);transition:background-color .2s ease}
 .rl-place[hidden]{display:none}
 .rl-place:hover,.rl-place:focus-within{background:color-mix(in srgb,var(--c) 12%,var(--rl-surface))}
-.rl-chip__ic{font-size:16px;line-height:1}
+.rl-chip__ic{display:inline-flex}
+.rl-ic{flex:none;display:block}
+.rl-place__tag{display:inline-flex;align-items:center;gap:5px}
+.rl-place__tag .rl-ic{width:13px;height:13px}
 .rl-place__media{position:relative;aspect-ratio:4/3;background:var(--c);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .rl-place__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:0}
 .rl-place__initial{font-family:var(--rl-display);font-weight:800;font-size:120px;line-height:1;color:#131313;opacity:.16}
