@@ -279,6 +279,10 @@ button{font:inherit;color:inherit}
 .rl-newsletter__form button{min-height:48px;padding:0 24px;border-radius:12px;border:1.5px solid #fff;background:#131313;color:#fff;font-weight:700;cursor:pointer}
 .rl-footer__list{list-style:none;margin:0;padding:0}
 .rl-footer__list a{display:flex;align-items:center;min-height:36px;color:#E6E6EA}
+.rl-footer__host{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 0;font-size:13px;color:var(--rl-muted)}
+.rl-footer__host a{color:var(--rl-ink);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.rl-footer__host a:hover{color:var(--rl-accent)}
+.rl-footer__host-note{opacity:.7}
 .rl-footer__legal{margin-top:36px;padding-top:18px;border-top:1px solid var(--rl-line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--rl-muted)}
 
 /* Spodné menu na mobile */

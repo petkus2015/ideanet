@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.45.0
+- **Pätička:** riadok „Web beží na hostingu WebSupport“ s ikonou servera a affiliate odkazom (`rel="sponsored noopener"`, popisok „affiliate odkaz“). Text, odkaz aj zobrazenie sa menia vo Vzhľad → Prispôsobiť → RELIFE.
+
 ## 1.44.1
 - **Kam na jedlo – čistejší filter:** jeden tmavý panel s popiskami Kategória a Cena, jednotné jemné tlačidlá bez farebného orámovania; vybraná možnosť je zvýraznená svetlým podkladom. Ikony ostávajú.
 

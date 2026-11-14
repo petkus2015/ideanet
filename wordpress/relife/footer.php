@@ -68,6 +68,21 @@ $action = (string) get_theme_mod( 'relife_newsletter_action', '' );
 			<span>© <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php echo esc_html( get_bloginfo( 'name' ) ); ?></span>
 			<span><?php esc_html_e( 'Ochrana súkromia · Cookies · Označenie spolupráce a affiliate odkazov', 'relife' ); ?><?php if ( function_exists( 'relife_google_tag_enabled' ) && relife_google_tag_enabled() && get_theme_mod( 'relife_cookie_banner', true ) && get_theme_mod( 'relife_google_tag_consent', true ) ) : ?> · <button type="button" class="rl-linkbtn js-cookie-settings"><?php esc_html_e( 'Nastavenia cookies', 'relife' ); ?></button><?php endif; ?></span>
 		</div>
+		<?php
+		$host_txt = trim( (string) get_theme_mod( 'relife_host_text', 'Web beží na hostingu WebSupport' ) );
+		$host_url = (string) get_theme_mod( 'relife_host_url', 'https://www.websupport.sk/?ref=NDgpGFI_' );
+		if ( get_theme_mod( 'relife_host_show', true ) && '' !== $host_txt ) :
+			?>
+			<p class="rl-footer__host">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01"/></svg>
+				<?php if ( '' !== $host_url ) : ?>
+					<a href="<?php echo esc_url( $host_url ); ?>" target="_blank" rel="sponsored noopener"><?php echo esc_html( $host_txt ); ?></a>
+					<span class="rl-footer__host-note"><?php esc_html_e( '(affiliate odkaz)', 'relife' ); ?></span>
+				<?php else : ?>
+					<span><?php echo esc_html( $host_txt ); ?></span>
+				<?php endif; ?>
+			</p>
+		<?php endif; ?>
 	</div>
 </footer>
 

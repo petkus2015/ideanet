@@ -93,6 +93,14 @@ function relife_customize_register( WP_Customize_Manager $wp_customize ): void {
 		)
 	);
 
+	// Pätička: hosting + affiliate odkaz.
+	$wp_customize->add_setting( 'relife_host_show', array( 'default' => true, 'sanitize_callback' => 'rest_sanitize_boolean' ) );
+	$wp_customize->add_control( 'relife_host_show', array( 'label' => __( 'Pätička: zobraziť riadok o hostingu', 'relife' ), 'section' => 'relife_options', 'type' => 'checkbox' ) );
+	$wp_customize->add_setting( 'relife_host_text', array( 'default' => 'Web beží na hostingu WebSupport', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'relife_host_text', array( 'label' => __( 'Pätička: text o hostingu (napr. na akom serveri/železe web beží)', 'relife' ), 'section' => 'relife_options', 'type' => 'text' ) );
+	$wp_customize->add_setting( 'relife_host_url', array( 'default' => 'https://www.websupport.sk/?ref=NDgpGFI_', 'sanitize_callback' => 'esc_url_raw' ) );
+	$wp_customize->add_control( 'relife_host_url', array( 'label' => __( 'Pätička: affiliate odkaz (prázdne = bez odkazu)', 'relife' ), 'section' => 'relife_options', 'type' => 'url' ) );
+
 	$wp_customize->add_setting(
 		'relife_accent',
 		array(
