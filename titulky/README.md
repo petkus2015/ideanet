@@ -35,6 +35,12 @@ podľa prehliadača. V náhľade sa dajú titulky presunúť myšou a zapnúť s
 Štýl Dynamický vychádza z TikTok titulkov: fráza má 1 až 3 slová, slová sa objavujú po jednom podľa reči (rozmazanie a posun zdola), prvý riadok je väčší, všetky slová majú jeden font, štýl je predvolene VEĽKÝMI písmenami (vypína sa v paneli) a fráza sa na konci rozmaže a odplynie nahor. Poloha frázy sa dá meniť zľava doprava pri každej fráze.
 Vznikne z `static/` príkazom `python3 build_browser.py`.
 
+## Verzia pre PHP webhosting (FTP)
+
+Priečinok `php/` obsahuje `index.php`, `app.html` a `.htaccess`. Nahraj ich cez FTP do priečinka na webe
+(napríklad `/titulky`) a otvor `https://tvojweb.sk/titulky/`. Server iba zobrazí stránku (a presmeruje na https),
+rozpoznanie reči aj export beží v prehliadači návštevníka. `app.html` sa generuje príkazom `python3 build_browser.py`.
+
 ## Nahrávanie z mobilu
 
 Verzia so serverom funguje v mobilnom prehliadači (Safari, Chrome): rozhranie sa prispôsobí

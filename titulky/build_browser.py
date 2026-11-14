@@ -96,3 +96,7 @@ body{{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16p
 '''
     Path(sys.argv[1]).write_text(frag, encoding="utf-8")
     print("demo", sys.argv[1])
+
+# --- verzia na PHP webhosting (FTP): rovnaká aplikácia, obslúži ju index.php ---
+(here / "php").mkdir(exist_ok=True)
+(here / "php" / "app.html").write_text(page, encoding="utf-8")
