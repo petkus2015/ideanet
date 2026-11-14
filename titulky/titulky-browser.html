@@ -244,7 +244,7 @@ const PRESETS = [
   { hl: "#ffe066", id: "vyrazny", name: "Výrazný", font: "Poppins", color: "#ffffff", bg: "#6c5cff", bgOpacity: 100, size: 7, bold: true },
   { hl: "#ffe066", id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
   { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
-  { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.55, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
+  { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false },
   segments: [], file: null, url: null, duration: 0, downloads: [] };
@@ -577,7 +577,7 @@ function dynChunks() {
 }
 const hashStr = (str) => { let h = 0; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
 const easeOut = (x) => 1 - Math.pow(1 - x, 3);
-const ROAM = [[-0.17, 0], [0.17, -0.03], [0, 0.03], [-0.1, -0.02], [0.14, 0.02]];
+const ROAM = [[-0.05, 0], [0.05, -0.012], [0, 0.015], [-0.03, -0.008], [0.04, 0.01]]; // malé posuny okolo zvolenej polohy, fráza ostáva v zornom poli
 function drawChunk(ctx, c, t, W, H, st) {
   const base = Math.min(W, H) * st.size / 100, space = base * 0.26;
   const exit = t > c.exitStart ? clamp((t - c.exitStart) / c.exitDur, 0, 1) : 0;
@@ -599,7 +599,7 @@ function drawChunk(ctx, c, t, W, H, st) {
     lines.push(arr);
   });
   const widths = lines.map((l) => l.reduce((a, i) => a + i.w, 0) + space * (l.length - 1));
-  const heights = lines.map((l) => Math.max(...l.map((i) => i.px)) * 1.15);
+  const heights = lines.map((l) => Math.max(...l.map((i) => i.px)) * 1.05);
   const bw = Math.max(...widths), bh = heights.reduce((a, v) => a + v, 0), pad = W * 0.03;
   const [ox, oy] = st.roam ? ROAM[c.idx % ROAM.length] : [0, 0];
   const cx = clamp(st.x * W + ox * W, bw / 2 + pad, Math.max(bw / 2 + pad, W - bw / 2 - pad));
