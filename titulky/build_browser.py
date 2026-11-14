@@ -39,7 +39,7 @@ body = body.replace('''<div class="group">
           <div class="inline"><label><input type="checkbox" id="highlight"> Zvýrazňovať práve vyslovené slovo</label></div>
           <div class="inline" style="margin-top:8px"><input type="color" id="hl"><small class="hint">Farba zvýraznenia</small></div>
           <div class="inline" style="margin-top:8px"><label><input type="checkbox" id="roam"> Dynamický štýl: meniť polohu pri každej fráze</label></div>
-          <div class="inline" style="margin-top:8px"><label><input type="checkbox" id="caps"> Dynamický štýl: VEĽKÉ PÍSMENA (capslock)</label></div>
+          <div class="inline" style="margin-top:8px"><label><input type="checkbox" id="caps"> Dynamický štýl: VEĽKÉ PÍSMENA (kapitálky)</label></div>
         </div>
         <div class="group">
           <div class="label">Veľkosť</div>''', 1)
@@ -59,7 +59,7 @@ page = f'''<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Titulky</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&display=swap">
 <style>
 {css}
 </style>
@@ -82,7 +82,7 @@ if len(sys.argv) > 1:
     demo_body = body.replace("Všetko beží vo vašom prehliadači. Nič sa neposiela na server.", "Ukážka: titulky sú vzorové, video ostáva vo vašom prehliadači.")
     frag = f'''<title>Titulky</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Playfair+Display:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&display=swap">
 <style>
 {css}
 html,body{{margin:0}}

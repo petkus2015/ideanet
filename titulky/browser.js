@@ -17,7 +17,7 @@ const PRESETS = [
   { hl: "#ffe066", id: "vyrazny", name: "Výrazný", font: "Poppins", color: "#ffffff", bg: "#6c5cff", bgOpacity: 100, size: 7, bold: true },
   { hl: "#ffe066", id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
   { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
-  { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, y: 0.55, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
+  { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.55, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false },
   segments: [], file: null, url: null, duration: 0, downloads: [] };
@@ -319,7 +319,6 @@ function syncControls() {
 // Vzor: slová sa objavujú po jednom podľa reči (rozmazanie + posun zdola), krátka fráza ostane na obraze
 // a potom sa rozmaže a odplynie nahor. Fráza má 1 až 3 slová, prvý riadok je väčší, niektoré slová sú
 // v pútavom písme a poloha frázy sa môže meniť zľava doprava.
-const SERIF = '"Playfair Display", "DM Serif Display", Georgia, serif';
 const ENTER = 0.22, EXIT = 0.25;
 let dynVer = 0, dynCache = { ver: -1, chunks: [] };
 const bumpDyn = () => { dynVer++; };
@@ -365,9 +364,8 @@ function drawChunk(ctx, c, t, W, H, st) {
     const arr = [];
     for (let j = 0; j < cnt; j++, k++) {
       const o = c.words[k], text = st.caps ? o.w.toUpperCase() : o.w.toLowerCase();
-      const serif = hashStr(text.replace(/[^\p{L}\d]/gu, "") + k) % 10 < 3; // niektoré slová dostanú pútavé písmo
-      const px = base * (li === 0 ? 1 : 0.82) * (serif ? 1.22 : 1);
-      const font = serif ? `700 ${px}px ${SERIF}` : `${st.bold ? 800 : 600} ${px}px "${st.font}", sans-serif`;
+      const px = base * (li === 0 ? 1 : 0.82);
+      const font = `${st.bold ? 800 : 600} ${px}px "${st.font}", sans-serif`; // jeden druh písma pre všetky slová
       ctx.font = font;
       arr.push({ o, k, font, px, text, w: ctx.measureText(text).width });
     }
@@ -471,7 +469,7 @@ async function exportVideo() {
     if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
     const [ow, oh] = OUT[state.aspect], k = EXPORT_SHORT / Math.min(ow, oh);
     const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = { ...state.style };
-    await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${wt} 40px "${st.font}"`).catch(() => {})).concat(document.fonts.load('700 40px "Playfair Display"').catch(() => {})));
+    await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${wt} 40px "${st.font}"`).catch(() => {})));
     const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext("2d");
     const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
@@ -529,13 +527,13 @@ function setup() {
     if (p.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(p.bg)},${p.bgOpacity / 100})`; else sp.style.textShadow = "-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000";
     if (p.dynamic) { // ukážka: pútavé písmo + malé písmo pod ním
       sp.textContent = ""; sp.style.cssText = "display:flex;flex-direction:column;align-items:center;line-height:1";
-      const a = document.createElement("span"); a.textContent = "text"; a.style.cssText = `font:700 22px ${SERIF}`;
-      const c = document.createElement("span"); c.textContent = "effect"; c.style.cssText = 'font:800 11px "Inter",sans-serif';
+      const a = document.createElement("span"); a.textContent = "TEXT"; a.style.cssText = 'font:800 20px "Inter",sans-serif';
+      const c = document.createElement("span"); c.textContent = "EFFECT"; c.style.cssText = 'font:800 12px "Inter",sans-serif';
       sp.append(a, c);
     }
     sample.append(sp);
     const name = document.createElement("span"); name.className = "name"; name.textContent = p.name; b.append(sample, name);
-    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight, caps: o.caps }; syncControls(); };
+    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight, caps: p.caps ?? o.caps }; syncControls(); };
     $("presets").append(b);
   });
   const custom = () => { state.style.preset = null; syncControls(); };
@@ -552,7 +550,7 @@ function setup() {
   setupDrag();
   const dyn = document.createElement("canvas"); dyn.id = "dyn";
   dyn.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none"; $("stage").append(dyn);
-  ["400 20px Inter", "800 20px Inter", `700 20px "Playfair Display"`].forEach((f) => document.fonts.load(f).catch(() => {}));
+  ["400 20px Inter", "800 20px Inter"].forEach((f) => document.fonts.load(f).catch(() => {}));
   new ResizeObserver(updateCaption).observe($("stage"));
   syncControls();
   $("export").onclick = exportVideo;
