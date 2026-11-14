@@ -337,7 +337,15 @@ function dynChunks() {
     }
     flush();
   }
-  all.forEach((c, i) => { c.idx = i; if (i + 1 < all.length) c.end = Math.max(c.end, Math.min(all[i + 1].start, c.end + 0.5)); });
+  // Odchod frázy sa vždy dokončí skôr, než sa objaví prvé slovo ďalšej frázy (nič sa neprekrýva).
+  all.forEach((c, i) => {
+    c.idx = i;
+    const next = all[i + 1];
+    if (next) {
+      const dur = clamp(next.start - (c.end + 0.05), 0.08, EXIT);
+      c.exitDur = dur; c.exitStart = Math.max(c.start, next.start - dur);
+    } else { c.exitDur = EXIT; c.exitStart = c.end + 0.5; }
+  });
   dynCache = { ver: dynVer, chunks: all };
   return all;
 }
@@ -346,7 +354,7 @@ const easeOut = (x) => 1 - Math.pow(1 - x, 3);
 const ROAM = [[-0.17, 0], [0.17, -0.03], [0, 0.03], [-0.1, -0.02], [0.14, 0.02]];
 function drawChunk(ctx, c, t, W, H, st) {
   const base = Math.min(W, H) * st.size / 100, space = base * 0.26;
-  const exit = t > c.end ? clamp((t - c.end) / EXIT, 0, 1) : 0;
+  const exit = t > c.exitStart ? clamp((t - c.exitStart) / c.exitDur, 0, 1) : 0;
   const h = hashStr(c.words.map((o) => o.w).join(" "));
   ctx.textBaseline = "middle"; ctx.textAlign = "center";
   if ("letterSpacing" in ctx) ctx.letterSpacing = `${-base * 0.02}px`;
@@ -394,7 +402,7 @@ function drawChunk(ctx, c, t, W, H, st) {
   if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
 }
 function drawDynamic(ctx, t, W, H, st) {
-  for (const c of dynChunks()) if (t >= c.start && t <= c.end + EXIT) drawChunk(ctx, c, t, W, H, st);
+  for (const c of dynChunks()) if (t >= c.start && t <= c.exitStart + c.exitDur) drawChunk(ctx, c, t, W, H, st);
 }
 function drawPreviewDyn() {
   const cv = $("dyn"), st = state.style, stage = $("stage"), dpr = window.devicePixelRatio || 1;
@@ -559,5 +567,5 @@ function setup() {
   requestAnimationFrame(loop);
   show("upload");
 }
-if (MOCK) window.__test = { captureAudio, decodeBuffer, state };
+if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn };
 setup();
