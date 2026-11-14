@@ -13,12 +13,12 @@ body = body.replace('''    <p class="error" id="upload-error" hidden></p>
   </section>''', '''    <div class="row">
       <label for="model">Model</label>
       <select id="model">
-        <option value="tiny">Rýchly (tiny, približne 40 MB)</option>
-        <option value="base" selected>Vyvážený (base, približne 80 MB)</option>
-        <option value="small">Presný (small, približne 250 MB)</option>
-      </select>
+        <option value="tiny">Rýchly (tiny): slabý pre slovenčinu</option>
+        <option value="base">Vyvážený (base): slabý pre slovenčinu</option>
+        <option value="small" selected>Presnejší (small, približne 250 MB)</option>
+        </select>
     </div>
-    <p class="hint">Model sa pri prvom použití stiahne a prehliadač si ho zapamätá. Slovenčina je presnejšia s modelom small.</p>
+    <p class="hint">Model sa pri prvom použití stiahne a prehliadač si ho zapamätá. Pre slovenčinu používaj aspoň model small, menšie modely robia veľa chýb.</p>
     <p class="error" id="upload-error" hidden></p>
   </section>''', 1)
 body = re.sub(r'accept="[^"]*"', 'accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265"', body, count=1)
