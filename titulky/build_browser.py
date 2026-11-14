@@ -30,8 +30,19 @@ body = body.replace('<p class="error" id="export-error" hidden></p>',
 body = body.replace('<p class="hint">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>',
     '<p class="hint">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>')
 body = body.replace('<a class="dl" id="dl-mp4">Stiahnuť video (MP4)</a>', '<a class="dl" id="dl-mp4">Stiahnuť video</a>')
+body = body.replace('''<div class="group">
+          <div class="label">Veľkosť</div>''', '''<p class="hint">Titulky môžeš presunúť aj myšou alebo prstom priamo v náhľade.</p>
+        <div class="group">
+          <div class="label">Zvýraznenie slov</div>
+          <div class="inline"><label><input type="checkbox" id="highlight"> Zvýrazňovať práve vyslovené slovo</label></div>
+          <div class="inline" style="margin-top:8px"><input type="color" id="hl"><small class="hint">Farba zvýraznenia</small></div>
+        </div>
+        <div class="group">
+          <div class="label">Veľkosť</div>''', 1)
 css = css.replace(":root{--bg:#070914;", ":root{color-scheme:dark;--bg:#070914;")
 css += """
+.cap{left:auto;right:auto;width:max-content;max-width:84%;pointer-events:auto;cursor:grab;touch-action:none;transform:translate(-50%,-50%);user-select:none}
+.inline label{display:flex;gap:8px;align-items:center;cursor:pointer}
 .row select{max-width:100%}
 @media(prefers-reduced-motion:reduce){.spinner{animation:none}}
 """

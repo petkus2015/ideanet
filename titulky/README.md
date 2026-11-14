@@ -31,7 +31,8 @@ Pri prvom rozpoznaní sa stiahne model Whisper (predvolene `small`, približne 0
 Rozpoznanie reči (Whisper cez transformers.js) aj export (nahranie z plátna) bežia v prehliadači,
 nič sa neposiela na server. Pri prvom použití potrebuje internet na stiahnutie modelu
 (40 až 250 MB podľa výberu) a písem. Export beží v reálnom čase a vyrobí WebM alebo MP4
-podľa prehliadača. Vznikne z `static/` príkazom `python3 build_browser.py`.
+podľa prehliadača. V náhľade sa dajú titulky presunúť myšou a zapnúť sa dá zvýrazňovanie práve vyslovených slov (časy slov dá model Whisper, ak ich nevie, odhadnú sa z dĺžky slov).
+Vznikne z `static/` príkazom `python3 build_browser.py`.
 
 ## Mazanie po 24 hodinách
 

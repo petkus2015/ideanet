@@ -76,6 +76,8 @@ input[type=range]{width:100%;accent-color:var(--a)}
 .danger:hover{border-color:#ff7a8a}
 @media(max-width:900px){.editor{grid-template-columns:1fr}.panel{position:static}.note{display:none}h1{font-size:32px}}
 
+.cap{left:auto;right:auto;width:max-content;max-width:84%;pointer-events:auto;cursor:grab;touch-action:none;transform:translate(-50%,-50%);user-select:none}
+.inline label{display:flex;gap:8px;align-items:center;cursor:pointer}
 .row select{max-width:100%}
 @media(prefers-reduced-motion:reduce){.spinner{animation:none}}
 
@@ -180,6 +182,12 @@ input[type=range]{width:100%;accent-color:var(--a)}
           </div>
         </div>
 
+        <p class="hint">Titulky môžeš presunúť aj myšou alebo prstom priamo v náhľade.</p>
+        <div class="group">
+          <div class="label">Zvýraznenie slov</div>
+          <div class="inline"><label><input type="checkbox" id="highlight"> Zvýrazňovať práve vyslovené slovo</label></div>
+          <div class="inline" style="margin-top:8px"><input type="color" id="hl"><small class="hint">Farba zvýraznenia</small></div>
+        </div>
         <div class="group">
           <div class="label">Veľkosť</div>
           <input type="range" id="size" min="3" max="12" step="0.5">
@@ -217,14 +225,14 @@ const OUT = { "9:16": [1080, 1920], "1:1": [1080, 1080], "16:9": [1920, 1080] };
 const EXPORT_SHORT = 720; // kratšia strana exportu v pixeloch
 const FONTS = ["Inter", "Montserrat", "Poppins", "Bebas Neue", "Roboto Slab", "Arial", "Georgia"];
 const PRESETS = [
-  { id: "modern",  name: "Modern",  font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 60, size: 6.5, bold: true },
-  { id: "klasik",  name: "Klasik",  font: "Arial", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 6, bold: true },
-  { id: "kino",    name: "Kino",    font: "Montserrat", color: "#ffe066", bg: "#000000", bgOpacity: 0, size: 6.5, bold: true },
-  { id: "vyrazny", name: "Výrazný", font: "Poppins", color: "#ffffff", bg: "#6c5cff", bgOpacity: 100, size: 7, bold: true },
-  { id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
-  { id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
+  { hl: "#ffe066", id: "modern",  name: "Modern",  font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 60, size: 6.5, bold: true },
+  { hl: "#ffe066", id: "klasik",  name: "Klasik",  font: "Arial", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 6, bold: true },
+  { hl: "#ffffff", id: "kino",    name: "Kino",    font: "Montserrat", color: "#ffe066", bg: "#000000", bgOpacity: 0, size: 6.5, bold: true },
+  { hl: "#ffe066", id: "vyrazny", name: "Výrazný", font: "Poppins", color: "#ffffff", bg: "#6c5cff", bgOpacity: 100, size: 7, bold: true },
+  { hl: "#ffe066", id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
+  { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
 ];
-const state = { aspect: "9:16", style: { ...PRESETS[0], position: "bottom", preset: "modern" },
+const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false },
   segments: [], file: null, url: null, duration: 0, downloads: [] };
 const video = $("video");
 
@@ -237,6 +245,34 @@ const setBusy = (title, text = "", pct = null) => {
   if (pct !== null) $("busy-bar").firstElementChild.style.width = pct + "%";
 };
 const showError = (msg) => { show("upload"); const e = $("upload-error"); e.textContent = msg; e.hidden = false; };
+
+// ---------- slová a ich časy ----------
+function estimateWords(text, start, end) {
+  const ws = text.trim().split(/\s+/).filter(Boolean), total = ws.reduce((a, w) => a + w.length, 0) || 1;
+  let t = start;
+  return ws.map((w) => { const d = (end - start) * w.length / total; const o = { w, start: t, end: t + d }; t += d; return o; });
+}
+// Slová titulku: ak sa text nezmenil v počte slov, platia pôvodné časy, inak sa čas rozdelí podľa dĺžky slov.
+function wordsFor(seg) {
+  const ws = seg.text.trim().split(/\s+/).filter(Boolean);
+  if (seg.words && seg.words.length === ws.length) return seg.words.map((o, i) => ({ ...o, w: ws[i] }));
+  return estimateWords(seg.text, seg.start, seg.end);
+}
+function groupWords(words) {
+  const segs = []; let cur = [];
+  const flush = () => { if (cur.length) { segs.push({ start: cur[0].start, end: cur[cur.length - 1].end, text: cur.map((o) => o.w).join(" "), words: cur }); cur = []; } };
+  for (const o of words) {
+    if (cur.length) {
+      const chars = cur.reduce((a, x) => a + x.w.length + 1, 0) + o.w.length;
+      if (chars > 32 || o.end - cur[0].start > 4 || o.start - cur[cur.length - 1].end > 0.8) flush();
+    }
+    cur.push(o);
+    if (/[.!?…]$/.test(o.w)) flush();
+  }
+  flush();
+  segs.forEach((g, i) => { if (i + 1 < segs.length) g.end = Math.min(g.end, segs[i + 1].start); g.end = Math.max(g.end, g.start + 0.3); });
+  return segs;
+}
 
 // ---------- rozpoznanie reči (Whisper v prehliadači) ----------
 function toMono(buf) {
@@ -271,7 +307,7 @@ async function recognize(file, modelKey, lang) {
   if (MOCK) {
     await new Promise((r) => setTimeout(r, 600));
     const d = state.duration, out = []; let t = 0.3, i = 1;
-    while (t + 1.5 < d) { out.push({ start: t, end: t + 2, text: `Ukážkový titulok číslo ${i++}` }); t += 2.3; }
+    while (t + 1.5 < d) { const text = `Ukážkový titulok číslo ${i++}`; out.push({ start: t, end: t + 2, text, words: estimateWords(text, t, t + 2) }); t += 2.3; }
     return out;
   }
   const audio = await decodeAudio(file);
@@ -295,13 +331,18 @@ async function recognize(file, modelKey, lang) {
     asrId = id;
   }
   setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.");
-  const opts = { task: "transcribe", return_timestamps: true, chunk_length_s: 30, stride_length_s: 5 };
+  const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5 };
   if (LANGS[lang]) opts.language = LANGS[lang];
-  const res = await asr(audio, opts);
+  try { // časy po slovách (zvýraznenie slov)
+    const wres = await asr(audio, { ...opts, return_timestamps: "word" });
+    const words = (wres.chunks || []).map((c) => ({ w: c.text.trim(), start: c.timestamp[0] ?? 0, end: c.timestamp[1] ?? state.duration })).filter((o) => o.w);
+    if (words.length) return groupWords(words);
+  } catch { /* model nevie časy po slovách, použije sa odhad */ }
+  const res = await asr(audio, { ...opts, return_timestamps: true });
   const chunks = res.chunks && res.chunks.length ? res.chunks : [{ timestamp: [0, state.duration], text: res.text }];
   return chunks.flatMap((c) => {
     const [s, e] = c.timestamp;
-    return c.text.trim() ? splitChunk(c.text, s ?? 0, e ?? state.duration) : [];
+    return c.text.trim() ? splitChunk(c.text, s ?? 0, e ?? state.duration).map((g) => ({ ...g, words: estimateWords(g.text, g.start, g.end) })) : [];
   });
 }
 
@@ -339,29 +380,60 @@ function buildSegments() {
 }
 function applyPreview() { const [w, h] = OUT[state.aspect]; const st = $("stage"); st.style.aspectRatio = `${w} / ${h}`; st.style.width = "auto"; updateCaption(); }
 const segmentAt = (t) => state.segments.findIndex((s) => t >= s.start && t < s.end);
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function updateCaption() {
   if ($("view-editor").hidden) return;
-  const st = state.style, cap = $("cap"), [w, h] = OUT[state.aspect];
-  const k = $("stage").clientWidth / w, px = Math.min(w, h) * st.size / 100 * k;
-  const i = segmentAt(video.currentTime);
+  const st = state.style, cap = $("cap"), stage = $("stage"), [w, h] = OUT[state.aspect];
+  const k = stage.clientWidth / w, px = Math.min(w, h) * st.size / 100 * k, t = video.currentTime;
+  let i = segmentAt(t), ghost = false;
   document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("active", +r.dataset.i === i));
-  cap.textContent = ""; if (i < 0) return;
-  const span = document.createElement("span"); span.textContent = state.segments[i].text;
+  if (i < 0 && video.paused && state.segments.length) { // v pauze ukáž najbližší titulok, aby sa dal presúvať
+    ghost = true; i = state.segments.reduce((b, s, n) => Math.abs(s.start - t) < Math.abs(state.segments[b].start - t) ? n : b, 0);
+  }
+  if (cap.dragging) { if (i < 0) return; }
+  cap.textContent = ""; if (i < 0) { cap.hidden = true; return; }
+  cap.hidden = false;
+  const seg = state.segments[i], words = wordsFor(seg);
+  let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
+  const outer = document.createElement("span");
+  words.forEach((o, n) => {
+    if (n) outer.append(" ");
+    const sp = document.createElement("span"); sp.textContent = o.w;
+    if (st.highlight && n === active && !ghost) { sp.style.color = st.hl; sp.style.display = "inline-block"; sp.style.transform = "scale(1.08)"; }
+    outer.append(sp);
+  });
   cap.style.fontSize = px + "px"; cap.style.fontFamily = `"${st.font}", sans-serif`; cap.style.fontWeight = st.bold ? 700 : 400;
-  span.style.color = st.color;
-  if (st.bgOpacity > 0) { span.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`; span.style.padding = `${px * .08}px ${px * .3}px`; span.style.textShadow = "none"; }
-  else { span.style.background = "none"; const o = Math.max(1, px * .07);
-    span.style.textShadow = [[-o,0],[o,0],[0,-o],[0,o],[-o,-o],[o,o],[-o,o],[o,-o]].map(([x,y]) => `${x}px ${y}px 0 #000`).join(","); }
-  cap.style.top = cap.style.bottom = cap.style.transform = "";
-  if (st.position === "top") cap.style.top = "12%"; else if (st.position === "bottom") cap.style.bottom = "12%";
-  else { cap.style.top = "50%"; cap.style.transform = "translateY(-50%)"; }
-  cap.append(span);
+  cap.style.opacity = ghost ? 0.45 : 1; cap.style.outline = ghost ? "1px dashed #fff" : "none";
+  outer.style.color = st.color;
+  if (st.bgOpacity > 0) { outer.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`; outer.style.padding = `${px * .08}px ${px * .3}px`; outer.style.textShadow = "none"; }
+  else { outer.style.background = "none"; const o = Math.max(1, px * .07);
+    outer.style.textShadow = [[-o,0],[o,0],[0,-o],[0,o],[-o,-o],[o,o],[-o,o],[o,-o]].map(([x,y]) => `${x}px ${y}px 0 #000`).join(","); }
+  cap.append(outer);
+  const sw = stage.clientWidth, sh = stage.clientHeight, cw = cap.offsetWidth, ch = cap.offsetHeight;
+  cap.style.left = clamp(st.x * sw, cw / 2, Math.max(cw / 2, sw - cw / 2)) + "px";
+  cap.style.top = clamp(st.y * sh, ch / 2, Math.max(ch / 2, sh - ch / 2)) + "px";
+}
+const POS_Y = { top: 0.14, middle: 0.5, bottom: 0.84 };
+function setupDrag() {
+  const cap = $("cap"), stage = $("stage");
+  cap.addEventListener("pointerdown", (e) => { cap.dragging = true; cap.setPointerCapture(e.pointerId); cap.style.cursor = "grabbing"; e.preventDefault(); });
+  cap.addEventListener("pointermove", (e) => {
+    if (!cap.dragging) return;
+    const r = stage.getBoundingClientRect();
+    state.style.x = clamp((e.clientX - r.left) / r.width, 0, 1);
+    state.style.y = clamp((e.clientY - r.top) / r.height, 0, 1);
+    state.style.position = null;
+    document.querySelectorAll("#positions button").forEach((b) => b.classList.remove("on"));
+  });
+  const end = () => { cap.dragging = false; cap.style.cursor = "grab"; };
+  cap.addEventListener("pointerup", end); cap.addEventListener("pointercancel", end);
 }
 function syncControls() {
   const st = state.style;
   $("color").value = st.color; $("bg").value = st.bg; $("bgOpacity").value = st.bgOpacity;
   $("bgOpacityOut").textContent = Math.round(st.bgOpacity) + " %"; $("size").value = st.size; $("font").value = st.font;
   document.querySelectorAll("#positions button").forEach((b) => b.classList.toggle("on", b.dataset.v === st.position));
+  $("highlight").checked = st.highlight; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
   document.querySelectorAll("#aspects button").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
   document.querySelectorAll(".preset").forEach((b) => b.classList.toggle("on", b.dataset.id === st.preset));
   applyPreview();
@@ -373,32 +445,38 @@ function resetExport() {
   state.downloads = []; $("downloads").hidden = true; $("export-error").hidden = true;
   $("export-hint").hidden = true; $("export-status").hidden = true; $("export").disabled = false;
 }
-function wrapLines(ctx, text, maxW) {
-  const lines = []; let cur = "";
-  for (const w of text.split(/\s+/)) {
-    const next = cur ? cur + " " + w : w;
-    if (cur && ctx.measureText(next).width > maxW) { lines.push(cur); cur = w; } else cur = next;
-  }
-  if (cur) lines.push(cur);
+function wrapWords(ctx, words, maxW) {
+  const sp = ctx.measureText(" ").width, lines = []; let cur = [], w = 0;
+  words.forEach((o, n) => {
+    const ww = ctx.measureText(o.w).width;
+    if (cur.length && w + sp + ww > maxW) { lines.push({ idx: cur, w }); cur = []; w = 0; }
+    w += (cur.length ? sp : 0) + ww; cur.push(n);
+  });
+  if (cur.length) lines.push({ idx: cur, w });
   return lines;
 }
-function drawCaption(ctx, text, W, H, st) {
-  const px = Math.min(W, H) * st.size / 100, lh = px * 1.25;
+function drawCaption(ctx, seg, t, W, H, st) {
+  const px = Math.min(W, H) * st.size / 100, lh = px * 1.25, padX = st.bgOpacity > 0 ? px * .3 : 0;
   ctx.font = `${st.bold ? 700 : 400} ${px}px "${st.font}", sans-serif`;
   ctx.textBaseline = "middle"; ctx.lineJoin = "round";
-  const lines = wrapLines(ctx, text, W * 0.84), total = lines.length * lh;
-  const top = st.position === "top" ? H * 0.12 : st.position === "middle" ? (H - total) / 2 : H * 0.88 - total;
-  lines.forEach((line, i) => {
-    const w = ctx.measureText(line).width, x = (W - w) / 2, y = top + i * lh;
+  const words = wordsFor(seg); let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
+  const lines = wrapWords(ctx, words, W * 0.84 - 2 * padX), total = lines.length * lh, sp = ctx.measureText(" ").width;
+  const blockW = Math.max(...lines.map((l) => l.w)) + 2 * padX;
+  const cx = clamp(st.x * W, blockW / 2, Math.max(blockW / 2, W - blockW / 2));
+  const top = clamp(st.y * H, total / 2, Math.max(total / 2, H - total / 2)) - total / 2;
+  lines.forEach((line, li) => {
+    const y = top + li * lh; let x = cx - line.w / 2;
     if (st.bgOpacity > 0) {
-      ctx.fillStyle = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(x - px * .3, y, w + px * .6, lh, px * .12); else ctx.rect(x - px * .3, y, w + px * .6, lh);
+      ctx.fillStyle = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`; ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x - padX, y, line.w + 2 * padX, lh, px * .12); else ctx.rect(x - padX, y, line.w + 2 * padX, lh);
       ctx.fill();
-    } else {
-      ctx.strokeStyle = "#000"; ctx.lineWidth = px * .16; ctx.strokeText(line, x, y + lh / 2);
     }
-    ctx.fillStyle = st.color; ctx.fillText(line, x, y + lh / 2);
+    line.idx.forEach((n) => {
+      const word = words[n].w, ww = ctx.measureText(word).width;
+      if (st.bgOpacity <= 0) { ctx.strokeStyle = "#000"; ctx.lineWidth = px * .16; ctx.strokeText(word, x, y + lh / 2); }
+      ctx.fillStyle = st.highlight && n === active ? st.hl : st.color; ctx.fillText(word, x, y + lh / 2);
+      x += ww + sp;
+    });
   });
 }
 const srtTime = (s, sep) => { const ms = Math.round(s * 1000), p = (n, l = 2) => String(n).padStart(l, "0");
@@ -439,7 +517,7 @@ async function exportVideo() {
       ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
       ctx.drawImage(ev, (W - vw * s) / 2, (H - vh * s) / 2, vw * s, vh * s);
       const i = segmentAt(ev.currentTime);
-      if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i].text, W, H, st);
+      if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], ev.currentTime, W, H, st);
       const p = Math.min(99, Math.round(ev.currentTime / (ev.duration || 1) * 100));
       bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`;
       ev.requestVideoFrameCallback ? ev.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
@@ -472,7 +550,7 @@ function setup() {
     if (p.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(p.bg)},${p.bgOpacity / 100})`; else sp.style.textShadow = "-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000";
     sample.append(sp);
     const name = document.createElement("span"); name.className = "name"; name.textContent = p.name; b.append(sample, name);
-    b.onclick = () => { state.style = { ...p, position: state.style.position, preset: p.id }; syncControls(); };
+    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: o.y, position: o.position, preset: p.id, highlight: o.highlight }; syncControls(); };
     $("presets").append(b);
   });
   const custom = () => { state.style.preset = null; syncControls(); };
@@ -481,7 +559,10 @@ function setup() {
   $("bgOpacity").oninput = (e) => { state.style.bgOpacity = +e.target.value; custom(); };
   $("size").oninput = (e) => { state.style.size = +e.target.value; custom(); };
   $("font").onchange = (e) => { state.style.font = e.target.value; custom(); };
-  document.querySelectorAll("#positions button").forEach((b) => b.onclick = () => { state.style.position = b.dataset.v; syncControls(); });
+  document.querySelectorAll("#positions button").forEach((b) => b.onclick = () => { state.style.position = b.dataset.v; state.style.x = 0.5; state.style.y = POS_Y[b.dataset.v]; syncControls(); });
+  $("highlight").onchange = (e) => { state.style.highlight = e.target.checked; syncControls(); };
+  $("hl").oninput = (e) => { state.style.hl = e.target.value; syncControls(); };
+  setupDrag();
   new ResizeObserver(updateCaption).observe($("stage"));
   syncControls();
   $("export").onclick = exportVideo;
