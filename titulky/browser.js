@@ -2,7 +2,9 @@
 const TF_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6";
 const MODELS = { tiny: "Xenova/whisper-tiny", base: "Xenova/whisper-base", small: "Xenova/whisper-small" };
 const LANGS = { sk: "slovak", cs: "czech", en: "english" };
-const MOCK = new URLSearchParams(location.search).has("mock"); // len na skúšanie bez modelu
+const DEMO = false; // true v ukážke na webe: vzorové titulky a výsledok sa prehrá priamo na stránke
+const MOCK = DEMO || new URLSearchParams(location.search).has("mock"); // len na skúšanie bez modelu
+const SAMPLE = ["Ahoj, vitajte pri ukážke aplikácie.", "Nahráte video a titulky sa vytvoria automaticky.", "Vyberiete štýl z ponuky,", "zmeníte farbu textu, font alebo podklad,", "a práve vyslovené slovo sa zvýrazní."];
 
 const $ = (id) => document.getElementById(id);
 const OUT = { "9:16": [1080, 1920], "1:1": [1080, 1080], "16:9": [1920, 1080] };
@@ -110,7 +112,7 @@ async function recognize(file, modelKey, lang) {
   if (MOCK) {
     await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
     const d = state.duration || 12, out = []; let t = 0.3, i = 1;
-    while (t + 1.5 < d) { const text = `Ukážkový titulok číslo ${i++}`; out.push({ start: t, end: t + 2, text, words: estimateWords(text, t, t + 2) }); t += 2.3; }
+    while (t + 1.5 < d) { const text = SAMPLE[i++ % SAMPLE.length]; out.push({ start: t, end: t + 2, text, words: estimateWords(text, t, t + 2) }); t += 2.3; }
     return out;
   }
   const audio = await decodeAudio(file);
@@ -342,6 +344,11 @@ const srtTime = (s, sep) => { const ms = Math.round(s * 1000), p = (n, l = 2) =>
 const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} --> ${srtTime(s.end, ",")}\n${s.text}\n`).join("\n");
 const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${s.text}\n`).join("\n");
 
+function showResult(url) { // v ukážke sa sťahovanie nedá, výsledok sa prehrá tu (na telefóne podrž prst na videu)
+  let v = $("result");
+  if (!v) { v = document.createElement("video"); v.id = "result"; v.controls = true; v.playsInline = true; v.style.cssText = "width:100%;border-radius:10px;background:#000"; $("downloads").prepend(v); }
+  v.src = url;
+}
 async function exportVideo() {
   resetExport();
   $("export").disabled = true; $("export-status").hidden = false; $("export-hint").hidden = false;
@@ -390,6 +397,7 @@ async function exportVideo() {
     $("dl-vtt").href = mk(toVtt(state.segments), "text/vtt"); $("dl-vtt").download = "titulky.vtt";
     $("downloads").hidden = false; $("export-status").hidden = true; $("export-hint").hidden = true;
     bar.style.width = "100%";
+    if (DEMO) showResult(a.href);
   } catch (e) {
     $("export-error").textContent = e.message || "Export zlyhal."; $("export-error").hidden = false;
     $("export-status").hidden = true; $("export-hint").hidden = true;

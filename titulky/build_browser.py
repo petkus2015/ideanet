@@ -72,3 +72,25 @@ page = f'''<!doctype html>
 '''
 (here / "titulky-browser.html").write_text(page, encoding="utf-8")
 print("ok", len(page))
+
+# --- ukážka na webe (artifact): vzorové titulky, výsledok sa prehrá na stránke ---
+import sys
+if len(sys.argv) > 1:
+    demo_js = js.replace("const DEMO = false;", "const DEMO = true;")
+    demo_body = body.replace("Všetko beží vo vašom prehliadači. Nič sa neposiela na server.", "Ukážka: titulky sú vzorové, video ostáva vo vašom prehliadači.")
+    frag = f'''<title>Titulky</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&display=swap">
+<style>
+{css}
+html,body{{margin:0}}
+body{{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+.top,main{{padding-left:0;padding-right:0}}
+</style>
+{demo_body}
+<script type="module">
+{demo_js}
+</script>
+'''
+    Path(sys.argv[1]).write_text(frag, encoding="utf-8")
+    print("demo", sys.argv[1])
