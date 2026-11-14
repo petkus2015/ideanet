@@ -1,0 +1,60 @@
+"""Zloží samostatný súbor titulky-browser.html (bez servera) zo static/index.html a styles.css."""
+import re
+from pathlib import Path
+
+here = Path(__file__).parent
+css = (here / "static/styles.css").read_text()
+html = (here / "static/index.html").read_text()
+body = re.search(r"<body>(.*)<script", html, re.S).group(1)
+
+body = body.replace('<p class="note" id="retention-note"></p>',
+    '<p class="note">Všetko beží vo vašom prehliadači. Nič sa neposiela na server.</p>')
+body = body.replace('''    <p class="error" id="upload-error" hidden></p>
+  </section>''', '''    <div class="row">
+      <label for="model">Model</label>
+      <select id="model">
+        <option value="tiny">Rýchly (tiny, približne 40 MB)</option>
+        <option value="base" selected>Vyvážený (base, približne 80 MB)</option>
+        <option value="small">Presný (small, približne 250 MB)</option>
+      </select>
+    </div>
+    <p class="hint">Model sa pri prvom použití stiahne a prehliadač si ho zapamätá. Slovenčina je presnejšia s modelom small.</p>
+    <p class="error" id="upload-error" hidden></p>
+  </section>''', 1)
+body = body.replace('<div class="bar" id="busy-bar" hidden><i></i></div>',
+                    '<div class="bar" id="busy-bar" hidden><i></i></div>')
+body = body.replace('<p class="expiry" id="expiry"></p>\n        <button class="danger" id="delete">Zmazať hneď</button>',
+    '<p class="expiry" id="expiry">Nič sa neukladá na server. Po zatvorení stránky je všetko preč, preto si súbory stiahni.</p>\n        <button class="danger" id="delete">Začať odznova</button>')
+body = body.replace('<p class="error" id="export-error" hidden></p>',
+    '<p class="hint" id="export-hint" hidden>Export beží v reálnom čase, nechaj túto kartu otvorenú.</p>\n        <p class="error" id="export-error" hidden></p>')
+body = body.replace('<p class="hint">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>',
+    '<p class="hint">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>')
+body = body.replace('<a class="dl" id="dl-mp4">Stiahnuť video (MP4)</a>', '<a class="dl" id="dl-mp4">Stiahnuť video</a>')
+css = css.replace(":root{--bg:#070914;", ":root{color-scheme:dark;--bg:#070914;")
+css += """
+.row select{max-width:100%}
+@media(prefers-reduced-motion:reduce){.spinner{animation:none}}
+"""
+js = (here / "browser.js").read_text()
+page = f'''<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Titulky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&display=swap">
+<style>
+{css}
+</style>
+</head>
+<body>
+{body}
+<script type="module">
+{js}
+</script>
+</body>
+</html>
+'''
+(here / "titulky-browser.html").write_text(page, encoding="utf-8")
+print("ok", len(page))

@@ -25,6 +25,14 @@ Pri prvom rozpoznaní sa stiahne model Whisper (predvolene `small`, približne 0
 | `TITULKY_ASR` | | `mock` = ukážkové titulky bez modelu (len na skúšanie) |
 | `HOST`, `PORT` | `127.0.0.1`, `8000` | adresa servera |
 
+## Verzia bez servera
+
+`titulky-browser.html` je jeden samostatný súbor: otvor ho dvojklikom v Chrome alebo Edge.
+Rozpoznanie reči (Whisper cez transformers.js) aj export (nahranie z plátna) bežia v prehliadači,
+nič sa neposiela na server. Pri prvom použití potrebuje internet na stiahnutie modelu
+(40 až 250 MB podľa výberu) a písem. Export beží v reálnom čase a vyrobí WebM alebo MP4
+podľa prehliadača. Vznikne z `static/` príkazom `python3 build_browser.py`.
+
 ## Mazanie po 24 hodinách
 
 Pracovná verzia (nahraté video, titulky, nastavenia, exportované súbory) sa zmaže
