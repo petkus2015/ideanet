@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Titulky</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="logo"><span class="logo-mark">▶</span> Titulky</div>
+  <p class="note" id="retention-note"></p>
+</header>
+
+<main>
+  <section id="view-upload" class="center">
+    <h1>Automatické titulky<br><span class="grad">k tvojmu videu.</span></h1>
+    <p class="lead">Nahraj video, uprav štýl a stiahni ho s titulkami.</p>
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="video/*,.mp4,.mov,.m4v,.webm,.mkv,.avi" hidden>
+      <span class="drop-icon">⬆</span>
+      <strong>Vyber video alebo ho pretiahni sem</strong>
+      <small id="drop-hint">MP4, MOV, WEBM</small>
+    </label>
+    <div class="row">
+      <label for="lang">Jazyk videa</label>
+      <select id="lang">
+        <option value="auto">Rozpoznať automaticky</option>
+        <option value="sk">Slovenčina</option>
+        <option value="cs">Čeština</option>
+        <option value="en">Angličtina</option>
+      </select>
+    </div>
+    <p class="error" id="upload-error" hidden></p>
+  </section>
+
+  <section id="view-busy" class="center" hidden>
+    <div class="spinner"></div>
+    <h2 id="busy-title">Spracúvam…</h2>
+    <p class="lead" id="busy-text"></p>
+    <div class="bar" id="busy-bar" hidden><i></i></div>
+  </section>
+
+  <section id="view-editor" hidden>
+    <div class="editor">
+      <div class="left">
+        <div class="stage-wrap">
+          <div class="stage" id="stage">
+            <video id="video" controls playsinline></video>
+            <div class="cap" id="cap"></div>
+          </div>
+        </div>
+        <h3>Text titulkov</h3>
+        <p class="hint">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>
+        <div id="segments" class="segments"></div>
+      </div>
+
+      <aside class="panel">
+        <h3>Úprava</h3>
+
+        <div class="group">
+          <div class="label">Pomer strán</div>
+          <div class="seg" id="aspects"></div>
+        </div>
+
+        <div class="group">
+          <div class="label">Štýl titulkov</div>
+          <div class="presets" id="presets"></div>
+        </div>
+
+        <div class="group">
+          <div class="label">Farba textu</div>
+          <input type="color" id="color">
+        </div>
+
+        <div class="group">
+          <div class="label">Font</div>
+          <select id="font"></select>
+        </div>
+
+        <div class="group">
+          <div class="label">Podklad</div>
+          <div class="inline">
+            <input type="color" id="bg">
+            <input type="range" id="bgOpacity" min="0" max="100" step="5">
+            <output id="bgOpacityOut"></output>
+          </div>
+          <small class="hint">0 % = bez podkladu, text dostane obrys.</small>
+        </div>
+
+        <div class="group">
+          <div class="label">Pozícia</div>
+          <div class="seg" id="positions">
+            <button data-v="top">Hore</button><button data-v="middle">Stred</button><button data-v="bottom">Dole</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="label">Veľkosť</div>
+          <input type="range" id="size" min="3" max="12" step="0.5">
+        </div>
+
+        <button class="primary" id="export">Exportovať</button>
+        <div id="export-status" class="export-status" hidden>
+          <div class="bar"><i></i></div>
+          <span></span>
+        </div>
+        <p class="error" id="export-error" hidden></p>
+
+        <div id="downloads" class="downloads" hidden>
+          <a class="dl" id="dl-mp4">Stiahnuť video (MP4)</a>
+          <div class="dl-row"><a class="dl small" id="dl-srt">SRT</a><a class="dl small" id="dl-vtt">VTT</a></div>
+        </div>
+
+        <p class="expiry" id="expiry"></p>
+        <button class="danger" id="delete">Zmazať hneď</button>
+      </aside>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
