@@ -377,7 +377,10 @@ async function recognize(file, modelKey, lang) {
       console.error("Diagnostika:", checks.join(", "), "Prehliadač:", navigator.userAgent, "Protokol:", location.protocol);
       lastErr.diag = checks.join(", ") + ` · ${/^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "Safari" : "iný prehliadač"} · ${location.protocol}`;
       const detail = String(lastErr && lastErr.message || lastErr).slice(0, 200);
-      const hint = reach
+      const inApp = location.protocol === "about:" || /Claude|FBAN|FBAV|Instagram|Line\//.test(navigator.userAgent) || (/iPhone|iPad/.test(navigator.userAgent) && !/Safari\//.test(navigator.userAgent));
+      const hint = inApp
+        ? "Stránka beží vo vstavanom prehliadači aplikácie, ktorý blokuje stiahnutie modelu z huggingface.co. Otvor ju v Safari alebo Chrome."
+        : reach
         ? "Prehliadač sa nedostal na huggingface.co (blokuje ho sieť, VPN, firewall alebo blokovač reklám). Skús inú sieť alebo vypni blokovač."
         : location.protocol === "file:"
           ? "Skús súbor otvoriť cez lokálny server: v priečinku so súborom spusti `python3 -m http.server 8000` a otvor http://localhost:8000/titulky-browser.html."
