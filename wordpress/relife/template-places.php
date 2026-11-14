@@ -99,10 +99,12 @@ get_header();
 
 <section class="rl-wrap rl-block rl-places js-places" data-sort="<?php echo $any_rating ? 'rating' : 'name'; ?>">
 	<?php if ( $places ) : ?>
+		<div class="rl-places__filter">
 		<div class="rl-places__chips" role="group" aria-label="<?php esc_attr_e( 'Kategórie', 'relife' ); ?>">
+			<span class="rl-places__label"><?php esc_html_e( 'Kategória', 'relife' ); ?></span>
 			<button type="button" class="rl-chip is-on js-places-cat" data-cat="" aria-pressed="true"><span class="rl-chip__ic"><?php echo $cat_icon( 'vsetko' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php esc_html_e( 'Všetko', 'relife' ); ?> <small><?php echo (int) count( $places ); ?></small></button>
 			<?php foreach ( $cat_counts as $slug => $c ) : ?>
-				<button type="button" class="rl-chip js-places-cat" data-cat="<?php echo esc_attr( $slug ); ?>" aria-pressed="false" style="--c:<?php echo esc_attr( $cat_color[ $slug ] ); ?>"><span class="rl-chip__ic"><?php echo $cat_icon( $c['name'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php echo esc_html( $c['name'] ); ?> <small><?php echo (int) $c['n']; ?></small></button>
+				<button type="button" class="rl-chip js-places-cat" data-cat="<?php echo esc_attr( $slug ); ?>" aria-pressed="false"><span class="rl-chip__ic"><?php echo $cat_icon( $c['name'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php echo esc_html( $c['name'] ); ?> <small><?php echo (int) $c['n']; ?></small></button>
 			<?php endforeach; ?>
 		</div>
 		<?php if ( $has_price ) : ?>
@@ -114,6 +116,7 @@ get_header();
 				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>
+		</div>
 		<p class="rl-places__count" aria-live="polite"><span class="js-places-n"><?php echo (int) count( $places ); ?></span> <?php esc_html_e( 'podnikov', 'relife' ); ?></p>
 
 		<div class="rl-grid rl-grid--3 rl-places__grid js-places-grid">

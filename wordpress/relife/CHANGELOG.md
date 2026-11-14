@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.44.1
+- **Kam na jedlo – čistejší filter:** jeden tmavý panel s popiskami Kategória a Cena, jednotné jemné tlačidlá bez farebného orámovania; vybraná možnosť je zvýraznená svetlým podkladom. Ikony ostávajú.
+
 ## 1.44.0
 - **Kam na jedlo pre viac miest (Bratislava, Žilina, …).** Nová obrazovka **Podniky (jedlo) → Mestá a zoznamy** – všetko na jednom mieste: pri každom meste vlastný odkaz na zdieľaný zoznam z Google Máp, tlačidlo *Uložiť a aktualizovať z Máp*, počet podnikov, posledná aktualizácia, odkazy na stránku mesta a jeho podniky a ručný import textu/CSV. Dole *Pridať ďalšie mesto* (názov + odkaz): vytvorí sa stránka „Kam na jedlo – <mesto>“ a samostatný zoznam podnikov.
 - Každé mesto má vlastné podniky, kategórie a filtre; stránky mestá medzi sebou prepína lišta s názvami miest. Zoznam podnikov v administrácii má filter podľa mesta a stĺpec Mesto; pri úprave podniku sa mesto vyberá vpravo.
