@@ -120,18 +120,44 @@ async function recognize(file, modelKey, lang) {
     setBusy("Sťahujem model…", "Stiahne sa len raz, potom ho prehliadač použije znova.", 0);
     let mod;
     try { mod = await import(TF_URL); }
-    catch { throw new Error("Nepodarilo sa načítať knižnicu na rozpoznávanie. Skontroluj pripojenie na internet."); }
+    catch (e) { throw new Error("Nepodarilo sa načítať knižnicu na rozpoznávanie (cdn.jsdelivr.net). Skontroluj pripojenie na internet alebo blokovač reklám. Technická chyba: " + String(e && e.message || e).slice(0, 150)); }
     const files = {};
-    try {
-      asr = await mod.pipeline("automatic-speech-recognition", id, {
-        progress_callback: (p) => {
-          if (p.status !== "progress" || !p.total) return;
-          files[p.file] = { loaded: p.loaded, total: p.total };
-          const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
-          setBusy("Sťahujem model…", `${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB`, loaded / total * 100);
-        },
-      });
-    } catch { throw new Error("Model sa nepodarilo stiahnuť. Skontroluj pripojenie na internet."); }
+    const progress = (p) => {
+      if (p.status !== "progress" || !p.total) return;
+      files[p.file] = { loaded: p.loaded, total: p.total };
+      const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
+      setBusy("Sťahujem model…", `${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB`, loaded / total * 100);
+    };
+    // Najprv sa overí, či sa prehliadač vôbec dostane na zdroj modelov.
+    let reach = null;
+    try { await fetch(`https://huggingface.co/${id}/resolve/main/config.json`, { method: "GET" }); }
+    catch (e) { reach = e; }
+    // Pokusy: bežne, bez vyrovnávacej pamäte prehliadača, cez zrkadlo.
+    const attempts = [
+      { label: "bežne", cache: true, host: "https://huggingface.co/" },
+      { label: "bez pamäte prehliadača", cache: false, host: "https://huggingface.co/" },
+      { label: "cez zrkadlo", cache: false, host: "https://hf-mirror.com/" },
+    ];
+    let lastErr = null;
+    for (const a of attempts) {
+      try {
+        mod.env.allowLocalModels = false;
+        mod.env.useBrowserCache = a.cache;
+        mod.env.remoteHost = a.host;
+        for (const k of Object.keys(files)) delete files[k];
+        asr = await mod.pipeline("automatic-speech-recognition", id, { progress_callback: progress });
+        lastErr = null; break;
+      } catch (e) { lastErr = e; console.error("Model:", a.label, e); }
+    }
+    if (lastErr) {
+      const detail = String(lastErr && lastErr.message || lastErr).slice(0, 200);
+      const hint = reach
+        ? "Prehliadač sa nedostal na huggingface.co (blokuje ho sieť, VPN, firewall alebo blokovač reklám). Skús inú sieť alebo vypni blokovač."
+        : location.protocol === "file:"
+          ? "Skús súbor otvoriť cez lokálny server: v priečinku so súborom spusti `python3 -m http.server 8000` a otvor http://localhost:8000/titulky-browser.html."
+          : "Skús obnoviť stránku alebo menší model (tiny).";
+      throw new Error(`Model sa nepodarilo stiahnuť. ${hint} Technická chyba: ${detail}`);
+    }
     asrId = id;
   }
   setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.");
