@@ -39,7 +39,7 @@ Vznikne z `static/` príkazom `python3 build_browser.py`.
 
 Priečinok `php/` obsahuje `index.php`, `app.html` a `.htaccess`. Nahraj ich cez FTP do priečinka na webe
 (napríklad `/titulky`) a otvor `https://tvojweb.sk/titulky/`. Server iba zobrazí stránku (a presmeruje na https),
-rozpoznanie reči aj export beží v prehliadači návštevníka. `app.html` sa generuje príkazom `python3 build_browser.py`.
+rozpoznanie reči aj export beží v prehliadači návštevníka. `app.html` sa generuje príkazom `python3 build_browser.py` zo šablóny `browser.html` a skriptu `browser.js`.
 
 ## Nahrávanie z mobilu
 

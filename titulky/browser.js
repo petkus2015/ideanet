@@ -18,19 +18,23 @@ const PRESETS = [
   { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
-const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false },
-  segments: [], file: null, url: null, duration: 0, downloads: [] };
+const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false, on: true },
+  segments: [], file: null, url: null, duration: 0, outs: [], busyExport: false, playable: null };
 const video = $("video");
-
-const show = (view) => { for (const v of ["upload", "busy", "editor"]) $("view-" + v).hidden = v !== view; };
+const STEP_OF = { upload: 0, busy: 1, editor: 2 };
+const setStep = (i) => document.querySelectorAll("#steps .step").forEach((s, n) => s.classList.toggle("on", n === i));
+const show = (view) => {
+  for (const v of ["upload", "busy", "editor"]) $("view-" + v).hidden = v !== view;
+  $("panel").hidden = view !== "editor"; setStep(STEP_OF[view]);
+};
 const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const rgbOf = (hex) => [1, 3, 5].map((n) => parseInt(hex.slice(n, n + 2), 16)).join(",");
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const segmentAt = (t) => state.segments.findIndex((s) => t >= s.start && t < s.end);
 const BUSY = "Nahrávam a titulkujem video…";
 const BUSY_TEXT = "Môže to trvať niekoľko minút (pri prvom použití dlhšie). Nechaj túto kartu otvorenú.";
 // Priebeh technických krokov (sťahovanie modelu a pod.) sa používateľovi neukazuje, vždy je vidno len jednu správu.
-const setBusy = (_title, _text = "", _pct = null) => {
-  show("busy"); $("busy-title").textContent = BUSY; $("busy-text").textContent = BUSY_TEXT; $("busy-bar").hidden = true;
-};
+const setBusy = (_title, _text = "", _pct = null) => { show("busy"); $("busy-title").textContent = BUSY; $("busy-text").textContent = BUSY_TEXT; };
 const showError = (msg) => { show("upload"); const e = $("upload-error"); e.textContent = msg; e.hidden = false; };
 
 // ---------- slová a ich časy ----------
@@ -209,17 +213,6 @@ async function recognize(file, _unused, lang) {
 
 // ---------- nahratie ----------
 const VIDEO_EXT = /\.(mp4|m4v|mov|mkv|webm|avi|ts|mts|m2ts|3gp|mpg|mpeg|ogv|hevc|h265|265)$/i;
-function playableBanner() {
-  const bad = state.playable === false;
-  $("noplay").hidden = !bad;
-  $("export").disabled = bad;
-  if (bad) { // bez prehrateľného videa sa dajú stiahnuť aspoň titulky
-    const mk = (data, type) => { const u = URL.createObjectURL(new Blob([data], { type })); state.downloads.push(u); return u; };
-    $("dl-srt").href = mk(toSrt(state.segments), "application/x-subrip"); $("dl-srt").download = "titulky.srt";
-    $("dl-vtt").href = mk(toVtt(state.segments), "text/vtt"); $("dl-vtt").download = "titulky.vtt";
-    $("dl-mp4").hidden = true; $("downloads").hidden = false;
-  } else $("dl-mp4").hidden = false;
-}
 async function pickFile(file) {
   $("upload-error").hidden = true;
   if (!file.type.startsWith("video/") && !VIDEO_EXT.test(file.name)) return showError("Vyber súbor s videom (MP4, MOV, MKV, WEBM a podobne).");
@@ -239,10 +232,67 @@ async function pickFile(file) {
   catch (e) { return showError(e.message || "Rozpoznanie zlyhalo."); }
   await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
   if (state.playable === null) state.playable = false;
-  bumpDyn(); buildSegments(); show("editor"); applyPreview(); resetExport(); playableBanner();
+  bumpDyn(); initEditor();
 }
 
 // ---------- editor ----------
+const ASPECTS = [{ k: "9:16", name: "Krátke video", icon: '<rect x="7" y="2.5" width="10" height="19" rx="2"/>' },
+  { k: "1:1", name: "Príspevok", icon: '<rect x="4.5" y="4.5" width="15" height="15" rx="2"/>' },
+  { k: "16:9", name: "Web", icon: '<rect x="2.5" y="7" width="19" height="10" rx="2"/>' }];
+const ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>';
+const POS_Y = { top: 0.14, middle: 0.5, bottom: 0.84 };
+const PV_MAX_H = 200;
+const outFor = (k) => state.outs.find((o) => o.k === k);
+
+function playableBanner() {
+  const bad = state.playable === false;
+  $("noplay").hidden = !bad;
+  $("exportAll").disabled = bad;
+  state.outs.forEach((o) => { o.dl.disabled = bad; });
+}
+function saveUrl(url, name) {
+  const a = document.createElement("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove();
+}
+function saveText(text, name, type) {
+  const u = URL.createObjectURL(new Blob([text], { type })); saveUrl(u, name); setTimeout(() => URL.revokeObjectURL(u), 4000);
+}
+function invalidateExports() {
+  if (state.busyExport) return;
+  for (const o of state.outs) {
+    if (o.result) { URL.revokeObjectURL(o.result.url); o.result = null; o.dl.classList.remove("ready"); o.dl.title = "Exportovať a stiahnuť"; }
+    const r = o.el.querySelector(".out-result"); if (r) r.remove();
+  }
+}
+function buildOuts() {
+  const box = $("outs"); box.textContent = ""; state.outs = [];
+  for (const a of ASPECTS) {
+    const el = document.createElement("div"); el.className = "out"; el.dataset.a = a.k;
+    el.innerHTML = `<div class="out-head"><span>${a.name} (${a.k})</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${a.icon}</svg></div>
+      <div class="pv"><canvas aria-label="Náhľad ${a.k}"></canvas></div><div class="out-time">0:00 / 0:00</div>
+      <div class="out-btns"><button class="edit">Upraviť</button><button class="dl" title="Exportovať a stiahnuť" aria-label="Exportovať a stiahnuť ${a.k}">${ICON_DL}</button></div>
+      <div class="out-prog" hidden><div class="bar"><i></i></div><span></span></div>`;
+    box.append(el);
+    const o = { k: a.k, el, cv: el.querySelector("canvas"), pv: el.querySelector(".pv"), time: el.querySelector(".out-time"),
+      dl: el.querySelector(".dl"), prog: el.querySelector(".out-prog"), result: null, drag: null };
+    el.querySelector(".edit").onclick = () => { state.aspect = a.k; syncControls(); };
+    o.dl.onclick = () => { if (o.result) saveUrl(o.result.url, `titulky-${a.k.replace(":", "x")}.${o.result.ext}`); else exportAspects([a.k]); };
+    // titulky sa presúvajú ťahaním v ktoromkoľvek náhľade
+    const move = (e) => {
+      const r = o.cv.getBoundingClientRect(); const st = state.style;
+      st.x = clamp((e.clientX - r.left) / r.width, 0, 1); st.y = clamp((e.clientY - r.top) / r.height, 0, 1); st.position = null;
+      document.querySelectorAll("#positions .opt").forEach((b) => b.classList.remove("on")); invalidateExports();
+    };
+    o.cv.addEventListener("pointerdown", (e) => { if (!state.style.on) return; o.drag = { x: e.clientX, y: e.clientY, active: false }; o.cv.setPointerCapture(e.pointerId); e.preventDefault(); });
+    o.cv.addEventListener("pointermove", (e) => {
+      if (!o.drag) return;
+      if (!o.drag.active && Math.hypot(e.clientX - o.drag.x, e.clientY - o.drag.y) > 4) o.drag.active = true;
+      if (o.drag.active) move(e);
+    });
+    const end = () => { o.drag = null; };
+    o.cv.addEventListener("pointerup", end); o.cv.addEventListener("pointercancel", end);
+    state.outs.push(o);
+  }
+}
 function buildSegments() {
   const box = $("segments"); box.textContent = "";
   if (!state.segments.length) { box.textContent = "V tomto videu sa nenašla žiadna reč."; return; }
@@ -252,84 +302,168 @@ function buildSegments() {
     t.onclick = () => { video.currentTime = s.start + 0.01; video.play(); };
     const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.setAttribute("aria-label", "Text titulku " + (i + 1));
     const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
-    ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); };
+    ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); invalidateExports(); };
     row.append(t, ta); box.append(row); requestAnimationFrame(fit);
   });
 }
-function applyPreview() { const [w, h] = OUT[state.aspect]; const st = $("stage"); st.style.aspectRatio = `${w} / ${h}`; st.style.width = "auto"; updateCaption(); }
-const segmentAt = (t) => state.segments.findIndex((s) => t >= s.start && t < s.end);
-const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-function updateCaption() {
-  if ($("view-editor").hidden) return;
-  const st = state.style, cap = $("cap"), stage = $("stage"), [w, h] = OUT[state.aspect];
-  const k = stage.clientWidth / w, px = Math.min(w, h) * st.size / 100 * k, t = video.currentTime;
-  let i = segmentAt(t), ghost = false;
-  document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("active", +r.dataset.i === i));
-  drawPreviewDyn();
-  if (st.dynamic) { cap.hidden = true; return; }
-  if (i < 0 && video.paused && state.segments.length) { // v pauze ukáž najbližší titulok, aby sa dal presúvať
-    ghost = true; i = state.segments.reduce((b, s, n) => Math.abs(s.start - t) < Math.abs(state.segments[b].start - t) ? n : b, 0);
-  }
-  if (cap.dragging) { if (i < 0) return; }
-  cap.textContent = ""; if (i < 0) { cap.hidden = true; return; }
-  cap.hidden = false;
-  const seg = state.segments[i], words = wordsFor(seg);
-  let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
-  const outer = document.createElement("span");
-  words.forEach((o, n) => {
-    if (n) outer.append(" ");
-    const sp = document.createElement("span"); sp.textContent = o.w;
-    if (st.highlight && n === active && !ghost) { sp.style.color = st.hl; sp.style.display = "inline-block"; sp.style.transform = "scale(1.08)"; }
-    outer.append(sp);
-  });
-  cap.style.fontSize = px + "px"; cap.style.fontFamily = `"${st.font}", sans-serif`; cap.style.fontWeight = st.bold ? 700 : 400;
-  cap.style.opacity = ghost ? 0.45 : 1; cap.style.outline = ghost ? "1px dashed #fff" : "none";
-  outer.style.color = st.color;
-  if (st.bgOpacity > 0) { outer.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`; outer.style.padding = `${px * .08}px ${px * .3}px`; outer.style.textShadow = "none"; }
-  else { outer.style.background = "none"; const o = Math.max(1, px * .07);
-    outer.style.textShadow = [[-o,0],[o,0],[0,-o],[0,o],[-o,-o],[o,o],[-o,o],[o,-o]].map(([x,y]) => `${x}px ${y}px 0 #000`).join(","); }
-  cap.append(outer);
-  const sw = stage.clientWidth, sh = stage.clientHeight, cw = cap.offsetWidth, ch = cap.offsetHeight;
-  cap.style.left = clamp(st.x * sw, cw / 2, Math.max(cw / 2, sw - cw / 2)) + "px";
-  cap.style.top = clamp(st.y * sh, ch / 2, Math.max(ch / 2, sh - ch / 2)) + "px";
+function initEditor() {
+  buildOuts(); buildSegments(); show("editor"); syncControls(); playableBanner(); $("export-error").hidden = true;
 }
-const POS_Y = { top: 0.14, middle: 0.5, bottom: 0.84 };
-function setupDrag() {
-  const cap = $("cap"), stage = $("stage");
-  cap.addEventListener("pointerdown", (e) => { cap.dragging = true; cap.setPointerCapture(e.pointerId); cap.style.cursor = "grabbing"; e.preventDefault(); });
-  cap.addEventListener("pointermove", (e) => {
-    if (!cap.dragging) return;
-    const r = stage.getBoundingClientRect();
-    state.style.x = clamp((e.clientX - r.left) / r.width, 0, 1);
-    state.style.y = clamp((e.clientY - r.top) / r.height, 0, 1);
-    state.style.position = null;
-    document.querySelectorAll("#positions button").forEach((b) => b.classList.remove("on"));
-  });
-  stage.addEventListener("pointerdown", (e) => { // dynamické titulky sa presúvajú ťahaním po náhľade (nie cez ovládanie videa dole)
-    const r = stage.getBoundingClientRect();
-    if (!state.style.dynamic || e.target === cap || (e.clientY - r.top) / r.height > 0.85) return;
-    stage.dragDyn = true; stage.setPointerCapture(e.pointerId); e.preventDefault();
-  });
-  stage.addEventListener("pointermove", (e) => {
-    if (!stage.dragDyn) return;
-    const r = stage.getBoundingClientRect();
-    state.style.x = clamp((e.clientX - r.left) / r.width, 0, 1); state.style.y = clamp((e.clientY - r.top) / r.height, 0, 1);
-    state.style.position = null; document.querySelectorAll("#positions button").forEach((b) => b.classList.remove("on"));
-  });
-  const endDyn = () => { stage.dragDyn = false; };
-  stage.addEventListener("pointerup", endDyn); stage.addEventListener("pointercancel", endDyn);
-  const end = () => { cap.dragging = false; cap.style.cursor = "grab"; };
-  cap.addEventListener("pointerup", end); cap.addEventListener("pointercancel", end);
+
+// ---------- kreslenie snímky (rovnaké pre náhľady aj export) ----------
+function renderFrame(ctx, vid, t, W, H, st) {
+  ctx.globalAlpha = 1; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  if (ctx.filter !== undefined) ctx.filter = "none";
+  if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+  ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+  const vw = vid.videoWidth, vh = vid.videoHeight;
+  if (vw && vh && vid.readyState >= 2) { const s = Math.max(W / vw, H / vh); ctx.drawImage(vid, (W - vw * s) / 2, (H - vh * s) / 2, vw * s, vh * s); }
+  if (!st.on) return;
+  if (st.dynamic) drawDynamic(ctx, t, W, H, st);
+  else { const i = segmentAt(t); if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], t, W, H, st); }
+}
+let lastActive = -2;
+function loop() {
+  if (!$("view-editor").hidden) {
+    const t = video.currentTime, dpr = window.devicePixelRatio || 1, label = `${fmtTime(t)} / ${fmtTime(state.duration || video.duration || 0)}`;
+    for (const o of state.outs) {
+      const [ow, oh] = OUT[o.k], ratio = ow / oh, avail = o.pv.clientWidth || 100;
+      const h = Math.round(Math.min(PV_MAX_H, avail / ratio)), w = Math.round(h * ratio);
+      if (o.cv.style.width !== w + "px" || o.cv.style.height !== h + "px") { o.cv.style.width = w + "px"; o.cv.style.height = h + "px"; }
+      if (o.cv.width !== Math.round(w * dpr) || o.cv.height !== Math.round(h * dpr)) { o.cv.width = Math.round(w * dpr); o.cv.height = Math.round(h * dpr); }
+      const ctx = o.cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      renderFrame(ctx, video, t, w, h, state.style);
+      o.time.textContent = label;
+    }
+    const i = segmentAt(t);
+    if (i !== lastActive) { lastActive = i; document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("active", +r.dataset.i === i)); }
+  }
+  requestAnimationFrame(loop);
+}
+
+// ---------- ovládacie prvky ----------
+function renderSample() {
+  const st = state.style, box = $("styleSample"); box.textContent = "";
+  const word = (s) => (st.caps ? s.toUpperCase() : s);
+  if (st.dynamic) {
+    const wrap = document.createElement("div");
+    const a = document.createElement("div"); a.textContent = word("text"); a.style.cssText = `font:800 22px "${st.font}",sans-serif;color:${st.color}`;
+    const b = document.createElement("div"); b.textContent = word("effect"); b.style.cssText = `font:800 13px "${st.font}",sans-serif;color:${st.color}`;
+    wrap.append(a, b); box.append(wrap); return;
+  }
+  const sp = document.createElement("span"); sp.className = "t"; sp.textContent = "Ahoj svet";
+  sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.bold ? 700 : 400};font-size:17px;color:${st.color}`;
+  if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
+  else sp.style.textShadow = "-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000";
+  box.append(sp);
 }
 function syncControls() {
   const st = state.style;
   $("color").value = st.color; $("bg").value = st.bg; $("bgOpacity").value = st.bgOpacity;
-  $("bgOpacityOut").textContent = Math.round(st.bgOpacity) + " %"; $("size").value = st.size; $("font").value = st.font;
-  document.querySelectorAll("#positions button").forEach((b) => b.classList.toggle("on", b.dataset.v === st.position));
-  $("highlight").checked = st.highlight; $("roam").checked = !!st.roam; $("caps").checked = !!st.caps; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
-  document.querySelectorAll("#aspects button").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
-  document.querySelectorAll(".preset").forEach((b) => b.classList.toggle("on", b.dataset.id === st.preset));
-  applyPreview();
+  $("bgOpacityOut").textContent = Math.round(st.bgOpacity) + " %"; $("size").value = st.size; $("sizeOut").textContent = st.size;
+  $("font").value = st.font; $("highlight").checked = !!st.highlight; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
+  $("roam").checked = !!st.roam; $("caps").checked = !!st.caps;
+  $("subsOn").setAttribute("aria-checked", String(st.on));
+  $("styleSel").value = st.preset || "custom";
+  document.querySelectorAll("#positions .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === st.position));
+  document.querySelectorAll("#aspects .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
+  state.outs.forEach((o) => o.el.classList.toggle("on", o.k === state.aspect));
+  renderSample(); invalidateExports();
+}
+
+// ---------- export: video + titulky nahrané z plátna ----------
+async function recordAspect(aspect, onProgress) {
+  if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
+  const [ow, oh] = OUT[aspect], k = EXPORT_SHORT / Math.min(ow, oh);
+  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = { ...state.style };
+  await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${wt} 40px "${st.font}"`).catch(() => {})));
+  const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
+  await new Promise((res, rej) => { ev.onloadeddata = res; ev.onerror = () => rej(new Error("Video sa nepodarilo načítať.")); });
+  const stream = canvas.captureStream(30);
+  const ac = new (window.AudioContext || window.webkitAudioContext)();
+  try {
+    const dest = ac.createMediaStreamDestination();
+    ac.createMediaElementSource(ev).connect(dest);
+    dest.stream.getAudioTracks().forEach((t) => stream.addTrack(t));
+  } catch {}
+  const types = ["video/mp4;codecs=avc1,mp4a.40.2", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
+  const mime = types.find((t) => MediaRecorder.isTypeSupported(t)) || "";
+  const rec = new MediaRecorder(stream, { mimeType: mime || undefined, videoBitsPerSecond: 6e6 });
+  const chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+  const finished = new Promise((res) => (rec.onstop = res));
+  let live = true;
+  const draw = () => {
+    if (!live) return;
+    renderFrame(ctx, ev, ev.currentTime, W, H, st);
+    onProgress(Math.min(99, Math.round(ev.currentTime / (ev.duration || 1) * 100)));
+    ev.requestVideoFrameCallback ? ev.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
+  };
+  ev.onended = () => { live = false; setTimeout(() => rec.stop(), 150); };
+  await ac.resume(); rec.start(500); draw(); await ev.play();
+  await finished; ac.close();
+  const ext = rec.mimeType.includes("mp4") ? "mp4" : "webm";
+  return { url: URL.createObjectURL(new Blob(chunks, { type: rec.mimeType || "video/webm" })), ext };
+}
+async function exportAspects(list) {
+  if (state.busyExport || state.playable === false) return;
+  state.busyExport = true; $("exportAll").disabled = true; $("export-error").hidden = true; setStep(3);
+  for (const k of list) {
+    const o = outFor(k), bar = o.prog.querySelector("i"), label = o.prog.querySelector("span");
+    o.prog.hidden = false; bar.style.width = "0%"; label.textContent = "Pripravujem…";
+    try {
+      const r = await recordAspect(k, (p) => { bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`; });
+      o.result = r; o.dl.classList.add("ready"); o.dl.title = "Stiahnuť hotové video";
+      if (DEMO) { // v ukážke sa sťahovanie nedá, výsledok sa prehrá priamo v karte
+        const v = document.createElement("video"); v.className = "out-result"; v.controls = true; v.playsInline = true; v.src = r.url; o.el.insertBefore(v, o.prog);
+      }
+      label.textContent = "Hotovo, stiahni tlačidlom ⬇";
+      o.prog.hidden = false; bar.style.width = "100%";
+    } catch (e) { $("export-error").textContent = e.message || "Export zlyhal."; $("export-error").hidden = false; o.prog.hidden = true; }
+  }
+  state.busyExport = false; $("exportAll").disabled = state.playable === false;
+}
+
+// ---------- štart ----------
+function reset() {
+  video.pause(); video.removeAttribute("src"); invalidateExports();
+  if (state.url) { URL.revokeObjectURL(state.url); state.url = null; }
+  state.segments = []; state.outs = []; state.playable = null; bumpDyn(); $("upload-error").hidden = true; $("file").value = ""; show("upload");
+}
+function setup() {
+  FONTS.forEach((f) => { const o = document.createElement("option"); o.value = o.textContent = f; $("font").append(o); });
+  PRESETS.concat([{ id: "custom", name: "Vlastný" }]).forEach((p) => { const o = document.createElement("option"); o.value = p.id; o.textContent = p.name; $("styleSel").append(o); });
+  $("styleSel").onchange = (e) => {
+    const p = PRESETS.find((x) => x.id === e.target.value); if (!p) return;
+    const o = state.style;
+    state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight, caps: p.caps ?? o.caps, on: o.on };
+    syncControls();
+  };
+  document.querySelectorAll("#aspects .opt").forEach((b) => b.onclick = () => { state.aspect = b.dataset.v; syncControls(); });
+  document.querySelectorAll("#positions .opt").forEach((b) => b.onclick = () => { const st = state.style; st.position = b.dataset.v; st.x = 0.5; st.y = POS_Y[b.dataset.v]; syncControls(); });
+  const custom = () => { state.style.preset = null; syncControls(); };
+  $("subsOn").onclick = () => { state.style.on = !state.style.on; syncControls(); };
+  $("color").oninput = (e) => { state.style.color = e.target.value; custom(); };
+  $("bg").oninput = (e) => { state.style.bg = e.target.value; custom(); };
+  $("bgOpacity").oninput = (e) => { state.style.bgOpacity = +e.target.value; custom(); };
+  $("size").oninput = (e) => { state.style.size = +e.target.value; custom(); };
+  $("font").onchange = (e) => { state.style.font = e.target.value; custom(); };
+  $("highlight").onchange = (e) => { state.style.highlight = e.target.checked; syncControls(); };
+  $("hl").oninput = (e) => { state.style.hl = e.target.value; syncControls(); };
+  $("roam").onchange = (e) => { state.style.roam = e.target.checked; syncControls(); };
+  $("caps").onchange = (e) => { state.style.caps = e.target.checked; syncControls(); };
+  $("exportAll").onclick = () => exportAspects(ASPECTS.map((a) => a.k));
+  $("dl-srt").onclick = () => saveText(toSrt(state.segments), "titulky.srt", "application/x-subrip");
+  $("dl-vtt").onclick = () => saveText(toVtt(state.segments), "titulky.vtt", "text/vtt");
+  $("newproject").onclick = reset;
+  const drop = $("drop");
+  $("file").onchange = (e) => e.target.files[0] && pickFile(e.target.files[0]);
+  ["dragover", "dragenter"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+  drop.addEventListener("drop", (e) => e.dataTransfer.files[0] && pickFile(e.dataTransfer.files[0]));
+  $("drop-hint").textContent = "MP4, MOV, WEBM · zostáva vo vašom prehliadači";
+  syncControls(); requestAnimationFrame(loop); show("upload");
 }
 
 // ---------- dynamické titulky ----------
@@ -419,20 +553,6 @@ function drawChunk(ctx, c, t, W, H, st) {
 function drawDynamic(ctx, t, W, H, st) {
   for (const c of dynChunks()) if (t >= c.start && t <= c.exitStart + c.exitDur) drawChunk(ctx, c, t, W, H, st);
 }
-function drawPreviewDyn() {
-  const cv = $("dyn"), st = state.style, stage = $("stage"), dpr = window.devicePixelRatio || 1;
-  const w = stage.clientWidth, h = stage.clientHeight;
-  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
-  if (st.dynamic) drawDynamic(ctx, video.currentTime, w, h, st);
-}
-
-// ---------- export: video + titulky nahrané z plátna ----------
-function resetExport() {
-  for (const u of state.downloads) URL.revokeObjectURL(u);
-  state.downloads = []; $("downloads").hidden = true; $("export-error").hidden = true;
-  $("export-hint").hidden = true; $("export-status").hidden = true; $("export").disabled = false;
-}
 function wrapWords(ctx, words, maxW) {
   const sp = ctx.measureText(" ").width, lines = []; let cur = [], w = 0;
   words.forEach((o, n) => {
@@ -472,115 +592,6 @@ const srtTime = (s, sep) => { const ms = Math.round(s * 1000), p = (n, l = 2) =>
 const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} --> ${srtTime(s.end, ",")}\n${s.text}\n`).join("\n");
 const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${s.text}\n`).join("\n");
 
-function showResult(url) { // v ukážke sa sťahovanie nedá, výsledok sa prehrá tu (na telefóne podrž prst na videu)
-  let v = $("result");
-  if (!v) { v = document.createElement("video"); v.id = "result"; v.controls = true; v.playsInline = true; v.style.cssText = "width:100%;border-radius:10px;background:#000"; $("downloads").prepend(v); }
-  v.src = url;
-}
-async function exportVideo() {
-  resetExport();
-  $("export").disabled = true; $("export-status").hidden = false; $("export-hint").hidden = false;
-  const bar = $("export-status").firstElementChild.firstElementChild, label = $("export-status").lastElementChild;
-  bar.style.width = "0%"; label.textContent = "Pripravujem…";
-  try {
-    if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
-    const [ow, oh] = OUT[state.aspect], k = EXPORT_SHORT / Math.min(ow, oh);
-    const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = { ...state.style };
-    await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${wt} 40px "${st.font}"`).catch(() => {})));
-    const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext("2d");
-    const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
-    await new Promise((res, rej) => { ev.onloadeddata = res; ev.onerror = () => rej(new Error("Video sa nepodarilo načítať.")); });
-    const stream = canvas.captureStream(30);
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    try {
-      const dest = ac.createMediaStreamDestination();
-      ac.createMediaElementSource(ev).connect(dest);
-      dest.stream.getAudioTracks().forEach((t) => stream.addTrack(t));
-    } catch {}
-    const types = ["video/mp4;codecs=avc1,mp4a.40.2", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
-    const mime = types.find((t) => MediaRecorder.isTypeSupported(t)) || "";
-    const rec = new MediaRecorder(stream, { mimeType: mime || undefined, videoBitsPerSecond: 6e6 });
-    const chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-    const finished = new Promise((res) => (rec.onstop = res));
-    let live = true;
-    const draw = () => {
-      if (!live) return;
-      const vw = ev.videoWidth, vh = ev.videoHeight, s = Math.max(W / vw, H / vh);
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
-      ctx.drawImage(ev, (W - vw * s) / 2, (H - vh * s) / 2, vw * s, vh * s);
-      if (st.dynamic) drawDynamic(ctx, ev.currentTime, W, H, st);
-      else { const i = segmentAt(ev.currentTime); if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], ev.currentTime, W, H, st); }
-      const p = Math.min(99, Math.round(ev.currentTime / (ev.duration || 1) * 100));
-      bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`;
-      ev.requestVideoFrameCallback ? ev.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
-    };
-    ev.onended = () => { live = false; setTimeout(() => rec.stop(), 150); };
-    await ac.resume(); rec.start(500); draw(); await ev.play();
-    await finished; ac.close();
-    const ext = rec.mimeType.includes("mp4") ? "mp4" : "webm";
-    const mk = (data, type) => { const u = URL.createObjectURL(new Blob(Array.isArray(data) ? data : [data], { type })); state.downloads.push(u); return u; };
-    const a = $("dl-mp4"); a.href = mk(chunks, rec.mimeType || "video/webm"); a.download = `titulky.${ext}`; a.textContent = `Stiahnuť video (${ext.toUpperCase()})`;
-    $("dl-srt").href = mk(toSrt(state.segments), "application/x-subrip"); $("dl-srt").download = "titulky.srt";
-    $("dl-vtt").href = mk(toVtt(state.segments), "text/vtt"); $("dl-vtt").download = "titulky.vtt";
-    $("downloads").hidden = false; $("export-status").hidden = true; $("export-hint").hidden = true;
-    bar.style.width = "100%";
-    if (DEMO) showResult(a.href);
-  } catch (e) {
-    $("export-error").textContent = e.message || "Export zlyhal."; $("export-error").hidden = false;
-    $("export-status").hidden = true; $("export-hint").hidden = true;
-  }
-  $("export").disabled = false;
-}
 
-// ---------- štart ----------
-function setup() {
-  FONTS.forEach((f) => { const o = document.createElement("option"); o.value = o.textContent = f; $("font").append(o); });
-  Object.keys(OUT).forEach((a) => { const b = document.createElement("button"); b.dataset.v = a; b.textContent = a; b.onclick = () => { state.aspect = a; syncControls(); }; $("aspects").append(b); });
-  PRESETS.forEach((p) => {
-    const b = document.createElement("button"); b.className = "preset"; b.dataset.id = p.id;
-    const sample = document.createElement("div"); sample.className = "sample";
-    const sp = document.createElement("span"); sp.textContent = "Ahoj svet"; sp.style.color = p.color; sp.style.fontFamily = `"${p.font}", sans-serif`; sp.style.fontWeight = p.bold ? 700 : 400;
-    if (p.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(p.bg)},${p.bgOpacity / 100})`; else sp.style.textShadow = "-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000";
-    if (p.dynamic) { // ukážka: pútavé písmo + malé písmo pod ním
-      sp.textContent = ""; sp.style.cssText = "display:flex;flex-direction:column;align-items:center;line-height:1";
-      const a = document.createElement("span"); a.textContent = "TEXT"; a.style.cssText = 'font:800 20px "Inter",sans-serif';
-      const c = document.createElement("span"); c.textContent = "EFFECT"; c.style.cssText = 'font:800 12px "Inter",sans-serif';
-      sp.append(a, c);
-    }
-    sample.append(sp);
-    const name = document.createElement("span"); name.className = "name"; name.textContent = p.name; b.append(sample, name);
-    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight, caps: p.caps ?? o.caps }; syncControls(); };
-    $("presets").append(b);
-  });
-  const custom = () => { state.style.preset = null; syncControls(); };
-  $("color").oninput = (e) => { state.style.color = e.target.value; custom(); };
-  $("bg").oninput = (e) => { state.style.bg = e.target.value; custom(); };
-  $("bgOpacity").oninput = (e) => { state.style.bgOpacity = +e.target.value; custom(); };
-  $("size").oninput = (e) => { state.style.size = +e.target.value; custom(); };
-  $("font").onchange = (e) => { state.style.font = e.target.value; custom(); };
-  document.querySelectorAll("#positions button").forEach((b) => b.onclick = () => { state.style.position = b.dataset.v; state.style.x = 0.5; state.style.y = POS_Y[b.dataset.v]; syncControls(); });
-  $("caps").onchange = (e) => { state.style.caps = e.target.checked; syncControls(); };
-  $("roam").onchange = (e) => { state.style.roam = e.target.checked; syncControls(); };
-  $("highlight").onchange = (e) => { state.style.highlight = e.target.checked; syncControls(); };
-  $("hl").oninput = (e) => { state.style.hl = e.target.value; syncControls(); };
-  setupDrag();
-  const dyn = document.createElement("canvas"); dyn.id = "dyn";
-  dyn.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none"; $("stage").append(dyn);
-  ["400 20px Inter", "800 20px Inter"].forEach((f) => document.fonts.load(f).catch(() => {}));
-  new ResizeObserver(updateCaption).observe($("stage"));
-  syncControls();
-  $("export").onclick = exportVideo;
-  $("delete").onclick = () => { $("noplay").hidden = true; video.pause(); video.removeAttribute("src"); resetExport(); state.segments = []; show("upload"); };
-  const drop = $("drop");
-  $("file").onchange = (e) => e.target.files[0] && pickFile(e.target.files[0]);
-  ["dragover", "dragenter"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));
-  ["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
-  drop.addEventListener("drop", (e) => e.dataTransfer.files[0] && pickFile(e.dataTransfer.files[0]));
-  $("drop-hint").textContent = "MP4, MOV, WEBM · zostáva vo vašom prehliadači";
-  const loop = () => { updateCaption(); requestAnimationFrame(loop); };
-  requestAnimationFrame(loop);
-  show("upload");
-}
 if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn };
 setup();
