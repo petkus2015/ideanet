@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.47.0
+- **Zdieľanie článku:** pod textom článku pribudol čistý panel „Zdieľaj článok“ s tlačidlami Facebook, X, WhatsApp, LinkedIn, E-mail a Kopírovať odkaz (po kliknutí sa zobrazí „Skopírované“). Na mobiloch a tabletoch, ktoré to podporujú, je navyše zvýraznené tlačidlo Zdieľať, ktoré otvorí systémové zdieľanie (Messenger, Instagram, AirDrop …). Bez cudzích skriptov, len obyčajné odkazy, takže nezaťažuje rýchlosť ani nevyžaduje súhlas s cookies.
+
 ## 1.46.0
 - **Komentáre sú v téme vypnuté:** nedajú sa pridávať (články, stránky, médiá ani vlastné typy), existujúce sa nezobrazujú, v administrácii zmizlo menu Komentáre, nastavenia diskusie, widget na nástenke a odkaz v admin lište. Vypnuté sú aj koncový bod komentárov v REST, pingbacky cez XML-RPC, hlavička X-Pingback a kanál komentárov (presmeruje sa na hlavný). Znovu zapnúť sa dajú filtrom `relife_disable_comments` (`__return_false`). Staré komentáre sa nemažú, len sa skryjú.
 

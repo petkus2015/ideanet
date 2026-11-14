@@ -464,6 +464,42 @@
 		} );
 	}
 
+	function initShare() {
+		var box = document.querySelector( '.js-share' );
+		if ( ! box ) { return; }
+		var url = box.getAttribute( 'data-url' ) || location.href;
+		var title = box.getAttribute( 'data-title' ) || document.title;
+		var nat = box.querySelector( '.js-share-native' );
+		if ( nat && navigator.share ) {
+			nat.hidden = false;
+			nat.addEventListener( 'click', function () {
+				navigator.share( { title: title, url: url } ).catch( function () {} );
+			} );
+		}
+		var copy = box.querySelector( '.js-share-copy' );
+		if ( copy ) {
+			copy.addEventListener( 'click', function () {
+				var t = copy.querySelector( '.js-share-copy-t' );
+				var old = t ? t.textContent : '';
+				function done() {
+					if ( ! t ) { return; }
+					t.textContent = copy.getAttribute( 'data-done' ) || 'OK';
+					copy.classList.add( 'is-done' );
+					setTimeout( function () { t.textContent = old; copy.classList.remove( 'is-done' ); }, 1800 );
+				}
+				if ( navigator.clipboard && navigator.clipboard.writeText ) {
+					navigator.clipboard.writeText( url ).then( done, function () {} );
+				} else {
+					var ta = document.createElement( 'textarea' );
+					ta.value = url; ta.setAttribute( 'readonly', '' ); ta.style.position = 'fixed'; ta.style.opacity = '0';
+					document.body.appendChild( ta ); ta.select();
+					try { document.execCommand( 'copy' ); done(); } catch ( e ) {}
+					document.body.removeChild( ta );
+				}
+			} );
+		}
+	}
+
 	function init() {
 		updateSavedUI();
 		initPoll();
@@ -474,6 +510,7 @@
 		initMenu();
 		initFlightsOrigin();
 		initCharts();
+		initShare();
 		renderSavedPage();
 		document.documentElement.classList.add( 'rl-ready' );
 	}
