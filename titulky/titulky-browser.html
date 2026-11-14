@@ -76,6 +76,7 @@ input[type=range]{width:100%;accent-color:var(--a)}
 .danger:hover{border-color:#ff7a8a}
 @media(max-width:900px){.editor{grid-template-columns:1fr}.panel{position:static}.note{display:none}h1{font-size:32px}}
 
+.banner{background:#2a1d12;border:1px solid #6b4a24;color:#f0c58a;border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:13px}
 .cap{left:auto;right:auto;width:max-content;max-width:84%;pointer-events:auto;cursor:grab;touch-action:none;transform:translate(-50%,-50%);user-select:none}
 .inline label{display:flex;gap:8px;align-items:center;cursor:pointer}
 .row select{max-width:100%}
@@ -95,7 +96,7 @@ input[type=range]{width:100%;accent-color:var(--a)}
     <h1>Automatické titulky<br><span class="grad">k tvojmu videu.</span></h1>
     <p class="lead">Nahraj video, uprav štýl a stiahni ho s titulkami.</p>
     <label class="drop" id="drop">
-      <input type="file" id="file" accept="video/*,.mp4,.mov,.m4v,.webm,.mkv,.avi" hidden>
+      <input type="file" id="file" accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265" hidden>
       <span class="drop-icon">⬆</span>
       <strong>Vyber video alebo ho pretiahni sem</strong>
       <small id="drop-hint">MP4, MOV, WEBM</small>
@@ -131,6 +132,7 @@ input[type=range]{width:100%;accent-color:var(--a)}
   <section id="view-editor" hidden>
     <div class="editor">
       <div class="left">
+        <p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľad a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>
         <div class="stage-wrap">
           <div class="stage" id="stage">
             <video id="video" controls playsinline></video>
@@ -280,11 +282,30 @@ function toMono(buf) {
   for (let c = 0; c < n; c++) { const d = buf.getChannelData(c); for (let i = 0; i < out.length; i++) out[i] += d[i] / n; }
   return out;
 }
-async function decodeAudio(file) {
+const decodeBuffer = async (arrayBuffer) => {
   const ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-  try { return toMono(await ctx.decodeAudioData(await file.arrayBuffer())); }
-  catch { throw new Error("Zo súboru sa nepodarilo prečítať zvuk. Skús MP4 so zvukom AAC."); }
-  finally { ctx.close(); }
+  try { return toMono(await ctx.decodeAudioData(arrayBuffer)); } finally { ctx.close(); }
+};
+// Záloha: ak prehliadač nevie rozbaliť zvuk zo súboru, zvuk sa nahrá pri prehrávaní videa (trvá dĺžku videa).
+async function captureAudio(url) {
+  const tv = document.createElement("video"); tv.src = url; tv.playsInline = true;
+  await new Promise((res, rej) => { tv.onloadedmetadata = res; tv.onerror = () => rej(new Error("play")); });
+  const ac = new (window.AudioContext || window.webkitAudioContext)();
+  const dest = ac.createMediaStreamDestination();
+  ac.createMediaElementSource(tv).connect(dest);
+  const rec = new MediaRecorder(dest.stream), chunks = [];
+  rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+  const stopped = new Promise((r) => (rec.onstop = r));
+  rec.start(); await ac.resume(); await tv.play();
+  const iv = setInterval(() => setBusy("Čítam zvuk…", `Prehliadač číta zvuk v reálnom čase: ${fmtTime(tv.currentTime)} z ${fmtTime(tv.duration)}`, tv.currentTime / tv.duration * 100), 400);
+  await new Promise((r) => (tv.onended = r));
+  clearInterval(iv); rec.stop(); await stopped; ac.close();
+  return decodeBuffer(await new Blob(chunks).arrayBuffer());
+}
+async function decodeAudio(file) {
+  try { return await decodeBuffer(await file.arrayBuffer()); } catch { /* skúsi sa záloha */ }
+  try { setBusy("Čítam zvuk…", "Prehliadač nevie rozbaliť zvuk priamo, číta ho pri prehrávaní."); return await captureAudio(state.url); }
+  catch { throw new Error("Zo súboru sa nepodarilo prečítať zvuk. Súbor je asi poškodený, bez zvuku alebo má zvukový kodek, ktorý prehliadač nepozná. Skús ho previesť do MP4 (H.264 + AAC)."); }
 }
 // Rozdelí dlhý úsek textu na titulky (najviac 32 znakov), čas rozdelí podľa dĺžky textu.
 function splitChunk(text, start, end) {
@@ -305,12 +326,13 @@ let asr = null, asrId = null;
 async function recognize(file, modelKey, lang) {
   setBusy("Načítavam zvuk…");
   if (MOCK) {
-    await new Promise((r) => setTimeout(r, 600));
-    const d = state.duration, out = []; let t = 0.3, i = 1;
+    await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
+    const d = state.duration || 12, out = []; let t = 0.3, i = 1;
     while (t + 1.5 < d) { const text = `Ukážkový titulok číslo ${i++}`; out.push({ start: t, end: t + 2, text, words: estimateWords(text, t, t + 2) }); t += 2.3; }
     return out;
   }
   const audio = await decodeAudio(file);
+  if (!state.duration) state.duration = audio.length / 16000;
   const id = MODELS[modelKey];
   if (asrId !== id) {
     setBusy("Sťahujem model…", "Stiahne sa len raz, potom ho prehliadač použije znova.", 0);
@@ -347,21 +369,38 @@ async function recognize(file, modelKey, lang) {
 }
 
 // ---------- nahratie ----------
-function pickFile(file) {
+const VIDEO_EXT = /\.(mp4|m4v|mov|mkv|webm|avi|ts|mts|m2ts|3gp|mpg|mpeg|ogv|hevc|h265|265)$/i;
+function playableBanner() {
+  const bad = state.playable === false;
+  $("noplay").hidden = !bad;
+  $("export").disabled = bad;
+  if (bad) { // bez prehrateľného videa sa dajú stiahnuť aspoň titulky
+    const mk = (data, type) => { const u = URL.createObjectURL(new Blob([data], { type })); state.downloads.push(u); return u; };
+    $("dl-srt").href = mk(toSrt(state.segments), "application/x-subrip"); $("dl-srt").download = "titulky.srt";
+    $("dl-vtt").href = mk(toVtt(state.segments), "text/vtt"); $("dl-vtt").download = "titulky.vtt";
+    $("dl-mp4").hidden = true; $("downloads").hidden = false;
+  } else $("dl-mp4").hidden = false;
+}
+async function pickFile(file) {
   $("upload-error").hidden = true;
-  if (!file.type.startsWith("video/")) return showError("Vyber súbor s videom.");
+  if (!file.type.startsWith("video/") && !VIDEO_EXT.test(file.name)) return showError("Vyber súbor s videom (MP4, MOV, MKV, WEBM a podobne).");
   if (state.url) URL.revokeObjectURL(state.url);
-  state.file = file; state.url = URL.createObjectURL(file);
-  video.src = state.url;
-  setBusy("Načítavam video…");
-  video.onerror = () => showError("Tento formát prehliadač neprehrá. Skús MP4.");
-  video.onloadedmetadata = async () => {
-    state.duration = video.duration || 0;
-    try {
-      state.segments = await recognize(file, $("model").value, $("lang").value);
-    } catch (e) { return showError(e.message || "Rozpoznanie zlyhalo."); }
-    buildSegments(); show("editor"); applyPreview(); resetExport();
-  };
+  state.file = file; state.url = URL.createObjectURL(file); state.duration = 0; state.playable = null;
+  setBusy("Čítam zvuk…");
+  state.meta = new Promise((resolve) => {
+    video.onloadedmetadata = () => {
+      state.playable = video.videoWidth > 0; // zvuk bez obrazu = kodek sa nedá dekódovať
+      if (isFinite(video.duration)) state.duration = video.duration;
+      resolve();
+    };
+    video.onerror = () => { state.playable = false; resolve(); };
+  });
+  video.preload = "auto"; video.src = state.url; video.load();
+  try { state.segments = await recognize(file, $("model").value, $("lang").value); }
+  catch (e) { return showError(e.message || "Rozpoznanie zlyhalo."); }
+  await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
+  if (state.playable === null) state.playable = false;
+  buildSegments(); show("editor"); applyPreview(); resetExport(); playableBanner();
 }
 
 // ---------- editor ----------
@@ -566,7 +605,7 @@ function setup() {
   new ResizeObserver(updateCaption).observe($("stage"));
   syncControls();
   $("export").onclick = exportVideo;
-  $("delete").onclick = () => { video.pause(); video.removeAttribute("src"); resetExport(); state.segments = []; show("upload"); };
+  $("delete").onclick = () => { $("noplay").hidden = true; video.pause(); video.removeAttribute("src"); resetExport(); state.segments = []; show("upload"); };
   const drop = $("drop");
   $("file").onchange = (e) => e.target.files[0] && pickFile(e.target.files[0]);
   ["dragover", "dragenter"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));
@@ -577,6 +616,7 @@ function setup() {
   requestAnimationFrame(loop);
   show("upload");
 }
+if (MOCK) window.__test = { captureAudio, decodeBuffer, state };
 setup();
 
 </script>

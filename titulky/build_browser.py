@@ -21,6 +21,8 @@ body = body.replace('''    <p class="error" id="upload-error" hidden></p>
     <p class="hint">Model sa pri prvom použití stiahne a prehliadač si ho zapamätá. Slovenčina je presnejšia s modelom small.</p>
     <p class="error" id="upload-error" hidden></p>
   </section>''', 1)
+body = re.sub(r'accept="[^"]*"', 'accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265"', body, count=1)
+body = body.replace('<div class="stage-wrap">', '<p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľad a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>\n        <div class="stage-wrap">', 1)
 body = body.replace('<div class="bar" id="busy-bar" hidden><i></i></div>',
                     '<div class="bar" id="busy-bar" hidden><i></i></div>')
 body = body.replace('<p class="expiry" id="expiry"></p>\n        <button class="danger" id="delete">Zmazať hneď</button>',
@@ -41,6 +43,7 @@ body = body.replace('''<div class="group">
           <div class="label">Veľkosť</div>''', 1)
 css = css.replace(":root{--bg:#070914;", ":root{color-scheme:dark;--bg:#070914;")
 css += """
+.banner{background:#2a1d12;border:1px solid #6b4a24;color:#f0c58a;border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:13px}
 .cap{left:auto;right:auto;width:max-content;max-width:84%;pointer-events:auto;cursor:grab;touch-action:none;transform:translate(-50%,-50%);user-select:none}
 .inline label{display:flex;gap:8px;align-items:center;cursor:pointer}
 .row select{max-width:100%}

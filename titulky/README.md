@@ -34,6 +34,13 @@ nič sa neposiela na server. Pri prvom použití potrebuje internet na stiahnuti
 podľa prehliadača. V náhľade sa dajú titulky presunúť myšou a zapnúť sa dá zvýrazňovanie práve vyslovených slov (časy slov dá model Whisper, ak ich nevie, odhadnú sa z dĺžky slov).
 Vznikne z `static/` príkazom `python3 build_browser.py`.
 
+## Formáty videa (H.264, H.265)
+
+Verzia so serverom prijme akékoľvek video, ktoré číta ffmpeg. Ak prehliadač video neprehrá
+(H.265/HEVC, 10-bitové video), server vyrobí H.264 náhľad a export ide z pôvodného súboru.
+Verzia bez servera rozpozná titulky zo zvuku aj vtedy, keď prehliadač neprehrá obraz, ale
+náhľad a export videa vtedy nie sú k dispozícii (ostane SRT a VTT).
+
 ## Mazanie po 24 hodinách
 
 Pracovná verzia (nahraté video, titulky, nastavenia, exportované súbory) sa zmaže

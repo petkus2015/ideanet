@@ -27,7 +27,7 @@ DATA = Path(os.environ.get("TITULKY_DATA", BASE / "data")) / "jobs"
 RETENTION = float(os.environ.get("TITULKY_RETENTION_HOURS", "24")) * 3600
 MAX_UPLOAD = int(os.environ.get("TITULKY_MAX_UPLOAD_MB", "500")) * 1024 * 1024
 SWEEP_EVERY = int(os.environ.get("TITULKY_SWEEP_SECONDS", "300"))
-EXTS = {".mp4", ".mov", ".m4v", ".webm", ".mkv", ".avi"}
+EXTS = {".mp4", ".mov", ".m4v", ".webm", ".mkv", ".avi", ".ts", ".mts", ".m2ts", ".3gp", ".mpg", ".mpeg"}
 ID_RE = re.compile(r"^[0-9a-f]{32}$")
 CANDIDATE_FONTS = ["Inter", "DejaVu Sans", "DejaVu Serif", "Liberation Sans",
                    "Liberation Serif", "FreeSans", "Carlito", "Caladea"]
@@ -140,6 +140,25 @@ def probe_duration(path):
     return float(out.strip() or 0)
 
 
+def needs_preview(path):
+    """Prehliadač neprehrá H.265, 10-bitové ani iné nezvyčajné video: na náhľad sa vyrobí H.264."""
+    out = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+         "stream=codec_name,pix_fmt", "-of", "csv=p=0", str(path)],
+        capture_output=True, text=True).stdout.strip().split(",")
+    codec, pix = (out + ["", ""])[:2]
+    return codec not in ("h264", "vp8", "vp9", "av1") or pix not in ("yuv420p", "yuvj420p")
+
+
+def make_preview(d, source):
+    subprocess.run(
+        ["ffmpeg", "-y", "-loglevel", "error", "-i", source,
+         "-vf", "scale='if(gt(iw,ih),-2,min(720,iw))':'if(gt(iw,ih),min(720,ih),-2)',format=yuv420p",
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-c:a", "aac", "-b:a", "128k",
+         "-movflags", "+faststart", "preview.mp4"],
+        cwd=d, check=True, capture_output=True)
+
+
 def run_transcribe(job_id, language):
     try:
         meta = load(job_id)
@@ -148,7 +167,12 @@ def run_transcribe(job_id, language):
         if duration <= 0:
             raise RuntimeError("Súbor sa nepodarilo prečítať ako video.")
         segments, lang = asr.transcribe(str(src), language, duration)
-        update(job_id, status="ready", segments=segments, duration=duration, language=lang)
+        preview = None
+        if needs_preview(src):
+            make_preview(DATA / job_id, meta["source"])
+            preview = "preview.mp4"
+        update(job_id, status="ready", segments=segments, duration=duration, language=lang,
+               preview=preview)
     except HTTPException:
         pass  # medzitým zmazané
     except Exception as e:
@@ -227,7 +251,7 @@ def get_job(job_id: str):
 @app.get("/api/jobs/{job_id}/video")
 def get_video(job_id: str):
     meta = load(job_id)
-    return FileResponse(DATA / job_id / meta["source"])
+    return FileResponse(DATA / job_id / (meta.get("preview") or meta["source"]))
 
 
 @app.put("/api/jobs/{job_id}/segments")
