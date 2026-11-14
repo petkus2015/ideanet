@@ -360,6 +360,7 @@ async function recognize(file, modelKey, lang) {
     for (const a of attempts) {
       try {
         mod.env.allowLocalModels = false;
+        try { mod.env.backends.onnx.wasm.numThreads = 1; mod.env.backends.onnx.wasm.proxy = false; } catch {}
         mod.env.useBrowserCache = a.cache;
         mod.env.remoteHost = a.host;
         for (const k of Object.keys(files)) delete files[k];
@@ -368,13 +369,20 @@ async function recognize(file, modelKey, lang) {
       } catch (e) { lastErr = e; console.error("Model:", a.label, e); }
     }
     if (lastErr) {
+      // Zisti, ktorá časť sa nedá stiahnuť: zdroj modelu alebo súbor behového prostredia (wasm).
+      const probe = async (url) => { try { await fetch(url, { method: "GET", cache: "no-store" }); return "ok"; } catch { return "NEDOSTUPNÉ"; } };
+      let wasmBase = ""; try { const wp = mod.env.backends.onnx.wasm.wasmPaths; wasmBase = typeof wp === "string" ? wp : (wp && (wp.wasm || wp.mjs) ? String(wp.wasm || wp.mjs).replace(/[^/]*$/, "") : ""); } catch {}
+      const checks = [`huggingface.co: ${await probe(`https://huggingface.co/${id}/resolve/main/config.json`)}`, `cdn.jsdelivr.net: ${await probe("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6/package.json")}`];
+      if (wasmBase) checks.push(`wasm: ${await probe(wasmBase + "ort-wasm-simd-threaded.jsep.wasm")}`);
+      console.error("Diagnostika:", checks.join(", "), "Prehliadač:", navigator.userAgent, "Protokol:", location.protocol);
+      lastErr.diag = checks.join(", ") + ` · ${/^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "Safari" : "iný prehliadač"} · ${location.protocol}`;
       const detail = String(lastErr && lastErr.message || lastErr).slice(0, 200);
       const hint = reach
         ? "Prehliadač sa nedostal na huggingface.co (blokuje ho sieť, VPN, firewall alebo blokovač reklám). Skús inú sieť alebo vypni blokovač."
         : location.protocol === "file:"
           ? "Skús súbor otvoriť cez lokálny server: v priečinku so súborom spusti `python3 -m http.server 8000` a otvor http://localhost:8000/titulky-browser.html."
           : "Skús obnoviť stránku alebo menší model (tiny).";
-      throw new Error(`Model sa nepodarilo stiahnuť. ${hint} Technická chyba: ${detail}`);
+      throw new Error(`Model sa nepodarilo stiahnuť. ${hint} Technická chyba: ${detail} (${lastErr.diag})`);
     }
     asrId = id;
   }
