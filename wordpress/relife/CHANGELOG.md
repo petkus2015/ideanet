@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.46.0
+- **Komentáre sú v téme vypnuté:** nedajú sa pridávať (články, stránky, médiá ani vlastné typy), existujúce sa nezobrazujú, v administrácii zmizlo menu Komentáre, nastavenia diskusie, widget na nástenke a odkaz v admin lište. Vypnuté sú aj koncový bod komentárov v REST, pingbacky cez XML-RPC, hlavička X-Pingback a kanál komentárov (presmeruje sa na hlavný). Znovu zapnúť sa dajú filtrom `relife_disable_comments` (`__return_false`). Staré komentáre sa nemažú, len sa skryjú.
+
 ## 1.45.1
 - **Kam na jedlo – vlastné farby kategórií:** v administrácii *Podniky (jedlo) → Kategórie podnikov* (pri pridaní aj úprave kategórie) sa dá zapnúť „Použiť vlastné farby“ a zvoliť farbu pozadia a textu. Použije sa na tlačidle kategórie vo filtri aj na štítku v karte; vybraná kategória má okolo seba tenký prstenec v jej farbe. Bez zapnutia ostáva predvolený vzhľad.
 

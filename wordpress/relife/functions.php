@@ -19,6 +19,7 @@ require_once RELIFE_DIR . '/inc/setup.php';
 require_once RELIFE_DIR . '/inc/content-model.php';
 require_once RELIFE_DIR . '/inc/template-tags.php';
 require_once RELIFE_DIR . '/inc/embeds.php';
+require_once RELIFE_DIR . '/inc/comments-off.php';
 require_once RELIFE_DIR . '/inc/performance.php';
 require_once RELIFE_DIR . '/inc/analytics.php';
 require_once RELIFE_DIR . '/inc/adsense-check.php';
