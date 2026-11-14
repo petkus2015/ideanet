@@ -786,6 +786,8 @@ button.rl-chart__btn:focus-visible{outline:3px solid var(--rl-accent,#3CFFD0);ou
 .rl-place[hidden]{display:none}
 .rl-place:hover,.rl-place:focus-within{background:color-mix(in srgb,var(--c) 12%,var(--rl-surface))}
 .rl-chip__ic{display:inline-flex}
+.rl-places__cities{margin:18px 0 6px}
+a.rl-chip{text-decoration:none}
 .rl-ic{flex:none;display:block}
 .rl-place__tag{display:inline-flex;align-items:center;gap:5px}
 .rl-place__tag .rl-ic{width:13px;height:13px}

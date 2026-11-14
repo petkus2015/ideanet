@@ -11,8 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$places   = relife_places_data();
-$maps_url = (string) get_theme_mod( 'relife_places_maps_url', 'https://maps.app.goo.gl/JgE1WtDw7LtKG1dD8?g_st=i' );
+$city_slug  = (string) get_post_meta( get_the_ID(), '_rl_places_city', true );
+$city       = '' !== $city_slug ? get_term_by( 'slug', $city_slug, 'relife_place_city' ) : null;
+$city_name  = $city instanceof WP_Term ? $city->name : '';
+$places     = relife_places_data( $city_slug );
+$maps_url   = $city instanceof WP_Term ? (string) get_term_meta( $city->term_id, 'rl_maps_url', true ) : '';
+$all_cities = relife_places_cities();
 $palette  = array( '#FF3D8B', '#3CFFD0', '#FFE14D', '#8F5CFF', '#FF7A2B', '#A6FF4D' );
 
 // Kategórie, ktoré sa naozaj používajú, s počtom podnikov.
@@ -77,9 +81,16 @@ get_header();
 ?>
 <section class="rl-places-hero">
 	<div class="rl-wrap">
-		<p class="rl-kicker"><?php esc_html_e( 'BRATISLAVA · JEDLO', 'relife' ); ?></p>
+		<p class="rl-kicker"><?php echo esc_html( ( '' !== $city_name ? mb_strtoupper( $city_name ) : __( 'SLOVENSKO', 'relife' ) ) . ' · ' . __( 'JEDLO', 'relife' ) ); ?></p>
 		<h1 class="rl-pagetitle"><?php the_title(); ?></h1>
-		<p class="rl-muted rl-lead"><?php esc_html_e( 'Overené podniky v Bratislave, kam sa oplatí zájsť na jedlo. Vyber si kategóriu alebo cenu a nájdeš to pravé miesto.', 'relife' ); ?></p>
+		<p class="rl-muted rl-lead"><?php esc_html_e( 'Overené podniky, kam sa oplatí zájsť na jedlo. Vyber si kategóriu alebo cenu a nájdeš to pravé miesto.', 'relife' ); ?></p>
+		<?php if ( count( $all_cities ) > 1 ) : ?>
+			<div class="rl-places__chips rl-places__cities" role="navigation" aria-label="<?php esc_attr_e( 'Mesto', 'relife' ); ?>">
+				<?php foreach ( $all_cities as $c ) : $cp = (int) get_term_meta( $c->term_id, 'rl_page_id', true ); if ( ! $cp || 'publish' !== get_post_status( $cp ) ) { continue; } ?>
+					<a class="rl-chip<?php echo $c->slug === $city_slug ? ' is-on' : ''; ?>" href="<?php echo esc_url( (string) get_permalink( $cp ) ); ?>"<?php echo $c->slug === $city_slug ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $c->name ); ?></a>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
 		<?php if ( '' !== $maps_url ) : ?>
 			<a class="rl-pill rl-pill--outline" href="<?php echo esc_url( $maps_url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Celý zoznam v Google Mapách ↗', 'relife' ); ?></a>
 		<?php endif; ?>
@@ -139,7 +150,7 @@ get_header();
 		<div class="rl-places__none">
 			<p><strong><?php esc_html_e( 'Zoznam podnikov sa pripravuje.', 'relife' ); ?></strong></p>
 			<?php if ( current_user_can( 'edit_pages' ) ) : ?>
-				<p class="rl-muted"><?php esc_html_e( 'Admin: podniky pridáte v menu Podniky (jedlo) → Pridať podnik, alebo hromadne cez Nástroje → Import podnikov.', 'relife' ); ?></p>
+				<p class="rl-muted"><?php esc_html_e( 'Admin: zoznam z Google Máp načítate v menu Podniky (jedlo) → Mestá a zoznamy.', 'relife' ); ?></p>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>

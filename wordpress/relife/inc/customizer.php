@@ -225,18 +225,6 @@ function relife_customize_register( WP_Customize_Manager $wp_customize ): void {
 		);
 	}
 
-	// Kam na jedlo: odkaz na celý zoznam v Google Mapách.
-	$wp_customize->add_setting( 'relife_places_maps_url', array( 'default' => 'https://maps.app.goo.gl/JgE1WtDw7LtKG1dD8?g_st=i', 'sanitize_callback' => 'esc_url_raw' ) );
-	$wp_customize->add_control(
-		'relife_places_maps_url',
-		array(
-			'label'       => __( 'Kam na jedlo: odkaz na celý zoznam v Google Mapách', 'relife' ),
-			'description' => __( 'Zobrazí sa ako tlačidlo na stránke Kam na jedlo v BA. Prázdne = bez tlačidla.', 'relife' ),
-			'section'     => 'relife_home',
-			'type'        => 'url',
-		)
-	);
-
 	// Versus: výber článku a obsah dvoch kariet.
 	$vposts = array( 0 => __( 'Automaticky (najnovší článok vo formáte Versus)', 'relife' ) );
 	$vq     = new WP_Query(
