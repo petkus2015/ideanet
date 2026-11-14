@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.47.1
+- **Kam na jedlo – Navigovať a Rezervovať:** odkaz „Mapa“ v karte podniku sa volá **Navigovať**. Pri podniku pribudlo pole *Odkaz na rezerváciu*; ak je vyplnené, v karte sa zobrazí tlačidlo **Rezervovať**. Pole je aj ako 8. stĺpec hromadného importu (`… | URL fotky | Rezervácia`).
+
 ## 1.47.0
 - **Zdieľanie článku:** pod textom článku pribudol čistý panel „Zdieľaj článok“ s tlačidlami Facebook, X, WhatsApp, LinkedIn, E-mail a Kopírovať odkaz (po kliknutí sa zobrazí „Skopírované“). Na mobiloch a tabletoch, ktoré to podporujú, je navyše zvýraznené tlačidlo Zdieľať, ktoré otvorí systémové zdieľanie (Messenger, Instagram, AirDrop …). Bez cudzích skriptov, len obyčajné odkazy, takže nezaťažuje rýchlosť ani nevyžaduje súhlas s cookies.
 

@@ -78,6 +78,7 @@ function relife_places_metabox(): void {
 				</select></label></p>
 			<p><label><strong><?php esc_html_e( 'Adresa / štvrť', 'relife' ); ?></strong><br><input type="text" name="rl_place_address" value="<?php echo esc_attr( $v( 'address' ) ); ?>" class="widefat"></label></p>
 			<p><label><strong><?php esc_html_e( 'Odkaz do Google Máp', 'relife' ); ?></strong><br><input type="url" name="rl_place_url" value="<?php echo esc_attr( $v( 'url' ) ); ?>" class="widefat" placeholder="https://maps.app.goo.gl/…"></label></p>
+			<p><label><strong><?php esc_html_e( 'Odkaz na rezerváciu (nepovinné)', 'relife' ); ?></strong><br><input type="url" name="rl_place_book" value="<?php echo esc_attr( $v( 'book' ) ); ?>" class="widefat" placeholder="https://…"></label><span class="description"><?php esc_html_e( 'Ak je vyplnený, v karte podniku sa zobrazí tlačidlo „Rezervovať“.', 'relife' ); ?></span></p>
 			<p class="description"><?php esc_html_e( 'Fotka: nastavte „Obrázok k príspevku“ vpravo. Krátky popis: pole „Úryvok“ nižšie. Kategórie vpravo.', 'relife' ); ?></p>
 			<?php
 		},
@@ -100,6 +101,7 @@ function relife_places_save( int $post_id ): void {
 		'price'   => static fn( $x ): string => in_array( (string) $x, array( '1', '2', '3', '4' ), true ) ? (string) $x : '',
 		'address' => 'sanitize_text_field',
 		'url'     => 'esc_url_raw',
+		'book'    => 'esc_url_raw',
 	);
 	foreach ( $map as $k => $cb ) {
 		$val = isset( $_POST[ 'rl_place_' . $k ] ) ? (string) call_user_func( $cb, wp_unslash( $_POST[ 'rl_place_' . $k ] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
@@ -319,6 +321,7 @@ function relife_places_data( string $city = '' ): array {
 			'price'   => (int) get_post_meta( $p->ID, '_rl_place_price', true ),
 			'address' => (string) get_post_meta( $p->ID, '_rl_place_address', true ),
 			'url'     => (string) get_post_meta( $p->ID, '_rl_place_url', true ),
+			'book'    => (string) get_post_meta( $p->ID, '_rl_place_book', true ),
 			'cats'    => $terms,
 			'thumb'   => has_post_thumbnail( $p ) ? get_the_post_thumbnail( $p, 'relife-card', array( 'alt' => '', 'loading' => 'lazy', 'sizes' => '(max-width: 760px) 100vw, 330px' ) ) : '',
 		);
@@ -357,7 +360,7 @@ function relife_places_create( array $r, string $default = '', string $city = ''
 		return false;
 	}
 	$rating = '' === ( $r['rating'] ?? '' ) ? '' : (string) max( 0, min( 5, (float) str_replace( ',', '.', $r['rating'] ) ) );
-	foreach ( array( 'rating' => $rating, 'address' => sanitize_text_field( $r['address'] ?? '' ), 'url' => esc_url_raw( $r['url'] ?? '' ) ) as $k => $v ) {
+	foreach ( array( 'rating' => $rating, 'address' => sanitize_text_field( $r['address'] ?? '' ), 'url' => esc_url_raw( $r['url'] ?? '' ), 'book' => esc_url_raw( $r['book'] ?? '' ) ) as $k => $v ) {
 		if ( '' !== $v ) {
 			update_post_meta( (int) $id, '_rl_place_' . $k, $v );
 		}
@@ -744,7 +747,7 @@ function relife_places_import_page(): void {
 		</div>
 		<p><?php esc_html_e( 'Alebo vložte vlastný zoznam podnikov. Podporované sú dva tvary:', 'relife' ); ?></p>
 		<ol>
-			<li><strong><?php esc_html_e( 'Riadky s oddeľovačom |', 'relife' ); ?></strong> – <code>Názov | Kategória | Hodnotenie | Popis | Adresa | Odkaz do Máp | URL fotky</code> <?php esc_html_e( '(od druhého poľa sú všetky nepovinné; viac kategórií oddeľte čiarkou)', 'relife' ); ?></li>
+			<li><strong><?php esc_html_e( 'Riadky s oddeľovačom |', 'relife' ); ?></strong> – <code>Názov | Kategória | Hodnotenie | Popis | Adresa | Odkaz do Máp | URL fotky | Rezervácia</code> <?php esc_html_e( '(od druhého poľa sú všetky nepovinné; viac kategórií oddeľte čiarkou)', 'relife' ); ?></li>
 			<li><strong><?php esc_html_e( 'CSV z Google Takeout', 'relife' ); ?></strong> (<?php esc_html_e( 'Uložené miesta → súbor zoznamu s hlavičkou Title, Note, URL, Tags, Comment', 'relife' ); ?>).</li>
 		</ol>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -791,8 +794,8 @@ function relife_places_parse_import( string $text ): array {
 		if ( '' === trim( $line ) ) {
 			continue;
 		}
-		$p      = array_pad( array_map( 'trim', explode( '|', $line ) ), 7, '' );
-		$rows[] = array( 'name' => $p[0], 'cat' => $p[1], 'rating' => $p[2], 'desc' => $p[3], 'address' => $p[4], 'url' => $p[5], 'img' => $p[6] );
+		$p      = array_pad( array_map( 'trim', explode( '|', $line ) ), 8, '' );
+		$rows[] = array( 'name' => $p[0], 'cat' => $p[1], 'rating' => $p[2], 'desc' => $p[3], 'address' => $p[4], 'url' => $p[5], 'img' => $p[6], 'book' => $p[7] );
 	}
 	return $rows;
 }

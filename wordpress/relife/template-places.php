@@ -142,7 +142,10 @@ get_header();
 						<?php if ( '' !== $pl['desc'] ) : ?><p class="rl-place__desc"><?php echo esc_html( $pl['desc'] ); ?></p><?php endif; ?>
 						<div class="rl-place__foot">
 							<?php if ( '' !== $pl['address'] ) : ?><span class="rl-place__addr"><?php echo esc_html( $pl['address'] ); ?></span><?php else : ?><span></span><?php endif; ?>
-							<?php if ( '' !== $pl['url'] ) : ?><a class="rl-place__map" href="<?php echo esc_url( $pl['url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Mapa', 'relife' ); ?> ↗</a><?php endif; ?>
+							<span class="rl-place__acts">
+								<?php if ( '' !== $pl['url'] ) : ?><a class="rl-place__map" href="<?php echo esc_url( $pl['url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Navigovať', 'relife' ); ?> ↗</a><?php endif; ?>
+								<?php if ( '' !== $pl['book'] ) : ?><a class="rl-place__book" href="<?php echo esc_url( $pl['book'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Rezervovať', 'relife' ); ?></a><?php endif; ?>
+							</span>
 						</div>
 					</div>
 				</article>
