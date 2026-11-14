@@ -1,0 +1,102 @@
+{
+	Tools = ordered() {
+		SubtitleClean = MacroOperator {
+			CtrlWZoom = false,
+			Inputs = ordered() {
+				Input1 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "StyledText",
+					Name = "Text",
+					Default = "Tvoj titulok",
+				},
+				Input2 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Font",
+					Default = "Open Sans",
+				},
+				Input3 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Style",
+					Default = "Bold",
+				},
+				Input4 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Size",
+					Default = 0.045,
+				},
+				Input5 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Center",
+					Default = { 0.5, 0.1 },
+				},
+				Input6 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Red1",
+					Name = "Farba textu R",
+				},
+				Input7 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Green1",
+					Name = "Farba textu G",
+				},
+				Input8 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Blue1",
+					Name = "Farba textu B",
+				},
+				Input9 = InstanceInput {
+					SourceOp = "SubText",
+					Source = "Thickness2",
+					Name = "Hrubka obrysu",
+					Default = 0.08,
+				},
+			},
+			Outputs = {
+				MainOutput1 = InstanceOutput {
+					SourceOp = "SubText",
+					Source = "Output",
+				}
+			},
+			ViewInfo = GroupInfo { Pos = { 0, 0 } },
+			Tools = ordered() {
+				SubText = TextPlus {
+					Inputs = {
+						GlobalOut = Input { Value = 119, },
+						Width = Input { Value = 1920, },
+						Height = Input { Value = 1080, },
+						UseFrameFormatSettings = Input { Value = 1, },
+						LayoutRotation = Input { Value = 1, },
+						TransformRotation = Input { Value = 1, },
+						Softness1 = Input { Value = 0, },
+						StyledText = Input { Value = "Tvoj titulok", },
+						Font = Input { Value = "Open Sans", },
+						Style = Input { Value = "Bold", },
+						Size = Input { Value = 0.045, },
+						Center = Input { Value = { 0.5, 0.1 }, },
+						VerticalJustificationNew = Input { Value = 3, },
+						HorizontalJustificationNew = Input { Value = 3, },
+						Red1 = Input { Value = 1, },
+						Green1 = Input { Value = 1, },
+						Blue1 = Input { Value = 1, },
+						Enabled2 = Input { Value = 1, },
+						ElementShape2 = Input { Value = 2, },
+						Thickness2 = Input { Value = 0.08, },
+						Red2 = Input { Value = 0, },
+						Green2 = Input { Value = 0, },
+						Blue2 = Input { Value = 0, },
+						Enabled3 = Input { Value = 1, },
+						ElementShape3 = Input { Value = 0, },
+						Red3 = Input { Value = 0, },
+						Green3 = Input { Value = 0, },
+						Blue3 = Input { Value = 0, },
+						Alpha3 = Input { Value = 0.6, },
+						Softness3 = Input { Value = 0.6, },
+						Offset3 = Input { Value = { 0.004, -0.004 }, },
+					},
+					ViewInfo = OperatorInfo { Pos = { 0, 0 } },
+				}
+			},
+		}
+	},
+	ActiveTool = "SubtitleClean"
+}
