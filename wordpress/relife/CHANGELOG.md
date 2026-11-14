@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.45.1
+- **Kam na jedlo – vlastné farby kategórií:** v administrácii *Podniky (jedlo) → Kategórie podnikov* (pri pridaní aj úprave kategórie) sa dá zapnúť „Použiť vlastné farby“ a zvoliť farbu pozadia a textu. Použije sa na tlačidle kategórie vo filtri aj na štítku v karte; vybraná kategória má okolo seba tenký prstenec v jej farbe. Bez zapnutia ostáva predvolený vzhľad.
+
 ## 1.45.0
 - **Pätička:** riadok „Web beží na hostingu WebSupport“ s ikonou servera a affiliate odkazom (`rel="sponsored noopener"`, popisok „affiliate odkaz“). Text, odkaz aj zobrazenie sa menia vo Vzhľad → Prispôsobiť → RELIFE.
 

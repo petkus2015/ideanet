@@ -23,7 +23,7 @@ $palette  = array( '#FF3D8B', '#3CFFD0', '#FFE14D', '#8F5CFF', '#FF7A2B', '#A6FF
 $cat_counts = array();
 foreach ( $places as $pl ) {
 	foreach ( $pl['cats'] as $t ) {
-		$cat_counts[ $t->slug ] = array( 'name' => $t->name, 'n' => ( $cat_counts[ $t->slug ]['n'] ?? 0 ) + 1 );
+		$cat_counts[ $t->slug ] = array( 'id' => $t->term_id, 'name' => $t->name, 'n' => ( $cat_counts[ $t->slug ]['n'] ?? 0 ) + 1 );
 	}
 }
 uasort( $cat_counts, static fn( $a, $b ): int => $b['n'] <=> $a['n'] );
@@ -104,7 +104,7 @@ get_header();
 			<span class="rl-places__label"><?php esc_html_e( 'Kategória', 'relife' ); ?></span>
 			<button type="button" class="rl-chip is-on js-places-cat" data-cat="" aria-pressed="true"><span class="rl-chip__ic"><?php echo $cat_icon( 'vsetko' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php esc_html_e( 'Všetko', 'relife' ); ?> <small><?php echo (int) count( $places ); ?></small></button>
 			<?php foreach ( $cat_counts as $slug => $c ) : ?>
-				<button type="button" class="rl-chip js-places-cat" data-cat="<?php echo esc_attr( $slug ); ?>" aria-pressed="false"><span class="rl-chip__ic"><?php echo $cat_icon( $c['name'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php echo esc_html( $c['name'] ); ?> <small><?php echo (int) $c['n']; ?></small></button>
+				<?php $cs = relife_places_cat_style( (int) $c['id'] ); ?><button type="button" class="rl-chip js-places-cat<?php echo '' !== $cs ? ' has-c' : ''; ?>" data-cat="<?php echo esc_attr( $slug ); ?>" aria-pressed="false"<?php echo '' !== $cs ? ' style="' . esc_attr( $cs ) . '"' : ''; ?>><span class="rl-chip__ic"><?php echo $cat_icon( $c['name'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span><?php echo esc_html( $c['name'] ); ?> <small><?php echo (int) $c['n']; ?></small></button>
 			<?php endforeach; ?>
 		</div>
 		<?php if ( $has_price ) : ?>
@@ -136,7 +136,7 @@ get_header();
 					</div>
 					<div class="rl-place__body">
 						<?php if ( $pl['cats'] ) : ?>
-							<div class="rl-place__tags"><?php foreach ( $pl['cats'] as $t ) : ?><span class="rl-place__tag"><?php echo $cat_icon( $t->name ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $t->name ); ?></span><?php endforeach; ?></div>
+							<div class="rl-place__tags"><?php foreach ( $pl['cats'] as $t ) : ?><?php $cs = relife_places_cat_style( (int) $t->term_id ); ?><span class="rl-place__tag<?php echo '' !== $cs ? ' has-c' : ''; ?>"<?php echo '' !== $cs ? ' style="' . esc_attr( $cs ) . '"' : ''; ?>><?php echo $cat_icon( $t->name ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $t->name ); ?></span><?php endforeach; ?></div>
 						<?php endif; ?>
 						<h2 class="rl-place__name"><?php echo esc_html( $pl['name'] ); ?><?php if ( $pl['price'] > 0 ) : ?> <small class="rl-place__price"><?php echo esc_html( str_repeat( '€', $pl['price'] ) ); ?></small><?php endif; ?></h2>
 						<?php if ( '' !== $pl['desc'] ) : ?><p class="rl-place__desc"><?php echo esc_html( $pl['desc'] ); ?></p><?php endif; ?>

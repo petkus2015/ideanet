@@ -136,6 +136,53 @@ function relife_places_column_content( string $col, int $post_id ): void {
 }
 add_action( 'manage_relife_place_posts_custom_column', 'relife_places_column_content', 10, 2 );
 
+
+/* ---------- Vlastné farby kategórií (filter a štítky) ---------- */
+
+function relife_places_cat_color_fields( $term = null ): void {
+	$bg  = $term instanceof WP_Term ? (string) get_term_meta( $term->term_id, 'rl_bg', true ) : '';
+	$fg  = $term instanceof WP_Term ? (string) get_term_meta( $term->term_id, 'rl_fg', true ) : '';
+	$on  = '' !== $bg && '' !== $fg;
+	$row = $term instanceof WP_Term;
+	wp_nonce_field( 'relife_cat_colors', 'relife_cat_colors_nonce' );
+	echo $row ? '<tr class="form-field"><th scope="row">' . esc_html__( 'Farby vo filtri', 'relife' ) . '</th><td>' : '<div class="form-field"><label>' . esc_html__( 'Farby vo filtri', 'relife' ) . '</label>'; // phpcs:ignore WordPress.Security.EscapeOutput
+	?>
+	<label><input type="checkbox" name="rl_cat_custom" value="1" <?php checked( $on ); ?>> <?php esc_html_e( 'Použiť vlastné farby (inak ostane predvolený vzhľad)', 'relife' ); ?></label><br>
+	<label><?php esc_html_e( 'Pozadie', 'relife' ); ?> <input type="color" name="rl_cat_bg" value="<?php echo esc_attr( '' !== $bg ? $bg : '#3CFFD0' ); ?>"></label>
+	&nbsp; <label><?php esc_html_e( 'Text', 'relife' ); ?> <input type="color" name="rl_cat_fg" value="<?php echo esc_attr( '' !== $fg ? $fg : '#131313' ); ?>"></label>
+	<p class="description"><?php esc_html_e( 'Použije sa na tlačidle kategórie vo filtri aj na štítku v karte podniku.', 'relife' ); ?></p>
+	<?php
+	echo $row ? '</td></tr>' : '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput
+}
+add_action( 'relife_place_cat_add_form_fields', 'relife_places_cat_color_fields' );
+add_action( 'relife_place_cat_edit_form_fields', 'relife_places_cat_color_fields' );
+
+function relife_places_cat_color_save( int $term_id ): void {
+	if ( ! isset( $_POST['relife_cat_colors_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['relife_cat_colors_nonce'] ) ), 'relife_cat_colors' ) || ! current_user_can( 'manage_categories' ) ) {
+		return;
+	}
+	$bg = isset( $_POST['rl_cat_bg'] ) ? sanitize_hex_color( wp_unslash( $_POST['rl_cat_bg'] ) ) : '';
+	$fg = isset( $_POST['rl_cat_fg'] ) ? sanitize_hex_color( wp_unslash( $_POST['rl_cat_fg'] ) ) : '';
+	if ( ! empty( $_POST['rl_cat_custom'] ) && $bg && $fg ) {
+		update_term_meta( $term_id, 'rl_bg', $bg );
+		update_term_meta( $term_id, 'rl_fg', $fg );
+	} else {
+		delete_term_meta( $term_id, 'rl_bg' );
+		delete_term_meta( $term_id, 'rl_fg' );
+	}
+}
+add_action( 'created_relife_place_cat', 'relife_places_cat_color_save' );
+add_action( 'edited_relife_place_cat', 'relife_places_cat_color_save' );
+
+/**
+ * Inline štýl s vlastnými farbami kategórie ('' ak ich nemá).
+ */
+function relife_places_cat_style( int $term_id ): string {
+	$bg = (string) get_term_meta( $term_id, 'rl_bg', true );
+	$fg = (string) get_term_meta( $term_id, 'rl_fg', true );
+	return ( sanitize_hex_color( $bg ) && sanitize_hex_color( $fg ) ) ? '--cbg:' . $bg . ';--cfg:' . $fg : '';
+}
+
 /* ---------- Mestá: každé mesto má vlastnú stránku, vlastný zoznam z Google Máp a vlastné podniky ---------- */
 
 /**
