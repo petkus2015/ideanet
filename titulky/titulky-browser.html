@@ -76,6 +76,8 @@ input[type=range]{width:100%;accent-color:var(--a)}
 .danger:hover{border-color:#ff7a8a}
 @media(max-width:900px){.editor{grid-template-columns:1fr}.panel{position:static}.note{display:none}h1{font-size:32px}}
 
+#view-upload .row{margin:0 0 14px}
+#view-upload .hint{margin-top:12px}
 .banner{background:#2a1d12;border:1px solid #6b4a24;color:#f0c58a;border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:13px}
 .cap{left:auto;right:auto;width:max-content;max-width:84%;pointer-events:auto;cursor:grab;touch-action:none;transform:translate(-50%,-50%);user-select:none}
 .inline label{display:flex;gap:8px;align-items:center;cursor:pointer}
@@ -95,30 +97,22 @@ input[type=range]{width:100%;accent-color:var(--a)}
   <section id="view-upload" class="center">
     <h1>Automatické titulky<br><span class="grad">k tvojmu videu.</span></h1>
     <p class="lead">Nahraj video, uprav štýl a stiahni ho s titulkami.</p>
-    <label class="drop" id="drop">
-      <input type="file" id="file" accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265" hidden>
-      <span class="drop-icon">⬆</span>
-      <strong>Vyber video alebo ho pretiahni sem</strong>
-      <small id="drop-hint">MP4, MOV, WEBM</small>
-    </label>
     <div class="row">
-      <label for="lang">Jazyk videa</label>
+      <label for="lang">1. Jazyk videa</label>
       <select id="lang">
+        <option value="sk" selected>Slovenčina</option>
         <option value="auto">Rozpoznať automaticky</option>
-        <option value="sk">Slovenčina</option>
         <option value="cs">Čeština</option>
         <option value="en">Angličtina</option>
       </select>
     </div>
-    <div class="row">
-      <label for="model">Model</label>
-      <select id="model">
-        <option value="tiny">Rýchly (tiny): slabý pre slovenčinu</option>
-        <option value="base">Vyvážený (base): slabý pre slovenčinu</option>
-        <option value="small" selected>Presnejší (small, približne 250 MB)</option>
-        </select>
-    </div>
-    <p class="hint">Model sa pri prvom použití stiahne a prehliadač si ho zapamätá. Pre slovenčinu používaj aspoň model small, menšie modely robia veľa chýb.</p>
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265" hidden>
+      <span class="drop-icon">⬆</span>
+      <strong>2. Vyber video alebo ho pretiahni sem</strong>
+      <small id="drop-hint">MP4, MOV, WEBM</small>
+    </label>
+    <p class="hint">Rozpoznanie používa automaticky najpresnejší model, ktorý tvoj prehliadač zvládne. Po prvom stiahnutí sa uloží v prehliadači a nesťahuje sa znova.</p>
     <p class="error" id="upload-error" hidden></p>
   </section>
 
@@ -227,7 +221,6 @@ window.addEventListener("error", function (e) {
 <script type="module">
 "use strict";
 const TF_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6";
-const MODELS = { tiny: "Xenova/whisper-tiny", base: "Xenova/whisper-base", small: "Xenova/whisper-small" };
 const LANGS = { sk: "slovak", cs: "czech", en: "english" };
 const DEMO = false; // true v ukážke na webe: vzorové titulky a výsledok sa prehrá priamo na stránke
 const MOCK = DEMO || new URLSearchParams(location.search).has("mock"); // len na skúšanie bez modelu
@@ -334,8 +327,87 @@ function splitChunk(text, start, end) {
   let t = start;
   return groups.map((g) => { const d = (end - start) * len(g) / total; const s = { start: t, end: t + d, text: g.join(" ") }; t += d; return s; });
 }
-let asr = null, asrId = null;
-async function recognize(file, modelKey, lang) {
+let asr = null, asrId = null, tf = null;
+// Vyberie sa vždy najpresnejší model, ktorý prehliadač zvládne: large-v3-turbo na grafickej karte (WebGPU),
+// inak small. Ak zlyhá najpresnejší, skúsi sa ďalší.
+async function bestModels() {
+  const list = [];
+  if (navigator.gpu) {
+    try {
+      if (await navigator.gpu.requestAdapter()) list.push({ id: "onnx-community/whisper-large-v3-turbo", label: "large-v3-turbo", opts: { device: "webgpu", dtype: { encoder_model: "fp16", decoder_model_merged: "q4" } } });
+    } catch { /* WebGPU nie je k dispozícii */ }
+  }
+  list.push({ id: "Xenova/whisper-small", label: "small", opts: {} });
+  return list;
+}
+async function explainFailure(mod, id, lastErr, reach) {
+  const probe = async (url) => { try { await fetch(url, { method: "GET", cache: "no-store" }); return "ok"; } catch { return "NEDOSTUPNÉ"; } };
+  let wasmBase = ""; try { const wp = mod.env.backends.onnx.wasm.wasmPaths; wasmBase = typeof wp === "string" ? wp : (wp && (wp.wasm || wp.mjs) ? String(wp.wasm || wp.mjs).replace(/[^/]*$/, "") : ""); } catch {}
+  const checks = [`huggingface.co: ${await probe(`https://huggingface.co/${id}/resolve/main/config.json`)}`, `cdn.jsdelivr.net: ${await probe("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6/package.json")}`];
+  if (wasmBase) checks.push(`wasm: ${await probe(wasmBase + "ort-wasm-simd-threaded.jsep.wasm")}`);
+  console.error("Diagnostika:", checks.join(", "), "Prehliadač:", navigator.userAgent, "Protokol:", location.protocol);
+  const diag = checks.join(", ") + ` · ${/^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "Safari" : "iný prehliadač"} · ${location.protocol}`;
+  const detail = String(lastErr && lastErr.message || lastErr).slice(0, 200);
+  const inApp = location.protocol === "about:" || /Claude|FBAN|FBAV|Instagram|Line\//.test(navigator.userAgent) || (/iPhone|iPad/.test(navigator.userAgent) && !/Safari\//.test(navigator.userAgent));
+  const hint = inApp
+    ? "Stránka beží vo vstavanom prehliadači aplikácie, ktorý blokuje stiahnutie modelu z huggingface.co. Otvor ju v Safari alebo Chrome."
+    : reach
+    ? "Prehliadač sa nedostal na huggingface.co (blokuje ho sieť, VPN, firewall alebo blokovač reklám). Skús inú sieť alebo vypni blokovač."
+    : location.protocol === "file:"
+      ? "Skús súbor otvoriť cez lokálny server: v priečinku so súborom spusti `python3 -m http.server 8000` a otvor http://localhost:8000/titulky-browser.html."
+      : "Skús obnoviť stránku.";
+  return new Error(`Model sa nepodarilo načítať. ${hint} Technická chyba: ${detail} (${diag})`);
+}
+async function loadModel(spec) {
+  setBusy("Načítavam model…", `Model ${spec.label}. Prvýkrát sa stiahne, potom sa použije uložený v prehliadači.`);
+  try { await navigator.storage?.persist?.(); } catch {} // aby prehliadač model nevymazal
+  if (!tf) {
+    try { tf = await import(TF_URL); }
+    catch (e) { throw new Error("Nepodarilo sa načítať knižnicu na rozpoznávanie (cdn.jsdelivr.net). Skontroluj pripojenie na internet alebo blokovač reklám. Technická chyba: " + String(e && e.message || e).slice(0, 150)); }
+  }
+  const files = {};
+  const progress = (p) => { // ukazuje sa len pri skutočnom sťahovaní, uložený model sa načíta bez neho
+    if (p.status !== "progress" || !p.total) return;
+    files[p.file] = { loaded: p.loaded, total: p.total };
+    const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
+    setBusy("Sťahujem model…", `${spec.label}: ${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB (len pri prvom použití)`, loaded / total * 100);
+  };
+  let reach = null;
+  try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
+  const attempts = [ // bežne (s pamäťou prehliadača), bez pamäte, cez zrkadlo
+    { label: "bežne", cache: true, host: "https://huggingface.co/" },
+    { label: "bez pamäte prehliadača", cache: false, host: "https://huggingface.co/" },
+    { label: "cez zrkadlo", cache: false, host: "https://hf-mirror.com/" },
+  ];
+  let lastErr = null;
+  for (const a of attempts) {
+    try {
+      tf.env.allowLocalModels = false;
+      try { tf.env.backends.onnx.wasm.numThreads = 1; tf.env.backends.onnx.wasm.proxy = false; } catch {}
+      tf.env.useBrowserCache = a.cache; tf.env.remoteHost = a.host;
+      for (const k of Object.keys(files)) delete files[k];
+      return await tf.pipeline("automatic-speech-recognition", spec.id, { ...spec.opts, progress_callback: progress });
+    } catch (e) { lastErr = e; console.error("Model:", spec.label, a.label, e); }
+  }
+  throw await explainFailure(tf, spec.id, lastErr, reach);
+}
+async function transcribeWith(model, audio, lang) {
+  setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.");
+  const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5 };
+  if (LANGS[lang]) opts.language = LANGS[lang];
+  try { // časy po slovách (zvýraznenie slov)
+    const wres = await model(audio, { ...opts, return_timestamps: "word" });
+    const words = (wres.chunks || []).map((c) => ({ w: c.text.trim(), start: c.timestamp[0] ?? 0, end: c.timestamp[1] ?? state.duration })).filter((o) => o.w);
+    if (words.length) return groupWords(words);
+  } catch { /* model nevie časy po slovách, použije sa odhad */ }
+  const res = await model(audio, { ...opts, return_timestamps: true });
+  const chunks = res.chunks && res.chunks.length ? res.chunks : [{ timestamp: [0, state.duration], text: res.text }];
+  return chunks.flatMap((c) => {
+    const [s, e] = c.timestamp;
+    return c.text.trim() ? splitChunk(c.text, s ?? 0, e ?? state.duration).map((g) => ({ ...g, words: estimateWords(g.text, g.start, g.end) })) : [];
+  });
+}
+async function recognize(file, _unused, lang) {
   setBusy("Načítavam zvuk…");
   if (MOCK) {
     await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
@@ -345,76 +417,14 @@ async function recognize(file, modelKey, lang) {
   }
   const audio = await decodeAudio(file);
   if (!state.duration) state.duration = audio.length / 16000;
-  const id = MODELS[modelKey];
-  if (asrId !== id) {
-    setBusy("Sťahujem model…", "Stiahne sa len raz, potom ho prehliadač použije znova.", 0);
-    let mod;
-    try { mod = await import(TF_URL); }
-    catch (e) { throw new Error("Nepodarilo sa načítať knižnicu na rozpoznávanie (cdn.jsdelivr.net). Skontroluj pripojenie na internet alebo blokovač reklám. Technická chyba: " + String(e && e.message || e).slice(0, 150)); }
-    const files = {};
-    const progress = (p) => {
-      if (p.status !== "progress" || !p.total) return;
-      files[p.file] = { loaded: p.loaded, total: p.total };
-      const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
-      setBusy("Sťahujem model…", `${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB`, loaded / total * 100);
-    };
-    // Najprv sa overí, či sa prehliadač vôbec dostane na zdroj modelov.
-    let reach = null;
-    try { await fetch(`https://huggingface.co/${id}/resolve/main/config.json`, { method: "GET" }); }
-    catch (e) { reach = e; }
-    // Pokusy: bežne, bez vyrovnávacej pamäte prehliadača, cez zrkadlo.
-    const attempts = [
-      { label: "bežne", cache: true, host: "https://huggingface.co/" },
-      { label: "bez pamäte prehliadača", cache: false, host: "https://huggingface.co/" },
-      { label: "cez zrkadlo", cache: false, host: "https://hf-mirror.com/" },
-    ];
-    let lastErr = null;
-    for (const a of attempts) {
-      try {
-        mod.env.allowLocalModels = false;
-        try { mod.env.backends.onnx.wasm.numThreads = 1; mod.env.backends.onnx.wasm.proxy = false; } catch {}
-        mod.env.useBrowserCache = a.cache;
-        mod.env.remoteHost = a.host;
-        for (const k of Object.keys(files)) delete files[k];
-        asr = await mod.pipeline("automatic-speech-recognition", id, { progress_callback: progress });
-        lastErr = null; break;
-      } catch (e) { lastErr = e; console.error("Model:", a.label, e); }
-    }
-    if (lastErr) {
-      // Zisti, ktorá časť sa nedá stiahnuť: zdroj modelu alebo súbor behového prostredia (wasm).
-      const probe = async (url) => { try { await fetch(url, { method: "GET", cache: "no-store" }); return "ok"; } catch { return "NEDOSTUPNÉ"; } };
-      let wasmBase = ""; try { const wp = mod.env.backends.onnx.wasm.wasmPaths; wasmBase = typeof wp === "string" ? wp : (wp && (wp.wasm || wp.mjs) ? String(wp.wasm || wp.mjs).replace(/[^/]*$/, "") : ""); } catch {}
-      const checks = [`huggingface.co: ${await probe(`https://huggingface.co/${id}/resolve/main/config.json`)}`, `cdn.jsdelivr.net: ${await probe("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6/package.json")}`];
-      if (wasmBase) checks.push(`wasm: ${await probe(wasmBase + "ort-wasm-simd-threaded.jsep.wasm")}`);
-      console.error("Diagnostika:", checks.join(", "), "Prehliadač:", navigator.userAgent, "Protokol:", location.protocol);
-      lastErr.diag = checks.join(", ") + ` · ${/^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "Safari" : "iný prehliadač"} · ${location.protocol}`;
-      const detail = String(lastErr && lastErr.message || lastErr).slice(0, 200);
-      const inApp = location.protocol === "about:" || /Claude|FBAN|FBAV|Instagram|Line\//.test(navigator.userAgent) || (/iPhone|iPad/.test(navigator.userAgent) && !/Safari\//.test(navigator.userAgent));
-      const hint = inApp
-        ? "Stránka beží vo vstavanom prehliadači aplikácie, ktorý blokuje stiahnutie modelu z huggingface.co. Otvor ju v Safari alebo Chrome."
-        : reach
-        ? "Prehliadač sa nedostal na huggingface.co (blokuje ho sieť, VPN, firewall alebo blokovač reklám). Skús inú sieť alebo vypni blokovač."
-        : location.protocol === "file:"
-          ? "Skús súbor otvoriť cez lokálny server: v priečinku so súborom spusti `python3 -m http.server 8000` a otvor http://localhost:8000/titulky-browser.html."
-          : "Skús obnoviť stránku alebo menší model (tiny).";
-      throw new Error(`Model sa nepodarilo stiahnuť. ${hint} Technická chyba: ${detail} (${lastErr.diag})`);
-    }
-    asrId = id;
+  let lastError = null;
+  for (const spec of await bestModels()) {
+    try {
+      if (asrId !== spec.id) { asr = await loadModel(spec); asrId = spec.id; }
+      return await transcribeWith(asr, audio, lang);
+    } catch (e) { lastError = e; asr = null; asrId = null; console.error("Model", spec.label, e); }
   }
-  setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.");
-  const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5 };
-  if (LANGS[lang]) opts.language = LANGS[lang];
-  try { // časy po slovách (zvýraznenie slov)
-    const wres = await asr(audio, { ...opts, return_timestamps: "word" });
-    const words = (wres.chunks || []).map((c) => ({ w: c.text.trim(), start: c.timestamp[0] ?? 0, end: c.timestamp[1] ?? state.duration })).filter((o) => o.w);
-    if (words.length) return groupWords(words);
-  } catch { /* model nevie časy po slovách, použije sa odhad */ }
-  const res = await asr(audio, { ...opts, return_timestamps: true });
-  const chunks = res.chunks && res.chunks.length ? res.chunks : [{ timestamp: [0, state.duration], text: res.text }];
-  return chunks.flatMap((c) => {
-    const [s, e] = c.timestamp;
-    return c.text.trim() ? splitChunk(c.text, s ?? 0, e ?? state.duration).map((g) => ({ ...g, words: estimateWords(g.text, g.start, g.end) })) : [];
-  });
+  throw lastError;
 }
 
 // ---------- nahratie ----------
@@ -445,7 +455,7 @@ async function pickFile(file) {
     video.onerror = () => { state.playable = false; resolve(); };
   });
   video.preload = "auto"; video.src = state.url; video.load();
-  try { state.segments = await recognize(file, $("model").value, $("lang").value); }
+  try { state.segments = await recognize(file, null, $("lang").value); }
   catch (e) { return showError(e.message || "Rozpoznanie zlyhalo."); }
   await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
   if (state.playable === null) state.playable = false;

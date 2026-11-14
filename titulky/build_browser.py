@@ -10,17 +10,17 @@ body = re.search(r"<body>(.*)<script", html, re.S).group(1)
 body = body.replace('<p class="note" id="retention-note"></p>',
     '<p class="note">Všetko beží vo vašom prehliadači. Nič sa neposiela na server.</p>')
 body = body.replace('''    <p class="error" id="upload-error" hidden></p>
-  </section>''', '''    <div class="row">
-      <label for="model">Model</label>
-      <select id="model">
-        <option value="tiny">Rýchly (tiny): slabý pre slovenčinu</option>
-        <option value="base">Vyvážený (base): slabý pre slovenčinu</option>
-        <option value="small" selected>Presnejší (small, približne 250 MB)</option>
-        </select>
-    </div>
-    <p class="hint">Model sa pri prvom použití stiahne a prehliadač si ho zapamätá. Pre slovenčinu používaj aspoň model small, menšie modely robia veľa chýb.</p>
+  </section>''', '''    <p class="hint">Rozpoznanie používa automaticky najpresnejší model, ktorý tvoj prehliadač zvládne. Po prvom stiahnutí sa uloží v prehliadači a nesťahuje sa znova.</p>
     <p class="error" id="upload-error" hidden></p>
   </section>''', 1)
+# jazyk sa vyberá pred nahratím videa
+m = re.search(r'    <div class="row">\s*<label for="lang">.*?</select>\s*</div>\n', body, re.S)
+assert m
+lang_block = m.group(0)
+body = body.replace(lang_block, "", 1)
+body = body.replace('    <label class="drop"', lang_block.replace('<label for="lang">Jazyk videa</label>', '<label for="lang">1. Jazyk videa</label>') + '    <label class="drop"', 1)
+body = body.replace('<strong>Vyber video alebo ho pretiahni sem</strong>', '<strong>2. Vyber video alebo ho pretiahni sem</strong>', 1)
+body = body.replace('<option value="auto">Rozpoznať automaticky</option>\n        <option value="sk">Slovenčina</option>', '<option value="sk" selected>Slovenčina</option>\n        <option value="auto">Rozpoznať automaticky</option>', 1)
 body = re.sub(r'accept="[^"]*"', 'accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265"', body, count=1)
 body = body.replace('<div class="stage-wrap">', '<p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľad a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>\n        <div class="stage-wrap">', 1)
 body = body.replace('<div class="bar" id="busy-bar" hidden><i></i></div>',
@@ -45,6 +45,8 @@ body = body.replace('''<div class="group">
           <div class="label">Veľkosť</div>''', 1)
 css = css.replace(":root{--bg:#070914;", ":root{color-scheme:dark;--bg:#070914;")
 css += """
+#view-upload .row{margin:0 0 14px}
+#view-upload .hint{margin-top:12px}
 .banner{background:#2a1d12;border:1px solid #6b4a24;color:#f0c58a;border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:13px}
 .cap{left:auto;right:auto;width:max-content;max-width:84%;pointer-events:auto;cursor:grab;touch-action:none;transform:translate(-50%,-50%);user-select:none}
 .inline label{display:flex;gap:8px;align-items:center;cursor:pointer}
