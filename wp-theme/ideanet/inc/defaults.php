@@ -198,15 +198,14 @@ function ideanet_defaults() {
 
 		/* ── podstránka: redizajn webov ────────── */
 		/* Čísla a sumy sú na jednom mieste a do textov sa dopĺňajú cez
-		   {cena}, {cena_pred}, {termin}, {miest}, {volnych}, {podstranok}
-		   a {dni}. Nedá sa tak stať, že v úvode bude iná cena ako v cenníku. */
+		   {cena}, {cena_pred}, {termin}, {miest}, {volnych} a {dni}.
+		   Nedá sa tak stať, že v úvode bude iná cena ako v cenníku. */
 		'red_price'      => '600 €',
 		'red_price_pred' => '890 €',
 		'red_price_unit' => 'bez DPH · celý balík',
 		'red_term'       => '26. – 30. 11.',
 		'red_slots'      => '10',
 		'red_slots_left' => '10',
-		'red_pages'      => '7',
 		'red_days'       => '7',
 
 		'red_flag'     => 'Black Friday',
@@ -225,7 +224,7 @@ function ideanet_defaults() {
 		'red_gets_eyebrow' => 'V cene',
 		'red_gets_title'   => 'Čo dostanete',
 		'red_gets_note'    => 'Jeden balík, jedna cena. Nič z toho nie je príplatok.',
-		'red_gets'         => "Nový dizajn vášho WordPress webu až do {podstranok} podstránok\nMobilné zobrazenie a rýchle načítanie\nKontaktný formulár, mapa, odkaz na recenzie a GDPR lišta\nŠkolenie v administrácii, aby ste si web vedeli upravovať sami\nOdovzdanie do {dni} pracovných dní od dodania podkladov",
+		'red_gets'         => "Nový dizajn vášho WordPress webu\nMobilné zobrazenie a rýchle načítanie\nKontaktný formulár, mapa, odkaz na recenzie a GDPR lišta\nŠkolenie v administrácii, aby ste si web vedeli upravovať sami\nOdovzdanie do {dni} pracovných dní od dodania podkladov",
 
 		'red_ako_eyebrow' => 'Postup',
 		'red_ako_title'   => 'Ako to prebieha',
@@ -246,7 +245,7 @@ function ideanet_defaults() {
 		'red_prekoho_eyebrow' => 'Pre koho',
 		'red_prekoho_title'   => 'Pre koho ponuka je',
 		'red_prekoho_note'    => 'Ponuka je nacenená na jeden typ webu, preto môže mať fixnú cenu.',
-		'red_prekoho'         => "WordPress prezentačné weby bez e-shopu, do {podstranok} podstránok\nFirmy, ktoré web majú a potrebujú ho zmodernizovať\nWeby, ktoré majú zostať na rovnakej adrese a udržať pozície v Google",
+		'red_prekoho'         => "WordPress prezentačné weby bez e-shopu\nFirmy, ktoré web majú a potrebujú ho zmodernizovať\nWeby, ktoré majú zostať na rovnakej adrese a udržať pozície v Google",
 		'red_prekoho_grab'    => 'Väčšie weby, e-shopy a viacjazyčné projekty rád nacením na mieru. Napíšte mi rozsah.',
 		'red_prekoho_cta'     => 'Napísať rozsah',
 

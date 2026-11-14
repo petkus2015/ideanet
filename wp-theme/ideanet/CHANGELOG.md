@@ -8,6 +8,16 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.16.0
+
+- Z ponuky redizajnu vypadol limit na počet podstránok. Veta v „Čo
+  dostanete" aj v „Pre koho ponuka je" sa skrátila a pole „Koľko
+  podstránok je v cene" zmizlo aj so zástupným {podstranok}.
+- Na weboch, ktoré podstránku už mali, sa obe vety prepíšu samy — ale
+  len ak ste ich nemenili. Vlastný text zostáva.
+- Počet voľných miest sa na takom webe nastaví na 4 z 10. Ak ste
+  s číslom už hýbali, nechá sa tak; na čerstvej inštalácii zostáva 10.
+
 ## 1.15.0
 
 - Úvodná obrazovka má farebné pozadie — magenta, fialová a modrá sa

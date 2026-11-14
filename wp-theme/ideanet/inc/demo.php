@@ -440,7 +440,7 @@ function ideanet_redizajn_stranka() {
  */
 function ideanet_redizajn_setup() {
 	$hotovo = (int) get_option( 'ideanet_redizajn_setup' );
-	if ( $hotovo >= 5 ) {
+	if ( $hotovo >= 6 ) {
 		return;
 	}
 
@@ -465,13 +465,59 @@ function ideanet_redizajn_setup() {
 		ideanet_redizajn_nadpisy_ukazok( $stranka->ID );
 	}
 
+	/* $hotovo > 0 = web túto podstránku už mal. Na čerstvej inštalácii
+	   sa počet voľných miest nemá prečo znižovať, tam sú ešte všetky. */
+	if ( $hotovo > 0 && $hotovo < 6 ) {
+		ideanet_redizajn_bez_podstranok( $stranka->ID );
+	}
+
 	/* Texty sa už neupravujú v Prispôsobiť, ale pri stránke. */
 	ideanet_red_prefill( $stranka->ID );
 	update_option( 'ideanet_red_page', $stranka->ID, false );
 
-	update_option( 'ideanet_redizajn_setup', 5 );
+	update_option( 'ideanet_redizajn_setup', 6 );
 }
 add_action( 'admin_init', 'ideanet_redizajn_setup' );
+
+/**
+ * Z ponuky vypadol limit na počet podstránok.
+ *
+ * Prepisujú sa len vety, ktoré nikto nemenil — vlastný text zostáva.
+ * Zároveň sa doplní, koľko miest je ešte voľných; aj to len vtedy, keď
+ * tam ešte stojí pôvodná hodnota a nikto s ňou nehýbal.
+ *
+ * @param int $page_id ID podstránky.
+ */
+function ideanet_redizajn_bez_podstranok( $page_id ) {
+	$vety = array(
+		'red_gets'    => array(
+			'Nový dizajn vášho WordPress webu až do {podstranok} podstránok',
+			'Nový dizajn vášho WordPress webu',
+		),
+		'red_prekoho' => array(
+			'WordPress prezentačné weby bez e-shopu, do {podstranok} podstránok',
+			'WordPress prezentačné weby bez e-shopu',
+		),
+	);
+
+	foreach ( $vety as $key => $def ) {
+		list( $stara, $nova ) = $def;
+		$name  = '_ideanet_' . $key;
+		$teraz = (string) get_post_meta( $page_id, $name, true );
+
+		if ( '' !== $teraz && false !== strpos( $teraz, $stara ) ) {
+			update_post_meta( $page_id, $name, str_replace( $stara, $nova, $teraz ) );
+		}
+	}
+
+	delete_post_meta( $page_id, '_ideanet_red_pages' );
+
+	/* Prvé miesta sú obsadené — ale len ak s číslom nikto nehýbal. */
+	$volne = (string) get_post_meta( $page_id, '_ideanet_red_slots_left', true );
+	if ( '' === $volne || '10' === $volne ) {
+		update_post_meta( $page_id, '_ideanet_red_slots_left', '4' );
+	}
+}
 
 /**
  * Premenovanie sekcie s ukážkami.

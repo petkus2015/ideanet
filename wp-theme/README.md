@@ -202,7 +202,6 @@ Cena, termín a počty sú uložené len raz a do textov sa dopĺňajú samy:
 | `{termin}` | dokedy ponuka platí |
 | `{miest}` | koľko miest je v ponuke |
 | `{volnych}` | koľko miest ešte zostáva |
-| `{podstranok}` | koľko podstránok je v cene |
 | `{dni}` | za koľko dní je web hotový |
 
 Keď sa teda zmení cena, stačí ju prepísať v jednom poli a zmení sa

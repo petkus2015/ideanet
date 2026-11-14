@@ -119,7 +119,6 @@ function ideanet_tokens( $text ) {
 			'{termin}'     => ideanet_red_opt( 'red_term' ),
 			'{miest}'      => ideanet_red_opt( 'red_slots' ),
 			'{volnych}'    => ideanet_red_opt( 'red_slots_left' ),
-			'{podstranok}' => ideanet_red_opt( 'red_pages' ),
 			'{dni}'        => ideanet_red_opt( 'red_days' ),
 		)
 	);

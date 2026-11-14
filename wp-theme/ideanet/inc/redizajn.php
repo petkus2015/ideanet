@@ -42,7 +42,6 @@ function ideanet_red_boxes() {
 				'red_term'       => array( __( 'Dokedy ponuka platí', 'ideanet' ), 'text', __( 'Napríklad 26. – 30. 11. V texte {termin}.', 'ideanet' ) ),
 				'red_slots'      => array( __( 'Koľko miest je v ponuke', 'ideanet' ), 'number', __( 'V texte {miest}.', 'ideanet' ) ),
 				'red_slots_left' => array( __( 'Koľko miest ešte zostáva', 'ideanet' ), 'number', __( 'Toto číslo znižujte, ako sa miesta obsadzujú. V texte {volnych}.', 'ideanet' ) ),
-				'red_pages'      => array( __( 'Koľko podstránok je v cene', 'ideanet' ), 'number', __( 'V texte {podstranok}.', 'ideanet' ) ),
 				'red_days'       => array( __( 'Za koľko dní je web hotový', 'ideanet' ), 'number', __( 'V texte {dni}.', 'ideanet' ) ),
 			),
 		),
