@@ -17,6 +17,7 @@ const PRESETS = [
   { hl: "#ffe066", id: "vyrazny", name: "Výrazný", font: "Poppins", color: "#ffffff", bg: "#6c5cff", bgOpacity: 100, size: 7, bold: true },
   { hl: "#ffe066", id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
   { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
+  { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, y: 0.55, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false },
   segments: [], file: null, url: null, duration: 0, downloads: [] };
@@ -247,6 +248,8 @@ function updateCaption() {
   const k = stage.clientWidth / w, px = Math.min(w, h) * st.size / 100 * k, t = video.currentTime;
   let i = segmentAt(t), ghost = false;
   document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("active", +r.dataset.i === i));
+  drawPreviewDyn();
+  if (st.dynamic) { cap.hidden = true; return; }
   if (i < 0 && video.paused && state.segments.length) { // v pauze ukáž najbližší titulok, aby sa dal presúvať
     ghost = true; i = state.segments.reduce((b, s, n) => Math.abs(s.start - t) < Math.abs(state.segments[b].start - t) ? n : b, 0);
   }
@@ -285,6 +288,19 @@ function setupDrag() {
     state.style.position = null;
     document.querySelectorAll("#positions button").forEach((b) => b.classList.remove("on"));
   });
+  stage.addEventListener("pointerdown", (e) => { // dynamické titulky sa presúvajú ťahaním po náhľade (nie cez ovládanie videa dole)
+    const r = stage.getBoundingClientRect();
+    if (!state.style.dynamic || e.target === cap || (e.clientY - r.top) / r.height > 0.85) return;
+    stage.dragDyn = true; stage.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!stage.dragDyn) return;
+    const r = stage.getBoundingClientRect();
+    state.style.x = clamp((e.clientX - r.left) / r.width, 0, 1); state.style.y = clamp((e.clientY - r.top) / r.height, 0, 1);
+    state.style.position = null; document.querySelectorAll("#positions button").forEach((b) => b.classList.remove("on"));
+  });
+  const endDyn = () => { stage.dragDyn = false; };
+  stage.addEventListener("pointerup", endDyn); stage.addEventListener("pointercancel", endDyn);
   const end = () => { cap.dragging = false; cap.style.cursor = "grab"; };
   cap.addEventListener("pointerup", end); cap.addEventListener("pointercancel", end);
 }
@@ -297,6 +313,81 @@ function syncControls() {
   document.querySelectorAll("#aspects button").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
   document.querySelectorAll(".preset").forEach((b) => b.classList.toggle("on", b.dataset.id === st.preset));
   applyPreview();
+}
+
+// ---------- dynamické titulky: krátke úseky, slová pribúdajú s animáciou ----------
+const SERIF = '"Playfair Display", "DM Serif Display", Georgia, serif';
+const chunkCache = new WeakMap();
+function chunksFor(seg) {
+  const key = `${seg.text}|${seg.start}|${seg.end}|${seg.words ? seg.words.length : 0}`;
+  const hit = chunkCache.get(seg);
+  if (hit && hit.key === key) return hit.chunks;
+  const chunks = []; let cur = [];
+  const flush = () => { if (cur.length) { chunks.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end }); cur = []; } };
+  for (const o of wordsFor(seg)) {
+    const len = cur.reduce((a, x) => a + x.w.length + 1, 0) + o.w.length;
+    if (cur.length && (cur.length >= 3 || len > 18 || o.start - cur[cur.length - 1].end > 0.5)) flush();
+    cur.push(o);
+    if (/[.,!?…;:]$/.test(o.w)) flush();
+  }
+  flush();
+  chunks.forEach((c, i) => { if (i + 1 < chunks.length) c.end = Math.max(c.end, Math.min(chunks[i + 1].start, c.end + 0.4)); });
+  chunkCache.set(seg, { key, chunks });
+  return chunks;
+}
+const segmentAtDyn = (t) => { let r = -1; state.segments.forEach((s, i) => { if (t >= s.start && t < s.end + 0.2) r = i; }); return r; };
+const hashStr = (str) => { let h = 0; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+function drawDynamic(ctx, seg, t, W, H, st) {
+  const chunks = chunksFor(seg); let c = null;
+  for (const x of chunks) if (t >= x.start) c = x;
+  if (!c) return;
+  const fade = t > c.end ? 1 - (t - c.end) / 0.2 : 1;
+  if (fade <= 0) return;
+  const base = Math.min(W, H) * st.size / 100, space = base * 0.28;
+  ctx.textBaseline = "middle"; ctx.textAlign = "center";
+  const items = c.words.map((o, n) => {
+    const serif = hashStr(o.w.toLowerCase().replace(/[^\p{L}\d]/gu, "") + n) % 10 < 3; // niektoré slová dostanú pútavé písmo
+    const px = base * (serif ? 1.2 : 1);
+    ctx.font = serif ? `700 ${px}px ${SERIF}` : `${st.bold ? 800 : 600} ${px}px "${st.font}", sans-serif`;
+    return { o, n, font: ctx.font, w: ctx.measureText(o.w).width };
+  });
+  const total = items.reduce((a, i) => a + i.w, 0) + space * (items.length - 1);
+  const half = Math.ceil(items.length / 2);
+  const lines = items.length >= 3 || total > W * 0.8 ? [items.slice(0, half), items.slice(half)] : [items];
+  const lh = base * 1.3, bh = lines.length * lh;
+  const widths = lines.map((l) => l.reduce((a, i) => a + i.w, 0) + space * (l.length - 1));
+  const bw = Math.max(...widths);
+  const cx = clamp(st.x * W, bw / 2, Math.max(bw / 2, W - bw / 2));
+  const top = clamp(st.y * H, bh / 2, Math.max(bh / 2, H - bh / 2)) - bh / 2;
+  let active = -1; items.forEach((i) => { if (t >= i.o.start) active = i.n; });
+  lines.forEach((line, li) => {
+    let x = cx - widths[li] / 2; const y = top + li * lh + lh / 2;
+    for (const it of line) {
+      const p = easeOut(clamp((t - (it.n === 0 ? c.start : it.o.start)) / 0.3, 0, 1));
+      if (p > 0) {
+        ctx.save();
+        ctx.globalAlpha = p * fade; ctx.font = it.font;
+        ctx.translate(x + it.w / 2, y + (1 - p) * base * 0.5);
+        const sc = 0.92 + 0.08 * p; ctx.scale(sc, sc);
+        if (ctx.filter !== undefined) ctx.filter = `blur(${(1 - p) * base * 0.2}px)`;
+        ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = base * 0.18; ctx.shadowOffsetY = base * 0.04;
+        ctx.fillStyle = st.highlight && it.n === active ? st.hl : st.color;
+        ctx.fillText(it.o.w, 0, 0);
+        ctx.restore();
+      }
+      x += it.w + space;
+    }
+  });
+}
+function drawPreviewDyn() {
+  const cv = $("dyn"), st = state.style, stage = $("stage"), dpr = window.devicePixelRatio || 1;
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+  if (!st.dynamic) return;
+  const i = segmentAtDyn(video.currentTime);
+  if (i >= 0) drawDynamic(ctx, state.segments[i], video.currentTime, w, h, st);
 }
 
 // ---------- export: video + titulky nahrané z plátna ----------
@@ -358,7 +449,7 @@ async function exportVideo() {
     if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
     const [ow, oh] = OUT[state.aspect], k = EXPORT_SHORT / Math.min(ow, oh);
     const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = { ...state.style };
-    await Promise.all([400, 700].map((wt) => document.fonts.load(`${wt} 40px "${st.font}"`).catch(() => {})));
+    await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${wt} 40px "${st.font}"`).catch(() => {})).concat(document.fonts.load('700 40px "Playfair Display"').catch(() => {})));
     const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext("2d");
     const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
@@ -381,8 +472,8 @@ async function exportVideo() {
       const vw = ev.videoWidth, vh = ev.videoHeight, s = Math.max(W / vw, H / vh);
       ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
       ctx.drawImage(ev, (W - vw * s) / 2, (H - vh * s) / 2, vw * s, vh * s);
-      const i = segmentAt(ev.currentTime);
-      if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], ev.currentTime, W, H, st);
+      if (st.dynamic) { const j = segmentAtDyn(ev.currentTime); if (j >= 0) drawDynamic(ctx, state.segments[j], ev.currentTime, W, H, st); }
+      else { const i = segmentAt(ev.currentTime); if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], ev.currentTime, W, H, st); }
       const p = Math.min(99, Math.round(ev.currentTime / (ev.duration || 1) * 100));
       bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`;
       ev.requestVideoFrameCallback ? ev.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
@@ -414,9 +505,15 @@ function setup() {
     const sample = document.createElement("div"); sample.className = "sample";
     const sp = document.createElement("span"); sp.textContent = "Ahoj svet"; sp.style.color = p.color; sp.style.fontFamily = `"${p.font}", sans-serif`; sp.style.fontWeight = p.bold ? 700 : 400;
     if (p.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(p.bg)},${p.bgOpacity / 100})`; else sp.style.textShadow = "-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000";
+    if (p.dynamic) { // ukážka: pútavé písmo + malé písmo pod ním
+      sp.textContent = ""; sp.style.cssText = "display:flex;flex-direction:column;align-items:center;line-height:1";
+      const a = document.createElement("span"); a.textContent = "text"; a.style.cssText = `font:700 22px ${SERIF}`;
+      const c = document.createElement("span"); c.textContent = "effect"; c.style.cssText = 'font:800 11px "Inter",sans-serif';
+      sp.append(a, c);
+    }
     sample.append(sp);
     const name = document.createElement("span"); name.className = "name"; name.textContent = p.name; b.append(sample, name);
-    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: o.y, position: o.position, preset: p.id, highlight: o.highlight }; syncControls(); };
+    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight }; syncControls(); };
     $("presets").append(b);
   });
   const custom = () => { state.style.preset = null; syncControls(); };
@@ -429,6 +526,9 @@ function setup() {
   $("highlight").onchange = (e) => { state.style.highlight = e.target.checked; syncControls(); };
   $("hl").oninput = (e) => { state.style.hl = e.target.value; syncControls(); };
   setupDrag();
+  const dyn = document.createElement("canvas"); dyn.id = "dyn";
+  dyn.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none"; $("stage").append(dyn);
+  ["400 20px Inter", "800 20px Inter", `700 20px "Playfair Display"`].forEach((f) => document.fonts.load(f).catch(() => {}));
   new ResizeObserver(updateCaption).observe($("stage"));
   syncControls();
   $("export").onclick = exportVideo;
