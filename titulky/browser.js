@@ -309,7 +309,7 @@ function syncControls() {
   $("color").value = st.color; $("bg").value = st.bg; $("bgOpacity").value = st.bgOpacity;
   $("bgOpacityOut").textContent = Math.round(st.bgOpacity) + " %"; $("size").value = st.size; $("font").value = st.font;
   document.querySelectorAll("#positions button").forEach((b) => b.classList.toggle("on", b.dataset.v === st.position));
-  $("highlight").checked = st.highlight; $("roam").checked = !!st.roam; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
+  $("highlight").checked = st.highlight; $("roam").checked = !!st.roam; $("caps").checked = !!st.caps; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
   document.querySelectorAll("#aspects button").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
   document.querySelectorAll(".preset").forEach((b) => b.classList.toggle("on", b.dataset.id === st.preset));
   applyPreview();
@@ -356,7 +356,7 @@ function drawChunk(ctx, c, t, W, H, st) {
   split.forEach((cnt, li) => {
     const arr = [];
     for (let j = 0; j < cnt; j++, k++) {
-      const o = c.words[k], text = o.w.toLowerCase();
+      const o = c.words[k], text = st.caps ? o.w.toUpperCase() : o.w.toLowerCase();
       const serif = hashStr(text.replace(/[^\p{L}\d]/gu, "") + k) % 10 < 3; // niektoré slová dostanú pútavé písmo
       const px = base * (li === 0 ? 1 : 0.82) * (serif ? 1.22 : 1);
       const font = serif ? `700 ${px}px ${SERIF}` : `${st.bold ? 800 : 600} ${px}px "${st.font}", sans-serif`;
@@ -527,7 +527,7 @@ function setup() {
     }
     sample.append(sp);
     const name = document.createElement("span"); name.className = "name"; name.textContent = p.name; b.append(sample, name);
-    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight }; syncControls(); };
+    b.onclick = () => { const o = state.style; state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight, caps: o.caps }; syncControls(); };
     $("presets").append(b);
   });
   const custom = () => { state.style.preset = null; syncControls(); };
@@ -537,6 +537,7 @@ function setup() {
   $("size").oninput = (e) => { state.style.size = +e.target.value; custom(); };
   $("font").onchange = (e) => { state.style.font = e.target.value; custom(); };
   document.querySelectorAll("#positions button").forEach((b) => b.onclick = () => { state.style.position = b.dataset.v; state.style.x = 0.5; state.style.y = POS_Y[b.dataset.v]; syncControls(); });
+  $("caps").onchange = (e) => { state.style.caps = e.target.checked; syncControls(); };
   $("roam").onchange = (e) => { state.style.roam = e.target.checked; syncControls(); };
   $("highlight").onchange = (e) => { state.style.highlight = e.target.checked; syncControls(); };
   $("hl").oninput = (e) => { state.style.hl = e.target.value; syncControls(); };
