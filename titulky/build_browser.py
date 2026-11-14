@@ -38,6 +38,7 @@ body = body.replace('''<div class="group">
           <div class="label">Zvýraznenie slov</div>
           <div class="inline"><label><input type="checkbox" id="highlight"> Zvýrazňovať práve vyslovené slovo</label></div>
           <div class="inline" style="margin-top:8px"><input type="color" id="hl"><small class="hint">Farba zvýraznenia</small></div>
+          <div class="inline" style="margin-top:8px"><label><input type="checkbox" id="roam"> Dynamický štýl: meniť polohu pri každej fráze</label></div>
         </div>
         <div class="group">
           <div class="label">Veľkosť</div>''', 1)

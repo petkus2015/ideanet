@@ -17,7 +17,7 @@ const PRESETS = [
   { hl: "#ffe066", id: "vyrazny", name: "Výrazný", font: "Poppins", color: "#ffffff", bg: "#6c5cff", bgOpacity: 100, size: 7, bold: true },
   { hl: "#ffe066", id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
   { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
-  { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, y: 0.55, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
+  { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, y: 0.55, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false },
   segments: [], file: null, url: null, duration: 0, downloads: [] };
@@ -222,7 +222,7 @@ async function pickFile(file) {
   catch (e) { return showError(e.message || "Rozpoznanie zlyhalo."); }
   await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
   if (state.playable === null) state.playable = false;
-  buildSegments(); show("editor"); applyPreview(); resetExport(); playableBanner();
+  bumpDyn(); buildSegments(); show("editor"); applyPreview(); resetExport(); playableBanner();
 }
 
 // ---------- editor ----------
@@ -235,7 +235,7 @@ function buildSegments() {
     t.onclick = () => { video.currentTime = s.start + 0.01; video.play(); };
     const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.setAttribute("aria-label", "Text titulku " + (i + 1));
     const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
-    ta.oninput = () => { s.text = ta.value; fit(); };
+    ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); };
     row.append(t, ta); box.append(row); requestAnimationFrame(fit);
   });
 }
@@ -309,85 +309,99 @@ function syncControls() {
   $("color").value = st.color; $("bg").value = st.bg; $("bgOpacity").value = st.bgOpacity;
   $("bgOpacityOut").textContent = Math.round(st.bgOpacity) + " %"; $("size").value = st.size; $("font").value = st.font;
   document.querySelectorAll("#positions button").forEach((b) => b.classList.toggle("on", b.dataset.v === st.position));
-  $("highlight").checked = st.highlight; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
+  $("highlight").checked = st.highlight; $("roam").checked = !!st.roam; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
   document.querySelectorAll("#aspects button").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
   document.querySelectorAll(".preset").forEach((b) => b.classList.toggle("on", b.dataset.id === st.preset));
   applyPreview();
 }
 
-// ---------- dynamické titulky: krátke úseky, slová pribúdajú s animáciou ----------
+// ---------- dynamické titulky ----------
+// Vzor: slová sa objavujú po jednom podľa reči (rozmazanie + posun zdola), krátka fráza ostane na obraze
+// a potom sa rozmaže a odplynie nahor. Fráza má 1 až 3 slová, prvý riadok je väčší, niektoré slová sú
+// v pútavom písme a poloha frázy sa môže meniť zľava doprava.
 const SERIF = '"Playfair Display", "DM Serif Display", Georgia, serif';
-const chunkCache = new WeakMap();
-function chunksFor(seg) {
-  const key = `${seg.text}|${seg.start}|${seg.end}|${seg.words ? seg.words.length : 0}`;
-  const hit = chunkCache.get(seg);
-  if (hit && hit.key === key) return hit.chunks;
-  const chunks = []; let cur = [];
-  const flush = () => { if (cur.length) { chunks.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end }); cur = []; } };
-  for (const o of wordsFor(seg)) {
-    const len = cur.reduce((a, x) => a + x.w.length + 1, 0) + o.w.length;
-    if (cur.length && (cur.length >= 3 || len > 18 || o.start - cur[cur.length - 1].end > 0.5)) flush();
-    cur.push(o);
-    if (/[.,!?…;:]$/.test(o.w)) flush();
+const ENTER = 0.22, EXIT = 0.25;
+let dynVer = 0, dynCache = { ver: -1, chunks: [] };
+const bumpDyn = () => { dynVer++; };
+function dynChunks() {
+  if (dynCache.ver === dynVer) return dynCache.chunks;
+  const all = [];
+  for (const seg of state.segments) {
+    let cur = [];
+    const flush = () => { if (cur.length) { all.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end }); cur = []; } };
+    for (const o of wordsFor(seg)) {
+      const len = cur.reduce((a, x) => a + x.w.length + 1, 0) + o.w.length;
+      if (cur.length && (cur.length >= 3 || len > 20 || o.start - cur[cur.length - 1].end > 0.5)) flush();
+      cur.push(o);
+      if (/[.,!?…;:]$/.test(o.w)) flush();
+    }
+    flush();
   }
-  flush();
-  chunks.forEach((c, i) => { if (i + 1 < chunks.length) c.end = Math.max(c.end, Math.min(chunks[i + 1].start, c.end + 0.4)); });
-  chunkCache.set(seg, { key, chunks });
-  return chunks;
+  all.forEach((c, i) => { c.idx = i; if (i + 1 < all.length) c.end = Math.max(c.end, Math.min(all[i + 1].start, c.end + 0.5)); });
+  dynCache = { ver: dynVer, chunks: all };
+  return all;
 }
-const segmentAtDyn = (t) => { let r = -1; state.segments.forEach((s, i) => { if (t >= s.start && t < s.end + 0.2) r = i; }); return r; };
 const hashStr = (str) => { let h = 0; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
 const easeOut = (x) => 1 - Math.pow(1 - x, 3);
-function drawDynamic(ctx, seg, t, W, H, st) {
-  const chunks = chunksFor(seg); let c = null;
-  for (const x of chunks) if (t >= x.start) c = x;
-  if (!c) return;
-  const fade = t > c.end ? 1 - (t - c.end) / 0.2 : 1;
-  if (fade <= 0) return;
-  const base = Math.min(W, H) * st.size / 100, space = base * 0.28;
+const ROAM = [[-0.17, 0], [0.17, -0.03], [0, 0.03], [-0.1, -0.02], [0.14, 0.02]];
+function drawChunk(ctx, c, t, W, H, st) {
+  const base = Math.min(W, H) * st.size / 100, space = base * 0.26;
+  const exit = t > c.end ? clamp((t - c.end) / EXIT, 0, 1) : 0;
+  const h = hashStr(c.words.map((o) => o.w).join(" "));
   ctx.textBaseline = "middle"; ctx.textAlign = "center";
-  const items = c.words.map((o, n) => {
-    const serif = hashStr(o.w.toLowerCase().replace(/[^\p{L}\d]/gu, "") + n) % 10 < 3; // niektoré slová dostanú pútavé písmo
-    const px = base * (serif ? 1.2 : 1);
-    ctx.font = serif ? `700 ${px}px ${SERIF}` : `${st.bold ? 800 : 600} ${px}px "${st.font}", sans-serif`;
-    return { o, n, font: ctx.font, w: ctx.measureText(o.w).width };
+  if ("letterSpacing" in ctx) ctx.letterSpacing = `${-base * 0.02}px`;
+  const n = c.words.length;
+  const split = n === 1 ? [1] : n === 2 ? (h % 2 ? [1, 1] : [2]) : [h % 2 ? 1 : 2, h % 2 ? 2 : 1];
+  const lines = []; let k = 0;
+  split.forEach((cnt, li) => {
+    const arr = [];
+    for (let j = 0; j < cnt; j++, k++) {
+      const o = c.words[k], text = o.w.toLowerCase();
+      const serif = hashStr(text.replace(/[^\p{L}\d]/gu, "") + k) % 10 < 3; // niektoré slová dostanú pútavé písmo
+      const px = base * (li === 0 ? 1 : 0.82) * (serif ? 1.22 : 1);
+      const font = serif ? `700 ${px}px ${SERIF}` : `${st.bold ? 800 : 600} ${px}px "${st.font}", sans-serif`;
+      ctx.font = font;
+      arr.push({ o, k, font, px, text, w: ctx.measureText(text).width });
+    }
+    lines.push(arr);
   });
-  const total = items.reduce((a, i) => a + i.w, 0) + space * (items.length - 1);
-  const half = Math.ceil(items.length / 2);
-  const lines = items.length >= 3 || total > W * 0.8 ? [items.slice(0, half), items.slice(half)] : [items];
-  const lh = base * 1.3, bh = lines.length * lh;
   const widths = lines.map((l) => l.reduce((a, i) => a + i.w, 0) + space * (l.length - 1));
-  const bw = Math.max(...widths);
-  const cx = clamp(st.x * W, bw / 2, Math.max(bw / 2, W - bw / 2));
-  const top = clamp(st.y * H, bh / 2, Math.max(bh / 2, H - bh / 2)) - bh / 2;
-  let active = -1; items.forEach((i) => { if (t >= i.o.start) active = i.n; });
+  const heights = lines.map((l) => Math.max(...l.map((i) => i.px)) * 1.15);
+  const bw = Math.max(...widths), bh = heights.reduce((a, v) => a + v, 0), pad = W * 0.03;
+  const [ox, oy] = st.roam ? ROAM[c.idx % ROAM.length] : [0, 0];
+  const cx = clamp(st.x * W + ox * W, bw / 2 + pad, Math.max(bw / 2 + pad, W - bw / 2 - pad));
+  const top = clamp(st.y * H + oy * H, bh / 2, Math.max(bh / 2, H - bh / 2)) - bh / 2;
+  let active = -1; c.words.forEach((o, i) => { if (t >= o.start) active = i; });
+  let y = top;
   lines.forEach((line, li) => {
-    let x = cx - widths[li] / 2; const y = top + li * lh + lh / 2;
+    let x = cx - widths[li] / 2; const cy = y + heights[li] / 2; y += heights[li];
     for (const it of line) {
-      const p = easeOut(clamp((t - (it.n === 0 ? c.start : it.o.start)) / 0.3, 0, 1));
+      const p = easeOut(clamp((t - (it.k === 0 ? c.start : it.o.start)) / ENTER, 0, 1));
       if (p > 0) {
         ctx.save();
-        ctx.globalAlpha = p * fade; ctx.font = it.font;
-        ctx.translate(x + it.w / 2, y + (1 - p) * base * 0.5);
-        const sc = 0.92 + 0.08 * p; ctx.scale(sc, sc);
-        if (ctx.filter !== undefined) ctx.filter = `blur(${(1 - p) * base * 0.2}px)`;
-        ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = base * 0.18; ctx.shadowOffsetY = base * 0.04;
-        ctx.fillStyle = st.highlight && it.n === active ? st.hl : st.color;
-        ctx.fillText(it.o.w, 0, 0);
+        ctx.globalAlpha = p * (1 - exit); ctx.font = it.font;
+        ctx.translate(x + it.w / 2, cy + (1 - p) * base * 0.45 - exit * base * 0.35);
+        const sc = (0.95 + 0.05 * p) * (1 + 0.04 * exit); ctx.scale(sc, sc);
+        if (ctx.filter !== undefined) ctx.filter = `blur(${((1 - p) * 0.25 + exit * 0.3) * base}px)`;
+        ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = base * 0.16; ctx.shadowOffsetY = base * 0.04;
+        ctx.fillStyle = st.highlight && it.k === active ? st.hl : st.color;
+        ctx.fillText(it.text, 0, 0);
         ctx.restore();
       }
       x += it.w + space;
     }
   });
+  if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+}
+function drawDynamic(ctx, t, W, H, st) {
+  for (const c of dynChunks()) if (t >= c.start && t <= c.end + EXIT) drawChunk(ctx, c, t, W, H, st);
 }
 function drawPreviewDyn() {
   const cv = $("dyn"), st = state.style, stage = $("stage"), dpr = window.devicePixelRatio || 1;
   const w = stage.clientWidth, h = stage.clientHeight;
   if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
   const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
-  if (!st.dynamic) return;
-  const i = segmentAtDyn(video.currentTime);
-  if (i >= 0) drawDynamic(ctx, state.segments[i], video.currentTime, w, h, st);
+  if (st.dynamic) drawDynamic(ctx, video.currentTime, w, h, st);
 }
 
 // ---------- export: video + titulky nahrané z plátna ----------
@@ -472,7 +486,7 @@ async function exportVideo() {
       const vw = ev.videoWidth, vh = ev.videoHeight, s = Math.max(W / vw, H / vh);
       ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
       ctx.drawImage(ev, (W - vw * s) / 2, (H - vh * s) / 2, vw * s, vh * s);
-      if (st.dynamic) { const j = segmentAtDyn(ev.currentTime); if (j >= 0) drawDynamic(ctx, state.segments[j], ev.currentTime, W, H, st); }
+      if (st.dynamic) drawDynamic(ctx, ev.currentTime, W, H, st);
       else { const i = segmentAt(ev.currentTime); if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], ev.currentTime, W, H, st); }
       const p = Math.min(99, Math.round(ev.currentTime / (ev.duration || 1) * 100));
       bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`;
@@ -523,6 +537,7 @@ function setup() {
   $("size").oninput = (e) => { state.style.size = +e.target.value; custom(); };
   $("font").onchange = (e) => { state.style.font = e.target.value; custom(); };
   document.querySelectorAll("#positions button").forEach((b) => b.onclick = () => { state.style.position = b.dataset.v; state.style.x = 0.5; state.style.y = POS_Y[b.dataset.v]; syncControls(); });
+  $("roam").onchange = (e) => { state.style.roam = e.target.checked; syncControls(); };
   $("highlight").onchange = (e) => { state.style.highlight = e.target.checked; syncControls(); };
   $("hl").oninput = (e) => { state.style.hl = e.target.value; syncControls(); };
   setupDrag();
