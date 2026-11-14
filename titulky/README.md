@@ -20,7 +20,7 @@ Pri prvom rozpoznaní sa stiahne model Whisper (predvolene `small`, približne 0
 | --- | --- | --- |
 | `TITULKY_MODEL` | `small` | model Whisper (`tiny`, `base`, `small`, `medium`, `large-v3`) |
 | `TITULKY_RETENTION_HOURS` | `24` | po koľkých hodinách sa pracovná verzia zmaže |
-| `TITULKY_MAX_UPLOAD_MB` | `500` | najväčšie nahrávané video |
+| `TITULKY_MAX_UPLOAD_MB` | `1000` | najväčšie nahrávané video |
 | `TITULKY_DATA` | `titulky/data` | kde sa ukladajú pracovné verzie |
 | `TITULKY_ASR` | | `mock` = ukážkové titulky bez modelu (len na skúšanie) |
 | `HOST`, `PORT` | `127.0.0.1`, `8000` | adresa servera |
@@ -33,6 +33,20 @@ nič sa neposiela na server. Pri prvom použití potrebuje internet na stiahnuti
 (40 až 250 MB podľa výberu) a písem. Export beží v reálnom čase a vyrobí WebM alebo MP4
 podľa prehliadača. V náhľade sa dajú titulky presunúť myšou a zapnúť sa dá zvýrazňovanie práve vyslovených slov (časy slov dá model Whisper, ak ich nevie, odhadnú sa z dĺžky slov).
 Vznikne z `static/` príkazom `python3 build_browser.py`.
+
+## Nahrávanie z mobilu
+
+Verzia so serverom funguje v mobilnom prehliadači (Safari, Chrome): rozhranie sa prispôsobí
+šírke, video sa nahráva s ukazovateľom priebehu a iPhone videá vo formáte HEVC (.MOV) si server
+prevedie na náhľad sám. Rozpoznanie beží na serveri, takže telefón nič nesťahuje.
+
+- **Skúška doma:** `HOST=0.0.0.0 python3 server.py`, potom v telefóne v tej istej Wi-Fi otvor
+  `http://<adresa počítača>:8000`.
+- **Nasadenie na web:** `docker build -t titulky .` a spusti na hosting s Dockerom (Render, Fly.io,
+  Railway, vlastný server) s trvalým diskom pripojeným na `/data` a HTTPS. Odporúčané je aspoň
+  2 GB pamäte pre model `small`. Dockerfile som tu nemohol zostaviť, preto ho pri prvom nasadení skontroluj.
+- Limit nahrávaného súboru je `TITULKY_MAX_UPLOAD_MB` (predvolene 1000). Ak pred aplikáciou
+  stojí proxy (nginx, Cloudflare), nastav aj tam rovnaký alebo vyšší limit.
 
 ## Formáty videa (H.264, H.265)
 

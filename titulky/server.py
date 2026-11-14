@@ -25,7 +25,7 @@ import render
 BASE = Path(__file__).parent
 DATA = Path(os.environ.get("TITULKY_DATA", BASE / "data")) / "jobs"
 RETENTION = float(os.environ.get("TITULKY_RETENTION_HOURS", "24")) * 3600
-MAX_UPLOAD = int(os.environ.get("TITULKY_MAX_UPLOAD_MB", "500")) * 1024 * 1024
+MAX_UPLOAD = int(os.environ.get("TITULKY_MAX_UPLOAD_MB", "1000")) * 1024 * 1024
 SWEEP_EVERY = int(os.environ.get("TITULKY_SWEEP_SECONDS", "300"))
 EXTS = {".mp4", ".mov", ".m4v", ".webm", ".mkv", ".avi", ".ts", ".mts", ".m2ts", ".3gp", ".mpg", ".mpeg"}
 ID_RE = re.compile(r"^[0-9a-f]{32}$")
