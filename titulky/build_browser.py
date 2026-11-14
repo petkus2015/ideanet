@@ -66,6 +66,13 @@ page = f'''<!doctype html>
 </head>
 <body>
 {body}
+<script>
+window.addEventListener("error", function (e) {{
+  var d = document.getElementById("titulky-err");
+  if (!d) {{ d = document.createElement("div"); d.id = "titulky-err"; d.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;background:#7a1020;color:#fff;padding:10px 14px;font:13px system-ui"; document.body.appendChild(d); }}
+  d.textContent = "Chyba stránky: " + (e.message || "neznáma chyba") + (e.filename ? " (" + e.filename.split("/").pop() + ":" + e.lineno + ")" : "");
+}});
+</script>
 <script type="module">
 {js}
 </script>
