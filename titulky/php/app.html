@@ -246,10 +246,11 @@ const video = $("video");
 const show = (view) => { for (const v of ["upload", "busy", "editor"]) $("view-" + v).hidden = v !== view; };
 const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const rgbOf = (hex) => [1, 3, 5].map((n) => parseInt(hex.slice(n, n + 2), 16)).join(",");
-const setBusy = (title, text = "", pct = null) => {
-  show("busy"); $("busy-title").textContent = title; $("busy-text").textContent = text;
-  $("busy-bar").hidden = pct === null;
-  if (pct !== null) $("busy-bar").firstElementChild.style.width = pct + "%";
+const BUSY = "Nahrávam a titulkujem video…";
+const BUSY_TEXT = "Môže to trvať niekoľko minút (pri prvom použití dlhšie). Nechaj túto kartu otvorenú.";
+// Priebeh technických krokov (sťahovanie modelu a pod.) sa používateľovi neukazuje, vždy je vidno len jednu správu.
+const setBusy = (_title, _text = "", _pct = null) => {
+  show("busy"); $("busy-title").textContent = BUSY; $("busy-text").textContent = BUSY_TEXT; $("busy-bar").hidden = true;
 };
 const showError = (msg) => { show("upload"); const e = $("upload-error"); e.textContent = msg; e.hidden = false; };
 
