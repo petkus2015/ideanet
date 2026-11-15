@@ -32,10 +32,18 @@ const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padSt
 const rgbOf = (hex) => [1, 3, 5].map((n) => parseInt(hex.slice(n, n + 2), 16)).join(",");
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const segmentAt = (t) => state.segments.findIndex((s) => t >= s.start && t < s.end);
-const BUSY = "Nahrávam a titulkujem video…";
-const BUSY_TEXT = "Môže to trvať niekoľko minút (pri prvom použití dlhšie). Nechaj túto kartu otvorenú.";
-// Priebeh technických krokov (sťahovanie modelu a pod.) sa používateľovi neukazuje, vždy je vidno len jednu správu.
-const setBusy = (_title, _text = "", _pct = null) => { show("busy"); $("busy-title").textContent = BUSY; $("busy-text").textContent = BUSY_TEXT; };
+// Priebeh sa skladá z troch krokov, každý má svoj podiel na celkových percentách:
+// čítanie zvuku (0 – 12 %), model (12 – 55 %, skáče hneď na 55 % ak je už uložený), rozpoznanie reči (55 – 100 %).
+const PHASES = { audio: [0, 12], model: [12, 55], asr: [55, 100] };
+const phasePct = (phase, frac) => { const [a, b] = PHASES[phase]; return a + (b - a) * clamp(frac, 0, 1); };
+let busyPct = 0;
+const setBusy = (title, text = "", pct = null) => {
+  show("busy"); $("busy-title").textContent = title || "Spracúvam…"; $("busy-text").textContent = text;
+  if (pct !== null) busyPct = Math.max(busyPct, pct); // percentá nikdy neklesnú, nech to nevyzerá, že sa appka vrátila
+  $("busy-fill").style.width = Math.round(busyPct) + "%";
+  $("busy-pct").textContent = Math.round(busyPct) + " %";
+};
+const resetBusy = () => { busyPct = 0; };
 const showError = (msg) => { show("upload"); const e = $("upload-error"); e.textContent = msg; e.hidden = false; };
 
 // ---------- slová a ich časy ----------
@@ -87,7 +95,7 @@ async function captureAudio(url) {
   rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
   const stopped = new Promise((r) => (rec.onstop = r));
   rec.start(); await ac.resume(); await tv.play();
-  const iv = setInterval(() => setBusy("Čítam zvuk…", `Prehliadač číta zvuk v reálnom čase: ${fmtTime(tv.currentTime)} z ${fmtTime(tv.duration)}`, tv.currentTime / tv.duration * 100), 400);
+  const iv = setInterval(() => setBusy("Čítam zvuk…", `Prehliadač číta zvuk v reálnom čase: ${fmtTime(tv.currentTime)} z ${fmtTime(tv.duration)}`, phasePct("audio", tv.currentTime / tv.duration)), 400);
   await new Promise((r) => (tv.onended = r));
   clearInterval(iv); rec.stop(); await stopped; ac.close();
   return decodeBuffer(await new Blob(chunks).arrayBuffer());
@@ -166,7 +174,7 @@ function ensureModel(spec, quiet) { // jedno načítanie naraz, hotový model sa
     loadingModels[spec.id] = loadModel(spec, quiet)
       .then((m) => { asr = m; asrId = spec.id; try { localStorage.setItem(MODEL_KEY, spec.id); } catch {} showModelState(); return m; })
       .finally(() => { delete loadingModels[spec.id]; });
-  } else if (!quiet) setBusy();
+  } else if (!quiet) setBusy("Načítavam model…", "", phasePct("model", 0));
   return loadingModels[spec.id];
 }
 async function showModelState() {
@@ -198,7 +206,9 @@ async function bestModels() {
 async function explainFailure(mod, id, lastErr, reach) {
   const probe = async (url) => { try { await fetch(url, { method: "GET", cache: "no-store" }); return "ok"; } catch { return "NEDOSTUPNÉ"; } };
   let wasmBase = ""; try { const wp = mod.env.backends.onnx.wasm.wasmPaths; wasmBase = typeof wp === "string" ? wp : (wp && (wp.wasm || wp.mjs) ? String(wp.wasm || wp.mjs).replace(/[^/]*$/, "") : ""); } catch {}
-  const checks = [`huggingface.co: ${await probe(`https://huggingface.co/${id}/resolve/main/config.json`)}`, `cdn.jsdelivr.net: ${await probe("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6/package.json")}`];
+  const hfUrl = "https://huggingface.co/" + id + "/resolve/main/config.json";
+  const cdnUrl = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6/package.json";
+  const checks = ["huggingface.co: " + (await probe(hfUrl)), "cdn.jsdelivr.net: " + (await probe(cdnUrl))];
   if (wasmBase) checks.push(`wasm: ${await probe(wasmBase + "ort-wasm-simd-threaded.jsep.wasm")}`);
   console.error("Diagnostika:", checks.join(", "), "Prehliadač:", navigator.userAgent, "Protokol:", location.protocol);
   const diag = checks.join(", ") + ` · ${/^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? "Safari" : "iný prehliadač"} · ${location.protocol}`;
@@ -214,18 +224,18 @@ async function explainFailure(mod, id, lastErr, reach) {
   return new Error(`Model sa nepodarilo načítať. ${hint} Technická chyba: ${detail} (${diag})`);
 }
 async function loadModel(spec, quiet) {
-  if (!quiet) setBusy();
+  if (!quiet) setBusy("Načítavam model…", "", phasePct("model", 0));
   try { await navigator.storage?.persist?.(); } catch {} // aby prehliadač model nevymazal
   if (!tf) {
     try { tf = await import(TF_URL); }
     catch (e) { throw new Error("Nepodarilo sa načítať knižnicu na rozpoznávanie (cdn.jsdelivr.net). Skontroluj pripojenie na internet alebo blokovač reklám. Technická chyba: " + String(e && e.message || e).slice(0, 150)); }
   }
   const files = {};
-  const progress = (p) => { // ukazuje sa len pri skutočnom sťahovaní, uložený model sa načíta bez neho
+  const progress = (p) => { // reálne percentá len pri skutočnom sťahovaní; uložený model sa načíta bez neho (žiadne p.total)
     if (p.status !== "progress" || !p.total) return;
     files[p.file] = { loaded: p.loaded, total: p.total };
     const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
-    void loaded; void total; // priebeh sa nezobrazuje
+    if (!quiet) setBusy("Sťahujem model…", `${spec.label}: ${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB (len pri prvom použití)`, phasePct("model", loaded / total));
   };
   let reach = null;
   try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
@@ -251,40 +261,67 @@ async function loadModel(spec, quiet) {
   }
   throw await explainFailure(tf, spec.id, lastErr, reach);
 }
-async function transcribeWith(model, audio, lang) {
-  setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.");
-  const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5 };
-  if (LANGS[lang]) opts.language = LANGS[lang];
-  try { // časy po slovách (zvýraznenie slov)
-    const wres = await model(audio, { ...opts, return_timestamps: "word" });
-    const words = (wres.chunks || []).map((c) => ({ w: c.text.trim(), start: c.timestamp[0] ?? 0, end: c.timestamp[1] ?? state.duration })).filter((o) => o.w);
-    if (words.length) return groupWords(words);
-  } catch { /* model nevie časy po slovách, použije sa odhad */ }
-  const res = await model(audio, { ...opts, return_timestamps: true });
-  const chunks = res.chunks && res.chunks.length ? res.chunks : [{ timestamp: [0, state.duration], text: res.text }];
-  return chunks.flatMap((c) => {
-    const [s, e] = c.timestamp;
-    return c.text.trim() ? splitChunk(c.text, s ?? 0, e ?? state.duration).map((g) => ({ ...g, words: estimateWords(g.text, g.start, g.end) })) : [];
-  });
+// Transformers.js nedáva priebeh po častiach počas samotného rozpoznávania (len pri sťahovaní modelu),
+// preto sa percentá odhadujú podľa uplynutého času a dĺžky videa: čím ďalej sa dostane, tým pomalšie
+// rastú, a nikdy nedosiahnu 100 %, kým rozpoznávanie naozaj neskončí.
+function startAsrProgress(durationSec, spec) {
+  const factor = spec?.opts?.device === "webgpu" ? 0.6 : 2.2; // odhadovaný násobok reálneho času behu
+  const est = Math.max(6, durationSec * factor), t0 = performance.now();
+  const iv = setInterval(() => {
+    const el = (performance.now() - t0) / 1000, frac = 1 - Math.exp(-el / (est / 2));
+    setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.", phasePct("asr", Math.min(frac, 0.96)));
+  }, 400);
+  return () => clearInterval(iv);
+}
+async function transcribeWith(model, audio, lang, spec) {
+  const stop = startAsrProgress(audio.length / 16000, spec);
+  try {
+    const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5 };
+    if (LANGS[lang]) opts.language = LANGS[lang];
+    try { // časy po slovách (zvýraznenie slov)
+      const wres = await model(audio, { ...opts, return_timestamps: "word" });
+      const words = (wres.chunks || []).map((c) => ({ w: c.text.trim(), start: c.timestamp[0] ?? 0, end: c.timestamp[1] ?? state.duration })).filter((o) => o.w);
+      if (words.length) return groupWords(words);
+    } catch { /* model nevie časy po slovách, použije sa odhad */ }
+    const res = await model(audio, { ...opts, return_timestamps: true });
+    const chunks = res.chunks && res.chunks.length ? res.chunks : [{ timestamp: [0, state.duration], text: res.text }];
+    return chunks.flatMap((c) => {
+      const [s, e] = c.timestamp;
+      return c.text.trim() ? splitChunk(c.text, s ?? 0, e ?? state.duration).map((g) => ({ ...g, words: estimateWords(g.text, g.start, g.end) })) : [];
+    });
+  } finally { stop(); }
 }
 async function recognize(file, _unused, lang) {
-  setBusy("Načítavam zvuk…");
+  resetBusy();
+  setBusy("Načítavam zvuk…", "", phasePct("audio", 0));
   state.audio = null;
   if (MOCK) {
     try { state.audio = await decodeBuffer(await file.arrayBuffer()); } catch { /* bez zvuku sa rečníci nerozlišujú */ }
+    setBusy("Načítavam zvuk…", "", phasePct("audio", 1));
+    setBusy("Načítavam model…", "", phasePct("model", 1));
     await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
     const d = state.duration || 12, out = []; let t = 0.3, i = 1;
-    while (t + 1.5 < d) { const text = SAMPLE[i++ % SAMPLE.length]; out.push({ start: t, end: t + 2, text, words: estimateWords(text, t, t + 2) }); t += 2.3; }
+    const total = Math.max(1, d - 2);
+    while (t + 1.5 < d) {
+      setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.", phasePct("asr", t / total));
+      const text = SAMPLE[i++ % SAMPLE.length]; out.push({ start: t, end: t + 2, text, words: estimateWords(text, t, t + 2) }); t += 2.3;
+      await new Promise((r) => setTimeout(r, 120)); // len aby bolo v teste vidno priebeh percent
+    }
+    setBusy("Rozpoznávam reč…", "", phasePct("asr", 1));
     return out;
   }
   const audio = await decodeAudio(file);
   state.audio = audio;
   if (!state.duration) state.duration = audio.length / 16000;
+  setBusy("Načítavam zvuk…", "", phasePct("audio", 1));
   let lastError = null;
   for (const spec of await preferLocal(await bestModels())) {
     try {
       const model = await ensureModel(spec, false);
-      return await transcribeWith(model, audio, lang);
+      setBusy("Rozpoznávam reč…", "", phasePct("model", 1));
+      const segs = await transcribeWith(model, audio, lang, spec);
+      setBusy("Rozpoznávam reč…", "", phasePct("asr", 1));
+      return segs;
     } catch (e) { lastError = e; asr = null; asrId = null; console.error("Model", spec.label, e); }
   }
   throw lastError;

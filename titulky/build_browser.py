@@ -1,21 +1,45 @@
 """Zloží samostatný súbor titulky-browser.html (bez servera) zo šablóny browser.html a skriptu browser.js.
 
-  python3 build_browser.py                 -> titulky-browser.html a php/app.html
-  python3 build_browser.py ukazka.html     -> navyše fragment pre ukážku na webe (artifact)
+  python3 build_browser.py                 -> titulky-browser.html a php/app.html (minifikované)
+  python3 build_browser.py ukazka.html     -> navyše fragment pre ukážku na webe (artifact, nemnifikovaný)
+
+Minifikácia (voliteľná): `pip install rjsmin rcssmin`. Bez nich sa vypíše súbor nezmenšený
+a nezašifrovaný — stránka funguje rovnako, len zdroj ostane čitateľný tak ako teraz.
+Minifikácia nerobí kód tajným (prehliadač ho musí dostať, aby stránku vykreslil), len ho
+robí nepraktickým na jednoduché prekopírovanie a preberanie.
 """
 import re
 import sys
 from pathlib import Path
 
+try:
+    import rjsmin
+    import rcssmin
+except ImportError:
+    rjsmin = rcssmin = None
+
 here = Path(__file__).parent
 template = (here / "browser.html").read_text(encoding="utf-8")
 js = (here / "browser.js").read_text(encoding="utf-8")
 
-page = template.replace("/*JS*/", js)
+
+def minify(html):
+    if rjsmin is None:
+        return html
+    html = re.sub(r"<style>(.*?)</style>", lambda m: "<style>" + rcssmin.cssmin(m.group(1)) + "</style>", html, flags=re.S)
+    html = re.sub(
+        r'(<script type="module">)(.*?)(</script>)',
+        lambda m: m.group(1) + rjsmin.jsmin(m.group(2)) + m.group(3),
+        html, flags=re.S,
+    )
+    return html
+
+
+page = minify(template.replace("/*JS*/", js))
 (here / "titulky-browser.html").write_text(page, encoding="utf-8")
 (here / "php").mkdir(exist_ok=True)
 (here / "php" / "app.html").write_text(page, encoding="utf-8")
-print("ok", len(page))
+print("ok", len(page), "(minifikované)" if rjsmin else "(BEZ minifikácie — chýba rjsmin/rcssmin)")
 
 if len(sys.argv) > 1:  # ukážka: vzorové titulky, výsledok sa prehrá v karte
     demo = template.replace("/*JS*/", js.replace("const DEMO = false;", "const DEMO = true;"))
