@@ -35,6 +35,36 @@ main{min-width:0}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:20px;align-items:start}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .card-title{font-size:13px;color:#cfd4ee;margin-bottom:10px}
+.card-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-title-row .card-title{margin-bottom:0}
+.icon-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line2);background:var(--card2);cursor:pointer;color:var(--text);display:inline-flex;align-items:center;justify-content:center;flex:none;padding:0}
+.icon-btn:hover{border-color:var(--a)}
+.icon-btn svg{width:15px;height:15px}
+.seg-search{width:100%;background:var(--card2);color:var(--text);border:1px solid var(--line2);border-radius:9px;padding:8px 10px;font:inherit;margin-bottom:10px}
+.spk-group{display:flex;align-items:center;gap:8px;padding:8px 2px 4px;cursor:pointer;color:#cfd4ee;font-size:13px;font-weight:600;user-select:none}
+.spk-group .dot{width:9px;height:9px}
+.spk-group .chev{margin-left:auto;color:var(--muted);transition:transform .15s}
+.spk-group.collapsed .chev{transform:rotate(-90deg)}
+/* časová os */
+.tl-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.tl-play{width:32px;height:32px;border-radius:50%;border:1px solid var(--line2);background:var(--card2);cursor:pointer;color:var(--text);flex:none}
+.tl-play:hover{border-color:var(--a)}
+.tl-time{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tl-spacer{flex:1}
+#tlZoom{width:100px}
+#tlSpeed{background:var(--card2);color:var(--text);border:1px solid var(--line2);border-radius:9px;padding:6px 8px;font:inherit;width:auto;flex:none}
+.tl-scroll{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);border-radius:10px;background:var(--card2)}
+.tl-inner{position:relative;height:110px;min-width:100%}
+#tlRuler{position:absolute;top:0;left:0;width:100%;height:24px}
+#tlWave{position:absolute;top:60px;left:0;width:100%;height:46px}
+.tl-chips{position:absolute;top:26px;left:0;height:30px;width:100%}
+.chip{position:absolute;top:0;height:26px;border-radius:6px;cursor:grab;display:flex;align-items:center;font-size:11px;font-weight:600;color:#fff;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid rgba(255,255,255,.3);box-sizing:border-box}
+.chip.active{outline:2px solid #fff;outline-offset:1px}
+.chip-label{pointer-events:none;overflow:hidden;text-overflow:ellipsis}
+.chip .h{position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize}
+.chip .h.l{left:0}
+.chip .h.r{right:0}
+.tl-playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;box-shadow:0 0 5px #fff;pointer-events:none;z-index:2}
 .vhidden{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none}
 .transport{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 14px}
 .transport button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:var(--card2);cursor:pointer;flex:none}
@@ -201,11 +231,40 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
         <section id="view-editor" hidden>
           <p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľady a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>
           <video id="video" class="vhidden" playsinline preload="auto"></video>
-          <div class="transport card"><button id="playBtn" aria-label="Prehrať alebo pozastaviť">▶</button><input type="range" id="seek" min="0" max="1" step="0.01" value="0" aria-label="Pozícia vo videu"></div>
           <div class="outs" id="outs"></div>
           <p class="hint">Titulky môžeš presunúť ťahaním v ktoromkoľvek náhľade. Export beží v reálnom čase, nechaj kartu otvorenú.</p>
+
+          <div class="card" id="timelineCard" style="margin-top:14px">
+            <div class="tl-top">
+              <button id="tlPlay" class="tl-play" aria-label="Prehrať alebo pozastaviť">▶</button>
+              <select id="tlSpeed" aria-label="Rýchlosť prehrávania">
+                <option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option>
+              </select>
+              <span class="tl-time"><output id="tlCur">0:00</output> / <output id="tlDur">0:00</output></span>
+              <span class="tl-spacer"></span>
+              <button id="tlZoomOut" class="icon-btn" aria-label="Oddialiť časovú os">−</button>
+              <input type="range" id="tlZoom" min="1" max="6" step="0.5" value="1" aria-label="Priblíženie časovej osi">
+              <button id="tlZoomIn" class="icon-btn" aria-label="Priblížiť časovú os">+</button>
+            </div>
+            <div class="tl-scroll" id="tlScroll">
+              <div class="tl-inner" id="tlInner">
+                <canvas id="tlRuler"></canvas>
+                <div class="tl-chips" id="tlChips"></div>
+                <canvas id="tlWave"></canvas>
+                <div class="tl-playhead" id="tlPlayhead"></div>
+              </div>
+            </div>
+            <p class="hint" style="margin-top:8px">Potiahni titulok a presunieš jeho čas, ťahaním za okraj upravíš začiatok alebo koniec. Klik na časovú os pretočí video.</p>
+          </div>
+
           <div class="card" style="margin-top:14px">
-            <div class="card-title">Text titulkov</div>
+            <div class="card-title-row">
+              <div class="card-title">Text titulkov</div>
+              <button class="icon-btn" id="segSearchBtn" title="Hľadať v titulkoch" aria-label="Hľadať v titulkoch">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+              </button>
+            </div>
+            <input type="search" id="segSearch" class="seg-search" placeholder="Hľadať v texte titulkov…" hidden>
             <p class="hint" style="margin:0 0 4px">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>
             <div id="segments" class="segments"></div>
             <div class="row-btns"><button id="dl-srt">Stiahnuť SRT</button><button id="dl-vtt">Stiahnuť VTT</button></div>
