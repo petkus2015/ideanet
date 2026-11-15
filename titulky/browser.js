@@ -16,6 +16,7 @@ const PRESETS = [
   { hl: "#ffe066", id: "vyrazny", name: "Výrazný", font: "Poppins", color: "#ffffff", bg: "#6c5cff", bgOpacity: 100, size: 7, bold: true },
   { hl: "#ffe066", id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
   { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
+  { hl: "#00b8fc", id: "modry", name: "Modrý obrys", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#00007d", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" },
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false, on: true },
@@ -427,9 +428,9 @@ function renderSample() {
     wrap.append(a, b); box.append(wrap); return;
   }
   const sp = document.createElement("span"); sp.className = "t"; sp.textContent = "Ahoj svet";
-  sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.bold ? 700 : 400};font-size:17px;color:${st.color}`;
+  sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:17px;color:${st.color}`;
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
-  else sp.style.textShadow = "-1px 0 #000,1px 0 #000,0 -1px #000,0 1px #000";
+  else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = "Ahoj "; const b2 = document.createElement("span"); b2.textContent = "svet"; b2.style.color = st.hl; sp.append(a, b2); } }
   box.append(sp);
 }
 function syncControls() {
@@ -451,7 +452,7 @@ async function recordAspect(aspect, onProgress) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
   const [ow, oh] = OUT[aspect], k = EXPORT_SHORT / Math.min(ow, oh);
   const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = { ...state.style };
-  await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${wt} 40px "${st.font}"`).catch(() => {})));
+  await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${st.italic ? "italic " : ""}${wt} 40px "${st.font}"`).catch(() => {})));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
   const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
@@ -512,7 +513,7 @@ function setup() {
   $("styleSel").onchange = (e) => {
     const p = PRESETS.find((x) => x.id === e.target.value); if (!p) return;
     const o = state.style;
-    state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.y ? null : o.position, preset: p.id, highlight: o.highlight, caps: p.caps ?? o.caps, on: o.on };
+    state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.position ?? (p.y ? null : o.position), preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, on: o.on };
     syncControls();
   };
   document.querySelectorAll("#aspects .opt").forEach((b) => b.onclick = () => { state.aspect = b.dataset.v; syncControls(); });
@@ -538,6 +539,7 @@ function setup() {
   ["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
   drop.addEventListener("drop", (e) => e.dataTransfer.files[0] && pickFile(e.dataTransfer.files[0]));
   $("drop-hint").textContent = "MP4, MOV, WEBM · zostáva vo vašom prehliadači";
+  ["400 20px Inter", "800 20px Inter", "italic 800 20px Montserrat"].forEach((f) => document.fonts.load(f).catch(() => {}));
   syncControls(); requestAnimationFrame(loop); show("upload"); showModelState(); warmUpModel();
 }
 
@@ -639,8 +641,8 @@ function wrapWords(ctx, words, maxW) {
   return lines;
 }
 function drawCaption(ctx, seg, t, W, H, st) {
-  const px = Math.min(W, H) * st.size / 100, lh = px * 1.25, padX = st.bgOpacity > 0 ? px * .3 : 0;
-  ctx.font = `${st.bold ? 700 : 400} ${px}px "${st.font}", sans-serif`;
+  const px = Math.min(W, H) * st.size / 100, lh = px * (st.lineH ?? 1.25), padX = st.bgOpacity > 0 ? px * .3 : 0;
+  ctx.font = `${st.italic ? "italic " : ""}${st.weight ?? (st.bold ? 700 : 400)} ${px}px "${st.font}", sans-serif`;
   ctx.textBaseline = "middle"; ctx.lineJoin = "round";
   const words = wordsFor(seg); let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
   const lines = wrapWords(ctx, words, W * 0.84 - 2 * padX), total = lines.length * lh, sp = ctx.measureText(" ").width;
@@ -656,7 +658,7 @@ function drawCaption(ctx, seg, t, W, H, st) {
     }
     line.idx.forEach((n) => {
       const word = words[n].w, ww = ctx.measureText(word).width;
-      if (st.bgOpacity <= 0) { ctx.strokeStyle = "#000"; ctx.lineWidth = px * .16; ctx.strokeText(word, x, y + lh / 2); }
+      if (st.bgOpacity <= 0) { ctx.strokeStyle = st.stroke || "#000"; ctx.lineWidth = px * (st.strokeW ?? .16); ctx.strokeText(word, x, y + lh / 2); }
       ctx.fillStyle = st.highlight && n === active ? st.hl : st.color; ctx.fillText(word, x, y + lh / 2);
       x += ww + sp;
     });
