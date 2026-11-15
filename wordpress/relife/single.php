@@ -121,7 +121,7 @@ while ( have_posts() ) :
 					'email'    => array( 'E-mail', 'mailto:?subject=' . $share_title . '&body=' . $share_url, '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>' ),
 				);
 				?>
-				<div class="rl-share js-share" data-url="<?php echo esc_attr( (string) get_permalink( $post_id ) ); ?>" data-title="<?php echo esc_attr( wp_strip_all_tags( get_the_title( $post_id ) ) ); ?>">
+				<div class="rl-share js-sharebox" data-url="<?php echo esc_attr( (string) get_permalink( $post_id ) ); ?>" data-title="<?php echo esc_attr( wp_strip_all_tags( get_the_title( $post_id ) ) ); ?>">
 					<span class="rl-share__label"><?php esc_html_e( 'Zdieľaj článok', 'relife' ); ?></span>
 					<div class="rl-share__btns">
 						<button type="button" class="rl-share__btn rl-share__btn--native js-share-native" hidden>

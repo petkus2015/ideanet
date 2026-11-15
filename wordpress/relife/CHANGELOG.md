@@ -2,6 +2,9 @@
 
 Verzia je v hlavičke `style.css` (`Version:`). Podľa nej sa pridáva `?ver=` k CSS a JS, takže po aktualizácii sa nenačíta stará kópia z cache.
 
+## 1.47.2
+- **Opravy z reálneho testovania:** (1) tlačidlá zdieľania článku po kliknutí zmizli, lebo ich ovládala staršia funkcia – teraz funguje aj kopírovanie odkazu (so záložným postupom, keď prehliadač schránku odmietne); (2) na mobile pretekalo vyhľadávacie pole a tlačidlo Hľadať mimo obrazovky; (3) na stránke Inzercia na mobile pretekal text kariet o 2 px; (4) na nástenke sa už v Aktivite nezobrazujú komentáre.
+
 ## 1.47.1
 - **Kam na jedlo – Navigovať a Rezervovať:** odkaz „Mapa“ v karte podniku sa volá **Navigovať**. Pri podniku pribudlo pole *Odkaz na rezerváciu*; ak je vyplnené, v karte sa zobrazí tlačidlo **Rezervovať**. Pole je aj ako 8. stĺpec hromadného importu (`… | URL fotky | Rezervácia`).
 

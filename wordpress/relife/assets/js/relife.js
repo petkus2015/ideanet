@@ -465,7 +465,7 @@
 	}
 
 	function initShare() {
-		var box = document.querySelector( '.js-share' );
+		var box = document.querySelector( '.js-sharebox' );
 		if ( ! box ) { return; }
 		var url = box.getAttribute( 'data-url' ) || location.href;
 		var title = box.getAttribute( 'data-title' ) || document.title;
@@ -487,14 +487,17 @@
 					copy.classList.add( 'is-done' );
 					setTimeout( function () { t.textContent = old; copy.classList.remove( 'is-done' ); }, 1800 );
 				}
-				if ( navigator.clipboard && navigator.clipboard.writeText ) {
-					navigator.clipboard.writeText( url ).then( done, function () {} );
-				} else {
+				function legacy() {
 					var ta = document.createElement( 'textarea' );
 					ta.value = url; ta.setAttribute( 'readonly', '' ); ta.style.position = 'fixed'; ta.style.opacity = '0';
 					document.body.appendChild( ta ); ta.select();
-					try { document.execCommand( 'copy' ); done(); } catch ( e ) {}
+					try { if ( document.execCommand( 'copy' ) ) { done(); } } catch ( e ) {}
 					document.body.removeChild( ta );
+				}
+				if ( navigator.clipboard && navigator.clipboard.writeText ) {
+					navigator.clipboard.writeText( url ).then( done, legacy );
+				} else {
+					legacy();
 				}
 			} );
 		}

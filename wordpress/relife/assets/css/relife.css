@@ -52,8 +52,8 @@ button{font:inherit;color:inherit}
 .rl-iconbtn{width:44px;height:44px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .rl-search{border-top:1px solid var(--rl-line);padding:14px 0;background:var(--rl-surface)}
 .rl-searchform{display:flex;gap:10px}
-.rl-searchform input{flex:1;min-height:48px;border-radius:999px;border:1.5px solid var(--rl-line);background:var(--rl-bg);color:var(--rl-ink);padding:0 20px;font:inherit}
-.rl-searchform button{min-height:48px;padding:0 24px;border-radius:999px;border:none;background:var(--rl-accent);color:#131313;font-weight:700;cursor:pointer}
+.rl-searchform input{flex:1;min-width:0;min-height:48px;border-radius:999px;border:1.5px solid var(--rl-line);background:var(--rl-bg);color:var(--rl-ink);padding:0 20px;font:inherit}
+.rl-searchform button{flex:none;min-height:48px;padding:0 24px;border-radius:999px;border:none;background:var(--rl-accent);color:#131313;font-weight:700;cursor:pointer}
 .rl-searchbox{margin:0 0 28px;max-width:640px}
 
 /* Pilulky a štítky */
@@ -569,8 +569,8 @@ html.rl-has-saved .js-saved-empty{display:none}
 .rl-chart__tip[hidden]{display:none}
 .rl-chart__tip b{color:var(--rl-accent)}
 .rl-chartcard__src{margin:10px 0 0;font-size:12px;color:var(--rl-muted)}
-.rl-adv-offer{background:var(--rl-surface);border:1px solid var(--rl-line);border-radius:18px;padding:22px}
-.rl-adv-offer h3{margin:0 0 8px;font-family:var(--rl-display);font-size:22px}
+.rl-adv-offer{min-width:0;overflow-wrap:anywhere;background:var(--rl-surface);border:1px solid var(--rl-line);border-radius:18px;padding:22px}
+.rl-adv-offer h3{margin:0 0 8px;hyphens:auto;font-family:var(--rl-display);font-size:22px}
 .rl-adv-offer p{margin:0;color:var(--rl-soft)}
 .rl-form{display:grid;gap:16px;max-width:760px}
 .rl-form__row{display:grid;grid-template-columns:1fr 1fr;gap:16px}

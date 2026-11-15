@@ -75,6 +75,15 @@ function relife_comments_dashboard(): void {
 }
 add_action( 'wp_dashboard_setup', 'relife_comments_dashboard' );
 
+/** Nástenka (widget Aktivita) nemá vypisovať žiadne komentáre. */
+function relife_comments_pre_query( $pre, WP_Comment_Query $q ) {
+	if ( ! relife_comments_disabled() || ! is_admin() ) {
+		return $pre;
+	}
+	return ! empty( $q->query_vars['count'] ) ? 0 : array();
+}
+add_filter( 'comments_pre_query', 'relife_comments_pre_query', 10, 2 );
+
 function relife_comments_admin_bar( WP_Admin_Bar $bar ): void {
 	if ( relife_comments_disabled() ) {
 		$bar->remove_node( 'comments' );
