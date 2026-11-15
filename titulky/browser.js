@@ -20,7 +20,7 @@ const PRESETS = [
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true },
-  segments: [], file: null, url: null, duration: 0, outs: [], busyExport: false, playable: null, job: 0, pos: {} };
+  segments: [], file: null, url: null, duration: 0, outs: [], busyExport: false, playable: null, job: 0, pos: {}, audio: null, spkOn: false, spk2: "modry", speakers: 1 };
 const video = $("video");
 const STEP_OF = { upload: 0, busy: 1, editor: 2 };
 const setStep = (i) => document.querySelectorAll("#steps .step").forEach((s, n) => s.classList.toggle("on", n === i));
@@ -269,13 +269,16 @@ async function transcribeWith(model, audio, lang) {
 }
 async function recognize(file, _unused, lang) {
   setBusy("Načítavam zvuk…");
+  state.audio = null;
   if (MOCK) {
+    try { state.audio = await decodeBuffer(await file.arrayBuffer()); } catch { /* bez zvuku sa rečníci nerozlišujú */ }
     await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
     const d = state.duration || 12, out = []; let t = 0.3, i = 1;
     while (t + 1.5 < d) { const text = SAMPLE[i++ % SAMPLE.length]; out.push({ start: t, end: t + 2, text, words: estimateWords(text, t, t + 2) }); t += 2.3; }
     return out;
   }
   const audio = await decodeAudio(file);
+  state.audio = audio;
   if (!state.duration) state.duration = audio.length / 16000;
   let lastError = null;
   for (const spec of await preferLocal(await bestModels())) {
@@ -325,7 +328,13 @@ const PV_MAX_H = 200;
 const outFor = (k) => state.outs.find((o) => o.k === k);
 // Poloha titulkov je samostatná pre každý formát (9:16, 1:1, 16:9); ostatné nastavenie štýlu je spoločné.
 const defaultPos = () => ({ x: 0.5, y: state.style.y ?? 0.84, position: state.style.position ?? (state.style.y ? null : "bottom") });
-const styleFor = (k) => ({ ...state.style, ...(state.pos[k] || defaultPos()) });
+function speakerStyle(sp) { // štýl titulkov pre daného rečníka (rečník 2 môže mať vlastný štýl z ponuky)
+  const main = state.style;
+  if (!state.spkOn || sp !== 2) return main;
+  const p = PRESETS.find((x) => x.id === state.spk2);
+  return p ? { ...p, preset: p.id, highlight: p.highlight ?? main.highlight, caps: p.caps ?? main.caps, on: main.on } : main;
+}
+const styleFor = (k, sp = 1) => ({ ...speakerStyle(sp), ...(state.pos[k] || defaultPos()) });
 
 function playableBanner() {
   const bad = state.playable === false;
@@ -386,25 +395,37 @@ function buildSegments() {
     const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.setAttribute("aria-label", "Text titulku " + (i + 1));
     const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
     ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); invalidateExports(); };
-    row.append(t, ta); box.append(row); requestAnimationFrame(fit);
+    const sp = document.createElement("button"); sp.className = "spk"; sp.dataset.i = i; sp.dataset.s = s.speaker || 1; sp.textContent = s.speaker || 1; sp.title = "Rečník (klikni pre zmenu)";
+    sp.onclick = () => { s.speaker = s.speaker === 2 ? 1 : 2; sp.textContent = s.speaker; sp.dataset.s = s.speaker; bumpDyn(); invalidateExports(); };
+    row.append(t, ta, sp); box.append(row); requestAnimationFrame(fit);
   });
 }
 function initEditor() {
   state.pos = {}; ASPECTS.forEach((a) => { state.pos[a.k] = defaultPos(); });
+  state.speakers = 1; state.spkOn = false;
   buildOuts(); buildSegments(); show("editor"); syncControls(); playableBanner(); $("export-error").hidden = true;
+  const job = state.job;
+  setTimeout(() => { // rozpoznanie rečníkov na pozadí, editor sa otvorí hneď
+    if (job !== state.job) return;
+    try { state.speakers = detectSpeakers(); } catch (e) { console.error("Rečníci:", e); state.speakers = 1; }
+    state.spkOn = state.speakers > 1;
+    if (state.spkOn && state.spk2 === state.style.preset) state.spk2 = state.style.preset === "kino" ? "modry" : "kino";
+    bumpDyn(); refreshSpeakerUi();
+  }, 50);
 }
 
 // ---------- kreslenie snímky (rovnaké pre náhľady aj export) ----------
-function renderFrame(ctx, vid, t, W, H, st) {
+function renderFrame(ctx, vid, t, W, H, stOf) {
   ctx.globalAlpha = 1; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
   if (ctx.filter !== undefined) ctx.filter = "none";
   if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
   ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
   const vw = vid.videoWidth, vh = vid.videoHeight;
   if (vw && vh && vid.readyState >= 2) { const s = Math.max(W / vw, H / vh); ctx.drawImage(vid, (W - vw * s) / 2, (H - vh * s) / 2, vw * s, vh * s); }
-  if (!st.on) return;
-  if (st.dynamic) drawDynamic(ctx, t, W, H, st);
-  else { const i = segmentAt(t); if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], t, W, H, st); }
+  if (!stOf(1).on) return;
+  drawDynamic(ctx, t, W, H, stOf);
+  const i = segmentAt(t);
+  if (i >= 0 && state.segments[i].text.trim()) { const sg = state.segments[i], st = stOf(sg.speaker || 1); if (!st.dynamic) drawCaption(ctx, sg, t, W, H, st); }
 }
 let lastActive = -2, seeking = false;
 function loop() {
@@ -416,7 +437,7 @@ function loop() {
       if (o.cv.style.width !== w + "px" || o.cv.style.height !== h + "px") { o.cv.style.width = w + "px"; o.cv.style.height = h + "px"; }
       if (o.cv.width !== Math.round(w * dpr) || o.cv.height !== Math.round(h * dpr)) { o.cv.width = Math.round(w * dpr); o.cv.height = Math.round(h * dpr); }
       const ctx = o.cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      renderFrame(ctx, video, t, w, h, styleFor(o.k));
+      renderFrame(ctx, video, t, w, h, (sp) => styleFor(o.k, sp));
       o.time.textContent = label;
     }
     if (!seeking) { $("seek").max = state.duration || video.duration || 0; $("seek").value = t; }
@@ -425,6 +446,152 @@ function loop() {
     if (i !== lastActive) { lastActive = i; document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("active", +r.dataset.i === i)); }
   }
   requestAnimationFrame(loop);
+}
+
+// ---------- rečníci: odhad podľa výšky hlasu a zafarbenia ----------
+// Jednoduchý odhad bez ďalšieho modelu: pre každý titulok sa z jeho zvuku zmeria základná výška hlasu (F0)
+// a spektrálny odtlačok (MFCC), potom sa titulky rozdelia do dvoch skupín. Spoľahlivé pri odlišných hlasoch
+// (napr. muž a žena), pri podobných hlasoch môže chybovať, vtedy sa rečník prepne ručne.
+function fftInPlace(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let bit = n >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang), h = len / 2;
+    for (let i = 0; i < n; i += len) {
+      let cr = 1, ci = 0;
+      for (let j = 0; j < h; j++) {
+        const a = i + j, b = a + h, vr = re[b] * cr - im[b] * ci, vi = re[b] * ci + im[b] * cr;
+        re[b] = re[a] - vr; im[b] = im[a] - vi; re[a] += vr; im[a] += vi;
+        const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr;
+      }
+    }
+  }
+}
+const SPK = { N: 512, HOP: 256, SR: 16000, MEL: 24, NC: 12 };
+let melBank = null;
+function buildMel() {
+  const { N, SR, MEL } = SPK, hz2mel = (f) => 2595 * Math.log10(1 + f / 700), mel2hz = (m) => 700 * (Math.pow(10, m / 2595) - 1);
+  const lo = hz2mel(80), hi = hz2mel(6000), pts = Array.from({ length: MEL + 2 }, (_, i) => mel2hz(lo + (hi - lo) * i / (MEL + 1)));
+  const bins = pts.map((f) => Math.floor((N + 1) * f / SR)), bank = [];
+  for (let m = 1; m <= MEL; m++) {
+    const f = new Float32Array(N / 2 + 1);
+    for (let k = bins[m - 1]; k < bins[m]; k++) f[k] = (k - bins[m - 1]) / Math.max(1, bins[m] - bins[m - 1]);
+    for (let k = bins[m]; k < bins[m + 1]; k++) f[k] = (bins[m + 1] - k) / Math.max(1, bins[m + 1] - bins[m]);
+    bank.push(f);
+  }
+  return bank;
+}
+function segmentFeatures(audio, start, end) {
+  const { N, HOP, SR, MEL, NC } = SPK;
+  if (!melBank) melBank = buildMel();
+  const a = Math.max(0, Math.floor(start * SR)), b = Math.min(audio.length - N, Math.floor(end * SR));
+  if (b - a < N * 4) return null;
+  const all = []; for (let p = a; p <= b; p += HOP) all.push(p);
+  const step = Math.max(1, Math.ceil(all.length / 90)), pos = all.filter((_, i) => i % step === 0);
+  const rms = pos.map((p) => { let e = 0; for (let i = 0; i < N; i++) e += audio[p + i] * audio[p + i]; return Math.sqrt(e / N); });
+  const thr = Math.max(0.008, 0.25 * Math.max(...rms));
+  const f0s = [], sums = new Float64Array(NC); let voiced = 0;
+  const win = Float32Array.from({ length: N }, (_, i) => 0.54 - 0.46 * Math.cos(2 * Math.PI * i / (N - 1)));
+  pos.forEach((p, idx) => {
+    if (rms[idx] < thr) return;
+    // F0: autokorelácia na 8 kHz, rozsah 70 až 400 Hz
+    const x = new Float32Array(N / 2); let mean = 0;
+    for (let i = 0; i < N / 2; i++) { x[i] = (audio[p + 2 * i] + audio[p + 2 * i + 1]) / 2; mean += x[i]; }
+    mean /= x.length; for (let i = 0; i < x.length; i++) x[i] -= mean;
+    let r0 = 0; for (let i = 0; i < x.length; i++) r0 += x[i] * x[i];
+    if (r0 < 1e-9) return;
+    const ac = []; let rmax = 0;
+    for (let lag = 20; lag <= 115; lag++) { let r = 0; for (let i = 0; i + lag < x.length; i++) r += x[i] * x[i + lag]; r /= r0; ac[lag] = r; if (r > rmax) rmax = r; }
+    if (rmax < 0.45) return;
+    let best = 0; for (let lag = 21; lag < 115; lag++) if (ac[lag] >= 0.9 * rmax && ac[lag] >= ac[lag - 1] && ac[lag] >= ac[lag + 1]) { best = lag; break; }
+    if (!best) return;
+    f0s.push(8000 / best);
+    // MFCC
+    const re = new Float64Array(N), im = new Float64Array(N);
+    for (let i = 0; i < N; i++) re[i] = audio[p + i] * win[i];
+    fftInPlace(re, im);
+    const pw = new Float64Array(N / 2 + 1); for (let k = 0; k <= N / 2; k++) pw[k] = re[k] * re[k] + im[k] * im[k];
+    const lm = melBank.map((f) => { let e = 0; for (let k = 0; k < f.length; k++) e += f[k] * pw[k]; return Math.log(e + 1e-10); });
+    for (let c = 1; c <= NC; c++) { let v = 0; for (let m = 0; m < MEL; m++) v += lm[m] * Math.cos(Math.PI * c * (m + 0.5) / MEL); sums[c - 1] += v; }
+    voiced++;
+  });
+  if (voiced < 8) return null;
+  f0s.sort((u, v) => u - v);
+  return [Math.log2(f0s[f0s.length >> 1]), ...Array.from(sums, (v) => v / voiced)];
+}
+// Rozdelí titulky na dvoch rečníkov (1 = ten, kto hovorí prvý). Vráti počet nájdených rečníkov.
+function detectSpeakers() {
+  const segs = state.segments, audio = state.audio;
+  segs.forEach((s) => { s.speaker = 1; });
+  if (!audio || segs.length < 4) return 1;
+  const feats = segs.map((s) => segmentFeatures(audio, s.start, s.end)), idx = feats.map((f, i) => (f ? i : -1)).filter((i) => i >= 0);
+  if (idx.length < 4) return 1;
+  const D = feats[idx[0]].length, mu = Array(D).fill(0), sd = Array(D).fill(0);
+  idx.forEach((i) => feats[i].forEach((v, d) => { mu[d] += v / idx.length; }));
+  idx.forEach((i) => feats[i].forEach((v, d) => { sd[d] += (v - mu[d]) ** 2 / idx.length; }));
+  const X = idx.map((i) => feats[i].map((v, d) => (v - mu[d]) / (Math.sqrt(sd[d]) || 1) * (d === 0 ? 4 : 1))); // výška hlasu má väčšiu váhu
+  const dist = (p, q) => Math.sqrt(p.reduce((a, v, d) => a + (v - q[d]) ** 2, 0));
+  let lo = 0, hi = 0; X.forEach((p, i) => { if (p[0] < X[lo][0]) lo = i; if (p[0] > X[hi][0]) hi = i; });
+  let c = [X[lo].slice(), X[hi].slice()], lab = new Array(X.length).fill(0);
+  for (let it = 0; it < 25; it++) {
+    lab = X.map((p) => (dist(p, c[0]) <= dist(p, c[1]) ? 0 : 1));
+    const nc = [0, 1].map((g) => { const m = Array(D).fill(0); let n = 0; X.forEach((p, i) => { if (lab[i] === g) { n++; p.forEach((v, d) => { m[d] += v; }); } }); return n ? m.map((v) => v / n) : c[g]; });
+    if (nc.every((q, g) => dist(q, c[g]) < 1e-6)) break; c = nc;
+  }
+  const n1 = lab.filter((v) => v === 1).length, n0 = X.length - n1;
+  const within = X.reduce((a, p, i) => a + dist(p, c[lab[i]]), 0) / X.length, between = dist(c[0], c[1]);
+  const f0gap = Math.abs((c[0][0] - c[1][0]) / 4 * Math.sqrt(sd[0] || 1)); // rozdiel výšky hlasu v oktávach
+  if (Math.min(n0, n1) < Math.max(2, 0.12 * X.length) || between / (within || 1) < 1.8 || f0gap < 0.12) return 1;
+  const first = lab[0]; // rečník 1 = ten, kto hovorí v prvom titulku
+  let prev = 1;
+  segs.forEach((sg, i) => { const j = idx.indexOf(i); if (j >= 0) prev = lab[j] === first ? 1 : 2; sg.speaker = prev; });
+  return 2;
+}
+function refreshSpeakerUi() {
+  const found = state.speakers;
+  $("spkInfo").textContent = found > 1
+    ? "Zistení 2 rečníci. Pre rečníka 2 vyber štýl nižšie. Ak sa niekto zle priradil, prepni ho číslom pri jeho titulku."
+    : "Zistený jeden rečník. Ak ich je viac, zapni rozlišovanie a priraď titulky ručne číslom pri texte.";
+  document.querySelectorAll(".spk").forEach((b) => { const sg = state.segments[+b.dataset.i]; b.textContent = sg.speaker || 1; b.dataset.s = sg.speaker || 1; });
+  syncControls();
+}
+
+// ---------- vlastný font (nahratý súbor, ostáva v tomto prehliadači) ----------
+function fontsDb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open("titulky-fonts", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("fonts");
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+const customFonts = new Set();
+function addFontOption(name) {
+  if ([...$("font").options].some((o) => o.value === name)) return;
+  const o = document.createElement("option"); o.value = o.textContent = name; $("font").append(o);
+}
+async function registerFont(name, buf) {
+  const face = new FontFace(name, buf, { weight: "100 900", style: "normal" }); // jeden súbor platí pre všetky hrúbky
+  await face.load(); document.fonts.add(face); customFonts.add(name); addFontOption(name);
+}
+async function loadSavedFonts() {
+  try {
+    const db = await fontsDb();
+    const all = await new Promise((res, rej) => { const q = db.transaction("fonts").objectStore("fonts").getAll(); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+    for (const f of all) { try { await registerFont(f.name, f.buf.slice(0)); } catch { /* poškodený súbor sa preskočí */ } }
+  } catch { /* bez trvalého úložiska ostanú fonty len do zatvorenia stránky */ }
+}
+async function uploadFont(file) {
+  $("fontMsg").textContent = "";
+  if (!/\.(ttf|otf|woff2?)$/i.test(file.name)) { $("fontMsg").textContent = "Použi súbor TTF, OTF, WOFF alebo WOFF2."; return; }
+  if (file.size > 15 * 1048576) { $("fontMsg").textContent = "Font je príliš veľký (najviac 15 MB)."; return; }
+  const name = "Vlastný " + file.name.replace(/\.[^.]+$/, "").replace(/[^\p{L}\p{N} _-]/gu, " ").trim().slice(0, 40);
+  try {
+    const buf = await file.arrayBuffer();
+    await registerFont(name, buf.slice(0));
+    try { const db = await fontsDb(); db.transaction("fonts", "readwrite").objectStore("fonts").put({ name, buf }, name); } catch {}
+    state.style.font = name; state.style.preset = null; syncControls();
+    $("fontMsg").textContent = `Font „${name}“ je pridaný a vybraný.`;
+  } catch { $("fontMsg").textContent = "Tento súbor sa nepodarilo načítať ako font."; }
 }
 
 // ---------- ovládacie prvky ----------
@@ -463,6 +630,8 @@ function syncControls() {
   $("roam").checked = !!st.roam; $("caps").checked = !!st.caps;
   $("subsOn").setAttribute("aria-checked", String(st.on));
   document.querySelectorAll("#styles .tile").forEach((t) => t.classList.toggle("on", t.dataset.id === st.preset));
+  document.querySelectorAll("#styles2 .tile").forEach((t) => t.classList.toggle("on", t.dataset.id === state.spk2));
+  $("spkOn").setAttribute("aria-checked", String(state.spkOn)); $("styles2box").hidden = !state.spkOn; $("segments").classList.toggle("spk-on", state.spkOn);
   $("styleCustom").hidden = !!st.preset;
   markActive(); invalidateExports();
 }
@@ -471,8 +640,8 @@ function syncControls() {
 async function recordAspect(aspect, onProgress, job) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
   const [ow, oh] = OUT[aspect], k = EXPORT_SHORT / Math.min(ow, oh);
-  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = styleFor(aspect);
-  await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${st.italic ? "italic " : ""}${wt} 40px "${st.font}"`).catch(() => {})));
+  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = styleFor(aspect), stOf = (sp) => styleFor(aspect, sp);
+  await Promise.all([st, stOf(2)].flatMap((x) => [400, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`).catch(() => {}))));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
   const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
@@ -493,7 +662,7 @@ async function recordAspect(aspect, onProgress, job) {
   const draw = () => {
     if (!live) return;
     if (job !== state.job) { live = false; ev.pause(); try { rec.stop(); } catch {} return; } // nový projekt: export sa zruší
-    renderFrame(ctx, ev, ev.currentTime, W, H, st);
+    renderFrame(ctx, ev, ev.currentTime, W, H, stOf);
     onProgress(Math.min(99, Math.round(ev.currentTime / (ev.duration || 1) * 100)));
     ev.requestVideoFrameCallback ? ev.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
   };
@@ -535,7 +704,7 @@ function reset() {
   state.job++; state.busyExport = false; $("exportAll").disabled = false; $("export-error").hidden = true;
   video.pause(); video.removeAttribute("src"); invalidateExports();
   if (state.url) { URL.revokeObjectURL(state.url); state.url = null; }
-  state.segments = []; state.outs = []; state.playable = null; bumpDyn(); $("upload-error").hidden = true; $("file").value = ""; show("upload");
+  state.segments = []; state.outs = []; state.playable = null; state.audio = null; state.spkOn = false; state.speakers = 1; bumpDyn(); $("upload-error").hidden = true; $("file").value = ""; show("upload");
 }
 function setup() {
   FONTS.forEach((f) => { const o = document.createElement("option"); o.value = o.textContent = f; $("font").append(o); });
@@ -547,6 +716,13 @@ function setup() {
   });
   document.querySelectorAll("#aspects .opt").forEach((b) => b.onclick = () => { state.aspect = b.dataset.v; syncControls(); });
   document.querySelectorAll("#positions .opt").forEach((b) => b.onclick = () => { const q = state.pos[state.aspect]; if (!q) return; q.position = b.dataset.v; q.x = 0.5; q.y = POS_Y[b.dataset.v]; syncControls(); });
+  PRESETS.forEach((p) => {
+    const t = document.createElement("button"); t.className = "tile"; t.dataset.id = p.id; t.setAttribute("aria-label", "Štýl rečníka 2: " + p.name);
+    const smp = document.createElement("div"); smp.className = "tsample"; renderSample(smp, { ...p, on: true }, 0.9);
+    const nm = document.createElement("span"); nm.className = "tname"; nm.textContent = p.name;
+    t.append(smp, nm); t.onclick = () => { state.spk2 = p.id; bumpDyn(); syncControls(); }; $("styles2").append(t);
+  });
+  $("spkOn").onclick = () => { state.spkOn = !state.spkOn; bumpDyn(); syncControls(); };
   const custom = () => { state.style.preset = null; syncControls(); };
   $("subsOn").onclick = () => { state.style.on = !state.style.on; syncControls(); };
   $("color").oninput = (e) => { state.style.color = e.target.value; custom(); };
@@ -562,6 +738,9 @@ function setup() {
   $("dl-srt").onclick = () => saveText(toSrt(state.segments), "titulky.srt", "application/x-subrip");
   $("dl-vtt").onclick = () => saveText(toVtt(state.segments), "titulky.vtt", "text/vtt");
   $("newproject").onclick = reset;
+  $("fontUp").onclick = () => $("fontFile").click();
+  $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
+  loadSavedFonts();
   $("playBtn").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   $("seek").addEventListener("input", (e) => { seeking = true; video.currentTime = +e.target.value; });
   $("seek").addEventListener("change", () => { seeking = false; });
@@ -587,7 +766,7 @@ function dynChunks() {
   const all = [];
   for (const seg of state.segments) {
     let cur = [];
-    const flush = () => { if (cur.length) { all.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end }); cur = []; } };
+    const flush = () => { if (cur.length) { all.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end, speaker: seg.speaker || 1 }); cur = []; } };
     for (const o of wordsFor(seg)) {
       const len = cur.reduce((a, x) => a + x.w.length + 1, 0) + o.w.length;
       if (cur.length && (cur.length >= 3 || len > 20 || o.start - cur[cur.length - 1].end > 0.5)) flush();
@@ -659,8 +838,11 @@ function drawChunk(ctx, c, t, W, H, st) {
   });
   if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
 }
-function drawDynamic(ctx, t, W, H, st) {
-  for (const c of dynChunks()) if (t >= c.start && t <= c.exitStart + c.exitDur) drawChunk(ctx, c, t, W, H, st);
+function drawDynamic(ctx, t, W, H, stOf) { // stOf(rečník) -> štýl; kreslia sa len frázy, ktorých štýl je dynamický
+  for (const c of dynChunks()) {
+    if (t < c.start || t > c.exitStart + c.exitDur) continue;
+    const st = stOf(c.speaker); if (st.dynamic) drawChunk(ctx, c, t, W, H, st);
+  }
 }
 function wrapWords(ctx, words, maxW) {
   const sp = ctx.measureText(" ").width, lines = []; let cur = [], w = 0;
@@ -702,5 +884,5 @@ const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} -
 const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${s.text}\n`).join("\n");
 
 
-if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels };
+if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels, segmentFeatures, detectSpeakers, uploadFont, customFonts };
 setup();
