@@ -23,6 +23,10 @@ button{font:inherit;color:inherit}
 .plan strong{display:block;font-size:18px;color:var(--text);margin:2px 0 0}
 .bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:8px 0 6px}
 .bar i{display:block;height:100%;width:0;background:var(--grad);transition:width .3s}
+.busy-ind{max-width:280px;margin-left:auto;margin-right:auto}
+.busy-ind i{width:40%;animation:busyind 1.3s ease-in-out infinite}
+@keyframes busyind{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+@media(prefers-reduced-motion:reduce){.busy-ind i{animation:none;width:100%;opacity:.5}}
 .content{padding:24px 28px 20px;min-width:0}
 .head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
 h1{margin:0;font-size:28px;line-height:1.15;font-weight:600}
@@ -188,6 +192,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
           <div class="spinner"></div>
           <h2 id="busy-title">Spracúvam…</h2>
           <p id="busy-text"></p>
+          <div class="bar busy-ind"><i></i></div>
         </section>
 
         <section id="view-editor" hidden>
