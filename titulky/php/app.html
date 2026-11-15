@@ -269,7 +269,7 @@ const PRESETS = [
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false, on: true },
-  segments: [], file: null, url: null, duration: 0, outs: [], busyExport: false, playable: null };
+  segments: [], file: null, url: null, duration: 0, outs: [], busyExport: false, playable: null, job: 0 };
 const video = $("video");
 const STEP_OF = { upload: 0, busy: 1, editor: 2 };
 const setStep = (i) => document.querySelectorAll("#steps .step").forEach((s, n) => s.classList.toggle("on", n === i));
@@ -541,21 +541,25 @@ const VIDEO_EXT = /\.(mp4|m4v|mov|mkv|webm|avi|ts|mts|m2ts|3gp|mpg|mpeg|ogv|hevc
 async function pickFile(file) {
   $("upload-error").hidden = true;
   if (!file.type.startsWith("video/") && !VIDEO_EXT.test(file.name)) return showError("Vyber súbor s videom (MP4, MOV, MKV, WEBM a podobne).");
+  const job = ++state.job; // nový projekt alebo ďalšie nahratie zruší výsledky staršej úlohy
   if (state.url) URL.revokeObjectURL(state.url);
   state.file = file; state.url = URL.createObjectURL(file); state.duration = 0; state.playable = null;
   setBusy("Čítam zvuk…");
   state.meta = new Promise((resolve) => {
     video.onloadedmetadata = () => {
+      if (job !== state.job) return resolve();
       state.playable = video.videoWidth > 0; // zvuk bez obrazu = kodek sa nedá dekódovať
       if (isFinite(video.duration)) state.duration = video.duration;
       resolve();
     };
-    video.onerror = () => { state.playable = false; resolve(); };
+    video.onerror = () => { if (job === state.job) state.playable = false; resolve(); };
   });
   video.preload = "auto"; video.src = state.url; video.load();
   try { state.segments = await recognize(file, null, $("lang").value); }
-  catch (e) { return showError(e.message || "Rozpoznanie zlyhalo."); }
+  catch (e) { if (job !== state.job) return; return showError(e.message || "Rozpoznanie zlyhalo."); }
+  if (job !== state.job) return;
   await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
+  if (job !== state.job) return;
   if (state.playable === null) state.playable = false;
   bumpDyn(); initEditor();
 }
@@ -697,7 +701,7 @@ function syncControls() {
 }
 
 // ---------- export: video + titulky nahrané z plátna ----------
-async function recordAspect(aspect, onProgress) {
+async function recordAspect(aspect, onProgress, job) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
   const [ow, oh] = OUT[aspect], k = EXPORT_SHORT / Math.min(ow, oh);
   const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = { ...state.style };
@@ -721,6 +725,7 @@ async function recordAspect(aspect, onProgress) {
   let live = true;
   const draw = () => {
     if (!live) return;
+    if (job !== state.job) { live = false; ev.pause(); try { rec.stop(); } catch {} return; } // nový projekt: export sa zruší
     renderFrame(ctx, ev, ev.currentTime, W, H, st);
     onProgress(Math.min(99, Math.round(ev.currentTime / (ev.duration || 1) * 100)));
     ev.requestVideoFrameCallback ? ev.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
@@ -729,29 +734,38 @@ async function recordAspect(aspect, onProgress) {
   await ac.resume(); rec.start(500); draw(); await ev.play();
   await finished; ac.close();
   const ext = rec.mimeType.includes("mp4") ? "mp4" : "webm";
+  if (job !== state.job) return null;
   return { url: URL.createObjectURL(new Blob(chunks, { type: rec.mimeType || "video/webm" })), ext };
 }
 async function exportAspects(list) {
   if (state.busyExport || state.playable === false) return;
+  const job = state.job, outs = state.outs;
   state.busyExport = true; $("exportAll").disabled = true; $("export-error").hidden = true; setStep(3);
-  for (const k of list) {
-    const o = outFor(k), bar = o.prog.querySelector("i"), label = o.prog.querySelector("span");
-    o.prog.hidden = false; bar.style.width = "0%"; label.textContent = "Pripravujem…";
-    try {
-      const r = await recordAspect(k, (p) => { bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`; });
-      o.result = r; o.dl.classList.add("ready"); o.dl.title = "Stiahnuť hotové video";
-      if (DEMO) { // v ukážke sa sťahovanie nedá, výsledok sa prehrá priamo v karte
-        const v = document.createElement("video"); v.className = "out-result"; v.controls = true; v.playsInline = true; v.src = r.url; o.el.insertBefore(v, o.prog);
-      }
-      label.textContent = "Hotovo, stiahni tlačidlom ⬇";
-      o.prog.hidden = false; bar.style.width = "100%";
-    } catch (e) { $("export-error").textContent = e.message || "Export zlyhal."; $("export-error").hidden = false; o.prog.hidden = true; }
+  try {
+    for (const k of list) {
+      const o = outs.find((x) => x.k === k); if (!o || job !== state.job) break;
+      const bar = o.prog.querySelector("i"), label = o.prog.querySelector("span");
+      o.prog.hidden = false; bar.style.width = "0%"; label.textContent = "Pripravujem…";
+      try {
+        const r = await recordAspect(k, (p) => { bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`; }, job);
+        if (!r || job !== state.job) { if (r) URL.revokeObjectURL(r.url); break; }
+        o.result = r; o.dl.classList.add("ready"); o.dl.title = "Stiahnuť hotové video";
+        if (DEMO) { // v ukážke sa sťahovanie nedá, výsledok sa prehrá priamo v karte
+          const v = document.createElement("video"); v.className = "out-result"; v.controls = true; v.playsInline = true; v.src = r.url; o.el.insertBefore(v, o.prog);
+        }
+        label.textContent = "Hotovo, stiahni tlačidlom ⬇";
+        o.prog.hidden = false; bar.style.width = "100%";
+      } catch (e) { if (job === state.job) { $("export-error").textContent = e.message || "Export zlyhal."; $("export-error").hidden = false; } o.prog.hidden = true; }
+    }
+  } finally {
+    state.busyExport = false;
+    if (job === state.job) $("exportAll").disabled = state.playable === false;
   }
-  state.busyExport = false; $("exportAll").disabled = state.playable === false;
 }
 
 // ---------- štart ----------
 function reset() {
+  state.job++; state.busyExport = false; $("exportAll").disabled = false; $("export-error").hidden = true;
   video.pause(); video.removeAttribute("src"); invalidateExports();
   if (state.url) { URL.revokeObjectURL(state.url); state.url = null; }
   state.segments = []; state.outs = []; state.playable = null; bumpDyn(); $("upload-error").hidden = true; $("file").value = ""; show("upload");
