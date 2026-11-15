@@ -392,6 +392,21 @@ const idbCache = {
     });
   },
 };
+// Model môže ležať na tvojom serveri (priečinok models/ vedľa stránky), vtedy sa sťahuje odtiaľ a nie z huggingface.co.
+const LOCAL_BASE = new URL("models/", location.href).href;
+const localCheck = {};
+function hasLocal(id) {
+  if (location.protocol === "file:") return Promise.resolve(false);
+  if (!localCheck[id]) {
+    localCheck[id] = fetch(LOCAL_BASE + id + "/config.json", { cache: "no-store" })
+      .then(async (r) => r.ok && (await r.json(), true)).catch(() => false);
+  }
+  return localCheck[id];
+}
+async function preferLocal(list) {
+  const flags = await Promise.all(list.map((x) => hasLocal(x.id)));
+  return list.map((x, i) => ({ x, l: flags[i], i })).sort((a, b) => (b.l - a.l) || (a.i - b.i)).map((o) => o.x);
+}
 const loadingModels = {};
 function ensureModel(spec, quiet) { // jedno načítanie naraz, hotový model sa drží v pamäti
   if (asr && asrId === spec.id) return Promise.resolve(asr);
@@ -402,17 +417,19 @@ function ensureModel(spec, quiet) { // jedno načítanie naraz, hotový model sa
   } else if (!quiet) setBusy();
   return loadingModels[spec.id];
 }
-function showModelState() {
+async function showModelState() {
   const el = $("model-state"); if (!el) return;
   let have = null; try { have = localStorage.getItem(MODEL_KEY); } catch {}
-  el.textContent = have ? "Model je uložený v tomto prehliadači a nesťahuje sa znova." : "Pri prvom použití sa model stiahne (stovky MB), potom sa uloží a nesťahuje sa znova.";
+  const first = (await preferLocal(await bestModels()))[0];
+  if (first && await hasLocal(first.id)) el.textContent = "Model je na serveri tejto stránky, sťahuje sa odtiaľ a ukladá sa v prehliadači.";
+  else el.textContent = have ? "Model je uložený v tomto prehliadači a nesťahuje sa znova." : "Pri prvom použití sa model stiahne (stovky MB), potom sa uloží a nesťahuje sa znova.";
 }
 // Ak je model už uložený, načíta sa na pozadí hneď po otvorení stránky, aby nahratie videa nečakalo.
 async function warmUpModel() {
   if (MOCK) return;
   let have = null; try { have = localStorage.getItem(MODEL_KEY); } catch {}
   if (!have) return;
-  try { const spec = (await bestModels()).find((x) => x.id === have); if (spec) await ensureModel(spec, true); } catch { /* načíta sa pri nahratí */ }
+  try { const spec = (await preferLocal(await bestModels())).find((x) => x.id === have); if (spec) await ensureModel(spec, true); } catch { /* načíta sa pri nahratí */ }
 }
 // Vyberie sa vždy najpresnejší model, ktorý prehliadač zvládne: large-v3-turbo na grafickej karte (WebGPU),
 // inak small. Ak zlyhá najpresnejší, skúsi sa ďalší.
@@ -461,7 +478,9 @@ async function loadModel(spec, quiet) {
   let reach = null;
   try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
   let idbOk = false; try { await openModelDb(); idbOk = true; } catch {}
-  const attempts = [ // trvalá pamäť modelu, pamäť prehliadača, bez pamäte, cez zrkadlo
+  const local = await hasLocal(spec.id);
+  const attempts = [
+    ...(local ? [{ label: "vlastný server", cache: idbOk ? "idb" : "none", host: "https://huggingface.co/", local: true }] : []), // trvalá pamäť modelu, pamäť prehliadača, bez pamäte, cez zrkadlo
     ...(idbOk ? [{ label: "uložený model", cache: "idb", host: "https://huggingface.co/" }] : []),
     { label: "pamäť prehliadača", cache: "browser", host: "https://huggingface.co/" },
     { label: "bez pamäte", cache: "none", host: "https://huggingface.co/" },
@@ -470,7 +489,7 @@ async function loadModel(spec, quiet) {
   let lastErr = null;
   for (const a of attempts) {
     try {
-      tf.env.allowLocalModels = false;
+      tf.env.allowLocalModels = !!a.local; tf.env.allowRemoteModels = !a.local; if (a.local) tf.env.localModelPath = LOCAL_BASE;
       try { tf.env.backends.onnx.wasm.numThreads = 1; tf.env.backends.onnx.wasm.proxy = false; } catch {}
       tf.env.useCustomCache = a.cache === "idb"; if (a.cache === "idb") tf.env.customCache = idbCache;
       tf.env.useBrowserCache = a.cache === "browser"; tf.env.remoteHost = a.host;
@@ -507,7 +526,7 @@ async function recognize(file, _unused, lang) {
   const audio = await decodeAudio(file);
   if (!state.duration) state.duration = audio.length / 16000;
   let lastError = null;
-  for (const spec of await bestModels()) {
+  for (const spec of await preferLocal(await bestModels())) {
     try {
       const model = await ensureModel(spec, false);
       return await transcribeWith(model, audio, lang);
@@ -898,7 +917,7 @@ const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} -
 const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${s.text}\n`).join("\n");
 
 
-if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState };
+if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels };
 setup();
 
 </script>
