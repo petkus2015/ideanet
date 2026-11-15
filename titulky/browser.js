@@ -112,6 +112,59 @@ function splitChunk(text, start, end) {
   return groups.map((g) => { const d = (end - start) * len(g) / total; const s = { start: t, end: t + d, text: g.join(" ") }; t += d; return s; });
 }
 let asr = null, asrId = null, tf = null;
+// Model sa ukladá do vlastnej trvalej pamäte (IndexedDB), nie len do vyrovnávacej pamäte prehliadača,
+// aby sa pri ďalšom nahratí videa (aj po obnovení stránky) nesťahoval znova.
+const MODEL_KEY = "titulky.model";
+function openModelDb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open("titulky-model-cache", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("files");
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+const keyOf = (req) => (typeof req === "string" ? req : req.url);
+const idbCache = {
+  async match(req) {
+    const db = await openModelDb();
+    return new Promise((res) => {
+      const r = db.transaction("files").objectStore("files").get(keyOf(req));
+      r.onsuccess = () => res(r.result ? new Response(r.result.blob, { headers: r.result.headers }) : undefined);
+      r.onerror = () => res(undefined);
+    });
+  },
+  async put(req, response) {
+    const blob = await response.blob(), headers = {};
+    response.headers.forEach((v, k) => { headers[k] = v; });
+    const db = await openModelDb();
+    return new Promise((res, rej) => {
+      const tx = db.transaction("files", "readwrite");
+      tx.objectStore("files").put({ blob, headers }, keyOf(req));
+      tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error);
+    });
+  },
+};
+const loadingModels = {};
+function ensureModel(spec, quiet) { // jedno načítanie naraz, hotový model sa drží v pamäti
+  if (asr && asrId === spec.id) return Promise.resolve(asr);
+  if (!loadingModels[spec.id]) {
+    loadingModels[spec.id] = loadModel(spec, quiet)
+      .then((m) => { asr = m; asrId = spec.id; try { localStorage.setItem(MODEL_KEY, spec.id); } catch {} showModelState(); return m; })
+      .finally(() => { delete loadingModels[spec.id]; });
+  } else if (!quiet) setBusy();
+  return loadingModels[spec.id];
+}
+function showModelState() {
+  const el = $("model-state"); if (!el) return;
+  let have = null; try { have = localStorage.getItem(MODEL_KEY); } catch {}
+  el.textContent = have ? "Model je uložený v tomto prehliadači a nesťahuje sa znova." : "Pri prvom použití sa model stiahne (stovky MB), potom sa uloží a nesťahuje sa znova.";
+}
+// Ak je model už uložený, načíta sa na pozadí hneď po otvorení stránky, aby nahratie videa nečakalo.
+async function warmUpModel() {
+  if (MOCK) return;
+  let have = null; try { have = localStorage.getItem(MODEL_KEY); } catch {}
+  if (!have) return;
+  try { const spec = (await bestModels()).find((x) => x.id === have); if (spec) await ensureModel(spec, true); } catch { /* načíta sa pri nahratí */ }
+}
 // Vyberie sa vždy najpresnejší model, ktorý prehliadač zvládne: large-v3-turbo na grafickej karte (WebGPU),
 // inak small. Ak zlyhá najpresnejší, skúsi sa ďalší.
 async function bestModels() {
@@ -142,8 +195,8 @@ async function explainFailure(mod, id, lastErr, reach) {
       : "Skús obnoviť stránku.";
   return new Error(`Model sa nepodarilo načítať. ${hint} Technická chyba: ${detail} (${diag})`);
 }
-async function loadModel(spec) {
-  setBusy("Načítavam model…", `Model ${spec.label}. Prvýkrát sa stiahne, potom sa použije uložený v prehliadači.`);
+async function loadModel(spec, quiet) {
+  if (!quiet) setBusy();
   try { await navigator.storage?.persist?.(); } catch {} // aby prehliadač model nevymazal
   if (!tf) {
     try { tf = await import(TF_URL); }
@@ -154,21 +207,24 @@ async function loadModel(spec) {
     if (p.status !== "progress" || !p.total) return;
     files[p.file] = { loaded: p.loaded, total: p.total };
     const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
-    setBusy("Sťahujem model…", `${spec.label}: ${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB (len pri prvom použití)`, loaded / total * 100);
+    void loaded; void total; // priebeh sa nezobrazuje
   };
   let reach = null;
   try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
-  const attempts = [ // bežne (s pamäťou prehliadača), bez pamäte, cez zrkadlo
-    { label: "bežne", cache: true, host: "https://huggingface.co/" },
-    { label: "bez pamäte prehliadača", cache: false, host: "https://huggingface.co/" },
-    { label: "cez zrkadlo", cache: false, host: "https://hf-mirror.com/" },
+  let idbOk = false; try { await openModelDb(); idbOk = true; } catch {}
+  const attempts = [ // trvalá pamäť modelu, pamäť prehliadača, bez pamäte, cez zrkadlo
+    ...(idbOk ? [{ label: "uložený model", cache: "idb", host: "https://huggingface.co/" }] : []),
+    { label: "pamäť prehliadača", cache: "browser", host: "https://huggingface.co/" },
+    { label: "bez pamäte", cache: "none", host: "https://huggingface.co/" },
+    { label: "cez zrkadlo", cache: "none", host: "https://hf-mirror.com/" },
   ];
   let lastErr = null;
   for (const a of attempts) {
     try {
       tf.env.allowLocalModels = false;
       try { tf.env.backends.onnx.wasm.numThreads = 1; tf.env.backends.onnx.wasm.proxy = false; } catch {}
-      tf.env.useBrowserCache = a.cache; tf.env.remoteHost = a.host;
+      tf.env.useCustomCache = a.cache === "idb"; if (a.cache === "idb") tf.env.customCache = idbCache;
+      tf.env.useBrowserCache = a.cache === "browser"; tf.env.remoteHost = a.host;
       for (const k of Object.keys(files)) delete files[k];
       return await tf.pipeline("automatic-speech-recognition", spec.id, { ...spec.opts, progress_callback: progress });
     } catch (e) { lastErr = e; console.error("Model:", spec.label, a.label, e); }
@@ -204,8 +260,8 @@ async function recognize(file, _unused, lang) {
   let lastError = null;
   for (const spec of await bestModels()) {
     try {
-      if (asrId !== spec.id) { asr = await loadModel(spec); asrId = spec.id; }
-      return await transcribeWith(asr, audio, lang);
+      const model = await ensureModel(spec, false);
+      return await transcribeWith(model, audio, lang);
     } catch (e) { lastError = e; asr = null; asrId = null; console.error("Model", spec.label, e); }
   }
   throw lastError;
@@ -463,7 +519,7 @@ function setup() {
   ["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
   drop.addEventListener("drop", (e) => e.dataTransfer.files[0] && pickFile(e.dataTransfer.files[0]));
   $("drop-hint").textContent = "MP4, MOV, WEBM · zostáva vo vašom prehliadači";
-  syncControls(); requestAnimationFrame(loop); show("upload");
+  syncControls(); requestAnimationFrame(loop); show("upload"); showModelState(); warmUpModel();
 }
 
 // ---------- dynamické titulky ----------
@@ -593,5 +649,5 @@ const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} -
 const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${s.text}\n`).join("\n");
 
 
-if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn };
+if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState };
 setup();
