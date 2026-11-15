@@ -50,6 +50,7 @@ main{min-width:0}
 .out-head svg{width:15px;height:15px;color:var(--muted)}
 .pv{display:flex;justify-content:center;align-items:center;height:200px}
 .pv canvas{border-radius:8px;background:#000;cursor:grab;touch-action:none;display:block}
+.pv canvas.crop{cursor:move}
 .out-time{font-size:11px;color:var(--muted);text-align:center}
 .out-btns{display:grid;grid-template-columns:1fr 54px;gap:8px}
 .out-btns button{padding:8px;border-radius:9px;border:1px solid var(--line2);background:var(--card2);cursor:pointer}
@@ -212,6 +213,15 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
             <button class="opt" data-v="9:16"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="2.5" width="10" height="19" rx="2"/></svg>9:16</button>
             <button class="opt" data-v="1:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4.5" y="4.5" width="15" height="15" rx="2"/></svg>1:1</button>
             <button class="opt" data-v="16:9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="7" width="19" height="10" rx="2"/></svg>16:9</button>
+          </div>
+        </div>
+        <div class="pgroup"><div class="plabel">Ťahanie v náhľade</div>
+          <div class="opts" id="tools"><button class="opt on" data-v="captions">Titulky</button><button class="opt" data-v="crop">Orez videa</button></div>
+          <div id="cropBox" hidden>
+            <div class="plabel" style="margin-top:12px"><span>Priblíženie</span><output id="zoomOut"></output></div>
+            <input type="range" id="zoom" min="1" max="3" step="0.05" value="1" aria-label="Priblíženie videa">
+            <button class="mini" id="cropReset" type="button">Obnoviť orez vybraného formátu</button>
+            <p class="hint" style="margin:6px 0 0">Ťahaním po náhľade posúvaš video, kolieskom myši alebo posuvníkom približuješ. Orez platí len pre vybraný formát.</p>
           </div>
         </div>
         <div class="pgroup"><div class="plabel"><span>Titulky</span><button class="sw" id="subsOn" role="switch" aria-checked="true" aria-label="Titulky zapnuté"></button></div>
