@@ -19,8 +19,8 @@ const PRESETS = [
   { hl: "#00b8fc", id: "modry", name: "Modrý obrys", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#00007d", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" },
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
-const state = { aspect: "9:16", style: { ...PRESETS[0], x: 0.5, y: 0.84, position: "bottom", preset: "modern", highlight: false, on: true },
-  segments: [], file: null, url: null, duration: 0, outs: [], busyExport: false, playable: null, job: 0 };
+const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true },
+  segments: [], file: null, url: null, duration: 0, outs: [], busyExport: false, playable: null, job: 0, pos: {} };
 const video = $("video");
 const STEP_OF = { upload: 0, busy: 1, editor: 2 };
 const setStep = (i) => document.querySelectorAll("#steps .step").forEach((s, n) => s.classList.toggle("on", n === i));
@@ -323,6 +323,9 @@ const ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const POS_Y = { top: 0.14, middle: 0.5, bottom: 0.84 };
 const PV_MAX_H = 200;
 const outFor = (k) => state.outs.find((o) => o.k === k);
+// Poloha titulkov je samostatná pre každý formát (9:16, 1:1, 16:9); ostatné nastavenie štýlu je spoločné.
+const defaultPos = () => ({ x: 0.5, y: state.style.y ?? 0.84, position: state.style.position ?? (state.style.y ? null : "bottom") });
+const styleFor = (k) => ({ ...state.style, ...(state.pos[k] || defaultPos()) });
 
 function playableBanner() {
   const bad = state.playable === false;
@@ -358,11 +361,11 @@ function buildOuts() {
     o.dl.onclick = () => { if (o.result) saveUrl(o.result.url, `titulky-${a.k.replace(":", "x")}.${o.result.ext}`); else exportAspects([a.k]); };
     // titulky sa presúvajú ťahaním v ktoromkoľvek náhľade
     const move = (e) => {
-      const r = o.cv.getBoundingClientRect(); const st = state.style;
-      st.x = clamp((e.clientX - r.left) / r.width, 0, 1); st.y = clamp((e.clientY - r.top) / r.height, 0, 1); st.position = null;
-      document.querySelectorAll("#positions .opt").forEach((b) => b.classList.remove("on")); invalidateExports();
+      const r = o.cv.getBoundingClientRect(), q = state.pos[o.k];
+      q.x = clamp((e.clientX - r.left) / r.width, 0, 1); q.y = clamp((e.clientY - r.top) / r.height, 0, 1); q.position = null;
+      state.aspect = o.k; markActive(); invalidateExports();
     };
-    o.cv.addEventListener("pointerdown", (e) => { if (!state.style.on) return; o.drag = { x: e.clientX, y: e.clientY, active: false }; o.cv.setPointerCapture(e.pointerId); e.preventDefault(); });
+    o.cv.addEventListener("pointerdown", (e) => { if (!state.style.on) return; state.aspect = o.k; markActive(); o.drag = { x: e.clientX, y: e.clientY, active: false }; o.cv.setPointerCapture(e.pointerId); e.preventDefault(); });
     o.cv.addEventListener("pointermove", (e) => {
       if (!o.drag) return;
       if (!o.drag.active && Math.hypot(e.clientX - o.drag.x, e.clientY - o.drag.y) > 4) o.drag.active = true;
@@ -387,6 +390,7 @@ function buildSegments() {
   });
 }
 function initEditor() {
+  state.pos = {}; ASPECTS.forEach((a) => { state.pos[a.k] = defaultPos(); });
   buildOuts(); buildSegments(); show("editor"); syncControls(); playableBanner(); $("export-error").hidden = true;
 }
 
@@ -402,7 +406,7 @@ function renderFrame(ctx, vid, t, W, H, st) {
   if (st.dynamic) drawDynamic(ctx, t, W, H, st);
   else { const i = segmentAt(t); if (i >= 0 && state.segments[i].text.trim()) drawCaption(ctx, state.segments[i], t, W, H, st); }
 }
-let lastActive = -2;
+let lastActive = -2, seeking = false;
 function loop() {
   if (!$("view-editor").hidden) {
     const t = video.currentTime, dpr = window.devicePixelRatio || 1, label = `${fmtTime(t)} / ${fmtTime(state.duration || video.duration || 0)}`;
@@ -412,9 +416,11 @@ function loop() {
       if (o.cv.style.width !== w + "px" || o.cv.style.height !== h + "px") { o.cv.style.width = w + "px"; o.cv.style.height = h + "px"; }
       if (o.cv.width !== Math.round(w * dpr) || o.cv.height !== Math.round(h * dpr)) { o.cv.width = Math.round(w * dpr); o.cv.height = Math.round(h * dpr); }
       const ctx = o.cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      renderFrame(ctx, video, t, w, h, state.style);
+      renderFrame(ctx, video, t, w, h, styleFor(o.k));
       o.time.textContent = label;
     }
+    if (!seeking) { $("seek").max = state.duration || video.duration || 0; $("seek").value = t; }
+    $("playBtn").textContent = video.paused ? "▶" : "❚❚";
     const i = segmentAt(t);
     if (i !== lastActive) { lastActive = i; document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("active", +r.dataset.i === i)); }
   }
@@ -422,20 +428,32 @@ function loop() {
 }
 
 // ---------- ovládacie prvky ----------
-function renderSample() {
-  const st = state.style, box = $("styleSample"); box.textContent = "";
-  const word = (s) => (st.caps ? s.toUpperCase() : s);
+function renderSample(box, st, scale = 1) {
+  box.textContent = "";
+  const word = (t) => (st.caps ? t.toUpperCase() : t);
   if (st.dynamic) {
     const wrap = document.createElement("div");
-    const a = document.createElement("div"); a.textContent = word("text"); a.style.cssText = `font:800 22px "${st.font}",sans-serif;color:${st.color}`;
-    const b = document.createElement("div"); b.textContent = word("effect"); b.style.cssText = `font:800 13px "${st.font}",sans-serif;color:${st.color}`;
+    const a = document.createElement("div"); a.textContent = word("text"); a.style.cssText = `font:800 ${19 * scale}px "${st.font}",sans-serif;color:${st.color}`;
+    const b = document.createElement("div"); b.textContent = word("effect"); b.style.cssText = `font:800 ${11 * scale}px "${st.font}",sans-serif;color:${st.color}`;
     wrap.append(a, b); box.append(wrap); return;
   }
   const sp = document.createElement("span"); sp.className = "t"; sp.textContent = "Ahoj svet";
-  sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:17px;color:${st.color}`;
+  sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:${16 * scale}px;color:${st.color}`;
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
   else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = "Ahoj "; const b2 = document.createElement("span"); b2.textContent = "svet"; b2.style.color = st.hl; sp.append(a, b2); } }
   box.append(sp);
+}
+function applyPreset(p) {
+  const o = state.style;
+  state.style = { ...p, preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, on: o.on };
+  if (p.y !== undefined) ASPECTS.forEach((a) => { state.pos[a.k] = { x: 0.5, y: p.y, position: p.position ?? null }; });
+  syncControls();
+}
+function markActive() {
+  const q = state.pos[state.aspect];
+  document.querySelectorAll("#positions .opt").forEach((b) => b.classList.toggle("on", !!q && b.dataset.v === q.position));
+  document.querySelectorAll("#aspects .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
+  state.outs.forEach((o) => o.el.classList.toggle("on", o.k === state.aspect));
 }
 function syncControls() {
   const st = state.style;
@@ -444,18 +462,16 @@ function syncControls() {
   $("font").value = st.font; $("highlight").checked = !!st.highlight; $("hl").value = st.hl; $("hl").disabled = !st.highlight;
   $("roam").checked = !!st.roam; $("caps").checked = !!st.caps;
   $("subsOn").setAttribute("aria-checked", String(st.on));
-  $("styleSel").value = st.preset || "custom";
-  document.querySelectorAll("#positions .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === st.position));
-  document.querySelectorAll("#aspects .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
-  state.outs.forEach((o) => o.el.classList.toggle("on", o.k === state.aspect));
-  renderSample(); invalidateExports();
+  document.querySelectorAll("#styles .tile").forEach((t) => t.classList.toggle("on", t.dataset.id === st.preset));
+  $("styleCustom").hidden = !!st.preset;
+  markActive(); invalidateExports();
 }
 
 // ---------- export: video + titulky nahrané z plátna ----------
 async function recordAspect(aspect, onProgress, job) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
   const [ow, oh] = OUT[aspect], k = EXPORT_SHORT / Math.min(ow, oh);
-  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = { ...state.style };
+  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = styleFor(aspect);
   await Promise.all([400, 700, 800].map((wt) => document.fonts.load(`${st.italic ? "italic " : ""}${wt} 40px "${st.font}"`).catch(() => {})));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
@@ -523,15 +539,14 @@ function reset() {
 }
 function setup() {
   FONTS.forEach((f) => { const o = document.createElement("option"); o.value = o.textContent = f; $("font").append(o); });
-  PRESETS.concat([{ id: "custom", name: "Vlastný" }]).forEach((p) => { const o = document.createElement("option"); o.value = p.id; o.textContent = p.name; $("styleSel").append(o); });
-  $("styleSel").onchange = (e) => {
-    const p = PRESETS.find((x) => x.id === e.target.value); if (!p) return;
-    const o = state.style;
-    state.style = { ...p, x: o.x, y: p.y ?? o.y, position: p.position ?? (p.y ? null : o.position), preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, on: o.on };
-    syncControls();
-  };
+  PRESETS.forEach((p) => { // ukážky štýlov
+    const t = document.createElement("button"); t.className = "tile"; t.dataset.id = p.id; t.setAttribute("aria-label", "Štýl " + p.name);
+    const smp = document.createElement("div"); smp.className = "tsample"; renderSample(smp, { ...p, on: true }, 0.9);
+    const nm = document.createElement("span"); nm.className = "tname"; nm.textContent = p.name;
+    t.append(smp, nm); t.onclick = () => applyPreset(p); $("styles").append(t);
+  });
   document.querySelectorAll("#aspects .opt").forEach((b) => b.onclick = () => { state.aspect = b.dataset.v; syncControls(); });
-  document.querySelectorAll("#positions .opt").forEach((b) => b.onclick = () => { const st = state.style; st.position = b.dataset.v; st.x = 0.5; st.y = POS_Y[b.dataset.v]; syncControls(); });
+  document.querySelectorAll("#positions .opt").forEach((b) => b.onclick = () => { const q = state.pos[state.aspect]; if (!q) return; q.position = b.dataset.v; q.x = 0.5; q.y = POS_Y[b.dataset.v]; syncControls(); });
   const custom = () => { state.style.preset = null; syncControls(); };
   $("subsOn").onclick = () => { state.style.on = !state.style.on; syncControls(); };
   $("color").oninput = (e) => { state.style.color = e.target.value; custom(); };
@@ -547,6 +562,9 @@ function setup() {
   $("dl-srt").onclick = () => saveText(toSrt(state.segments), "titulky.srt", "application/x-subrip");
   $("dl-vtt").onclick = () => saveText(toVtt(state.segments), "titulky.vtt", "text/vtt");
   $("newproject").onclick = reset;
+  $("playBtn").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
+  $("seek").addEventListener("input", (e) => { seeking = true; video.currentTime = +e.target.value; });
+  $("seek").addEventListener("change", () => { seeking = false; });
   const drop = $("drop");
   $("file").onchange = (e) => e.target.files[0] && pickFile(e.target.files[0]);
   ["dragover", "dragenter"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));

@@ -33,7 +33,15 @@ main{min-width:0}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:20px;align-items:start}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .card-title{font-size:13px;color:#cfd4ee;margin-bottom:10px}
-#video{display:block;width:100%;max-width:100%;max-height:330px;background:#000;border-radius:8px;object-fit:contain}
+.vhidden{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none}
+.transport{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 14px}
+.transport button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:var(--card2);cursor:pointer;flex:none}
+.transport input{flex:1}
+.styles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tile{border:1px solid var(--line2);border-radius:10px;padding:0;cursor:pointer;overflow:hidden;background:#050816;color:#fff;text-align:center}
+.tile.on{border-color:var(--a);box-shadow:0 0 0 1px var(--a)}
+.tile .tsample{height:58px;display:grid;place-items:center;padding:4px;line-height:1.1;background:linear-gradient(135deg,#2a2f55,#3b2f6b)}
+.tile .tname{display:block;font-size:11px;color:var(--muted);background:var(--card2);padding:4px 0}
 .arrows{display:grid;grid-template-columns:repeat(3,1fr);justify-items:center;height:32px;color:var(--b);font-size:18px;align-items:center}
 .outs{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.05fr) minmax(0,1.25fr);gap:14px}
 .out{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -176,8 +184,8 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 
         <section id="view-editor" hidden>
           <p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľady a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>
-          <div class="card"><div class="card-title">Pôvodné video</div><video id="video" controls playsinline></video></div>
-          <div class="arrows"><span>↓</span><span>↓</span><span>↓</span></div>
+          <video id="video" class="vhidden" playsinline preload="auto"></video>
+          <div class="transport card"><button id="playBtn" aria-label="Prehrať alebo pozastaviť">▶</button><input type="range" id="seek" min="0" max="1" step="0.01" value="0" aria-label="Pozícia vo videu"></div>
           <div class="outs" id="outs"></div>
           <p class="hint">Titulky môžeš presunúť ťahaním v ktoromkoľvek náhľade. Export beží v reálnom čase, nechaj kartu otvorenú.</p>
           <div class="card" style="margin-top:14px">
@@ -201,8 +209,8 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
         </div>
         <div class="pgroup"><div class="plabel"><span>Titulky</span><button class="sw" id="subsOn" role="switch" aria-checked="true" aria-label="Titulky zapnuté"></button></div>
           <div class="plabel" style="margin-top:12px">Štýl</div>
-          <select id="styleSel" aria-label="Štýl titulkov"></select>
-          <div class="sample" id="styleSample"></div>
+          <div class="styles" id="styles"></div>
+          <p class="hint" id="styleCustom" hidden>Vlastný štýl (upravený)</p>
         </div>
         <div class="pgroup"><div class="plabel">Pozícia</div>
           <div class="opts" id="positions">
