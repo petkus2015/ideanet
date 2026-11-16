@@ -507,6 +507,7 @@ function wireChip(el, s, i, hl, hr) {
   el.addEventListener("pointerdown", (e) => {
     if (e.target !== el) return;
     begin("m")(e); state.activeSeg = i; video.currentTime = s.start + 0.01; markActiveSeg();
+    const row = document.querySelector(`.segment[data-i="${i}"]`); if (row) row.scrollIntoView({ block: "nearest" }); // klik na titulok na osi = zámerný presun, tu sa scrollovať má
   });
   el.addEventListener("pointermove", (e) => {
     if (!mode) return;
@@ -654,7 +655,7 @@ function loop() {
     const i = segmentAt(t);
     if (i !== lastActive && !state.tlDragging) {
       lastActive = i; state.activeSeg = i; markActiveSeg();
-      if (i >= 0) { const row = document.querySelector(`.segment[data-i="${i}"]`); if (row) row.scrollIntoView({ block: "nearest" }); }
+      // zámerne sa tu nescrolluje zoznam titulkov — pri prehrávaní by to „skákalo“, ak si v zozname vyscrolloval inam
     }
   }
   requestAnimationFrame(loop);
