@@ -965,7 +965,7 @@ function runDetectSpeakers() {
   }, 30);
 }
 
-// ---------- stránky v bočnej lište: Prerobenie (práca s videom), Knižnica štýlov, Značka (fonty) ----------
+// ---------- stránky v bočnej lište: Titulkovanie (práca s videom), Knižnica štýlov, Značka (fonty) ----------
 let page = "work";
 function setPage(p) {
   page = p; closeSpkMenu();
