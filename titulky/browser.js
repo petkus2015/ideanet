@@ -45,7 +45,7 @@ const PRESETS = [
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true },
   segments: [], file: null, url: null, duration: 0, out: null, results: {}, busyExport: false, playable: null, job: 0, pos: {}, audio: null,
-  spk: [], spkStyle: {}, cur: 1, tab: "subs", quality: "orig", parts: [], partSel: 0, crop: {}, tool: "captions",
+  spk: [], spkStyle: {}, cur: 1, tab: "subs", quality: "orig", clips: [], clipSel: 0, trSel: -1, undo: [], redo: [], pc: 0, pvRate: 1, autoStop: null, thumbs: null, exportCancel: false, crop: {}, tool: "captions",
   waveform: null, tlZoomVal: 1, tlPxPerSec: 100, tlDragging: false, collapsedSpk: new Set(), activeSeg: -1, segFilter: "", sel: new Set(), selAnchor: -1 };
 const video = $("video");
 // Menu krokov je stále hore. Po nahratí videa sa ním prepína medzi časťami editora:
@@ -640,7 +640,8 @@ function renderTimeline() {
   const dur = tlDuration(), avail = $("tlScroll").clientWidth || 600;
   const px = Math.max(10, avail / dur * state.tlZoomVal);
   state.tlPxPerSec = px;
-  drawRuler(dur, px); drawWave(dur, px); renderChips(dur, px); renderCuts(dur, px);
+  drawRuler(dur, px); drawWave(dur, px); renderChips(dur, px);
+  if (state.tab === "edit" && !trackBusy) renderClipTrack();
   $("tlDur").textContent = fmtTimeline(dur);
 }
 function selectSeg(i, e) { // klik = jeden titulok, Shift+klik = úsek, Ctrl/Cmd+klik = pridať/odobrať
@@ -684,9 +685,10 @@ function markActiveSeg() {
   document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("active", +r.dataset.i === state.activeSeg));
 }
 function syncTimelinePlayhead() {
+  if (state.tab === "edit") { syncClipPlayhead(); return; }
   const ph = $("tlPlayhead"); if (!ph) return;
   const x = video.currentTime * state.tlPxPerSec;
-  ph.style.left = Math.round(x) + "px"; $("tlCur").textContent = fmtTimeline(video.currentTime);
+  ph.style.left = Math.round(x) + "px"; $("tlCur").textContent = fmtTimeline(video.currentTime); $("tlDur").textContent = fmtTimeline(tlDuration());
   const sc = $("tlScroll");
   if (sc && !video.paused && (x < sc.scrollLeft + 24 || x > sc.scrollLeft + sc.clientWidth - 24)) sc.scrollLeft = Math.max(0, x - sc.clientWidth * 0.3);
 }
@@ -818,7 +820,7 @@ function initEditor() {
   buildOut(); buildSegments(); show("editor"); syncControls(); markActive(); playableBanner(); $("export-error").hidden = true;
   renderTimeline();
   renderSpkList(); renderSelSpk(); $("spkDetect").disabled = !state.audio;
-  resetCuts(); renderCutUi();
+  resetClips(); makeThumbs(state.job); renderCutUi();
 }
 
 // ---------- kreslenie snímky (rovnaké pre náhľady aj export) ----------
@@ -828,144 +830,442 @@ function cropRect(vw, vh, W, H, crop) {
   const cx = clamp(crop?.cx ?? 0.5, W / 2 / iw, 1 - W / 2 / iw), cy = clamp(crop?.cy ?? 0.5, H / 2 / ih, 1 - H / 2 / ih);
   return { iw, ih, dx: W / 2 - cx * iw, dy: H / 2 - cy * ih };
 }
-// ---------- strih: časti videa a prechody ----------
-// Video sa delí na časti (v čase originálu). Časť môže byť vystrihnutá (off). Za každou ponechanou časťou môže byť
-// prechod do ďalšej ponechanej časti. Titulky ostávajú v čase originálu: čo sa neprehrá, to sa ani neukáže.
-// Prechody používajú jedno video (bez prekrývania záberov): koniec časti odchádza, začiatok ďalšej prichádza.
+// ---------- strih ako v CapCut ----------
+// Video je zoznam klipov v poradí, v akom idú vo výslednom videu. Každý klip je úsek originálu (start–end),
+// má rýchlosť, efekt, filter a prechod do nasledujúceho klipu. Zmazaný klip zmizne a stopa sa zatvorí,
+// klipy sa dajú presúvať a orezávať. Titulky ostávajú v čase originálu, takže idú so svojím klipom.
 const TRANSITIONS = [
-  { id: "none", name: "Bez prechodu" }, { id: "fade", name: "Stmievačka" }, { id: "white", name: "Záblesk" },
-  { id: "blur", name: "Rozmazanie" }, { id: "zoom", name: "Priblíženie" }, { id: "whip", name: "Švih" },
+  { id: "none", name: "Žiadny" }, { id: "fade", name: "Stmievačka" }, { id: "white", name: "Záblesk" }, { id: "blur", name: "Rozmazanie" },
+  { id: "zoom", name: "Priblíženie" }, { id: "whip", name: "Švih" }, { id: "spin", name: "Otočenie" }, { id: "glitch", name: "Glitch" },
 ];
-const trName = (id) => (TRANSITIONS.find((x) => x.id === id) || TRANSITIONS[0]).name;
-function resetCuts() { state.parts = [{ start: 0, end: tlDuration(), off: false, tr: "none", td: 0.6 }]; state.partSel = 0; }
-const partAt = (t) => { const i = state.parts.findIndex((p) => t < p.end); return i < 0 ? state.parts.length - 1 : i; };
-const nextKept = (i) => { for (let j = i + 1; j < state.parts.length; j++) if (!state.parts[j].off) return j; return -1; };
-const prevKept = (i) => { for (let j = i - 1; j >= 0; j--) if (!state.parts[j].off) return j; return -1; };
-const hasCuts = () => state.parts.length > 1 || (state.parts[0] && state.parts[0].off);
-const outDuration = () => state.parts.reduce((a, p) => a + (p.off ? 0 : p.end - p.start), 0);
-function srcToOut(t) { // čas originálu -> čas vo výslednom videu (null, ak je to vystrihnuté)
-  let acc = 0;
-  for (const p of state.parts) { if (t < p.end) return p.off ? null : acc + Math.max(0, t - p.start); if (!p.off) acc += p.end - p.start; }
-  return acc;
+const EFFECTS = [
+  { id: "none", name: "Žiadny" }, { id: "kenburns", name: "Zoom" }, { id: "pulse", name: "Pulz" },
+  { id: "shake", name: "Otras" }, { id: "glitch", name: "Glitch" }, { id: "vhs", name: "VHS" },
+];
+const FILTERS = [
+  { id: "none", name: "Pôvodný" }, { id: "vivid", name: "Živý" }, { id: "warm", name: "Teplý" }, { id: "cool", name: "Studený" },
+  { id: "bw", name: "Čiernobiely" }, { id: "vintage", name: "Vintage" }, { id: "film", name: "Film" },
+];
+const SPEEDS = [0.5, 1, 1.5, 2, 3];
+const nameOf = (list, id) => (list.find((x) => x.id === id) || list[0]).name;
+const TR_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 6v12M20 6v12M8 12h8M13 9l3 3-3 3"/></svg>';
+let clipSeq = 1;
+const newClip = (start, end, o = {}) => ({ id: clipSeq++, start, end, speed: 1, tr: "none", td: 0.5, fx: "none", filter: "none", ...o });
+function resetClips() { state.clips = [newClip(0, tlDuration())]; state.clipSel = 0; state.trSel = -1; state.undo = []; state.redo = []; state.pc = 0; state.autoStop = null; }
+const clipOut = (c) => (c.end - c.start) / c.speed; // dĺžka klipu vo výslednom videu
+function outStarts() { const a = []; let acc = 0; for (const c of state.clips) { a.push(acc); acc += clipOut(c); } return a; }
+const outDuration = () => state.clips.reduce((a, c) => a + clipOut(c), 0);
+const clipAtSrc = (t) => state.clips.findIndex((c) => t >= c.start - 1e-4 && t < c.end);
+const isEdited = () => { const c = state.clips; return !!c && (c.length !== 1 || c[0].start > 0.01 || c[0].end < tlDuration() - 0.01 || c[0].speed !== 1); };
+const firstClipStart = () => (state.clips.length ? state.clips[0].start : 0);
+function srcToOut(t) { const i = clipAtSrc(t); if (i < 0) return null; const c = state.clips[i]; return outStarts()[i] + (t - c.start) / c.speed; }
+function outToSrc(o) {
+  const st = outStarts(), n = state.clips.length;
+  for (let i = 0; i < n; i++) { const c = state.clips[i]; if (o < st[i] + clipOut(c) || i === n - 1) return { i, t: clamp(c.start + (o - st[i]) * c.speed, c.start, c.end - 0.001) }; }
+  return { i: 0, t: 0 };
 }
-// Kam pokračovať z času t: null = normálne ďalej, číslo = preskočiť na tento čas, "end" = koniec videa.
-function cutStep(t) {
-  if (!hasCuts()) return null;
-  const i = partAt(t), p = state.parts[i];
-  if (!p.off && t < p.end - 0.03) return null;
-  const j = nextKept(i);
-  if (j < 0) return p.off || t >= p.end - 0.03 ? "end" : null;
-  if (!p.off && j === i + 1) return null; // nasledujúca časť nadväzuje, netreba skákať
-  return state.parts[j].start + 0.001;
+// Kam ďalej pri prehrávaní z času t, keď hrá klip pc: null = nič, { pc } = už hrá iný klip, { pc, t } = skočiť, "end".
+function cutStep(t, pc) {
+  if (!isEdited()) return null;
+  const n = state.clips.length, c = state.clips[pc];
+  if (!c) return { pc: 0, t: state.clips[0].start + 0.001 };
+  if (t >= c.start - 0.05 && t < c.end - 0.03) return null; // hrá aktuálny klip
+  if (t >= c.end - 0.03 && t < c.end + 0.25) { // aktuálny klip dohral: ďalší podľa poradia, nie podľa času originálu
+    const nx = pc + 1; if (nx >= n) return "end";
+    if (Math.abs(state.clips[nx].start - c.end) < 0.02) return t >= c.end ? { pc: nx } : null; // nadväzuje, netreba skákať
+    return { pc: nx, t: state.clips[nx].start + 0.001 };
+  }
+  const i = clipAtSrc(t); // prehrávanie posunuté inam: prevezmi klip, v ktorom je
+  if (i >= 0) return { pc: i };
+  return t < c.start ? { pc, t: c.start + 0.001 } : pc + 1 < n ? { pc: pc + 1, t: state.clips[pc + 1].start + 0.001 } : "end";
 }
-function firstKeptStart() { const p = state.parts.find((x) => !x.off); return p ? p.start : 0; }
-function trSpan(i) { // dĺžka polovice prechodu za časťou i (odchod na jej konci aj príchod na začiatku ďalšej)
-  const p = state.parts[i], j = nextKept(i); if (j < 0 || p.tr === "none") return 0;
-  const q = state.parts[j];
-  return Math.min(p.td / 2, (p.end - p.start) / 2, (q.end - q.start) / 2);
+function trSpan(i) { // polovica prechodu (vo výslednom čase) za klipom i
+  const c = state.clips[i], d = state.clips[i + 1]; if (!c || !d || c.tr === "none") return 0;
+  return Math.min(c.td / 2, clipOut(c) / 2, clipOut(d) / 2);
 }
-function transFx(t) { // aký prechod práve beží v čase t: { type, p (0..1), out (odchod = true) }
-  if (!hasCuts()) return null;
-  const i = partAt(t), part = state.parts[i]; if (part.off) return null;
+function transFx(t) {
+  if (!state.clips || !state.clips.length) return null;
+  const i = clipAtSrc(t); if (i < 0) return null;
+  const c = state.clips[i], lo = (t - c.start) / c.speed, rem = (c.end - t) / c.speed;
   let best = null;
-  const d1 = trSpan(i); if (d1 > 0 && part.end - t < d1) best = { type: part.tr, p: 1 - (part.end - t) / d1, out: true };
-  const k = prevKept(i);
-  if (k >= 0) { const d0 = trSpan(k); if (d0 > 0 && nextKept(k) === i && t - part.start < d0) { const p = 1 - (t - part.start) / d0; if (!best || p > best.p) best = { type: state.parts[k].tr, p, out: false }; } }
+  const d1 = trSpan(i); if (d1 > 0 && rem < d1) best = { type: c.tr, p: 1 - rem / d1, out: true };
+  const d0 = i > 0 ? trSpan(i - 1) : 0;
+  if (d0 > 0 && lo < d0) { const p = 1 - lo / d0; if (!best || p > best.p) best = { type: state.clips[i - 1].tr, p, out: false }; }
   if (best) best.p = clamp(best.p, 0, 1);
   return best;
 }
-function cutSegments() { // titulky pre SRT/VTT v čase výsledného videa
-  if (!hasCuts()) return state.segments;
-  const out = [];
+function clipLook(t) {
+  if (!state.clips || !state.clips.length) return null;
+  const i = clipAtSrc(t); if (i < 0) return null;
+  const c = state.clips[i]; if (c.fx === "none" && c.filter === "none") return null;
+  return { fx: c.fx, filter: c.filter, lt: (t - c.start) / c.speed, lp: (t - c.start) / Math.max(0.01, c.end - c.start) };
+}
+function cutSegments() { // titulky pre SRT/VTT v čase výsledného videa (aj po presunutí a zrýchlení klipov)
+  if (!isEdited()) return state.segments;
+  const st = outStarts(), out = [];
   for (const s of state.segments) {
-    const pieces = state.parts.filter((p) => !p.off && p.end > s.start && p.start < s.end);
-    if (!pieces.length) continue;
-    const a = srcToOut(Math.max(s.start, pieces[0].start)), b = srcToOut(Math.min(s.end, pieces[pieces.length - 1].end) - 0.001);
-    if (a != null && b != null && b - a > 0.25) out.push({ ...s, start: a, end: b + 0.001 });
+    let cur = null;
+    state.clips.forEach((c, i) => {
+      const a = Math.max(s.start, c.start), b = Math.min(s.end, c.end); if (b - a <= 0) return;
+      const oa = st[i] + (a - c.start) / c.speed, ob = st[i] + (b - c.start) / c.speed;
+      if (cur && Math.abs(cur.end - oa) < 0.02) cur.end = ob; else { if (cur) out.push(cur); cur = { ...s, start: oa, end: ob }; }
+    });
+    if (cur) out.push(cur);
   }
-  return out;
+  return out.filter((x) => x.end - x.start > 0.25).sort((a, b) => a.start - b.start);
 }
+
+// --- história (Späť / Znova) ---
+function snapshot() { state.undo.push(JSON.stringify(state.clips)); if (state.undo.length > 60) state.undo.shift(); state.redo = []; }
+function restoreClips(json) {
+  state.clips = JSON.parse(json); clipSeq = Math.max(clipSeq, ...state.clips.map((c) => c.id + 1));
+  state.clipSel = Math.min(state.clipSel, state.clips.length - 1); if (state.trSel >= state.clips.length - 1) state.trSel = -1;
+}
+function undoCut() { if (!state.undo.length) return; state.redo.push(JSON.stringify(state.clips)); restoreClips(state.undo.pop()); cutHint("Vrátené späť."); cutsChanged(); }
+function redoCut() { if (!state.redo.length) return; state.undo.push(JSON.stringify(state.clips)); restoreClips(state.redo.pop()); cutHint("Znova použité."); cutsChanged(); }
 function cutsChanged() { invalidateResults(); renderCutUi(); }
+const cutHint = (t) => { const h = $("cutHint"); if (h) h.textContent = t; };
+const secTxt = (s) => s.toFixed(1).replace(".", ",") + " s";
+
+// --- úpravy klipov ---
+function seekOut(o) { const r = outToSrc(o); state.pc = r.i; video.currentTime = r.t; }
 function splitAt(t) {
-  const i = partAt(t), p = state.parts[i];
-  if (t - p.start < 0.2 || p.end - t < 0.2) { $("cutHint").textContent = "Tu sa rozdeliť nedá, strih je príliš blízko. Posuň video trochu ďalej."; return; }
-  state.parts.splice(i + 1, 0, { start: t, end: p.end, off: p.off, tr: p.tr, td: p.td });
-  p.end = t; p.tr = "none"; state.partSel = i;
-  $("cutHint").textContent = `Rozdelené v čase ${fmtTimeMs(t)}. Vyber časť a vystrihni ju, alebo nižšie nastav prechod medzi časťami.`;
+  const i = clipAtSrc(t);
+  if (i < 0) { cutHint("Prehrávacia hlava nie je na žiadnom klipe."); return; }
+  const c = state.clips[i];
+  if (t - c.start < 0.15 * c.speed || c.end - t < 0.15 * c.speed) { cutHint("Tu sa rozdeliť nedá, je to príliš blízko okraja klipu."); return; }
+  snapshot();
+  state.clips.splice(i + 1, 0, newClip(t, c.end, { speed: c.speed, fx: c.fx, filter: c.filter, tr: c.tr, td: c.td }));
+  c.end = t; c.tr = "none"; state.clipSel = i + 1; state.trSel = -1; state.pc = i + 1;
+  cutHint("Rozdelené. Vybraný je klip za strihom: vymaž ho, presuň, alebo mu daj efekt.");
   cutsChanged();
 }
-function toggleOff(i) {
-  const p = state.parts[i]; if (!p) return;
-  if (!p.off && state.parts.filter((x) => !x.off).length === 1) { $("cutHint").textContent = "Celé video vystrihnúť nejde, aspoň jedna časť musí ostať."; return; }
-  p.off = !p.off;
-  $("cutHint").textContent = p.off ? `Časť ${i + 1} je vystrihnutá. Prehrávanie aj export ju preskočia.` : `Časť ${i + 1} je späť vo videu.`;
-  if (p.off && video.currentTime >= p.start && video.currentTime < p.end) { const j = nextKept(i) >= 0 ? nextKept(i) : prevKept(i); if (j >= 0) video.currentTime = state.parts[j].start + 0.001; }
+function deleteClip(i) {
+  const c = state.clips[i]; if (!c) return;
+  if (state.clips.length < 2) { cutHint("Posledný klip vymazať nejde. Kratší ho spravíš ťahaním za biele okraje."); return; }
+  const playing = clipAtSrc(video.currentTime) === i, o = outStarts()[i];
+  snapshot(); state.clips.splice(i, 1);
+  state.clipSel = Math.min(i, state.clips.length - 1); state.trSel = -1;
+  if (playing) seekOut(Math.min(o, outDuration() - 0.01));
+  cutHint("Klip je vymazaný, ostatné sa posunuli k sebe. Späť ho vrátiš tlačidlom Späť.");
   cutsChanged();
 }
-const fmtTimeMs = (s) => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, "0")}`;
-function selectPart(i, seek = false) {
-  state.partSel = clamp(i, 0, state.parts.length - 1);
-  if (seek) video.currentTime = state.parts[state.partSel].start + 0.001;
-  renderCutUi();
+function moveClip(from, to) {
+  if (from === to) return;
+  snapshot(); const [c] = state.clips.splice(from, 1); state.clips.splice(to, 0, c);
+  state.clipSel = to; state.trSel = -1; seekOut(outStarts()[to] + 0.001);
+  cutHint(`Klip je presunutý na ${to + 1}. miesto.`);
+  cutsChanged();
 }
-function renderCuts(dur, px) { // vrstva na časovej osi: vystrihnuté časti, miesta strihu, prechody, vybraná časť
-  const box = $("tlCuts"); if (!box) return; box.textContent = ""; box.style.width = Math.round(dur * px) + "px";
-  state.parts.forEach((p, i) => {
-    const l = Math.round(p.start * px), w = Math.max(1, Math.round((p.end - p.start) * px));
-    if (p.off) { const d = document.createElement("div"); d.className = "cut-off"; d.style.left = l + "px"; d.style.width = w + "px"; const sp = document.createElement("span"); sp.textContent = "Vystrihnuté"; d.append(sp); box.append(d); }
-    if (i > 0) { const c = document.createElement("div"); c.className = "cut-line"; c.style.left = l + "px"; box.append(c); }
-    if (i === state.partSel && state.parts.length > 1) { const sl = document.createElement("div"); sl.className = "cut-sel"; sl.style.left = l + "px"; sl.style.width = w + "px"; box.append(sl); }
-    if (!p.off && p.tr !== "none" && nextKept(i) >= 0) {
-      const b = document.createElement("button"); b.type = "button"; b.className = "cut-tr"; b.style.left = Math.round(p.end * px) + "px"; b.textContent = "✦";
-      b.title = "Prechod: " + trName(p.tr) + " · klikni a uprav"; b.setAttribute("aria-label", b.title);
-      b.onclick = (e) => { e.stopPropagation(); selectPart(i); };
-      b.onpointerdown = (e) => e.stopPropagation();
-      box.append(b);
-    }
+function selectClip(i) { state.clipSel = i; state.trSel = -1; renderCutUi(); }
+function selectTransition(i) {
+  state.trSel = i; state.clipSel = -1; renderCutUi();
+  previewTransition(i, false);
+}
+function previewTransition(i, play) { // pretočí kúsok pred strih; po zmene prechodu ho hneď prehrá
+  const a = state.clips[i], b = state.clips[i + 1]; if (!a || !b) return;
+  const lead = Math.min(1.2, clipOut(a) * 0.6);
+  video.currentTime = a.end - lead * a.speed; state.pc = i;
+  if (play) { state.autoStop = { pc: i + 1, at: b.start + Math.min(1, clipOut(b) * 0.6) * b.speed }; video.play().catch(() => {}); }
+}
+
+// --- náhľady snímok do stopy ---
+async function makeThumbs(job) {
+  state.thumbs = null;
+  const dur = tlDuration(), n = clamp(Math.ceil(dur / 1.2), 6, 90), step = dur / n;
+  const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = state.url;
+  const ok = await new Promise((res) => { v.onloadeddata = () => res(true); v.onerror = () => res(false); setTimeout(() => res(!!v.videoWidth), 8000); });
+  if (!ok || !v.videoWidth || job !== state.job) return;
+  const th = 96, tw = Math.round(th * clamp(v.videoWidth / v.videoHeight, 0.45, 1.9));
+  state.thumbs = { step, list: new Array(n).fill(null), tw, th };
+  for (let k = 0; k < n; k++) {
+    if (job !== state.job) return;
+    await new Promise((res) => { const to = setTimeout(res, 2000); v.onseeked = () => { clearTimeout(to); res(); }; v.currentTime = Math.min(dur - 0.05, (k + 0.5) * step); });
+    const c = document.createElement("canvas"); c.width = tw; c.height = th;
+    try { c.getContext("2d").drawImage(v, 0, 0, tw, th); state.thumbs.list[k] = c; } catch {}
+    if (k % 8 === 7 || k === n - 1) { if (state.tab === "edit" && !trackBusy) renderClipTrack(); }
+  }
+  v.removeAttribute("src"); v.load();
+}
+const thumbAt = (t) => { const T = state.thumbs; if (!T) return null; const k = clamp(Math.floor(t / T.step), 0, T.list.length - 1); return T.list[k] || T.list.find(Boolean) || null; };
+
+// --- klipová stopa ---
+const CT_PAD = 28;
+let trackBusy = false;
+function ctPx() { const avail = ($("ctScroll").clientWidth || 600) - CT_PAD * 2; return Math.max(16, avail / Math.max(0.5, outDuration()) * state.tlZoomVal); }
+function drawCtRuler(total, px) {
+  const cv = $("ctRuler"), dpr = window.devicePixelRatio || 1, w = Math.round(total * px + CT_PAD * 2);
+  cv.width = Math.round(w * dpr); cv.height = Math.round(22 * dpr); cv.style.width = w + "px";
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, 22);
+  const step = px > 60 ? 1 : px > 25 ? 2 : px > 10 ? 5 : px > 4 ? 10 : 30;
+  g.strokeStyle = "rgba(255,255,255,.2)"; g.fillStyle = "rgba(255,255,255,.55)"; g.font = "10px Inter,sans-serif"; g.textBaseline = "top";
+  for (let t = 0; t <= total + 1e-6; t += step / 2) {
+    const x = CT_PAD + t * px, major = Math.abs(t / step - Math.round(t / step)) < 1e-6;
+    g.beginPath(); g.moveTo(x + 0.5, major ? 13 : 17); g.lineTo(x + 0.5, 22); g.stroke();
+    if (major) g.fillText(fmtTime(t), x + 3, 1);
+  }
+}
+function drawStrip(cv, c, w) {
+  const dpr = window.devicePixelRatio || 1, h = 64;
+  cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.round(h * dpr);
+  const g = cv.getContext("2d"); g.fillStyle = "#1a2140"; g.fillRect(0, 0, cv.width, cv.height);
+  const T = state.thumbs; if (!T) return;
+  const tw = h * dpr * T.tw / T.th;
+  for (let x = 0; x < cv.width; x += tw) {
+    const t = c.start + ((x + tw / 2) / dpr) / state.ctPx * c.speed, im = thumbAt(Math.min(t, c.end - 0.01));
+    if (im) g.drawImage(im, x, 0, tw, cv.height);
+  }
+  if (c.filter !== "none") { g.fillStyle = "rgba(108,92,255,.18)"; g.fillRect(0, 0, cv.width, cv.height); }
+}
+function drawCtAudio(total, px) { // zvuk pod klipmi, v poradí a rýchlosti klipov
+  const cv = $("ctAudio"), dpr = window.devicePixelRatio || 1, w = Math.round(total * px + CT_PAD * 2), h = 18;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.width = w + "px";
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const peaks = state.waveform, dur = tlDuration(); if (!peaks || !peaks.length) return;
+  g.fillStyle = "rgba(25,184,232,.55)";
+  for (let x = 0; x < total * px; x++) {
+    const { t } = outToSrc(x / px), v = peaks[Math.floor(t / dur * peaks.length)] || 0, bh = Math.max(1, v * h);
+    g.fillRect(CT_PAD + x, (h - bh) / 2, 1, bh);
+  }
+}
+function renderClipTrack() {
+  const inner = $("ctInner"); if (!inner || !state.clips || !state.clips.length || !$("ctScroll").clientWidth) return;
+  const px = state.ctPx = ctPx(), total = outDuration(), st = outStarts();
+  inner.style.width = Math.round(total * px + CT_PAD * 2) + "px";
+  drawCtRuler(total, px); drawCtAudio(total, px);
+  const box = $("ctClips"); box.textContent = "";
+  state.clips.forEach((c, i) => {
+    const el = document.createElement("div"); el.className = "clip" + (i === state.clipSel ? " sel" : ""); el.dataset.i = i;
+    el.setAttribute("role", "button"); el.setAttribute("aria-label", `Klip ${i + 1}, ${secTxt(clipOut(c))}`); el.tabIndex = 0;
+    const w = Math.max(6, clipOut(c) * px); el.style.left = (CT_PAD + st[i] * px) + "px"; el.style.width = w + "px";
+    const cv = document.createElement("canvas"); drawStrip(cv, c, w); el.append(cv);
+    const tags = document.createElement("div"); tags.className = "cl-tags";
+    const tag = (txt, cls = "") => { const s = document.createElement("span"); s.className = "cl-tag " + cls; s.textContent = txt; tags.append(s); };
+    if (c.speed !== 1) tag(String(c.speed).replace(".", ",") + "×", "sp");
+    if (c.fx !== "none") tag(nameOf(EFFECTS, c.fx)); if (c.filter !== "none") tag(nameOf(FILTERS, c.filter));
+    const du = document.createElement("span"); du.className = "cl-dur"; du.textContent = secTxt(clipOut(c));
+    el.append(tags, du);
+    if (i === state.clipSel) { const l = document.createElement("div"); l.className = "trim l"; l.title = "Ťahaním orežeš začiatok"; const r = document.createElement("div"); r.className = "trim r"; r.title = "Ťahaním orežeš koniec"; el.append(l, r); wireTrim(l, i, "l"); wireTrim(r, i, "r"); }
+    el.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); selectClip(i); } };
+    wireClip(el, i); box.append(el);
   });
+  for (let i = 0; i < state.clips.length - 1; i++) {
+    if (state.clipSel === i || state.clipSel === i + 1) continue; // pri vybranom klipe sú na okrajoch úchyty orezania
+    const b = document.createElement("button"); b.type = "button"; b.className = "ctr" + (state.clips[i].tr !== "none" ? " on" : "") + (state.trSel === i ? " sel" : "");
+    b.style.left = (CT_PAD + st[i + 1] * px) + "px"; b.innerHTML = TR_ICON;
+    b.title = state.clips[i].tr !== "none" ? "Prechod: " + nameOf(TRANSITIONS, state.clips[i].tr) : "Pridať prechod"; b.setAttribute("aria-label", b.title);
+    b.onpointerdown = (e) => e.stopPropagation(); b.onclick = (e) => { e.stopPropagation(); selectTransition(i); };
+    box.append(b);
+  }
+  syncClipPlayhead(true);
 }
+function layoutTrack() { // len prepočíta polohy (pri orezávaní), bez nového vykreslenia stopy
+  const px = state.ctPx, st = outStarts(), total = outDuration();
+  document.querySelectorAll("#ctClips .clip").forEach((el) => { const i = +el.dataset.i, c = state.clips[i]; el.style.left = (CT_PAD + st[i] * px) + "px"; el.style.width = Math.max(6, clipOut(c) * px) + "px"; el.querySelector(".cl-dur").textContent = secTxt(clipOut(c)); });
+  document.querySelectorAll("#ctClips .ctr").forEach((b, k) => { b.style.left = (CT_PAD + st[k + 1] * px) + "px"; });
+  $("ctInner").style.width = Math.round(total * px + CT_PAD * 2) + "px";
+}
+function syncClipPlayhead(force) {
+  const ph = $("ctPlayhead"); if (!ph || !state.clips || !state.clips.length) return;
+  let o = srcToOut(video.currentTime);
+  if (o == null) { const c = state.clips[state.pc]; o = c ? outStarts()[state.pc] + (video.currentTime < c.start ? 0 : clipOut(c)) : 0; }
+  const x = CT_PAD + o * state.ctPx; ph.style.left = Math.round(x) + "px";
+  $("tlCur").textContent = fmtTime(o); $("tlDur").textContent = fmtTime(outDuration());
+  const sc = $("ctScroll");
+  if (sc && (!video.paused || force === "follow") && (x < sc.scrollLeft + 30 || x > sc.scrollLeft + sc.clientWidth - 30)) sc.scrollLeft = Math.max(0, x - sc.clientWidth * 0.3);
+}
+function wireClip(el, i) {
+  let start = null;
+  el.addEventListener("pointerdown", (e) => {
+    if (e.target.classList.contains("trim") || e.button > 0) return;
+    start = { x: e.clientX, left: parseFloat(el.style.left), w: parseFloat(el.style.width), drag: false };
+    el.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  el.addEventListener("pointermove", (e) => {
+    if (!start) return;
+    const dx = e.clientX - start.x;
+    if (!start.drag && Math.abs(dx) > 7 && state.clips.length > 1) { start.drag = true; el.classList.add("dragging"); trackBusy = true; }
+    if (!start.drag) return;
+    el.style.transform = `translateX(${dx}px)`;
+    const mid = start.left + start.w / 2 + dx; let to = 0;
+    document.querySelectorAll("#ctClips .clip").forEach((o) => { if (o !== el && parseFloat(o.style.left) + parseFloat(o.style.width) / 2 < mid) to++; });
+    start.to = to;
+    let ins = $("ctIns"); if (!ins) { ins = document.createElement("div"); ins.id = "ctIns"; ins.className = "ct-ins"; $("ctInner").append(ins); }
+    const others = [...document.querySelectorAll("#ctClips .clip")].filter((o) => o !== el);
+    ins.style.left = (to < others.length ? parseFloat(others[to].style.left) : parseFloat(others[others.length - 1].style.left) + parseFloat(others[others.length - 1].style.width)) + "px";
+  });
+  const end = (e) => {
+    if (!start) return;
+    const s = start; start = null; trackBusy = false;
+    const ins = $("ctIns"); if (ins) ins.remove();
+    if (s.drag) { el.classList.remove("dragging"); el.style.transform = ""; if (s.to != null && s.to !== i) moveClip(i, s.to); else renderClipTrack(); return; }
+    if (e.type === "pointercancel") return;
+    const o = (s.left - CT_PAD + (e.clientX - el.getBoundingClientRect().left)) / state.ctPx;
+    seekOut(clamp(o, outStarts()[i], outStarts()[i] + clipOut(state.clips[i]) - 0.01));
+    if (state.clipSel !== i || state.trSel >= 0) selectClip(i);
+  };
+  el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+}
+function wireTrim(h, i, side) {
+  let s = null;
+  h.addEventListener("pointerdown", (e) => {
+    e.stopPropagation(); e.preventDefault(); h.setPointerCapture(e.pointerId);
+    const c = state.clips[i], others = state.clips.filter((x, k) => k !== i);
+    s = { x: e.clientX, start: c.start, end: c.end, before: JSON.stringify(state.clips),
+      lo: Math.max(0, ...others.filter((x) => x.end <= c.start + 1e-6).map((x) => x.end)),
+      hi: Math.min(tlDuration(), ...others.filter((x) => x.start >= c.end - 1e-6).map((x) => x.start)) };
+    trackBusy = true; video.pause();
+  });
+  h.addEventListener("pointermove", (e) => {
+    if (!s) return;
+    const c = state.clips[i], dt = (e.clientX - s.x) / state.ctPx * c.speed, min = 0.2 * c.speed;
+    if (side === "l") c.start = clamp(s.start + dt, s.lo, c.end - min); else c.end = clamp(s.end + dt, c.start + min, s.hi);
+    layoutTrack(); drawStrip(h.parentElement.querySelector("canvas"), c, parseFloat(h.parentElement.style.width));
+    video.currentTime = side === "l" ? c.start + 0.001 : c.end - 0.04; state.pc = i;
+  });
+  const end = () => {
+    if (!s) return; const before = s.before; s = null; trackBusy = false;
+    if (before !== JSON.stringify(state.clips)) { state.undo.push(before); state.redo = []; cutHint("Klip je orezaný."); }
+    cutsChanged();
+  };
+  h.addEventListener("pointerup", end); h.addEventListener("pointercancel", end);
+}
+
+// --- panel strihu ---
 function renderCutUi() {
-  if (!state.parts.length) return;
-  renderCuts(tlDuration(), state.tlPxPerSec);
-  const list = $("parts"); if (!list) return; list.textContent = "";
-  state.parts.forEach((p, i) => {
-    const r = document.createElement("div"); r.className = "part" + (p.off ? " off" : "") + (i === state.partSel ? " on" : "");
-    r.setAttribute("role", "option"); r.setAttribute("aria-selected", String(i === state.partSel)); r.tabIndex = 0;
-    const n = document.createElement("span"); n.className = "pn"; n.textContent = i + 1;
-    const t = document.createElement("span"); t.className = "pt";
-    const tt = document.createElement("span"); tt.className = "ptt"; tt.textContent = `${fmtTimeMs(p.start)} – ${fmtTimeMs(p.end)}`; t.append(tt);
-    if (!p.off && p.tr !== "none" && nextKept(i) >= 0) { const tr = document.createElement("span"); tr.className = "ptr"; tr.textContent = "→ " + trName(p.tr); t.append(tr); }
-    const d = document.createElement("span"); d.className = "pd"; d.textContent = p.off ? "vystrihnuté" : (p.end - p.start).toFixed(1).replace(".", ",") + " s";
-    r.append(n, t, d);
-    r.onclick = () => selectPart(i, true);
-    r.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectPart(i, true); } };
-    list.append(r);
-  });
-  $("cutLen").textContent = fmtTime(outDuration()) + (hasCuts() ? ` (z ${fmtTime(tlDuration())})` : "");
-  $("cutReset").hidden = !hasCuts();
-  const sel = state.parts[state.partSel];
-  $("cutDelLabel").textContent = sel && sel.off ? "Vrátiť časť" : "Vystrihnúť časť";
-  $("cutDel").disabled = state.parts.length < 2 && !(sel && sel.off);
-  // prechod za vybranou časťou
-  const j = sel && !sel.off ? nextKept(state.partSel) : -1, can = j >= 0;
-  $("trLabel").textContent = can ? `Prechod: časť ${state.partSel + 1} → ${j + 1}` : "Prechod";
-  document.querySelectorAll("#trGrid .trt").forEach((b) => { const on = can && b.dataset.tr === sel.tr; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); b.disabled = !can; });
-  $("trDur").disabled = !can || sel.tr === "none"; if (can) $("trDur").value = sel.td;
-  $("trDurOut").textContent = (can ? sel.td : 0.6).toFixed(1).replace(".", ",") + " s";
-  $("trHint").textContent = can ? "Prechod sa prejaví na konci tejto časti a na začiatku nasledujúcej. Pusti video kúsok pred strihom a uvidíš ho v náhľade."
-    : state.parts.length < 2 ? "Prechod sa pridáva medzi dve časti. Najprv video rozdeľ tlačidlom Rozdeliť tu."
-    : "Vyber ponechanú časť, za ktorou nasleduje ďalšia, a nastav jej prechod.";
+  if (!state.clips || !state.clips.length || !$("pane-cut")) return;
+  if (!trackBusy) renderClipTrack();
+  const n = state.clips.length, c = state.clipSel >= 0 ? state.clips[state.clipSel] : null, tr = state.trSel >= 0 ? state.clips[state.trSel] : null;
+  $("clipPanel").hidden = !c || !!tr; $("trPanel").hidden = !tr;
+  $("cutDel").disabled = !c || n < 2; $("cutUndo").disabled = !state.undo.length; $("cutRedo").disabled = !state.redo.length;
+  $("cutLen").textContent = fmtTime(outDuration()) + (isEdited() ? ` z ${fmtTime(tlDuration())}` : "");
+  $("cutReset").hidden = !isEdited() && !state.clips.some((x) => x.fx !== "none" || x.filter !== "none" || x.tr !== "none");
+  if (!$("cutHint").textContent) cutHint("Klikni na klip v stope a uprav ho. Klip presunieš ťahaním, biele okraje vybraného klipu ho orežú. Biely štvorček medzi klipmi pridá prechod (pri nevybranom klipe).");
+  if (c && !tr) {
+    $("clipLabel").textContent = `Klip ${state.clipSel + 1} z ${n}`; $("clipLen").textContent = secTxt(clipOut(c));
+    document.querySelectorAll("#speedOpts button").forEach((b) => { const on = +b.dataset.v === c.speed; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
+    document.querySelectorAll("#fxGrid .trt").forEach((b) => { const on = b.dataset.id === c.fx; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
+    document.querySelectorAll("#filterGrid .trt").forEach((b) => { const on = b.dataset.id === c.filter; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
+    const im = thumbAt((c.start + c.end) / 2); // ukážky filtrov a efektov na zábere z vybraného klipu
+    document.querySelectorAll("#filterGrid .fv canvas, #fxGrid .fv canvas").forEach((cv) => { const g = cv.getContext("2d"); g.fillStyle = "#1a2140"; g.fillRect(0, 0, cv.width, cv.height); if (im) { const s = Math.max(cv.width / im.width, cv.height / im.height); g.drawImage(im, (cv.width - im.width * s) / 2, (cv.height - im.height * s) / 2, im.width * s, im.height * s); } cv.nextElementSibling.textContent = im ? "" : "A"; });
+  }
+  if (tr) {
+    $("trLabel").textContent = `Prechod: klip ${state.trSel + 1} → ${state.trSel + 2}`;
+    document.querySelectorAll("#trGrid .trt").forEach((b) => { const on = b.dataset.id === tr.tr; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
+    $("trDur").value = tr.td; $("trDur").disabled = tr.tr === "none"; $("trDurOut").textContent = secTxt(tr.td);
+  }
 }
-// Efekt prechodu pri kreslení snímky. Video sa kreslí cez drawVideo, prekrytie (čierna/biela) až po titulkoch.
-function drawVideoFx(ctx, vid, W, H, r, fx) {
-  if (!fx || fx.type === "fade" || fx.type === "white" || fx.type === "none") { ctx.drawImage(vid, r.dx, r.dy, r.iw, r.ih); return; }
-  const e = fx.p * fx.p; ctx.save();
-  if (fx.type === "blur" && ctx.filter !== undefined) ctx.filter = `blur(${(e * Math.min(W, H) * 0.04).toFixed(1)}px)`;
-  if (fx.type === "zoom") { const k = 1 + 0.7 * e; ctx.translate(W / 2, H / 2); ctx.scale(k, k); ctx.translate(-W / 2, -H / 2); }
-  if (fx.type === "whip") { ctx.translate((fx.out ? -1 : 1) * e * W * 0.6, 0); if (ctx.filter !== undefined) ctx.filter = `blur(${(e * W * 0.02).toFixed(1)}px)`; }
+function setupCut() {
+  const tile = (box, item, preview) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "trt"; b.dataset.id = item.id; b.setAttribute("role", "radio");
+    b.innerHTML = preview; const nm = document.createElement("span"); nm.textContent = item.name; b.append(nm); box.append(b); return b;
+  };
+  TRANSITIONS.forEach((x) => tile($("trGrid"), x, `<span class="tv ${x.id}" aria-hidden="true"><i class="a">A</i><i class="b">B</i><i class="w"></i></span>`).onclick = () => {
+    const a = state.clips[state.trSel]; if (!a) return; snapshot(); a.tr = x.id; cutsChanged(); if (x.id !== "none") previewTransition(state.trSel, true);
+  });
+  EFFECTS.forEach((x) => tile($("fxGrid"), x, `<span class="fv ${x.id}" aria-hidden="true"><canvas width="96" height="60"></canvas><i>A</i></span>`).onclick = () => {
+    const c = state.clips[state.clipSel]; if (!c) return; snapshot(); c.fx = x.id; cutsChanged();
+    seekOut(outStarts()[state.clipSel] + 0.001); if (x.id !== "none") { state.autoStop = { pc: state.clipSel, at: c.start + Math.min(2.5, clipOut(c)) * c.speed }; video.play().catch(() => {}); }
+  });
+  FILTERS.forEach((x) => tile($("filterGrid"), x, `<span class="fv ${x.id}" aria-hidden="true"><canvas class="fl-${x.id}" width="96" height="60"></canvas><i>A</i></span>`).onclick = () => {
+    const c = state.clips[state.clipSel]; if (!c) return; snapshot(); c.filter = x.id; cutsChanged(); if (video.paused) seekOut(clamp(srcToOut(video.currentTime) ?? 0, outStarts()[state.clipSel], outStarts()[state.clipSel] + clipOut(c) - 0.01));
+  });
+  SPEEDS.forEach((v) => { const b = document.createElement("button"); b.type = "button"; b.dataset.v = v; b.setAttribute("role", "radio"); b.textContent = String(v).replace(".", ",") + "×";
+    b.onclick = () => { const c = state.clips[state.clipSel]; if (!c || c.speed === v) return; snapshot(); c.speed = v; cutHint(`Klip ide rýchlosťou ${b.textContent}, trvá ${secTxt(clipOut(c))}.`); cutsChanged(); };
+    $("speedOpts").append(b); });
+  $("fxAll").onclick = () => { const c = state.clips[state.clipSel]; if (!c) return; snapshot(); state.clips.forEach((x) => { x.fx = c.fx; }); cutHint(`Efekt ${nameOf(EFFECTS, c.fx)} je na všetkých klipoch.`); cutsChanged(); };
+  $("filterAll").onclick = () => { const c = state.clips[state.clipSel]; if (!c) return; snapshot(); state.clips.forEach((x) => { x.filter = c.filter; }); cutHint(`Filter ${nameOf(FILTERS, c.filter)} je na všetkých klipoch.`); cutsChanged(); };
+  $("trAll").onclick = () => { const a = state.clips[state.trSel]; if (!a) return; snapshot(); state.clips.forEach((x, k) => { if (k < state.clips.length - 1) { x.tr = a.tr; x.td = a.td; } }); cutHint(`Prechod ${nameOf(TRANSITIONS, a.tr)} je medzi všetkými klipmi.`); cutsChanged(); };
+  let trBefore = null;
+  $("trDur").addEventListener("pointerdown", () => { trBefore = JSON.stringify(state.clips); });
+  $("trDur").oninput = (e) => { const a = state.clips[state.trSel]; if (!a) return; a.td = +e.target.value; $("trDurOut").textContent = secTxt(a.td); invalidateResults(); };
+  $("trDur").onchange = () => { if (trBefore && trBefore !== JSON.stringify(state.clips)) { state.undo.push(trBefore); state.redo = []; } trBefore = null; renderCutUi(); previewTransition(state.trSel, true); };
+  $("cutSplit").onclick = () => splitAt(video.currentTime);
+  $("cutDel").onclick = () => deleteClip(state.clipSel);
+  $("cutUndo").onclick = undoCut; $("cutRedo").onclick = redoCut;
+  $("cutReset").onclick = () => { snapshot(); state.clips = [newClip(0, tlDuration())]; state.clipSel = 0; state.trSel = -1; state.pc = 0; cutHint("Video je opäť celé a bez efektov. Späť to vrátiš tlačidlom Späť."); cutsChanged(); };
+  // klik na pravítko alebo prázdne miesto v stope = posun prehrávania (ťahaním sa dá „scrubovať“)
+  let scrub = false;
+  const oAt = (e) => clamp((e.clientX - $("ctInner").getBoundingClientRect().left - CT_PAD) / state.ctPx, 0, Math.max(0, outDuration() - 0.01));
+  $("ctInner").addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".clip") || e.target.closest(".ctr")) return;
+    scrub = true; seekOut(oAt(e)); $("ctInner").setPointerCapture(e.pointerId);
+    if (e.target !== $("ctRuler") && (state.clipSel >= 0 || state.trSel >= 0)) { state.clipSel = -1; state.trSel = -1; renderCutUi(); }
+  });
+  $("ctInner").addEventListener("pointermove", (e) => { if (scrub) seekOut(oAt(e)); });
+  $("ctInner").addEventListener("pointerup", () => { scrub = false; });
+  new ResizeObserver(() => { if (state.tab === "edit" && !trackBusy) renderClipTrack(); }).observe($("ctScroll"));
+}
+
+// --- kreslenie efektov, filtrov a prechodov ---
+const CANVAS_FILTER = (() => { try { const g = document.createElement("canvas").getContext("2d"); g.filter = "blur(2px)"; return g.filter === "blur(2px)"; } catch { return false; } })();
+const FILTER_CSS = { vivid: "saturate(1.5) contrast(1.1)", warm: "sepia(.22) saturate(1.3) brightness(1.03)", cool: "saturate(1.05) brightness(1.03)",
+  bw: "grayscale(1) contrast(1.15)", vintage: "sepia(.5) contrast(.92) brightness(1.05) saturate(.85)", film: "contrast(1.12) saturate(.85)" };
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function pix(ctx, fn) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); if (CANVAS_FILTER) ctx.filter = "none"; fn(ctx.canvas.width, ctx.canvas.height); ctx.restore(); }
+const scaleAt = (ctx, W, H, k) => { ctx.translate(W / 2, H / 2); ctx.scale(k, k); ctx.translate(-W / 2, -H / 2); };
+function drawVideoLayer(ctx, vid, W, H, r, fx, look, t) {
+  ctx.save();
+  let blur = 0;
+  if (look) {
+    if (look.fx === "kenburns") scaleAt(ctx, W, H, 1 + 0.16 * clamp(look.lp, 0, 1));
+    if (look.fx === "pulse") { const ph = (look.lt * 2) % 1; scaleAt(ctx, W, H, 1 + 0.08 * Math.pow(1 - ph, 3)); }
+    if (look.fx === "shake") { const s = Math.min(W, H) * 0.014, a = look.lt * 34; ctx.translate(W / 2 + Math.sin(a * 1.3) * s + Math.sin(a * 2.9) * s * 0.5, H / 2 + Math.cos(a * 1.7) * s); ctx.rotate(Math.sin(a * 0.9) * 0.012); ctx.scale(1.06, 1.06); ctx.translate(-W / 2, -H / 2); }
+  }
+  let whip = 0;
+  if (fx && fx.type !== "none") {
+    const e = fx.p * fx.p, m = Math.min(W, H);
+    if (fx.type === "blur") blur = e * m * 0.04;
+    if (fx.type === "zoom") scaleAt(ctx, W, H, 1 + 0.7 * e);
+    if (fx.type === "whip") { whip = (fx.out ? -1 : 1) * e * W * 0.6; ctx.translate(whip, 0); blur = e * W * 0.02; }
+    if (fx.type === "spin") { ctx.translate(W / 2, H / 2); ctx.rotate((fx.out ? 1 : -1) * e * Math.PI / 2); ctx.scale(1 + 0.6 * e, 1 + 0.6 * e); ctx.translate(-W / 2, -H / 2); blur = e * m * 0.015; }
+  }
+  if (CANVAS_FILTER) { const f = [look && look.filter !== "none" ? FILTER_CSS[look.filter] : "", blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : ""].join(" ").trim(); ctx.filter = f || "none"; }
   ctx.drawImage(vid, r.dx, r.dy, r.iw, r.ih);
-  if (fx.type === "whip") ctx.drawImage(vid, r.dx + (fx.out ? 1 : -1) * W * 0.6, r.dy, r.iw, r.ih); // druhá kópia, aby za pohybom neostala čierna
+  if (whip) ctx.drawImage(vid, r.dx - Math.sign(whip) * W * 0.6 * 1.0, r.dy, r.iw, r.ih); // kópia, aby za pohybom nebola čierna
   ctx.restore();
+  if (look && look.filter !== "none") drawFilterTint(ctx, look.filter);
+  if (look && look.fx === "glitch" && (look.lt % 1.3) < 0.28) glitchFx(ctx, look.lt, 1);
+  if (look && look.fx === "vhs") vhsFx(ctx, look.lt);
+  if (fx && fx.type === "glitch") glitchFx(ctx, t, 0.4 + fx.p * 1.4);
+}
+function drawFilterTint(ctx, f) { // farebný nádych filtra (funguje aj tam, kde plátno nevie CSS filtre)
+  pix(ctx, (w, h) => {
+    const fill = (op, style, a = 1) => { ctx.globalCompositeOperation = op; ctx.globalAlpha = a; ctx.fillStyle = style; ctx.fillRect(0, 0, w, h); };
+    if (!CANVAS_FILTER) { if (f === "bw") fill("saturation", "#808080"); if (f === "vivid") { ctx.globalCompositeOperation = "overlay"; ctx.globalAlpha = 0.35; ctx.drawImage(ctx.canvas, 0, 0); } if (f === "vintage") fill("saturation", "#808080", 0.45); }
+    if (f === "warm") fill("soft-light", "rgb(255,150,60)", 0.32);
+    if (f === "cool") fill("soft-light", "rgb(50,130,255)", 0.4);
+    if (f === "vintage") { fill("soft-light", "rgb(255,200,140)", 0.35); fill("screen", "rgb(40,25,10)", 0.25); }
+    if (f === "film") { fill("soft-light", "rgb(0,150,160)", 0.28); ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.fillStyle = "#000"; const b = Math.round(h * (w > h ? 0.09 : 0.06)); ctx.fillRect(0, 0, w, b); ctx.fillRect(0, h - b, w, b); }
+    if (f === "vintage" || f === "film") { ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.max(w, h) * 0.75); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.45)"); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); }
+  });
+}
+function glitchFx(ctx, time, strength) { // posunuté pásy obrazu + farebné záblesky
+  pix(ctx, (w, h) => {
+    const r = rng(Math.floor(time * 14) + 7), n = 4 + Math.floor(r() * 6);
+    for (let k = 0; k < n; k++) {
+      const y = Math.floor(r() * h), bh = Math.max(2, Math.floor(h * (0.015 + r() * 0.07))), dx = Math.round((r() - 0.5) * w * 0.14 * strength);
+      ctx.drawImage(ctx.canvas, 0, y, w, bh, dx, y, w, bh);
+      if (r() < 0.5) { ctx.globalCompositeOperation = "screen"; ctx.globalAlpha = 0.35; ctx.fillStyle = r() < 0.5 ? "#ff0050" : "#00e5ff"; ctx.fillRect(0, y, w, bh); ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; }
+    }
+    ctx.globalCompositeOperation = "lighten"; ctx.globalAlpha = 0.3 * Math.min(1, strength); ctx.drawImage(ctx.canvas, Math.round(w * 0.008 * strength), 0);
+  });
+}
+function vhsFx(ctx, time) { // retro VHS: vyblednutie, presvit farieb, riadky, šum a skákajúci pás
+  pix(ctx, (w, h) => {
+    ctx.globalCompositeOperation = "saturation"; ctx.globalAlpha = 0.35; ctx.fillStyle = "#808080"; ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "lighten"; ctx.globalAlpha = 0.28; ctx.drawImage(ctx.canvas, Math.max(2, Math.round(w * 0.004)), 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1;
+    const lh = Math.max(2, Math.round(h / 360)); ctx.fillStyle = "rgba(0,0,0,.16)";
+    for (let y = 0; y < h; y += lh * 2) ctx.fillRect(0, y, w, lh);
+    const by = ((time * 0.22) % 1.2 - 0.1) * h, bh = h * 0.05;
+    ctx.drawImage(ctx.canvas, 0, by, w, bh, Math.round(w * 0.01), by, w, bh);
+    ctx.fillStyle = "rgba(255,255,255,.06)"; ctx.fillRect(0, by, w, bh);
+    const r = rng(Math.floor(time * 24)); ctx.fillStyle = "rgba(255,255,255,.35)";
+    for (let k = 0; k < 40; k++) ctx.fillRect(r() * w, r() * h, Math.max(1, w * 0.004 * r()), Math.max(1, h / 540));
+    ctx.font = `600 ${Math.round(Math.min(w, h) * 0.045)}px monospace`; ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.textBaseline = "top";
+    if (Math.floor(time * 1.5) % 2 === 0) ctx.fillText("▶ PLAY", Math.round(w * 0.05), Math.round(h * 0.05));
+  });
 }
 function drawFxOverlay(ctx, W, H, fx) {
   if (!fx) return;
@@ -974,6 +1274,7 @@ function drawFxOverlay(ctx, W, H, fx) {
 }
 const fxGain = (fx) => (fx && fx.type === "fade" ? 1 - fx.p : 1); // stmievačka stíši aj zvuk
 
+
 function renderFrame(ctx, vid, t, W, H, stOf, crop) {
   ctx.globalAlpha = 1; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
   if (ctx.filter !== undefined) ctx.filter = "none";
@@ -981,7 +1282,7 @@ function renderFrame(ctx, vid, t, W, H, stOf, crop) {
   ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
   const vw = vid.videoWidth, vh = vid.videoHeight;
   const fx = transFx(t);
-  if (vw && vh && vid.readyState >= 2) { const r = cropRect(vw, vh, W, H, crop); drawVideoFx(ctx, vid, W, H, r, fx); }
+  if (vw && vh && vid.readyState >= 2) { const r = cropRect(vw, vh, W, H, crop); drawVideoLayer(ctx, vid, W, H, r, fx, clipLook(t), t); }
   if (stOf(1).on) {
     drawDynamic(ctx, t, W, H, stOf);
     const i = segmentAt(t);
@@ -1000,14 +1301,17 @@ function loop() {
       if (o.cv.style.width !== w + "px" || o.cv.style.height !== h + "px") { o.cv.style.width = w + "px"; o.cv.style.height = h + "px"; }
       if (o.cv.width !== Math.round(w * dpr) || o.cv.height !== Math.round(h * dpr)) { o.cv.width = Math.round(w * dpr); o.cv.height = Math.round(h * dpr); }
       const ctx = o.cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (!video.paused && !video.seeking) { // prehrávanie preskakuje vystrihnuté časti
-        const step = cutStep(t);
-        if (step === "end") { video.pause(); video.currentTime = firstKeptStart() + 0.001; }
-        else if (step != null) video.currentTime = step;
-      }
+      if (!video.paused && !video.seeking) { // prehrávanie ide po klipoch v ich poradí, vymazané preskočí
+        const step = cutStep(t, state.pc);
+        if (step === "end") { video.pause(); state.pc = 0; video.currentTime = firstClipStart() + 0.001; }
+        else if (step) { state.pc = step.pc; if (step.t != null) video.currentTime = step.t; }
+        if (state.autoStop && state.pc === state.autoStop.pc && t >= state.autoStop.at) { video.pause(); state.autoStop = null; }
+      } else if (video.paused) state.autoStop = null;
+      const pcc = state.clips[state.pc], rate = (pcc ? pcc.speed : 1) * state.pvRate;
+      if (Math.abs(video.playbackRate - rate) > 1e-3) video.playbackRate = rate;
       renderFrame(ctx, video, t, w, h, (sp, seg) => styleFor(o.k, sp, seg), state.crop[o.k]);
       video.volume = fxGain(transFx(t));
-      if (hasCuts() && state.parts[partAt(t)].off) { // zastavené vo vystrihnutej časti: jasne to ukáž
+      if (isEdited() && clipAtSrc(t) < 0) { // zastavené vo vystrihnutej časti: jasne to ukáž
         ctx.fillStyle = "rgba(6,9,22,.72)"; ctx.fillRect(0, 0, w, h);
         ctx.fillStyle = "#ff9aab"; ctx.font = `600 ${Math.round(Math.min(w, h) * 0.06)}px Inter,sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText("Vystrihnuté", w / 2, h / 2); ctx.textAlign = "left";
@@ -1336,7 +1640,9 @@ async function recordAspect(aspect, onProgress, job) {
   const ctx = canvas.getContext("2d");
   const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
   await new Promise((res, rej) => { ev.onloadeddata = res; ev.onerror = () => rej(new Error("Video sa nepodarilo načítať.")); });
-  if (hasCuts()) { ev.currentTime = firstKeptStart() + 0.001; await new Promise((res) => { ev.onseeked = res; }); ev.onseeked = null; }
+  let epc = 0;
+  if (isEdited()) { ev.currentTime = firstClipStart() + 0.001; await new Promise((res) => { ev.onseeked = res; }); ev.onseeked = null; }
+  ev.playbackRate = state.clips[0] ? state.clips[0].speed : 1;
   const stream = canvas.captureStream(); // nová snímka pri každej snímke originálu = rovnaká plynulosť (aj 60 fps)
   const ac = new (window.AudioContext || window.webkitAudioContext)();
   let gain = null;
@@ -1351,7 +1657,7 @@ async function recordAspect(aspect, onProgress, job) {
   const chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
   const finished = new Promise((res) => (rec.onstop = res));
   let live = true, jumping = false;
-  const total = hasCuts() ? outDuration() : (ev.duration || 1);
+  const total = isEdited() ? outDuration() : (ev.duration || 1);
   const schedule = () => (ev.requestVideoFrameCallback ? ev.requestVideoFrameCallback(draw) : requestAnimationFrame(draw));
   const finish = () => { if (!live) return; live = false; ev.pause(); setTimeout(() => rec.stop(), 150); };
   const jumpTo = (t) => { // strih: nahrávanie sa na chvíľu zastaví, aby sa skok do ďalšej časti nenahral ako zamrznutý obraz
@@ -1366,20 +1672,23 @@ async function recordAspect(aspect, onProgress, job) {
   };
   const draw = () => {
     if (!live || jumping) return;
-    if (job !== state.job) { live = false; ev.pause(); try { rec.stop(); } catch {} return; } // nový projekt: export sa zruší
-    const t = ev.currentTime, step = cutStep(t);
+    if (job !== state.job || state.exportCancel) { live = false; ev.pause(); try { rec.stop(); } catch {} return; } // nový projekt alebo Zrušiť export
+    const t = ev.currentTime, step = cutStep(t, epc);
     if (step === "end") { finish(); return; }
-    if (step != null) { jumpTo(step); return; }
+    if (step) { epc = step.pc; ev.playbackRate = state.clips[epc].speed; if (step.t != null) { jumpTo(step.t); return; } }
     const fx = transFx(t); if (gain) gain.gain.value = fxGain(fx);
     renderFrame(ctx, ev, t, W, H, stOf, crop);
-    onProgress(Math.min(99, Math.round((hasCuts() ? srcToOut(t) || 0 : t) / total * 100)));
+    onProgress(Math.min(99, Math.round((isEdited() ? srcToOut(t) || 0 : t) / total * 100)));
     schedule();
   };
-  ev.onended = finish;
+  ev.onended = () => { // koniec súboru nemusí byť koniec videa: po presune klipov môže ďalší klip nasledovať
+    const st = cutStep(ev.duration, epc);
+    if (live && st && st !== "end" && st.t != null) { epc = st.pc; ev.playbackRate = state.clips[epc].speed; jumpTo(st.t); } else finish();
+  };
   await ac.resume(); rec.start(500); draw(); await ev.play();
   await finished; ac.close();
   const ext = rec.mimeType.includes("mp4") ? "mp4" : "webm";
-  if (job !== state.job) return null;
+  if (job !== state.job || state.exportCancel) return null;
   return { url: URL.createObjectURL(new Blob(chunks, { type: rec.mimeType || "video/webm" })), ext };
 }
 // Len jeden formát je vidno naraz, ale "Exportovať všetko" spracuje aj tie ostatné na pozadí (recordAspect
@@ -1388,7 +1697,7 @@ async function recordAspect(aspect, onProgress, job) {
 async function exportAspects(list) {
   if (state.busyExport || state.playable === false) return;
   const job = state.job, multi = list.length > 1;
-  state.busyExport = true; $("exportAll").disabled = true; $("exportCur").disabled = true; $("export-error").hidden = true;
+  state.busyExport = true; state.exportCancel = false; $("exportAll").disabled = true; $("exportCur").disabled = true; $("export-error").hidden = true; $("exportStop").hidden = false; $("exportStatus").textContent = "";
   try {
     for (let idx = 0; idx < list.length; idx++) {
       const k = list[idx]; if (job !== state.job) break;
@@ -1401,7 +1710,12 @@ async function exportAspects(list) {
           if (live) { bar.style.width = p + "%"; label.textContent = `Exportujem… ${p} %`; }
           if (multi) $("exportStatus").textContent = `Exportujem formát ${idx + 1} z ${list.length} (${k})… ${p} %`;
         }, job);
-        if (!r || job !== state.job) { if (r) URL.revokeObjectURL(r.url); break; }
+        if (!r || job !== state.job || state.exportCancel) {
+          if (r) URL.revokeObjectURL(r.url);
+          if (state.exportCancel && live) { live.prog.hidden = true; }
+          if (state.exportCancel) $("exportStatus").textContent = "";
+          break;
+        }
         state.results[k] = r;
         if (live) {
           if (DEMO) { // v ukážke sa sťahovanie nedá, výsledok sa prehrá priamo v karte
@@ -1413,7 +1727,9 @@ async function exportAspects(list) {
       } catch (e) { if (job === state.job) { $("export-error").textContent = e.message || "Export zlyhal."; $("export-error").hidden = false; } if (live) live.prog.hidden = true; }
     }
   } finally {
-    state.busyExport = false; $("exportStatus").textContent = "";
+    const canceled = state.exportCancel;
+    state.busyExport = false; state.exportCancel = false; $("exportStop").hidden = true;
+    $("exportStatus").textContent = canceled ? "Export je zrušený." : "";
     if (job === state.job) { $("exportAll").disabled = state.playable === false; $("exportCur").disabled = state.playable === false; }
   }
 }
@@ -1464,18 +1780,8 @@ function setup() {
   $("fontUp").onclick = () => $("fontFile").click();
   document.querySelectorAll("#quality .opt").forEach((b) => b.onclick = () => { state.quality = b.dataset.q; invalidateResults(); refreshQuality(); });
   $("fontsAll").onclick = () => setPage("brand");
-  // strih
-  TRANSITIONS.forEach((x) => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "trt"; b.dataset.tr = x.id; b.setAttribute("role", "radio");
-    b.innerHTML = `<span class="tv ${x.id}" aria-hidden="true"><i class="a">A</i><i class="b">B</i><i class="w"></i></span>`;
-    const nm = document.createElement("span"); nm.textContent = x.name; b.append(nm);
-    b.onclick = () => { const p = state.parts[state.partSel]; if (!p || p.off || nextKept(state.partSel) < 0) return; p.tr = x.id; cutsChanged(); if (x.id !== "none") video.currentTime = Math.max(p.start, p.end - Math.max(1.2, p.td + 0.6)); };
-    $("trGrid").append(b);
-  });
-  $("trDur").oninput = (e) => { const p = state.parts[state.partSel]; if (!p) return; p.td = +e.target.value; cutsChanged(); };
-  $("cutSplit").onclick = () => splitAt(video.currentTime);
-  $("cutDel").onclick = () => toggleOff(state.partSel);
-  $("cutReset").onclick = () => { resetCuts(); $("cutHint").textContent = "Strihy sú zrušené, video je opäť celé."; cutsChanged(); };
+  $("exportStop").onclick = () => { if (state.busyExport) { state.exportCancel = true; $("exportStop").hidden = true; } };
+  setupCut();
   document.querySelectorAll(".nav[data-page]").forEach((a) => a.onclick = (e) => { e.preventDefault(); setPage(a.dataset.page); });
   $("brandBack").onclick = $("libBack").onclick = () => setPage("work");
   $("brandFile").onchange = async (e) => { for (const f of e.target.files) await uploadFont(f, true); e.target.value = ""; };
@@ -1487,14 +1793,20 @@ function setup() {
   $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
   loadSavedFonts();
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
-  $("tlSpeed").onchange = (e) => { video.playbackRate = +e.target.value; };
+  video.addEventListener("ended", () => { // to isté pri náhľade
+    if (!isEdited()) return;
+    const st = cutStep(video.duration, state.pc);
+    if (st && st !== "end" && st.t != null) { state.pc = st.pc; video.currentTime = st.t; video.play().catch(() => {}); }
+    else { state.pc = 0; video.currentTime = firstClipStart() + 0.001; }
+  });
+  $("tlSpeed").onchange = (e) => { state.pvRate = +e.target.value; }; // rýchlosť náhľadu (násobí sa rýchlosťou klipu)
   $("tlZoom").oninput = (e) => { state.tlZoomVal = +e.target.value; renderTimeline(); };
   $("tlZoomIn").onclick = () => { state.tlZoomVal = clamp(state.tlZoomVal + 0.5, 1, 6); $("tlZoom").value = state.tlZoomVal; renderTimeline(); };
   $("tlZoomOut").onclick = () => { state.tlZoomVal = clamp(state.tlZoomVal - 0.5, 1, 6); $("tlZoom").value = state.tlZoomVal; renderTimeline(); };
   new ResizeObserver(() => renderTimeline()).observe($("tlScroll"));
   // klik na pozadie časovej osi (mimo titulku) pretočí video; ťahanie "scrubuje"
   const tAt = (e) => clamp((e.clientX - $("tlInner").getBoundingClientRect().left) / state.tlPxPerSec, 0, tlDuration());
-  const scrub = (e) => { const t = tAt(e); video.currentTime = t; if (state.tab === "edit" && partAt(t) !== state.partSel) selectPart(partAt(t)); };
+  const scrub = (e) => { video.currentTime = tAt(e); };
   let scrubbing = false, band = null;
   $("tlInner").addEventListener("pointerdown", (e) => {
     if (e.target.closest(".chip")) return;
@@ -1539,9 +1851,12 @@ function setup() {
       e.preventDefault(); if (tag === "BUTTON" || tag === "INPUT") el.blur();
       if (video.paused) video.play().catch(() => {}); else video.pause();
     } else if (e.key === "Escape" && !typing && state.sel.size) clearSel();
-    else if (state.tab === "edit" && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      if (e.code === "KeyS") { e.preventDefault(); splitAt(video.currentTime); }
-      else if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); toggleOff(state.partSel); }
+    else if (state.tab === "edit" && !typing && !e.altKey) {
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && e.code === "KeyZ") { e.preventDefault(); if (e.shiftKey) redoCut(); else undoCut(); }
+      else if (mod && e.code === "KeyY") { e.preventDefault(); redoCut(); }
+      else if (!mod && e.code === "KeyS") { e.preventDefault(); splitAt(video.currentTime); }
+      else if (!mod && (e.key === "Delete" || e.key === "Backspace") && state.clipSel >= 0) { e.preventDefault(); deleteClip(state.clipSel); }
     }
   });
   $("segSearchBtn").onclick = () => {

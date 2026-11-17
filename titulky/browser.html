@@ -143,41 +143,54 @@ main{min-width:0}
 .stile{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid var(--line2);background:#050816;color:var(--muted);border-radius:8px;padding:5px 8px;font:inherit;font-size:10px;cursor:pointer;min-width:62px}
 .stile.on{border-color:#ffe066;color:#fff}
 .stsample{display:grid;place-items:center;height:22px}
-/* strih */
-.tl-cuts{position:absolute;inset:0;pointer-events:none;z-index:1}
-.cut-off{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(6,9,22,.78) 0 6px,rgba(6,9,22,.55) 6px 12px);border-left:1px solid #ff6b81;border-right:1px solid #ff6b81}
-.cut-off span{position:absolute;top:4px;left:6px;font-size:10px;font-weight:600;color:#ff9aab;white-space:nowrap;text-shadow:0 1px 2px #000}
-.cut-line{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#ffe066}
-.cut-sel{position:absolute;top:0;bottom:0;border:2px solid var(--b);border-radius:6px;box-shadow:inset 0 0 0 999px rgba(25,184,232,.08)}
-.cut-tr{position:absolute;top:62px;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:#ffe066;color:#1a1500;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid #0e1430;box-shadow:0 2px 6px rgba(0,0,0,.5)}
-#timelineCard.cut-mode .tl-cuts .cut-tr{pointer-events:auto;cursor:pointer}
-#timelineCard:not(.cut-mode) .cut-sel{display:none}
-.cut-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.cut-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1px solid var(--line2);border-radius:12px;background:var(--card2);color:var(--text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
-.cut-btn svg{width:20px;height:20px;color:var(--b)}
-.cut-btn:hover:not(:disabled){border-color:var(--a);background:#141a4a}
-.cut-btn:disabled{opacity:.45;cursor:default}
-.cut-btn kbd,.kbd{font:600 10px/1 Inter,sans-serif;color:var(--muted);border:1px solid var(--line2);border-radius:5px;padding:2px 5px}
-.cut-btn.danger svg{color:#ff8a98}
-.parts{display:flex;flex-direction:column;gap:6px}
-.part{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line2);border-radius:11px;background:var(--card2);cursor:pointer;font-size:12px;transition:border-color .15s}
-.part:hover{border-color:#3a4380}
-.part.on{border-color:var(--b);box-shadow:0 0 0 3px rgba(25,184,232,.15)}
-.part.off{opacity:.6}
-.part.off .ptt{text-decoration:line-through}
-.part .pn{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#141a4a;font-weight:700;font-size:11px;flex:none}
-.part.off .pn{background:#3a1520;color:#ff9aab}
-.part .pt{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
-.part .ptt{white-space:nowrap;font-variant-numeric:tabular-nums}
-.part .pd{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.part .ptr{font-size:10px;color:#ffe066;border:1px solid #6b5f2a;border-radius:99px;padding:1px 7px;white-space:nowrap}
-.cut-sum{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px}
+/* strih: klipová stopa ako v CapCut */
+#timelineCard.cut-mode #tlScroll,#timelineCard:not(.cut-mode) #ct{display:none}
+.ct-scroll{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);border-radius:10px;background:#050816;touch-action:pan-x}
+.ct-inner{position:relative;height:124px;min-width:100%;user-select:none;-webkit-user-select:none}
+#ctRuler{position:absolute;top:0;left:0;height:22px;cursor:pointer}
+.ct-clips{position:absolute;top:30px;left:0;right:0;height:64px}
+.ct-audio{position:absolute;top:100px;left:0;height:18px;pointer-events:none}
+.clip{position:absolute;top:0;height:64px;border-radius:8px;background:#1a2140;cursor:grab;touch-action:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.clip canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:8px;pointer-events:none}
+.clip .cl-tags{position:absolute;left:6px;top:5px;right:6px;display:flex;gap:4px;flex-wrap:wrap;pointer-events:none}
+.clip .cl-tag{font-size:9px;font-weight:700;background:rgba(5,8,22,.75);color:#fff;border-radius:4px;padding:1px 5px;white-space:nowrap}
+.clip .cl-tag.sp{background:#f5a524;color:#1a1000}
+.clip .cl-dur{position:absolute;left:6px;bottom:4px;font-size:10px;font-weight:600;background:rgba(5,8,22,.75);border-radius:4px;padding:1px 5px;pointer-events:none;font-variant-numeric:tabular-nums}
+.clip.sel{box-shadow:0 0 0 2px #fff;z-index:3}
+.clip.dragging{z-index:6;cursor:grabbing;opacity:.9;box-shadow:0 12px 26px rgba(0,0,0,.6),0 0 0 2px var(--b)}
+.trim{position:absolute;top:0;bottom:0;width:14px;background:#fff;display:none;place-items:center;cursor:ew-resize;touch-action:none;z-index:4}
+.trim::after{content:"";width:2px;height:20px;border-radius:2px;background:#0b1024}
+.trim.l{left:-14px;border-radius:7px 0 0 7px}.trim.r{right:-14px;border-radius:0 7px 7px 0}
+.clip.sel .trim{display:grid}
+.ct-ins{position:absolute;top:26px;width:3px;height:72px;margin-left:-1.5px;border-radius:2px;background:var(--b);box-shadow:0 0 8px var(--b);z-index:7;pointer-events:none}
+.ctr{position:absolute;top:20px;width:24px;height:24px;margin-left:-12px;border-radius:7px;border:0;background:#fff;color:#0b1024;display:grid;place-items:center;cursor:pointer;z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.55);padding:0}
+.ctr svg{width:14px;height:14px}
+.ctr.on{background:#ffe066}
+.ctr.sel{outline:2px solid var(--b);outline-offset:2px}
+.ctr:hover{transform:scale(1.12)}
+.ct-playhead{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;z-index:8;pointer-events:none;box-shadow:0 0 6px rgba(255,255,255,.7)}
+.ct-playhead::before{content:"";position:absolute;top:-1px;left:-5px;border:6px solid transparent;border-top:8px solid #fff}
+.cut-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.cbt{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 2px 8px;border:1px solid var(--line2);border-radius:12px;background:var(--card2);color:var(--text);font:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
+.cbt svg{width:19px;height:19px;color:var(--b)}
+.cbt.danger svg{color:#ff8a98}
+.cbt:hover:not(:disabled){border-color:var(--a);background:#141a4a}
+.cbt:disabled{opacity:.4;cursor:default}
+.cbt kbd{font:600 9px/1 Inter,sans-serif;color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:2px 4px}
+.cut-head{display:flex;align-items:center;gap:8px;margin:14px 0 2px;font-size:13px;font-weight:600}
+.cut-head .dot{width:10px;height:10px;border-radius:3px;background:#fff}
+.cut-head small{margin-left:auto;color:var(--muted);font-weight:500;font-size:11px}
+.cut-sum{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px}
 .cut-sum b{color:var(--text);font-variant-numeric:tabular-nums}
+.speeds{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.speeds button{padding:8px 0;border:1px solid var(--line2);border-radius:9px;background:var(--card2);color:var(--muted);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.speeds button.on{border-color:var(--a);background:#141a4a;color:#fff}
 .trgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.trt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;border:1px solid var(--line2);border-radius:11px;background:var(--card2);color:var(--muted);font:inherit;font-size:11px;cursor:pointer}
+.trgrid.four{grid-template-columns:repeat(4,1fr)}
+.trt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:7px 4px;border:1px solid var(--line2);border-radius:11px;background:var(--card2);color:var(--muted);font:inherit;font-size:11px;cursor:pointer;min-width:0}
+.trt span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .trt:hover{border-color:#3a4380}
 .trt.on{border-color:var(--a);color:#fff;background:#141a4a}
-.trt:disabled{opacity:.4;cursor:default}
 .tv{position:relative;width:100%;aspect-ratio:16/10;border-radius:7px;overflow:hidden;background:#000}
 .tv i{position:absolute;inset:0;display:grid;place-items:center;font:800 13px/1 Inter,sans-serif;color:#fff;font-style:normal}
 .tv .a{background:linear-gradient(135deg,#6c5cff,#3b2fb8)}
@@ -190,6 +203,8 @@ main{min-width:0}
 .tv.blur .a{animation-name:tA-blur}.tv.blur .b{animation-name:tB-blur}
 .tv.zoom .a{animation-name:tA-zoom}.tv.zoom .b{animation-name:tB-zoom}
 .tv.whip .a{animation-name:tA-whip}.tv.whip .b{animation-name:tB-whip}
+.tv.spin .a{animation-name:tA-spin}.tv.spin .b{animation-name:tB-spin}
+.tv.glitch .a{animation-name:tA-glitch}.tv.glitch .b{animation-name:tB-glitch}
 @keyframes tA-none{0%,49.9%{opacity:1}50%,100%{opacity:0}}
 @keyframes tB-none{0%,49.9%{opacity:0}50%,100%{opacity:1}}
 @keyframes tA-fade{0%,32%{opacity:1}50%,100%{opacity:0}}
@@ -201,7 +216,32 @@ main{min-width:0}
 @keyframes tB-zoom{0%,49.9%{opacity:0;transform:scale(1.8)}50%{opacity:1;transform:scale(1.8)}70%,100%{opacity:1;transform:scale(1)}}
 @keyframes tA-whip{0%,34%{opacity:1;transform:translateX(0);filter:blur(0)}50%{opacity:1;transform:translateX(-100%);filter:blur(4px)}50.1%,100%{opacity:0}}
 @keyframes tB-whip{0%,49.9%{opacity:0;transform:translateX(100%)}50%{opacity:1;transform:translateX(100%);filter:blur(4px)}66%,100%{opacity:1;transform:translateX(0);filter:blur(0)}}
-@media(prefers-reduced-motion:reduce){.trt .tv i{animation:none}.tv .b{opacity:0}}
+@keyframes tA-spin{0%,30%{opacity:1;transform:rotate(0) scale(1)}50%{opacity:1;transform:rotate(90deg) scale(1.6);filter:blur(3px)}50.1%,100%{opacity:0}}
+@keyframes tB-spin{0%,49.9%{opacity:0}50%{opacity:1;transform:rotate(-90deg) scale(1.6);filter:blur(3px)}70%,100%{opacity:1;transform:rotate(0) scale(1);filter:blur(0)}}
+@keyframes tA-glitch{0%,38%{opacity:1;transform:none}42%{transform:translateX(-12%) skewX(8deg);filter:hue-rotate(90deg)}46%{transform:translateX(10%)}50%{opacity:1}50.1%,100%{opacity:0}}
+@keyframes tB-glitch{0%,49.9%{opacity:0}50%{opacity:1;transform:translateX(12%) skewX(-8deg);filter:hue-rotate(-90deg)}55%{transform:translateX(-8%)}60%,100%{opacity:1;transform:none;filter:none}}
+.fv{position:relative;width:100%;aspect-ratio:16/10;border-radius:7px;overflow:hidden;background:#000}
+.fv canvas,.fv i{position:absolute;inset:0;width:100%;height:100%}
+.fv i{display:grid;place-items:center;font:800 13px/1 Inter,sans-serif;color:#fff;font-style:normal;background:linear-gradient(135deg,#6c5cff,#19b8e8)}
+.fv canvas+i{background:none}
+.trt .fv.kenburns>*{animation:fvKen 3s ease-in-out infinite alternate}
+.trt .fv.pulse>*{animation:fvPulse .6s ease-out infinite}
+.trt .fv.shake>*{animation:fvShake .35s linear infinite}
+.trt .fv.glitch>*{animation:fvGlitch 1.4s steps(1) infinite}
+.trt .fv.vhs::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.35) 0 1px,transparent 1px 3px);pointer-events:none}
+.trt .fv.vhs>*{filter:saturate(.6) contrast(1.1);animation:fvVhs 2s steps(1) infinite}
+@keyframes fvKen{from{transform:scale(1)}to{transform:scale(1.3)}}
+@keyframes fvPulse{0%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes fvShake{0%{transform:translate(0,0) scale(1.08)}25%{transform:translate(2px,-1px) scale(1.08)}50%{transform:translate(-2px,1px) scale(1.08)}75%{transform:translate(1px,2px) scale(1.08)}100%{transform:translate(0,0) scale(1.08)}}
+@keyframes fvGlitch{0%,70%{transform:none;filter:none}75%{transform:translateX(-6px) skewX(10deg);filter:hue-rotate(90deg)}82%{transform:translateX(5px);filter:hue-rotate(-60deg) saturate(2)}90%{transform:none}}
+@keyframes fvVhs{0%,80%{transform:none}85%{transform:translateX(2px)}92%{transform:translateY(-1px)}}
+.fl-vivid{filter:saturate(1.6) contrast(1.12)}.fl-warm{filter:sepia(.3) saturate(1.35) brightness(1.04)}.fl-cool{filter:saturate(1.05) hue-rotate(-12deg) brightness(1.04)}
+.fl-bw{filter:grayscale(1) contrast(1.15)}.fl-vintage{filter:sepia(.55) contrast(.9) brightness(1.06) saturate(.85)}.fl-film{filter:contrast(1.15) saturate(.85)}
+.fv.film::before,.fv.film::after{content:"";position:absolute;left:0;right:0;height:14%;background:#000;z-index:1}.fv.film::before{top:0}.fv.film::after{bottom:0}
+.fv.cool::after{content:"";position:absolute;inset:0;background:rgba(40,120,255,.22);mix-blend-mode:soft-light}
+@media(prefers-reduced-motion:reduce){.trt .tv i,.trt .fv>*{animation:none!important}.tv .b{opacity:0}}
+.btn-stop{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;border:1px solid #5a2633;background:#2a1018;color:#ffb3bf;border-radius:10px;padding:9px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.btn-stop:hover{background:#3a1520;border-color:#ff6b81}
 .tl-playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;box-shadow:0 0 5px #fff;pointer-events:none;z-index:2}
 .vhidden{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none}
 .transport{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 14px}
@@ -321,6 +361,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
   h1{font-size:23px}
   .arrows{display:none}
   .steps{grid-template-columns:repeat(4,1fr);gap:4px;padding:6px}
+  .cbt kbd{display:none}
   .step{flex-direction:column;gap:4px;padding:6px 2px;text-align:center;font-size:0}
   .step .ic{width:34px;height:34px}
   .step b{font-size:11px}
@@ -336,7 +377,6 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
     <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Prehľad</a>
     <a class="nav on" href="#" data-page="work" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Titulkovanie</a>
     <a class="nav" href="#kniznica" data-page="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>Knižnica</a>
-    <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Šablóny</a>
     <a class="nav" href="#znacka" data-page="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l9 9-9 9-9-9z"/></svg>Značka</a>
     <div class="plan"><small>Plán</small><strong>Pro</strong><small>2 € mesačne</small><div class="bar"><i style="width:100%"></i></div><small>Bez limitu exportov</small></div>
   </aside>
@@ -404,10 +444,17 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
                 <canvas id="tlRuler"></canvas>
                 <div class="tl-chips" id="tlChips"></div>
                 <canvas id="tlWave"></canvas>
-                <div class="tl-cuts" id="tlCuts"></div>
                 <div class="tl-band" id="tlBand" hidden></div>
                 <div class="tl-playhead" id="tlPlayhead"></div>
               </div>
+            </div>
+            <div class="ct" id="ct">
+              <div class="ct-scroll" id="ctScroll"><div class="ct-inner" id="ctInner">
+                <canvas id="ctRuler"></canvas>
+                <div class="ct-clips" id="ctClips"></div>
+                <canvas class="ct-audio" id="ctAudio"></canvas>
+                <div class="ct-playhead" id="ctPlayhead"></div>
+              </div></div>
             </div>
             <div class="selbar" id="selBar" hidden>
               <div class="selrow"><strong id="selInfo"></strong><button class="mini-btn" id="selClear" type="button">Zrušiť výber</button></div>
@@ -492,22 +539,29 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
         </section>
         <section id="pane-cut" hidden>
         <h3 style="margin-top:22px">Strih</h3>
-        <div class="pgroup"><div class="plabel">Strihanie</div>
-          <div class="cut-tools">
-            <button class="cut-btn" id="cutSplit" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg>Rozdeliť tu <kbd>S</kbd></button>
-            <button class="cut-btn danger" id="cutDel" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg><span id="cutDelLabel">Vystrihnúť časť</span> <kbd>Del</kbd></button>
-          </div>
-          <p class="hint" id="cutHint" style="margin:8px 0 0">Pusti alebo posuň video na miesto strihu a rozdeľ ho. Potom klikni na časť, ktorú chceš vystrihnúť.</p>
+        <div class="cut-bar" role="toolbar" aria-label="Nástroje strihu">
+          <button class="cbt" id="cutSplit" type="button" title="Rozdeliť klip v mieste prehrávania (S)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg>Rozdeliť<kbd>S</kbd></button>
+          <button class="cbt danger" id="cutDel" type="button" title="Vymazať vybraný klip (Del)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>Vymazať<kbd>Del</kbd></button>
+          <button class="cbt" id="cutUndo" type="button" title="Späť (Ctrl+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Späť<kbd>Ctrl+Z</kbd></button>
+          <button class="cbt" id="cutRedo" type="button" title="Znova (Ctrl+Shift+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>Znova<kbd>⇧Ctrl+Z</kbd></button>
         </div>
-        <div class="pgroup"><div class="plabel"><span>Časti videa</span><button class="mini-btn" id="cutReset" type="button">Zrušiť strihy</button></div>
-          <div class="parts" id="parts" role="listbox" aria-label="Časti videa"></div>
-          <div class="cut-sum"><span>Dĺžka po strihu</span><b id="cutLen">0:00</b></div>
+        <p class="hint" id="cutHint" style="margin:8px 0 0"></p>
+        <div id="clipPanel" hidden>
+          <div class="cut-head"><i class="dot"></i><span id="clipLabel">Klip</span><small id="clipLen"></small></div>
+          <div class="pgroup"><div class="plabel">Rýchlosť</div><div class="speeds" id="speedOpts" role="radiogroup" aria-label="Rýchlosť klipu"></div></div>
+          <div class="pgroup"><div class="plabel"><span>Efekt</span><button class="mini-btn" id="fxAll" type="button">Na všetky klipy</button></div><div class="trgrid" id="fxGrid" role="radiogroup" aria-label="Efekt klipu"></div></div>
+          <div class="pgroup"><div class="plabel"><span>Filter</span><button class="mini-btn" id="filterAll" type="button">Na všetky klipy</button></div><div class="trgrid" id="filterGrid" role="radiogroup" aria-label="Filter klipu"></div></div>
         </div>
-        <div class="pgroup"><div class="plabel" id="trLabel">Prechod</div>
-          <div class="trgrid" id="trGrid" role="radiogroup" aria-label="Prechod"></div>
-          <div class="plabel" style="margin-top:12px"><span>Dĺžka prechodu</span><output id="trDurOut">0,6 s</output></div>
-          <input type="range" id="trDur" min="0.2" max="2" step="0.1" value="0.6" aria-label="Dĺžka prechodu">
-          <p class="hint" id="trHint" style="margin:8px 0 0"></p>
+        <div id="trPanel" hidden>
+          <div class="cut-head"><i class="dot" style="background:#ffe066"></i><span id="trLabel">Prechod</span></div>
+          <div class="pgroup"><div class="plabel"><span>Prechod</span><button class="mini-btn" id="trAll" type="button">Na všetky prechody</button></div>
+            <div class="trgrid four" id="trGrid" role="radiogroup" aria-label="Prechod"></div>
+            <div class="plabel" style="margin-top:12px"><span>Dĺžka prechodu</span><output id="trDurOut"></output></div>
+            <input type="range" id="trDur" min="0.2" max="1.5" step="0.1" value="0.5" aria-label="Dĺžka prechodu"></div>
+        </div>
+        <div class="pgroup">
+          <div class="cut-sum"><span>Dĺžka výsledného videa</span><b id="cutLen">0:00</b></div>
+          <button class="mini" id="cutReset" type="button">Obnoviť pôvodné video</button>
         </div>
         </section>
         <section id="pane-export" hidden>
@@ -522,6 +576,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
         </div>
         <div class="pgroup"><div class="plabel">Video s titulkami</div>
           <button class="export-all" id="exportCur" style="margin-top:0">Exportovať tento formát</button>
+          <button class="btn-stop" id="exportStop" type="button" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>Zrušiť export</button>
           <button class="mini" id="exportAll" type="button">Exportovať všetky formáty (9:16, 1:1, 16:9)</button>
           <p class="hint" id="exportStatus"></p>
         </div>
