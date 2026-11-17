@@ -7,7 +7,31 @@ const SAMPLE = ["Ahoj, vitajte pri ukážke aplikácie.", "Nahráte video a titu
 
 const $ = (id) => document.getElementById(id);
 const OUT = { "9:16": [1080, 1920], "1:1": [1080, 1080], "16:9": [1920, 1080] };
-const EXPORT_SHORT = 720; // kratšia strana exportu v pixeloch
+// Kvalita exportu: Originál = rozlíšenie nahratého videa, najviac 1080p; 4K len ak bolo nahraté video v 4K;
+// Menší súbor = 720p. Nad 720p sa video nezväčšuje viac, než koľko pixelov má originál vo zvolenom výreze.
+const QUALITY_CAP = { orig: 1080, "4k": 2160, small: 720 };
+const is4kSource = () => Math.min(video.videoWidth || 0, video.videoHeight || 0) >= 2000;
+function exportSize(aspect, q = state.quality) {
+  const [ow, oh] = OUT[aspect], r = ow / oh, z = state.crop[aspect]?.zoom || 1;
+  const vw = video.videoWidth || ow, vh = video.videoHeight || oh;
+  const visW = Math.min(vw, vh * r) / z, visH = visW / r; // koľko pixelov originálu pokrýva výrez
+  const cap = q === "4k" && !is4kSource() ? 1080 : QUALITY_CAP[q] || 1080;
+  const short = Math.min(cap, Math.max(720, Math.round(Math.min(visW, visH)))); // aspoň 720p, aby titulky ostali ostré
+  const k = short / Math.min(ow, oh);
+  return { W: Math.round(ow * k / 2) * 2, H: Math.round(oh * k / 2) * 2 };
+}
+function refreshQuality() {
+  const has4k = is4kSource();
+  if (state.quality === "4k" && !has4k) state.quality = "orig";
+  document.querySelector('#quality [data-q="4k"]').hidden = !has4k;
+  document.querySelectorAll("#quality .opt").forEach((b) => { const on = b.dataset.q === state.quality; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
+  const src = Math.min(video.videoWidth || 0, video.videoHeight || 0);
+  $("qOrig").textContent = src ? (Math.min(src, 1080) + "p") : "do 1080p";
+  const { W, H } = exportSize(state.aspect);
+  $("qualityInfo").textContent = `Formát ${state.aspect}: ${W}×${H} px, snímky za sekundu ako v origináli.` +
+    (state.quality === "4k" ? " 4K export trvá dlhšie a na slabších zariadeniach môže sekať." : "") +
+    ((state.crop[state.aspect]?.zoom || 1) > 1.05 && state.quality !== "small" ? " Priblížený výrez používa menej pixelov originálu, obraz môže byť menej ostrý." : "");
+}
 const FONTS = ["Inter", "Montserrat", "Poppins", "Bebas Neue", "Roboto Slab", "Arial", "Georgia"];
 const PRESETS = [
   { hl: "#ffe066", id: "modern",  name: "Modern",  font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 60, size: 6.5, bold: true },
@@ -21,7 +45,7 @@ const PRESETS = [
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true },
   segments: [], file: null, url: null, duration: 0, out: null, results: {}, busyExport: false, playable: null, job: 0, pos: {}, audio: null,
-  spk: [], spkStyle: {}, cur: 1, tab: "subs", crop: {}, tool: "captions",
+  spk: [], spkStyle: {}, cur: 1, tab: "subs", quality: "orig", crop: {}, tool: "captions",
   waveform: null, tlZoomVal: 1, tlPxPerSec: 100, tlDragging: false, collapsedSpk: new Set(), activeSeg: -1, segFilter: "", sel: new Set(), selAnchor: -1 };
 const video = $("video");
 // Menu krokov je stále hore. Po nahratí videa sa ním prepína medzi časťami editora:
@@ -372,6 +396,7 @@ async function pickFile(file) {
       if (job !== state.job) return resolve();
       state.playable = video.videoWidth > 0; // zvuk bez obrazu = kodek sa nedá dekódovať
       if (state.playable) state.aspect = detectAspect(video.videoWidth, video.videoHeight); // uhádne formát podľa videa
+      refreshQuality();
       if (isFinite(video.duration)) state.duration = video.duration;
       resolve();
     };
@@ -1123,6 +1148,7 @@ function markActive() {
   document.querySelectorAll("#aspects .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
   if (state.out) state.out.cv.classList.toggle("crop", state.tool === "crop");
   const c = state.crop[state.aspect]; if (c) { $("zoom").value = c.zoom; $("zoomOut").textContent = `${state.aspect} · ${c.zoom.toFixed(2)}×`; }
+  refreshQuality();
 }
 function syncControls() {
   const st = activeStyle();
@@ -1141,14 +1167,13 @@ function syncControls() {
 // ---------- export: video + titulky nahrané z plátna ----------
 async function recordAspect(aspect, onProgress, job) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
-  const [ow, oh] = OUT[aspect], k = EXPORT_SHORT / Math.min(ow, oh);
-  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = styleFor(aspect), stOf = (sp, seg) => styleFor(aspect, sp, seg), crop = { ...state.crop[aspect] };
+  const { W, H } = exportSize(aspect), st = styleFor(aspect), stOf = (sp, seg) => styleFor(aspect, sp, seg), crop = { ...state.crop[aspect] };
   await Promise.all([st, ...state.spk.map((x) => stOf(x.id)), ...state.segments.filter((x) => x.styleOv).map((x) => stOf(x.speaker || 1, x))].flatMap((x) => [400, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`).catch(() => {}))));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
   const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
   await new Promise((res, rej) => { ev.onloadeddata = res; ev.onerror = () => rej(new Error("Video sa nepodarilo načítať.")); });
-  const stream = canvas.captureStream(30);
+  const stream = canvas.captureStream(); // nová snímka pri každej snímke originálu = rovnaká plynulosť (aj 60 fps)
   const ac = new (window.AudioContext || window.webkitAudioContext)();
   try {
     const dest = ac.createMediaStreamDestination();
@@ -1157,7 +1182,7 @@ async function recordAspect(aspect, onProgress, job) {
   } catch {}
   const types = ["video/mp4;codecs=avc1,mp4a.40.2", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
   const mime = types.find((t) => MediaRecorder.isTypeSupported(t)) || "";
-  const rec = new MediaRecorder(stream, { mimeType: mime || undefined, videoBitsPerSecond: 6e6 });
+  const rec = new MediaRecorder(stream, { mimeType: mime || undefined, videoBitsPerSecond: Math.round(clamp(W * H * 6, 5e6, 50e6)) }); // ~12 Mb/s pri 1080p, ~50 Mb/s pri 4K
   const chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
   const finished = new Promise((res) => (rec.onstop = res));
   let live = true;
@@ -1255,6 +1280,7 @@ function setup() {
   $("zoom").oninput = (e) => { const q = state.crop[state.aspect]; if (!q) return; q.zoom = +e.target.value; markActive(); invalidateResults(); };
   $("cropReset").onclick = () => { state.crop[state.aspect] = { zoom: 1, cx: 0.5, cy: 0.5 }; markActive(); invalidateResults(); };
   $("fontUp").onclick = () => $("fontFile").click();
+  document.querySelectorAll("#quality .opt").forEach((b) => b.onclick = () => { state.quality = b.dataset.q; invalidateResults(); refreshQuality(); });
   $("fontsAll").onclick = () => setPage("brand");
   document.querySelectorAll(".nav[data-page]").forEach((a) => a.onclick = (e) => { e.preventDefault(); setPage(a.dataset.page); });
   $("brandBack").onclick = $("libBack").onclick = () => setPage("work");
