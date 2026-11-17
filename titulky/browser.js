@@ -22,7 +22,7 @@ const PRESETS = [
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true },
   segments: [], file: null, url: null, duration: 0, out: null, results: {}, busyExport: false, playable: null, job: 0, pos: {}, audio: null,
   spkOn: false, spkTab: 1, style2: null, speakers: 1, crop: {}, tool: "captions",
-  waveform: null, tlZoomVal: 1, tlPxPerSec: 100, tlDragging: false, collapsedSpk: new Set(), activeSeg: -1, segFilter: "" };
+  waveform: null, tlZoomVal: 1, tlPxPerSec: 100, tlDragging: false, collapsedSpk: new Set(), activeSeg: -1, segFilter: "", sel: new Set(), selAnchor: -1 };
 const video = $("video");
 const STEP_OF = { upload: 0, busy: 1, editor: 2 };
 const setStep = (i) => document.querySelectorAll("#steps .step").forEach((s, n) => s.classList.toggle("on", n === i));
@@ -380,10 +380,12 @@ function defaultStyle2() {
   const p = PRESETS.find((x) => x.id !== state.style.preset) || PRESETS[0];
   return { ...p, preset: p.id, highlight: state.style.highlight, caps: p.caps ?? state.style.caps };
 }
-function speakerStyle(sp) { // štýl titulkov pre daného rečníka (rečník 2 môže mať vlastný štýl)
-  return (sp === 2 && state.spkOn && state.style2) ? state.style2 : state.style;
+function speakerStyle(sp, seg) { // štýl titulku: vlastný štýl úseku > štýl rečníka 2 > hlavný štýl
+  const base = (sp === 2 && state.spkOn && state.style2) ? state.style2 : state.style;
+  const p = seg && seg.styleOv ? PRESETS.find((x) => x.id === seg.styleOv) : null;
+  return p ? { ...p, preset: p.id, highlight: p.highlight ?? base.highlight, caps: p.caps ?? base.caps, on: state.style.on } : base;
 }
-const styleFor = (k, sp = 1) => ({ ...speakerStyle(sp), ...(state.pos[k] || defaultPos()) });
+const styleFor = (k, sp = 1, seg = null) => ({ ...speakerStyle(sp, seg), ...(state.pos[k] || defaultPos()) });
 
 function playableBanner() {
   const bad = state.playable === false;
@@ -506,6 +508,9 @@ function wireChip(el, s, i, hl, hr) {
   hl.addEventListener("pointerdown", begin("l")); hr.addEventListener("pointerdown", begin("r"));
   el.addEventListener("pointerdown", (e) => {
     if (e.target !== el) return;
+    const mod = e.shiftKey || e.ctrlKey || e.metaKey;
+    if (mod || !state.sel.has(i)) selectSeg(i, e);
+    if (mod) { e.stopPropagation(); return; } // výber s klávesom nepresúva titulok
     begin("m")(e); state.activeSeg = i; video.currentTime = s.start + 0.01; markActiveSeg();
     const row = document.querySelector(`.segment[data-i="${i}"]`); if (row) row.scrollIntoView({ block: "nearest" }); // klik na titulok na osi = zámerný presun, tu sa scrollovať má
   });
@@ -524,7 +529,7 @@ function renderChips(dur, px) {
   const box = $("tlChips"); if (!box) return;
   box.style.width = Math.round(dur * px) + "px"; box.textContent = "";
   state.segments.forEach((s, i) => {
-    const el = document.createElement("div"); el.className = "chip" + (i === state.activeSeg ? " active" : ""); el.dataset.i = i;
+    const el = document.createElement("div"); el.className = "chip" + (i === state.activeSeg ? " active" : "") + (state.sel.has(i) ? " sel" : "") + (s.styleOv ? " ov" : ""); el.dataset.i = i;
     el.style.left = Math.round(s.start * px) + "px"; el.style.width = Math.max(10, Math.round((s.end - s.start) * px)) + "px";
     el.style.background = s.speaker === 2 ? "var(--spk2)" : "var(--spk1)"; el.title = s.text;
     const label = document.createElement("span"); label.className = "chip-label"; label.textContent = s.text.slice(0, 36);
@@ -539,6 +544,42 @@ function renderTimeline() {
   state.tlPxPerSec = px;
   drawRuler(dur, px); drawWave(dur, px); renderChips(dur, px);
   $("tlDur").textContent = fmtTimeline(dur);
+}
+function selectSeg(i, e) { // klik = jeden titulok, Shift+klik = úsek, Ctrl/Cmd+klik = pridať/odobrať
+  if (e && e.shiftKey && state.selAnchor >= 0) {
+    const a = Math.min(state.selAnchor, i), b = Math.max(state.selAnchor, i);
+    if (!(e.ctrlKey || e.metaKey)) state.sel.clear();
+    for (let k = a; k <= b; k++) state.sel.add(k);
+  } else if (e && (e.ctrlKey || e.metaKey)) {
+    if (state.sel.has(i)) state.sel.delete(i); else state.sel.add(i);
+    state.selAnchor = i;
+  } else { state.sel.clear(); state.sel.add(i); state.selAnchor = i; }
+  refreshSel();
+}
+function clearSel() { state.sel.clear(); state.selAnchor = -1; refreshSel(); }
+function refreshSel() {
+  document.querySelectorAll(".chip").forEach((c) => c.classList.toggle("sel", state.sel.has(+c.dataset.i)));
+  document.querySelectorAll(".segment").forEach((r) => r.classList.toggle("sel", state.sel.has(+r.dataset.i)));
+  const bar = $("selBar"); if (!bar) return;
+  const ids = [...state.sel].sort((a, b) => a - b).filter((k) => state.segments[k]);
+  bar.hidden = ids.length === 0;
+  if (!ids.length) return;
+  const a = state.segments[ids[0]], b = state.segments[ids[ids.length - 1]];
+  $("selInfo").textContent = `Vybraté: ${ids.length} ${ids.length === 1 ? "titulok" : ids.length < 5 ? "titulky" : "titulkov"} · ${fmtTime(a.start)}–${fmtTime(b.end)}`;
+  const spks = new Set(ids.map((k) => state.segments[k].speaker || 1)), ovs = new Set(ids.map((k) => state.segments[k].styleOv || ""));
+  document.querySelectorAll("#selBar [data-spk]").forEach((x) => x.classList.toggle("on", spks.size === 1 && spks.has(+x.dataset.spk)));
+  document.querySelectorAll("#selStyles .stile").forEach((x) => x.classList.toggle("on", ovs.size === 1 && ovs.has(x.dataset.id)));
+}
+function assignSpeaker(n) {
+  const ids = [...state.sel]; if (!ids.length) return;
+  ids.forEach((k) => { state.segments[k].speaker = n; });
+  if (n === 2 && !state.spkOn) { state.spkOn = true; if (!state.style2) state.style2 = defaultStyle2(); state.speakers = Math.max(state.speakers, 2); }
+  bumpDyn(); invalidateResults(); buildSegments(); renderChips(tlDuration(), state.tlPxPerSec); syncControls(); refreshSel();
+}
+function assignStyle(id) {
+  const ids = [...state.sel]; if (!ids.length) return;
+  ids.forEach((k) => { state.segments[k].styleOv = id || null; });
+  bumpDyn(); invalidateResults(); buildSegments(); renderChips(tlDuration(), state.tlPxPerSec); refreshSel();
 }
 function markActiveSeg() {
   document.querySelectorAll(".chip").forEach((c) => c.classList.toggle("active", +c.dataset.i === state.activeSeg));
@@ -583,9 +624,14 @@ function buildSegments() {
       h.onclick = () => toggleSpkGroup(n);
       box.append(h);
     }
-    const row = document.createElement("div"); row.className = "segment"; row.dataset.i = i; row.dataset.s = n;
-    const t = document.createElement("button"); t.textContent = fmtTime(s.start);
-    t.onclick = () => { video.currentTime = s.start + 0.01; video.play(); state.activeSeg = i; markActiveSeg(); };
+    const row = document.createElement("div"); row.className = "segment" + (state.sel.has(i) ? " sel" : ""); row.dataset.i = i; row.dataset.s = n;
+    const t = document.createElement("button"); t.textContent = fmtTime(s.start); t.title = "Klik: prehrať odtiaľto a vybrať · Shift+klik: vybrať úsek";
+    t.onclick = (e) => {
+      selectSeg(i, e);
+      if (!(e.shiftKey || e.ctrlKey || e.metaKey)) { video.currentTime = s.start + 0.01; video.play(); }
+      state.activeSeg = i; markActiveSeg();
+    };
+    if (s.styleOv) { const p = PRESETS.find((x) => x.id === s.styleOv); if (p) { const tag = document.createElement("span"); tag.className = "ovtag"; tag.textContent = p.name; t.append(tag); } }
     const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.setAttribute("aria-label", "Text titulku " + (i + 1));
     const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
     ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); invalidateResults(); updateChip(i); };
@@ -597,12 +643,12 @@ function buildSegments() {
     };
     row.append(t, ta, sp); box.append(row); requestAnimationFrame(fit);
   });
-  applySegFilter();
+  applySegFilter(); refreshSel();
 }
 function initEditor() {
   state.pos = {}; state.crop = {}; state.tool = "captions"; state.results = {};
   ASPECTS.forEach((a) => { state.pos[a.k] = defaultPos(); state.crop[a.k] = { zoom: 1, cx: 0.5, cy: 0.5 }; });
-  state.speakers = 1; state.spkOn = false; state.spkTab = 1; state.activeSeg = -1; state.collapsedSpk.clear();
+  state.speakers = 1; state.spkOn = false; state.spkTab = 1; state.activeSeg = -1; state.collapsedSpk.clear(); state.sel.clear(); state.selAnchor = -1;
   computeWaveform();
   buildOut(); buildSegments(); show("editor"); syncControls(); markActive(); playableBanner(); $("export-error").hidden = true;
   renderTimeline();
@@ -633,7 +679,7 @@ function renderFrame(ctx, vid, t, W, H, stOf, crop) {
   if (!stOf(1).on) return;
   drawDynamic(ctx, t, W, H, stOf);
   const i = segmentAt(t);
-  if (i >= 0 && state.segments[i].text.trim()) { const sg = state.segments[i], st = stOf(sg.speaker || 1); if (!st.dynamic) drawCaption(ctx, sg, t, W, H, st); }
+  if (i >= 0 && state.segments[i].text.trim()) { const sg = state.segments[i], st = stOf(sg.speaker || 1, sg); if (!st.dynamic) drawCaption(ctx, sg, t, W, H, st); }
 }
 let lastActive = -2;
 function loop() {
@@ -646,7 +692,7 @@ function loop() {
       if (o.cv.style.width !== w + "px" || o.cv.style.height !== h + "px") { o.cv.style.width = w + "px"; o.cv.style.height = h + "px"; }
       if (o.cv.width !== Math.round(w * dpr) || o.cv.height !== Math.round(h * dpr)) { o.cv.width = Math.round(w * dpr); o.cv.height = Math.round(h * dpr); }
       const ctx = o.cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      renderFrame(ctx, video, t, w, h, (sp) => styleFor(o.k, sp), state.crop[o.k]);
+      renderFrame(ctx, video, t, w, h, (sp, seg) => styleFor(o.k, sp, seg), state.crop[o.k]);
       o.time.textContent = label;
       o.play.textContent = video.paused ? "▶ Prehrať" : "■ Stop";
     }
@@ -733,7 +779,7 @@ function segmentFeatures(audio, start, end) {
   return [Math.log2(f0s[f0s.length >> 1]), ...Array.from(sums, (v) => v / voiced)];
 }
 // Rozdelí titulky na dvoch rečníkov (1 = ten, kto hovorí prvý). Vráti počet nájdených rečníkov.
-function detectSpeakers() {
+function detectSpeakers(dbgOut) {
   const segs = state.segments, audio = state.audio;
   segs.forEach((s) => { s.speaker = 1; });
   if (!audio || segs.length < 4) return 1;
@@ -754,7 +800,13 @@ function detectSpeakers() {
   const n1 = lab.filter((v) => v === 1).length, n0 = X.length - n1;
   const within = X.reduce((a, p, i) => a + dist(p, c[lab[i]]), 0) / X.length, between = dist(c[0], c[1]);
   const f0gap = Math.abs((c[0][0] - c[1][0]) / 4 * Math.sqrt(sd[0] || 1)); // rozdiel výšky hlasu v oktávach
-  if (Math.min(n0, n1) < Math.max(2, 0.12 * X.length) || between / (within || 1) < 1.8 || f0gap < 0.12) return 1;
+  // Oddelenosť výšky hlasu: rozdiel priemerov oproti rozptylu v skupinách. Jeden hlas rozdelený nasilu
+  // vychádza okolo 2,5, dvaja rôzni ľudia výrazne viac. Bez jasného rozdielu ostáva jeden rečník.
+  const f0 = (g) => idx.map((i, j) => (lab[j] === g ? feats[i][0] : null)).filter((v) => v !== null);
+  const stat = (a) => { const m = a.reduce((x, v) => x + v, 0) / a.length; return [m, Math.sqrt(a.reduce((x, v) => x + (v - m) ** 2, 0) / a.length)]; };
+  const [m0, s0] = stat(f0(0)), [m1, s1] = stat(f0(1)), sep = Math.abs(m0 - m1) / (Math.sqrt((s0 * s0 + s1 * s1) / 2) || 1e-6);
+  if (dbgOut) dbgOut.push({ n0, n1, ratio: between / (within || 1), f0gap, sep });
+  if (idx.length < 6 || Math.min(n0, n1) < Math.max(3, 0.15 * X.length) || between / (within || 1) < 1.8 || f0gap < 0.33 || sep < 2.8) return 1;
   const first = lab[0]; // rečník 1 = ten, kto hovorí v prvom titulku
   let prev = 1;
   segs.forEach((sg, i) => { const j = idx.indexOf(i); if (j >= 0) prev = lab[j] === first ? 1 : 2; sg.speaker = prev; });
@@ -866,8 +918,8 @@ function syncControls() {
 async function recordAspect(aspect, onProgress, job) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
   const [ow, oh] = OUT[aspect], k = EXPORT_SHORT / Math.min(ow, oh);
-  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = styleFor(aspect), stOf = (sp) => styleFor(aspect, sp), crop = { ...state.crop[aspect] };
-  await Promise.all([st, stOf(2)].flatMap((x) => [400, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`).catch(() => {}))));
+  const W = Math.round(ow * k / 2) * 2, H = Math.round(oh * k / 2) * 2, st = styleFor(aspect), stOf = (sp, seg) => styleFor(aspect, sp, seg), crop = { ...state.crop[aspect] };
+  await Promise.all([st, stOf(2), ...state.segments.filter((x) => x.styleOv).map((x) => stOf(x.speaker || 1, x))].flatMap((x) => [400, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`).catch(() => {}))));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
   const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
@@ -993,11 +1045,54 @@ function setup() {
   $("tlZoomOut").onclick = () => { state.tlZoomVal = clamp(state.tlZoomVal - 0.5, 1, 6); $("tlZoom").value = state.tlZoomVal; renderTimeline(); };
   new ResizeObserver(() => renderTimeline()).observe($("tlScroll"));
   // klik na pozadie časovej osi (mimo titulku) pretočí video; ťahanie "scrubuje"
-  const scrub = (e) => { const r = $("tlInner").getBoundingClientRect(); video.currentTime = clamp((e.clientX - r.left + $("tlScroll").scrollLeft) / state.tlPxPerSec, 0, tlDuration()); };
-  let scrubbing = false;
-  $("tlInner").addEventListener("pointerdown", (e) => { if (e.target.closest(".chip")) return; scrubbing = true; scrub(e); });
-  window.addEventListener("pointermove", (e) => { if (scrubbing) scrub(e); });
-  window.addEventListener("pointerup", () => { scrubbing = false; });
+  const tAt = (e) => clamp((e.clientX - $("tlInner").getBoundingClientRect().left) / state.tlPxPerSec, 0, tlDuration());
+  const scrub = (e) => { video.currentTime = tAt(e); };
+  let scrubbing = false, band = null;
+  $("tlInner").addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".chip")) return;
+    if (e.target === $("tlChips")) { // ťahanie v páse titulkov = výber úseku
+      band = { t0: tAt(e), add: e.shiftKey || e.ctrlKey || e.metaKey, base: new Set(state.sel) };
+      $("tlBand").hidden = false; e.preventDefault(); return;
+    }
+    scrubbing = true; scrub(e);
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (scrubbing) scrub(e);
+    if (band) {
+      const t1 = tAt(e), a = Math.min(band.t0, t1), b = Math.max(band.t0, t1), px = state.tlPxPerSec;
+      Object.assign($("tlBand").style, { left: Math.round(a * px) + "px", width: Math.max(1, Math.round((b - a) * px)) + "px" });
+      state.sel = new Set(band.add ? band.base : []);
+      state.segments.forEach((s, k) => { if (s.end > a && s.start < b) state.sel.add(k); });
+      refreshSel();
+    }
+  });
+  window.addEventListener("pointerup", (e) => {
+    scrubbing = false;
+    if (band) {
+      if (Math.abs(tAt(e) - band.t0) * state.tlPxPerSec < 4 && !band.add) { clearSel(); video.currentTime = band.t0; } // len klik = zrušiť výber a pretočiť
+      else state.selAnchor = [...state.sel].sort((x, y) => x - y)[0] ?? -1;
+      band = null; $("tlBand").hidden = true;
+    }
+  });
+  // lišta výberu: rečník a štýl pre vybrané titulky
+  document.querySelectorAll("#selBar [data-spk]").forEach((b) => b.onclick = () => assignSpeaker(+b.dataset.spk));
+  [{ id: "", name: "Podľa rečníka" }, ...PRESETS].forEach((p) => {
+    const b = document.createElement("button"); b.className = "stile"; b.dataset.id = p.id; b.title = p.id ? "Štýl " + p.name + " pre vybrané titulky" : "Zrušiť vlastný štýl, použiť štýl rečníka";
+    if (p.id) { const smp = document.createElement("span"); smp.className = "stsample"; renderSample(smp, { ...p, on: true }, 0.55); b.append(smp); }
+    const nm = document.createElement("span"); nm.textContent = p.name; b.append(nm);
+    b.onclick = () => assignStyle(p.id); $("selStyles").append(b);
+  });
+  $("selClear").onclick = clearSel;
+  // medzerník = prehrať/zastaviť, Esc = zrušiť výber
+  document.addEventListener("keydown", (e) => {
+    if ($("view-editor").hidden) return;
+    const el = e.target, tag = el.tagName, typing = tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable ||
+      (tag === "INPUT" && !["range", "checkbox", "color", "button", "file"].includes(el.type));
+    if (e.code === "Space" && !typing) {
+      e.preventDefault(); if (tag === "BUTTON" || tag === "INPUT") el.blur();
+      if (video.paused) video.play().catch(() => {}); else video.pause();
+    } else if (e.key === "Escape" && !typing && state.sel.size) clearSel();
+  });
   $("segSearchBtn").onclick = () => {
     const inp = $("segSearch"); inp.hidden = !inp.hidden;
     if (!inp.hidden) inp.focus(); else { inp.value = ""; state.segFilter = ""; applySegFilter(); }
@@ -1025,7 +1120,7 @@ function dynChunks() {
   const all = [];
   for (const seg of state.segments) {
     let cur = [];
-    const flush = () => { if (cur.length) { all.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end, speaker: seg.speaker || 1 }); cur = []; } };
+    const flush = () => { if (cur.length) { all.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end, speaker: seg.speaker || 1, seg }); cur = []; } };
     for (const o of wordsFor(seg)) {
       const len = cur.reduce((a, x) => a + x.w.length + 1, 0) + o.w.length;
       if (cur.length && (cur.length >= 3 || len > 20 || o.start - cur[cur.length - 1].end > 0.5)) flush();
@@ -1100,7 +1195,7 @@ function drawChunk(ctx, c, t, W, H, st) {
 function drawDynamic(ctx, t, W, H, stOf) { // stOf(rečník) -> štýl; kreslia sa len frázy, ktorých štýl je dynamický
   for (const c of dynChunks()) {
     if (t < c.start || t > c.exitStart + c.exitDur) continue;
-    const st = stOf(c.speaker); if (st.dynamic) drawChunk(ctx, c, t, W, H, st);
+    const st = stOf(c.speaker, c.seg); if (st.dynamic) drawChunk(ctx, c, t, W, H, st);
   }
 }
 function wrapWords(ctx, words, maxW) {
