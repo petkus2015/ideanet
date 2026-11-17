@@ -99,7 +99,7 @@ main{min-width:0}
 .chip .h{position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize}
 .chip .h.l{left:0}
 .chip .h.r{right:0}
-#timelineCard.video-only .tl-chips,#timelineCard.video-only #tlHint,#timelineCard.video-only .selbar{display:none!important}
+#timelineCard.cut-mode .tl-chips,#timelineCard.cut-mode #tlHint,#timelineCard.cut-mode .selbar,#timelineCard.video-only .tl-chips,#timelineCard.video-only #tlHint,#timelineCard.video-only .selbar{display:none!important}
 .add-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line2);background:var(--card2);color:var(--text);border-radius:99px;padding:4px 11px 4px 8px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
 .add-btn svg{width:13px;height:13px}
 .add-btn:hover{border-color:var(--a);background:#141a4a}
@@ -143,6 +143,65 @@ main{min-width:0}
 .stile{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid var(--line2);background:#050816;color:var(--muted);border-radius:8px;padding:5px 8px;font:inherit;font-size:10px;cursor:pointer;min-width:62px}
 .stile.on{border-color:#ffe066;color:#fff}
 .stsample{display:grid;place-items:center;height:22px}
+/* strih */
+.tl-cuts{position:absolute;inset:0;pointer-events:none;z-index:1}
+.cut-off{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(6,9,22,.78) 0 6px,rgba(6,9,22,.55) 6px 12px);border-left:1px solid #ff6b81;border-right:1px solid #ff6b81}
+.cut-off span{position:absolute;top:4px;left:6px;font-size:10px;font-weight:600;color:#ff9aab;white-space:nowrap;text-shadow:0 1px 2px #000}
+.cut-line{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#ffe066}
+.cut-sel{position:absolute;top:0;bottom:0;border:2px solid var(--b);border-radius:6px;box-shadow:inset 0 0 0 999px rgba(25,184,232,.08)}
+.cut-tr{position:absolute;top:62px;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:#ffe066;color:#1a1500;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid #0e1430;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+#timelineCard.cut-mode .tl-cuts .cut-tr{pointer-events:auto;cursor:pointer}
+#timelineCard:not(.cut-mode) .cut-sel{display:none}
+.cut-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cut-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1px solid var(--line2);border-radius:12px;background:var(--card2);color:var(--text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
+.cut-btn svg{width:20px;height:20px;color:var(--b)}
+.cut-btn:hover:not(:disabled){border-color:var(--a);background:#141a4a}
+.cut-btn:disabled{opacity:.45;cursor:default}
+.cut-btn kbd,.kbd{font:600 10px/1 Inter,sans-serif;color:var(--muted);border:1px solid var(--line2);border-radius:5px;padding:2px 5px}
+.cut-btn.danger svg{color:#ff8a98}
+.parts{display:flex;flex-direction:column;gap:6px}
+.part{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line2);border-radius:11px;background:var(--card2);cursor:pointer;font-size:12px;transition:border-color .15s}
+.part:hover{border-color:#3a4380}
+.part.on{border-color:var(--b);box-shadow:0 0 0 3px rgba(25,184,232,.15)}
+.part.off{opacity:.6}
+.part.off .ptt{text-decoration:line-through}
+.part .pn{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#141a4a;font-weight:700;font-size:11px;flex:none}
+.part.off .pn{background:#3a1520;color:#ff9aab}
+.part .pt{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.part .ptt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.part .pd{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.part .ptr{font-size:10px;color:#ffe066;border:1px solid #6b5f2a;border-radius:99px;padding:1px 7px;white-space:nowrap}
+.cut-sum{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px}
+.cut-sum b{color:var(--text);font-variant-numeric:tabular-nums}
+.trgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.trt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;border:1px solid var(--line2);border-radius:11px;background:var(--card2);color:var(--muted);font:inherit;font-size:11px;cursor:pointer}
+.trt:hover{border-color:#3a4380}
+.trt.on{border-color:var(--a);color:#fff;background:#141a4a}
+.trt:disabled{opacity:.4;cursor:default}
+.tv{position:relative;width:100%;aspect-ratio:16/10;border-radius:7px;overflow:hidden;background:#000}
+.tv i{position:absolute;inset:0;display:grid;place-items:center;font:800 13px/1 Inter,sans-serif;color:#fff;font-style:normal}
+.tv .a{background:linear-gradient(135deg,#6c5cff,#3b2fb8)}
+.tv .b{background:linear-gradient(135deg,#19b8e8,#0d6f9a);opacity:0}
+.tv .w{background:#fff;opacity:0}
+.trt .tv i{animation:2.4s infinite both}
+.tv.none .a{animation-name:tA-none}.tv.none .b{animation-name:tB-none}
+.tv.fade .a{animation-name:tA-fade}.tv.fade .b{animation-name:tB-fade}
+.tv.white .a{animation-name:tA-none}.tv.white .b{animation-name:tB-none}.tv.white .w{animation-name:tW}
+.tv.blur .a{animation-name:tA-blur}.tv.blur .b{animation-name:tB-blur}
+.tv.zoom .a{animation-name:tA-zoom}.tv.zoom .b{animation-name:tB-zoom}
+.tv.whip .a{animation-name:tA-whip}.tv.whip .b{animation-name:tB-whip}
+@keyframes tA-none{0%,49.9%{opacity:1}50%,100%{opacity:0}}
+@keyframes tB-none{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+@keyframes tA-fade{0%,32%{opacity:1}50%,100%{opacity:0}}
+@keyframes tB-fade{0%,50%{opacity:0}68%,100%{opacity:1}}
+@keyframes tW{0%,34%{opacity:0}50%{opacity:1}66%,100%{opacity:0}}
+@keyframes tA-blur{0%,30%{opacity:1;filter:blur(0)}50%{opacity:1;filter:blur(8px)}50.1%,100%{opacity:0}}
+@keyframes tB-blur{0%,49.9%{opacity:0;filter:blur(8px)}50%{opacity:1;filter:blur(8px)}70%,100%{opacity:1;filter:blur(0)}}
+@keyframes tA-zoom{0%,30%{opacity:1;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}50.1%,100%{opacity:0}}
+@keyframes tB-zoom{0%,49.9%{opacity:0;transform:scale(1.8)}50%{opacity:1;transform:scale(1.8)}70%,100%{opacity:1;transform:scale(1)}}
+@keyframes tA-whip{0%,34%{opacity:1;transform:translateX(0);filter:blur(0)}50%{opacity:1;transform:translateX(-100%);filter:blur(4px)}50.1%,100%{opacity:0}}
+@keyframes tB-whip{0%,49.9%{opacity:0;transform:translateX(100%)}50%{opacity:1;transform:translateX(100%);filter:blur(4px)}66%,100%{opacity:1;transform:translateX(0);filter:blur(0)}}
+@media(prefers-reduced-motion:reduce){.trt .tv i{animation:none}.tv .b{opacity:0}}
 .tl-playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;box-shadow:0 0 5px #fff;pointer-events:none;z-index:2}
 .vhidden{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none}
 .transport{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 14px}
@@ -243,7 +302,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 .busy h2{margin:0 0 6px;font-size:18px}
 .busy p{margin:0;color:var(--muted)}
 /* kroky */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card);position:sticky;top:0;z-index:5}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:0 0 18px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card);position:sticky;top:0;z-index:5}
 .step{display:flex;align-items:center;gap:12px;color:var(--muted);font:inherit;font-size:12px;text-align:left;background:none;border:1px solid transparent;border-radius:10px;padding:6px 8px;cursor:pointer}
 .step:hover:not(:disabled){border-color:var(--line2)}
 .step:disabled{opacity:.45;cursor:default}
@@ -261,7 +320,10 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
   .content{padding:18px 16px}
   h1{font-size:23px}
   .arrows{display:none}
-  .steps{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
+  .step{flex-direction:column;gap:4px;padding:6px 2px;text-align:center;font-size:0}
+  .step .ic{width:34px;height:34px}
+  .step b{font-size:11px}
   .head{flex-direction:column}
 }
 @media(prefers-reduced-motion:reduce){.spinner{animation:none}}
@@ -291,6 +353,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
     <nav class="steps" id="steps" aria-label="Kroky">
       <button class="step" data-tab="upload" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg></span><span><b>Nahratie</b>Pridaj video</span></button>
       <button class="step" data-tab="subs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></span><span><b>Titulkovanie</b>Text, rečníci, štýl</span></button>
+      <button class="step" data-tab="cut" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg></span><span><b>Strih</b>Strihanie, prechody</span></button>
       <button class="step" data-tab="edit" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span><b>Úprava</b>Formát, výrez, posun</span></button>
       <button class="step" data-tab="export" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></span><span><b>Export</b>Stiahni súbory</span></button>
     </nav>
@@ -342,6 +405,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
                 <canvas id="tlRuler"></canvas>
                 <div class="tl-chips" id="tlChips"></div>
                 <canvas id="tlWave"></canvas>
+                <div class="tl-cuts" id="tlCuts"></div>
                 <div class="tl-band" id="tlBand" hidden></div>
                 <div class="tl-playhead" id="tlPlayhead"></div>
               </div>
@@ -409,6 +473,26 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
           <label class="check"><input type="checkbox" id="roam"> Dynamický štýl: meniť polohu pri každej fráze</label>
           <label class="check"><input type="checkbox" id="caps"> Dynamický štýl: VEĽKÉ PÍSMENA (kapitálky)</label>
         </div></details>
+        </section>
+        <section id="pane-cut" hidden>
+        <h3>Strih</h3>
+        <div class="pgroup"><div class="plabel">Strihanie</div>
+          <div class="cut-tools">
+            <button class="cut-btn" id="cutSplit" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg>Rozdeliť tu <kbd>S</kbd></button>
+            <button class="cut-btn danger" id="cutDel" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg><span id="cutDelLabel">Vystrihnúť časť</span> <kbd>Del</kbd></button>
+          </div>
+          <p class="hint" id="cutHint" style="margin:8px 0 0">Pusti alebo posuň video na miesto strihu a rozdeľ ho. Potom klikni na časť, ktorú chceš vystrihnúť.</p>
+        </div>
+        <div class="pgroup"><div class="plabel"><span>Časti videa</span><button class="mini-btn" id="cutReset" type="button">Zrušiť strihy</button></div>
+          <div class="parts" id="parts" role="listbox" aria-label="Časti videa"></div>
+          <div class="cut-sum"><span>Dĺžka po strihu</span><b id="cutLen">0:00</b></div>
+        </div>
+        <div class="pgroup"><div class="plabel" id="trLabel">Prechod</div>
+          <div class="trgrid" id="trGrid" role="radiogroup" aria-label="Prechod"></div>
+          <div class="plabel" style="margin-top:12px"><span>Dĺžka prechodu</span><output id="trDurOut">0,6 s</output></div>
+          <input type="range" id="trDur" min="0.2" max="2" step="0.1" value="0.6" aria-label="Dĺžka prechodu">
+          <p class="hint" id="trHint" style="margin:8px 0 0"></p>
+        </div>
         </section>
         <section id="pane-edit" hidden>
         <h3>Úprava videa</h3>
