@@ -63,6 +63,7 @@ const show = (view) => {
   curView = view;
   for (const v of ["upload", "busy", "editor"]) $("view-" + v).hidden = v !== view;
   $("panel").hidden = view !== "editor";
+  $("content").classList.toggle("ws", view === "editor" && page === "work");
   if (view === "editor") applyTab(); else updateTabs();
 };
 function applyTab() { // zobrazí v editore len to, čo patrí k zvolenému kroku
@@ -593,7 +594,7 @@ function drawWave(dur, px) {
   const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
   const peaks = state.waveform;
   if (peaks && peaks.length) {
-    ctx.fillStyle = "rgba(108,92,255,.6)";
+    ctx.fillStyle = "rgba(80,190,120,.7)";
     const n = peaks.length;
     for (let x = 0; x < w; x++) { const v = peaks[Math.floor(x / w * n)] || 0, bh = Math.max(1, v * h); ctx.fillRect(x, (h - bh) / 2, 1, bh); }
   } else { ctx.fillStyle = "rgba(255,255,255,.08)"; ctx.fillRect(0, h / 2 - 1, w, 2); }
@@ -990,66 +991,73 @@ async function makeThumbs(job) {
 const thumbAt = (t) => { const T = state.thumbs; if (!T) return null; const k = clamp(Math.floor(t / T.step), 0, T.list.length - 1); return T.list[k] || T.list.find(Boolean) || null; };
 
 // --- klipová stopa ---
-const CT_PAD = 28;
+const CT_PAD = 14;
+const fmtTC = (s) => { const f = Math.floor(Math.max(0, s) * 25 + 1e-6), p = (n) => String(n).padStart(2, "0"); return `${p(Math.floor(f / 90000))}:${p(Math.floor(f / 1500) % 60)}:${p(Math.floor(f / 25) % 60)}:${p(f % 25)}`; };
+const plural = (n, a, b, c) => n + " " + (n === 1 ? a : n > 1 && n < 5 ? b : c);
 let trackBusy = false;
-function ctPx() { const avail = ($("ctScroll").clientWidth || 600) - CT_PAD * 2; return Math.max(16, avail / Math.max(0.5, outDuration()) * state.tlZoomVal); }
-function drawCtRuler(total, px) {
-  const cv = $("ctRuler"), dpr = window.devicePixelRatio || 1, w = Math.round(total * px + CT_PAD * 2);
-  cv.width = Math.round(w * dpr); cv.height = Math.round(22 * dpr); cv.style.width = w + "px";
-  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, 22);
-  const step = px > 60 ? 1 : px > 25 ? 2 : px > 10 ? 5 : px > 4 ? 10 : 30;
-  g.strokeStyle = "rgba(255,255,255,.2)"; g.fillStyle = "rgba(255,255,255,.55)"; g.font = "10px Inter,sans-serif"; g.textBaseline = "top";
-  for (let t = 0; t <= total + 1e-6; t += step / 2) {
-    const x = CT_PAD + t * px, major = Math.abs(t / step - Math.round(t / step)) < 1e-6;
-    g.beginPath(); g.moveTo(x + 0.5, major ? 13 : 17); g.lineTo(x + 0.5, 22); g.stroke();
-    if (major) g.fillText(fmtTime(t), x + 3, 1);
+function ctPx() { const avail = ($("ctScroll").clientWidth || 600) - CT_PAD * 2; return Math.max(1, avail / Math.max(0.5, outDuration()) * state.tlZoomVal); }
+function drawCtRuler(total, px) { // pravítko s časovým kódom ako v Resolve
+  const cv = $("ctRuler"), dpr = window.devicePixelRatio || 1, w = Math.round(total * px + CT_PAD * 2), h = 34;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.width = w + "px";
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const step = [1, 2, 5, 10, 15, 30, 60, 120].find((x) => x * px >= 95) || 300;
+  g.strokeStyle = "rgba(255,255,255,.28)"; g.fillStyle = "#b8b8bc"; g.font = "10.5px Menlo,Consolas,monospace"; g.textBaseline = "top";
+  for (let k = 0; k * step / 5 <= total + 1e-6; k++) {
+    const t = k * step / 5, x = Math.round(CT_PAD + t * px) + 0.5, major = k % 5 === 0;
+    g.beginPath(); g.moveTo(x, major ? 4 : 22); g.lineTo(x, h); g.stroke();
+    if (major) g.fillText(fmtTC(t), x + 4, 6);
   }
 }
 function drawStrip(cv, c, w) {
-  const dpr = window.devicePixelRatio || 1, h = 64;
+  const dpr = window.devicePixelRatio || 1, h = 50;
   cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.round(h * dpr);
-  const g = cv.getContext("2d"); g.fillStyle = "#1a2140"; g.fillRect(0, 0, cv.width, cv.height);
+  const g = cv.getContext("2d"); g.fillStyle = "#2a4a6e"; g.fillRect(0, 0, cv.width, cv.height);
   const T = state.thumbs; if (!T) return;
   const tw = h * dpr * T.tw / T.th;
   for (let x = 0; x < cv.width; x += tw) {
     const t = c.start + ((x + tw / 2) / dpr) / state.ctPx * c.speed, im = thumbAt(Math.min(t, c.end - 0.01));
     if (im) g.drawImage(im, x, 0, tw, cv.height);
   }
-  if (c.filter !== "none") { g.fillStyle = "rgba(108,92,255,.18)"; g.fillRect(0, 0, cv.width, cv.height); }
 }
-function drawCtAudio(total, px) { // zvuk pod klipmi, v poradí a rýchlosti klipov
-  const cv = $("ctAudio"), dpr = window.devicePixelRatio || 1, w = Math.round(total * px + CT_PAD * 2), h = 18;
-  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.width = w + "px";
+function drawClipAudio(cv, c, w) { // vlna zvuku klipu (v jeho rýchlosti)
+  const dpr = window.devicePixelRatio || 1, h = 34;
+  cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.round(h * dpr);
   const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
   const peaks = state.waveform, dur = tlDuration(); if (!peaks || !peaks.length) return;
-  g.fillStyle = "rgba(25,184,232,.55)";
-  for (let x = 0; x < total * px; x++) {
-    const { t } = outToSrc(x / px), v = peaks[Math.floor(t / dur * peaks.length)] || 0, bh = Math.max(1, v * h);
-    g.fillRect(CT_PAD + x, (h - bh) / 2, 1, bh);
+  g.fillStyle = "rgba(200,245,215,.85)";
+  for (let x = 0; x < w; x++) {
+    const t = c.start + (x / state.ctPx) * c.speed, v = peaks[Math.floor(t / dur * peaks.length)] || 0, bh = Math.max(1, v * h * 0.95);
+    g.fillRect(x, (h - bh) / 2, 1, bh);
   }
 }
 function renderClipTrack() {
   const inner = $("ctInner"); if (!inner || !state.clips || !state.clips.length || !$("ctScroll").clientWidth) return;
-  const px = state.ctPx = ctPx(), total = outDuration(), st = outStarts();
+  const px = state.ctPx = ctPx(), total = outDuration(), st = outStarts(), n = state.clips.length;
   inner.style.width = Math.round(total * px + CT_PAD * 2) + "px";
-  drawCtRuler(total, px); drawCtAudio(total, px);
-  const box = $("ctClips"); box.textContent = "";
+  drawCtRuler(total, px);
+  $("ctVN").textContent = plural(n, "klip", "klipy", "klipov"); $("ctAN").textContent = plural(n, "klip", "klipy", "klipov");
+  const box = $("ctClips"), abox = $("ctAClips"); box.textContent = ""; abox.textContent = "";
   state.clips.forEach((c, i) => {
-    const el = document.createElement("div"); el.className = "clip" + (i === state.clipSel ? " sel" : ""); el.dataset.i = i;
+    const sel = i === state.clipSel, w = Math.max(6, clipOut(c) * px), left = (CT_PAD + st[i] * px) + "px";
+    const el = document.createElement("div"); el.className = "clip" + (sel ? " sel" : ""); el.dataset.i = i;
     el.setAttribute("role", "button"); el.setAttribute("aria-label", `Klip ${i + 1}, ${secTxt(clipOut(c))}`); el.tabIndex = 0;
-    const w = Math.max(6, clipOut(c) * px); el.style.left = (CT_PAD + st[i] * px) + "px"; el.style.width = w + "px";
+    el.style.left = left; el.style.width = w + "px";
     const cv = document.createElement("canvas"); drawStrip(cv, c, w); el.append(cv);
     const tags = document.createElement("div"); tags.className = "cl-tags";
     const tag = (txt, cls = "") => { const s = document.createElement("span"); s.className = "cl-tag " + cls; s.textContent = txt; tags.append(s); };
     if (c.speed !== 1) tag(String(c.speed).replace(".", ",") + "×", "sp");
     if (c.fx !== "none") tag(nameOf(EFFECTS, c.fx)); if (c.filter !== "none") tag(nameOf(FILTERS, c.filter));
-    const du = document.createElement("span"); du.className = "cl-dur"; du.textContent = secTxt(clipOut(c));
-    el.append(tags, du);
-    if (i === state.clipSel) { const l = document.createElement("div"); l.className = "trim l"; l.title = "Ťahaním orežeš začiatok"; const r = document.createElement("div"); r.className = "trim r"; r.title = "Ťahaním orežeš koniec"; el.append(l, r); wireTrim(l, i, "l"); wireTrim(r, i, "r"); }
+    const nm = document.createElement("div"); nm.className = "cl-name";
+    const a = document.createElement("span"); a.textContent = "Klip " + (i + 1); const d = document.createElement("span"); d.className = "cl-dur"; d.textContent = secTxt(clipOut(c));
+    nm.append(a, d); el.append(tags, nm);
+    if (sel) { const l = document.createElement("div"); l.className = "trim l"; l.title = "Ťahaním orežeš začiatok"; const r = document.createElement("div"); r.className = "trim r"; r.title = "Ťahaním orežeš koniec"; el.append(l, r); wireTrim(l, i, "l"); wireTrim(r, i, "r"); }
     el.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); selectClip(i); } };
     wireClip(el, i); box.append(el);
+    const ae = document.createElement("div"); ae.className = "aclip" + (sel ? " sel" : ""); ae.dataset.i = i; ae.style.left = left; ae.style.width = w + "px";
+    const acv = document.createElement("canvas"); drawClipAudio(acv, c, w); const al = document.createElement("span"); al.textContent = "Klip " + (i + 1);
+    ae.append(acv, al); wireClip(ae, i); abox.append(ae);
   });
-  for (let i = 0; i < state.clips.length - 1; i++) {
+  for (let i = 0; i < n - 1; i++) {
     if (state.clipSel === i || state.clipSel === i + 1) continue; // pri vybranom klipe sú na okrajoch úchyty orezania
     const b = document.createElement("button"); b.type = "button"; b.className = "ctr" + (state.clips[i].tr !== "none" ? " on" : "") + (state.trSel === i ? " sel" : "");
     b.style.left = (CT_PAD + st[i + 1] * px) + "px"; b.innerHTML = TR_ICON;
@@ -1061,7 +1069,7 @@ function renderClipTrack() {
 }
 function layoutTrack() { // len prepočíta polohy (pri orezávaní), bez nového vykreslenia stopy
   const px = state.ctPx, st = outStarts(), total = outDuration();
-  document.querySelectorAll("#ctClips .clip").forEach((el) => { const i = +el.dataset.i, c = state.clips[i]; el.style.left = (CT_PAD + st[i] * px) + "px"; el.style.width = Math.max(6, clipOut(c) * px) + "px"; el.querySelector(".cl-dur").textContent = secTxt(clipOut(c)); });
+  document.querySelectorAll("#ctClips .clip, #ctAClips .aclip").forEach((el) => { const i = +el.dataset.i, c = state.clips[i]; el.style.left = (CT_PAD + st[i] * px) + "px"; el.style.width = Math.max(6, clipOut(c) * px) + "px"; const d = el.querySelector(".cl-dur"); if (d) d.textContent = secTxt(clipOut(c)); });
   document.querySelectorAll("#ctClips .ctr").forEach((b, k) => { b.style.left = (CT_PAD + st[k + 1] * px) + "px"; });
   $("ctInner").style.width = Math.round(total * px + CT_PAD * 2) + "px";
 }
@@ -1070,9 +1078,10 @@ function syncClipPlayhead(force) {
   let o = srcToOut(video.currentTime);
   if (o == null) { const c = state.clips[state.pc]; o = c ? outStarts()[state.pc] + (video.currentTime < c.start ? 0 : clipOut(c)) : 0; }
   const x = CT_PAD + o * state.ctPx; ph.style.left = Math.round(x) + "px";
-  $("tlCur").textContent = fmtTime(o); $("tlDur").textContent = fmtTime(outDuration());
+  $("ctTC").textContent = fmtTC(o);
+  $("ctPlay").innerHTML = video.paused ? '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5l12 7-12 7z"/></svg>' : '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
   const sc = $("ctScroll");
-  if (sc && (!video.paused || force === "follow") && (x < sc.scrollLeft + 30 || x > sc.scrollLeft + sc.clientWidth - 30)) sc.scrollLeft = Math.max(0, x - sc.clientWidth * 0.3);
+  if (sc && !trackBusy && (!video.paused || force === "follow") && (x < sc.scrollLeft + 30 || x > sc.scrollLeft + sc.clientWidth - 30)) sc.scrollLeft = Math.max(0, x - sc.clientWidth * 0.3);
 }
 function wireClip(el, i) {
   let start = null;
@@ -1084,14 +1093,15 @@ function wireClip(el, i) {
   el.addEventListener("pointermove", (e) => {
     if (!start) return;
     const dx = e.clientX - start.x;
-    if (!start.drag && Math.abs(dx) > 7 && state.clips.length > 1) { start.drag = true; el.classList.add("dragging"); trackBusy = true; }
+    if (!start.drag && Math.abs(dx) > 7 && state.clips.length > 1) { start.drag = true; el.classList.add("dragging"); trackBusy = true; video.pause(); state.autoStop = null; }
     if (!start.drag) return;
     el.style.transform = `translateX(${dx}px)`;
     const mid = start.left + start.w / 2 + dx; let to = 0;
-    document.querySelectorAll("#ctClips .clip").forEach((o) => { if (o !== el && parseFloat(o.style.left) + parseFloat(o.style.width) / 2 < mid) to++; });
+    const row = el.parentElement.querySelectorAll(el.classList.contains("aclip") ? ".aclip" : ".clip");
+    row.forEach((o) => { if (o !== el && parseFloat(o.style.left) + parseFloat(o.style.width) / 2 < mid) to++; });
     start.to = to;
     let ins = $("ctIns"); if (!ins) { ins = document.createElement("div"); ins.id = "ctIns"; ins.className = "ct-ins"; $("ctInner").append(ins); }
-    const others = [...document.querySelectorAll("#ctClips .clip")].filter((o) => o !== el);
+    const others = [...row].filter((o) => o !== el);
     ins.style.left = (to < others.length ? parseFloat(others[to].style.left) : parseFloat(others[others.length - 1].style.left) + parseFloat(others[others.length - 1].style.width)) + "px";
   });
   const end = (e) => {
@@ -1136,11 +1146,11 @@ function renderCutUi() {
   if (!state.clips || !state.clips.length || !$("pane-cut")) return;
   if (!trackBusy) renderClipTrack();
   const n = state.clips.length, c = state.clipSel >= 0 ? state.clips[state.clipSel] : null, tr = state.trSel >= 0 ? state.clips[state.trSel] : null;
-  $("clipPanel").hidden = !c || !!tr; $("trPanel").hidden = !tr;
+  $("clipPanel").hidden = !c || !!tr; $("trPanel").hidden = !tr; $("cutEmpty").hidden = !!(c || tr);
   $("cutDel").disabled = !c || n < 2; $("cutUndo").disabled = !state.undo.length; $("cutRedo").disabled = !state.redo.length;
   $("cutLen").textContent = fmtTime(outDuration()) + (isEdited() ? ` z ${fmtTime(tlDuration())}` : "");
   $("cutReset").hidden = !isEdited() && !state.clips.some((x) => x.fx !== "none" || x.filter !== "none" || x.tr !== "none");
-  if (!$("cutHint").textContent) cutHint("Klikni na klip v stope a uprav ho. Klip presunieš ťahaním, biele okraje vybraného klipu ho orežú. Biely štvorček medzi klipmi pridá prechod (pri nevybranom klipe).");
+  if (!$("cutHint").textContent) cutHint("Klik na klip ho vyberie, ťahaním ho presunieš. Oranžové okraje vybraného klipu ho orežú. Štvorček medzi klipmi pridá prechod. S = rozdeliť, Del = vymazať.");
   if (c && !tr) {
     $("clipLabel").textContent = `Klip ${state.clipSel + 1} z ${n}`; $("clipLen").textContent = secTxt(clipOut(c));
     document.querySelectorAll("#speedOpts button").forEach((b) => { const on = +b.dataset.v === c.speed; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
@@ -1181,6 +1191,11 @@ function setupCut() {
   $("trDur").oninput = (e) => { const a = state.clips[state.trSel]; if (!a) return; a.td = +e.target.value; $("trDurOut").textContent = secTxt(a.td); invalidateResults(); };
   $("trDur").onchange = () => { if (trBefore && trBefore !== JSON.stringify(state.clips)) { state.undo.push(trBefore); state.redo = []; } trBefore = null; renderCutUi(); previewTransition(state.trSel, true); };
   $("cutSplit").onclick = () => splitAt(video.currentTime);
+  $("ctPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
+  $("ctSpeed").onchange = (e) => { state.pvRate = +e.target.value; $("tlSpeed").value = e.target.value; };
+  const zoomTo = (z) => { state.tlZoomVal = clamp(z, 1, 8); $("ctZoom").value = state.tlZoomVal; $("tlZoom").value = Math.min(6, state.tlZoomVal); renderTimeline(); };
+  $("ctZoom").oninput = (e) => zoomTo(+e.target.value);
+  $("ctZoomIn").onclick = () => zoomTo(state.tlZoomVal + 0.5); $("ctZoomOut").onclick = () => zoomTo(state.tlZoomVal - 0.5);
   $("cutDel").onclick = () => deleteClip(state.clipSel);
   $("cutUndo").onclick = undoCut; $("cutRedo").onclick = redoCut;
   $("cutReset").onclick = () => { snapshot(); state.clips = [newClip(0, tlDuration())]; state.clipSel = 0; state.trSel = -1; state.pc = 0; cutHint("Video je opäť celé a bez efektov. Späť to vrátiš tlačidlom Späť."); cutsChanged(); };
@@ -1463,6 +1478,7 @@ function setPage(p) {
   page = p; closeSpkMenu();
   if (p !== "work") video.pause();
   $("content").classList.toggle("alt-page", p !== "work");
+  $("content").classList.toggle("ws", p === "work" && curView === "editor");
   $("page-brand").hidden = p !== "brand"; $("page-library").hidden = p !== "library";
   document.querySelectorAll(".nav[data-page]").forEach((a) => { const on = a.dataset.page === p; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   if (p === "brand") renderBrand();
