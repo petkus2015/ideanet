@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,400;0,700;1,800&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&display=swap">
 <style>
-:root{color-scheme:dark;--bg:#060916;--side:#080c1c;--card:#0b1024;--card2:#0e1430;--line:#1a2140;--line2:#262e55;--text:#e9ecf8;--muted:#7f87ab;--a:#6c5cff;--b:#19b8e8;--grad:linear-gradient(90deg,#6c5cff,#19b8e8);--spk1:#4a3cd8;--spk2:#0d86ad}
+:root{color-scheme:dark;--bg:#060916;--side:#080c1c;--card:#0b1024;--card2:#0e1430;--line:#1a2140;--line2:#262e55;--text:#e9ecf8;--muted:#7f87ab;--a:#6c5cff;--b:#19b8e8;--grad:linear-gradient(90deg,#6c5cff,#19b8e8)}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 [hidden]{display:none!important}
@@ -19,6 +19,40 @@ button{font:inherit;color:inherit}
 .nav svg{width:17px;height:17px;flex:none}
 .nav.on{color:#fff;background:linear-gradient(90deg,#161c52,#0e1436);box-shadow:inset 0 0 0 1px #2a3277}
 .nav[aria-disabled=true]:not(.on):hover{color:#a8afd0}
+.nav[data-page]{cursor:pointer}
+.nav[data-page]:not(.on):hover{color:#fff;background:#0e1436}
+.content.alt-page>:not(.xpage){display:none!important}
+.brand-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.brand-head h1{margin:0 0 4px}
+.brand-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.brand-tools input[type=text]{flex:1;min-width:200px;background:var(--card2);border:1px solid var(--line2);border-radius:10px;color:var(--text);font:inherit;padding:9px 12px}
+.brand-tools input[type=text]:focus{outline:none;border-color:var(--a)}
+.fdrop{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed var(--line2);border-radius:14px;padding:18px;color:#cfd4ee;cursor:pointer;margin-bottom:18px;text-align:center;transition:border-color .15s,background .15s}
+.fdrop:hover,.fdrop.over{border-color:var(--a);background:#10153a}
+.fdrop svg{width:20px;height:20px;color:var(--a);flex:none}
+.fdrop small{display:block;color:var(--muted)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.fcard{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.fcard.on{border-color:var(--a);box-shadow:0 0 0 3px color-mix(in srgb,var(--a) 22%,transparent)}
+.fsample{font-size:26px;line-height:1.2;color:#fff;overflow-wrap:anywhere;min-height:62px;display:flex;align-items:center}
+.fmeta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.fmeta b{color:var(--text);font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.ftag{border:1px solid var(--line2);border-radius:99px;padding:1px 8px;font-size:10px;flex:none}
+.ftag.own{border-color:#3b3591;color:#b9b2ff}
+.fmeta .spk-del{margin-left:auto}
+.fuse{margin-left:auto;border:1px solid var(--line2);background:var(--card2);border-radius:8px;padding:5px 11px;font-size:12px;cursor:pointer}
+.fuse:hover{border-color:var(--a)}
+.fcard.on .fuse{border-color:var(--a);background:#141a4a;color:#fff;cursor:default}
+.fmeta .spk-del+.fuse,.fmeta .fuse+.spk-del{margin-left:0}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.lcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .15s,transform .15s}
+.lcard:hover{border-color:var(--line2);transform:translateY(-2px)}
+.lcard.on{border-color:var(--a);box-shadow:0 0 0 3px color-mix(in srgb,var(--a) 22%,transparent)}
+.lcard canvas{display:block;width:100%;aspect-ratio:4/5;background:#000}
+.lfoot{display:flex;align-items:center;gap:8px;padding:10px 12px}
+.lfoot b{font-size:13px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lfoot small{color:var(--muted);font-size:11px}
+@media(max-width:820px){.lgrid{grid-template-columns:1fr 1fr;gap:10px}.lfoot{flex-wrap:wrap}.side{overflow-x:auto;gap:2px}.side .nav[data-page]{display:flex;padding:8px 10px;flex:none}.side .nav[data-page] svg{display:none}}
 .plan{margin-top:auto;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:12px;color:var(--muted)}
 .plan strong{display:block;font-size:18px;color:var(--text);margin:2px 0 0}
 .bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:8px 0 6px}
@@ -66,6 +100,33 @@ main{min-width:0}
 .chip .h.l{left:0}
 .chip .h.r{right:0}
 #timelineCard.video-only .tl-chips,#timelineCard.video-only #tlHint,#timelineCard.video-only .selbar{display:none!important}
+.add-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line2);background:var(--card2);color:var(--text);border-radius:99px;padding:4px 11px 4px 8px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
+.add-btn svg{width:13px;height:13px}
+.add-btn:hover{border-color:var(--a);background:#141a4a}
+.spk-list{display:flex;flex-direction:column;gap:6px}
+.spk-row{display:flex;align-items:center;gap:9px;padding:7px 8px 7px 10px;border:1px solid var(--line2);border-radius:11px;background:var(--card2);cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+.spk-row:hover{border-color:color-mix(in srgb,var(--c) 60%,var(--line2))}
+.spk-row.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--card2));box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 18%,transparent)}
+.spk-row:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.spk-row .dot{width:10px;height:10px;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
+.spk-name{flex:1;min-width:0;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--text);font:inherit;font-size:13px;font-weight:600;padding:3px 5px}
+.spk-name:hover{border-color:var(--line2)}
+.spk-name:focus{outline:none;border-color:var(--c);background:var(--bg)}
+.spk-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+.spk-badge{font-size:10px;font-weight:600;color:var(--muted);border:1px solid var(--line2);border-radius:99px;padding:1px 7px}
+.spk-del{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;border:1px solid transparent;background:none;color:var(--muted);cursor:pointer;flex:none}
+.spk-del svg{width:14px;height:14px}
+.spk-del:hover{color:#ff8a98;border-color:#5a2633;background:#2a1018}
+.ghost-btn{display:inline-flex;align-items:center;gap:7px;margin-top:10px;width:100%;justify-content:center;border:1px dashed var(--line2);background:none;color:#cfd4ee;border-radius:10px;padding:8px;font:inherit;font-size:12px;cursor:pointer}
+.ghost-btn svg{width:14px;height:14px;color:var(--a)}
+.ghost-btn:hover{border-color:var(--a);background:#10153a}
+.ghost-btn:disabled{opacity:.5;cursor:default}
+.selspk{display:flex;gap:6px;flex-wrap:wrap}
+.spk-menu{position:fixed;z-index:50;min-width:190px;padding:6px;border:1px solid var(--line2);border-radius:12px;background:#0d1230;box-shadow:0 16px 40px rgba(0,0,0,.55)}
+.spk-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border:0;border-radius:8px;background:none;color:var(--text);font:inherit;font-size:13px;cursor:pointer;text-align:left}
+.spk-menu button:hover,.spk-menu button:focus-visible{background:#18205a;outline:none}
+.spk-menu .check{margin-left:auto;color:var(--b)}
+.spk-menu hr{border:0;border-top:1px solid var(--line);margin:5px 2px}
 .tl-band{position:absolute;top:24px;height:34px;background:rgba(108,92,255,.22);border:1px solid var(--a);border-radius:4px;pointer-events:none;z-index:1}
 .chip.sel{box-shadow:0 0 0 2px #ffe066 inset}
 .chip.ov{border-style:dashed;border-color:#ffe066}
@@ -116,24 +177,17 @@ main{min-width:0}
 .segments .spk{display:none;align-items:center;justify-content:center;gap:5px;height:28px;margin-top:4px;padding:0 8px 0 7px;border-radius:99px;border:1px solid;cursor:pointer;font:inherit;font-size:11px;font-weight:700;letter-spacing:.02em;color:#fff;transition:background .15s,box-shadow .15s,transform .1s;white-space:nowrap}
 .segments .spk svg{width:12px;height:12px;opacity:.75}
 .segments .spk .dot{width:8px;height:8px}
-.segments .spk[data-s="1"]{background:color-mix(in srgb,var(--spk1) 28%,transparent);border-color:var(--spk1)}
-.segments .spk[data-s="2"]{background:color-mix(in srgb,var(--spk2) 28%,transparent);border-color:var(--spk2)}
+.segments .spk{background:color-mix(in srgb,var(--c) 26%,transparent);border-color:var(--c)}
+.segments .spk span{max-width:84px;overflow:hidden;text-overflow:ellipsis}
 .segments .spk:hover{box-shadow:0 0 0 3px color-mix(in srgb,currentColor 12%,transparent);filter:brightness(1.2)}
 .segments .spk:hover svg{opacity:1}
 .segments .spk:active{transform:scale(.95)}
 .segments .spk:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .segments.spk-on .spk{display:inline-flex}
 .segments.spk-on .segment{border-left:3px solid transparent}
-.segments.spk-on .segment[data-s="1"]{border-left-color:var(--spk1)}
-.segments.spk-on .segment[data-s="2"]{border-left-color:var(--spk2)}
-.spk-tabs{margin-top:10px}
-.spk-tabs .opt{flex-direction:row;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;padding:9px 6px;color:#cfd4ee}
-.spk-tabs .opt.on{color:#fff}
-.spk-tabs .opt[data-spk="1"].on{border-color:var(--spk1);background:color-mix(in srgb,var(--spk1) 22%,var(--card2))}
-.spk-tabs .opt[data-spk="2"].on{border-color:var(--spk2);background:color-mix(in srgb,var(--spk2) 22%,var(--card2))}
+.segments.spk-on .segment{border-left-color:var(--c)}
 .dot{width:9px;height:9px;border-radius:50%;flex:none}
-.dot[data-s="1"]{background:var(--spk1)}
-.dot[data-s="2"]{background:var(--spk2)}
+.dot{background:var(--c,var(--a))}
 .segment{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:start;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:4px 10px}
 .segments.spk-on .segment{grid-template-columns:52px 1fr auto;align-items:center}
 .segment.active{border-color:var(--a)}
@@ -217,16 +271,14 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
   <aside class="side">
     <div class="logo">▶</div>
     <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Prehľad</a>
-    <a class="nav on" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Prerobenie</a>
-    <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>Knižnica</a>
+    <a class="nav on" href="#" data-page="work" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Prerobenie</a>
+    <a class="nav" href="#kniznica" data-page="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>Knižnica</a>
     <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Šablóny</a>
-    <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l9 9-9 9-9-9z"/></svg>Značka</a>
-    <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Analytika</a>
-    <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>Nastavenia</a>
+    <a class="nav" href="#znacka" data-page="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l9 9-9 9-9-9z"/></svg>Značka</a>
     <div class="plan"><small>Plán</small><strong>Pro</strong><small>2 € mesačne</small><div class="bar"><i style="width:100%"></i></div><small>Bez limitu exportov</small></div>
   </aside>
 
-  <div class="content">
+  <div class="content" id="content">
     <header class="head">
       <div>
         <h1><span class="grad">Titulky do videa</span></h1>
@@ -296,8 +348,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
             <div class="selbar" id="selBar" hidden>
               <div class="selrow"><strong id="selInfo"></strong><button class="mini-btn" id="selClear" type="button">Zrušiť výber</button></div>
               <div class="selrow"><span class="sellbl">Rečník</span>
-                <button class="mini-btn" data-spk="1" type="button"><i class="dot" data-s="1"></i>Rečník 1</button>
-                <button class="mini-btn" data-spk="2" type="button"><i class="dot" data-s="2"></i>Rečník 2</button></div>
+                <div class="selspk" id="selSpk"></div></div>
               <div class="selrow"><span class="sellbl">Štýl</span><div class="selstyles" id="selStyles"></div></div>
             </div>
             <p class="hint" id="tlHint" style="margin-top:8px">Ťahaním v páse titulkov vyberieš úsek (alebo klik a Shift+klik na titulky), potom mu priradíš rečníka a štýl. Titulok presunieš ťahaním, ťahaním za okraj upravíš začiatok alebo koniec. Klik na pravítko alebo vlnovku pretočí video, medzerník spustí a zastaví prehrávanie.</p>
@@ -322,12 +373,11 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
         <section id="pane-subs">
         <h3>Titulky</h3>
         <div class="pgroup"><div class="plabel"><span>Titulky</span><button class="sw" id="subsOn" role="switch" aria-checked="true" aria-label="Titulky zapnuté"></button></div></div>
-        <div class="pgroup" id="speakers"><div class="plabel"><span>Viac rečníkov</span><button class="sw" id="spkOn" role="switch" aria-checked="false" aria-label="Rozlišovať rečníkov"></button></div>
-          <p class="hint" id="spkInfo" style="margin:0"></p>
-          <div class="opts spk-tabs" id="spkTabs" hidden>
-            <button class="opt spk-tab" data-spk="1"><i class="dot" data-s="1"></i>Rečník 1</button>
-            <button class="opt spk-tab" data-spk="2"><i class="dot" data-s="2"></i>Rečník 2</button>
-          </div>
+        <div class="pgroup" id="speakers">
+          <div class="plabel"><span>Rečníci</span><button class="add-btn" id="spkAdd" type="button" aria-label="Pridať rečníka"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Pridať</button></div>
+          <div class="spk-list" id="spkList" role="listbox" aria-label="Rečníci"></div>
+          <p class="hint" id="spkInfo" style="margin:8px 0 0"></p>
+          <button class="ghost-btn" id="spkDetect" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Rozpoznať rečníkov podľa hlasu</button>
         </div>
         <div class="pgroup"><div class="plabel" id="styleLabel">Štýl</div>
           <div class="styles" id="styles"></div>
@@ -344,10 +394,10 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
         <div class="pgroup"><div class="plabel">Vzhľad (veľkosť)</div>
           <div class="inline"><span style="color:var(--muted)">A</span><input type="range" id="size" min="3" max="12" step="0.5" aria-label="Veľkosť titulkov"><output id="sizeOut"></output></div>
         </div>
-        <details id="brand" open><summary>Značka</summary><div class="body">
+        <details id="brand" open><summary>Farba a font</summary><div class="body">
           <div><div class="plabel">Farba textu</div><input type="color" id="color"></div>
           <div><div class="plabel">Font</div><select id="font"></select>
-            <button class="mini" id="fontUp" type="button">Nahrať vlastný font</button><input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" hidden>
+            <button class="mini" id="fontUp" type="button">Nahrať vlastný font</button><button class="mini" id="fontsAll" type="button">Všetky fonty s ukážkou v Značke →</button><input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" hidden>
             <p class="hint" id="fontMsg" style="margin:6px 0 0">Súbor TTF, OTF, WOFF alebo WOFF2. Font ostane len v tomto prehliadači.</p></div>
           <div><div class="plabel">Podklad</div><div class="inline"><input type="color" id="bg"><input type="range" id="bgOpacity" min="0" max="100" step="5" aria-label="Priehľadnosť podkladu"><output id="bgOpacityOut"></output></div>
             <p class="hint" style="margin:6px 0 0">0 % = bez podkladu, text dostane obrys.</p></div>
@@ -390,6 +440,24 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
         </section>
       </aside>
     </div>
+
+    <section id="page-library" class="xpage" hidden>
+      <div class="brand-head"><div><h1><span class="grad">Knižnica štýlov</span></h1>
+        <p class="sub">Všetky štýly titulkov, ktoré Titulkovač má, v pohybe. Klikni na Použiť a štýl sa nastaví pre vybraného rečníka.</p></div>
+        <button class="btn" id="libBack" type="button">← Späť na video</button></div>
+      <div class="lgrid" id="libGrid"></div>
+    </section>
+    <section id="page-brand" class="xpage" hidden>
+      <div class="brand-head"><div><h1><span class="grad">Značka</span></h1>
+        <p class="sub">Tvoje fonty pre titulky. Nahraté fonty ostanú v tomto prehliadači a nájdeš ich vo výbere fontu pri štýle titulkov.</p></div>
+        <button class="btn" id="brandBack" type="button">← Späť na video</button></div>
+      <label class="fdrop" id="fontDrop" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+        <span><strong>Pridať font</strong> — pretiahni sem súbor alebo klikni<small>TTF, OTF, WOFF alebo WOFF2, najviac 15 MB</small></span>
+        <input type="file" id="brandFile" accept=".ttf,.otf,.woff,.woff2" multiple hidden></label>
+      <p class="hint" id="brandMsg" role="status" style="margin:-8px 0 14px"></p>
+      <div class="brand-tools"><input type="text" id="fontSampleText" value="Ahoj, toto sú moje titulky" aria-label="Text ukážky" maxlength="80"></div>
+      <div class="fgrid" id="fontGrid"></div>
+    </section>
 
   </div>
 </div>
