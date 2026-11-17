@@ -67,15 +67,14 @@ const show = (view) => {
 };
 function applyTab() { // zobrazí v editore len to, čo patrí k zvolenému kroku
   const t = state.tab;
-  $("pane-subs").hidden = t !== "subs"; $("pane-cut").hidden = t !== "cut"; $("pane-edit").hidden = t !== "edit"; $("pane-export").hidden = t !== "export";
+  $("pane-subs").hidden = t !== "subs"; $("pane-cut").hidden = t !== "edit"; $("pane-edit").hidden = t !== "edit"; $("pane-export").hidden = t !== "export";
   $("timelineCard").hidden = t === "export"; $("textCard").hidden = t !== "subs";
   $("timelineCard").classList.toggle("video-only", t === "edit"); // v Úprave len prehrávanie a posun v čase, bez titulkov
-  $("timelineCard").classList.toggle("cut-mode", t === "cut"); // v Strihu časti videa a prechody namiesto titulkov
-  if (t === "cut") renderCutUi();
+  $("timelineCard").classList.toggle("cut-mode", t === "edit"); // v Úprave časti videa a prechody namiesto titulkov
+  if (t === "edit") renderCutUi();
   if (t !== "subs" && state.sel && state.sel.size) clearSel();
   state.tool = t === "edit" ? "crop" : t === "subs" ? "captions" : "none";
-  $("pvHint").textContent = t === "cut" ? "Prehrávanie preskakuje vystrihnuté časti a ukazuje prechody tak, ako budú v exporte."
-    : t === "edit" ? "Ťahaním v náhľade posúvaš video, kolieskom myši alebo posuvníkom ho približuješ. Výrez platí pre zvolený formát."
+  $("pvHint").textContent = t === "edit" ? "Ťahaním v náhľade posúvaš video, kolieskom myši ho približuješ. Prehrávanie preskakuje vystrihnuté časti a ukazuje prechody ako v exporte."
     : t === "subs" ? "Titulky presunieš ťahaním v náhľade. Posunie sa poloha rečníka, ktorého titulok práve vidíš."
     : "Export beží v reálnom čase, nechaj kartu otvorenú.";
   if (state.out) markActive();
@@ -1495,7 +1494,7 @@ function setup() {
   new ResizeObserver(() => renderTimeline()).observe($("tlScroll"));
   // klik na pozadie časovej osi (mimo titulku) pretočí video; ťahanie "scrubuje"
   const tAt = (e) => clamp((e.clientX - $("tlInner").getBoundingClientRect().left) / state.tlPxPerSec, 0, tlDuration());
-  const scrub = (e) => { const t = tAt(e); video.currentTime = t; if (state.tab === "cut" && partAt(t) !== state.partSel) selectPart(partAt(t)); };
+  const scrub = (e) => { const t = tAt(e); video.currentTime = t; if (state.tab === "edit" && partAt(t) !== state.partSel) selectPart(partAt(t)); };
   let scrubbing = false, band = null;
   $("tlInner").addEventListener("pointerdown", (e) => {
     if (e.target.closest(".chip")) return;
@@ -1540,7 +1539,7 @@ function setup() {
       e.preventDefault(); if (tag === "BUTTON" || tag === "INPUT") el.blur();
       if (video.paused) video.play().catch(() => {}); else video.pause();
     } else if (e.key === "Escape" && !typing && state.sel.size) clearSel();
-    else if (state.tab === "cut" && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    else if (state.tab === "edit" && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
       if (e.code === "KeyS") { e.preventDefault(); splitAt(video.currentTime); }
       else if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); toggleOff(state.partSel); }
     }

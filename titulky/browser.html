@@ -302,7 +302,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 .busy h2{margin:0 0 6px;font-size:18px}
 .busy p{margin:0;color:var(--muted)}
 /* kroky */
-.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:0 0 18px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card);position:sticky;top:0;z-index:5}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card);position:sticky;top:0;z-index:5}
 .step{display:flex;align-items:center;gap:12px;color:var(--muted);font:inherit;font-size:12px;text-align:left;background:none;border:1px solid transparent;border-radius:10px;padding:6px 8px;cursor:pointer}
 .step:hover:not(:disabled){border-color:var(--line2)}
 .step:disabled{opacity:.45;cursor:default}
@@ -320,7 +320,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
   .content{padding:18px 16px}
   h1{font-size:23px}
   .arrows{display:none}
-  .steps{grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
+  .steps{grid-template-columns:repeat(4,1fr);gap:4px;padding:6px}
   .step{flex-direction:column;gap:4px;padding:6px 2px;text-align:center;font-size:0}
   .step .ic{width:34px;height:34px}
   .step b{font-size:11px}
@@ -353,8 +353,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
     <nav class="steps" id="steps" aria-label="Kroky">
       <button class="step" data-tab="upload" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg></span><span><b>Nahratie</b>Pridaj video</span></button>
       <button class="step" data-tab="subs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></span><span><b>Titulkovanie</b>Text, rečníci, štýl</span></button>
-      <button class="step" data-tab="cut" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg></span><span><b>Strih</b>Strihanie, prechody</span></button>
-      <button class="step" data-tab="edit" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span><b>Úprava</b>Formát, výrez, posun</span></button>
+      <button class="step" data-tab="edit" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span><b>Úprava</b>Formát, výrez, strih</span></button>
       <button class="step" data-tab="export" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></span><span><b>Export</b>Stiahni súbory</span></button>
     </nav>
 
@@ -474,8 +473,25 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
           <label class="check"><input type="checkbox" id="caps"> Dynamický štýl: VEĽKÉ PÍSMENA (kapitálky)</label>
         </div></details>
         </section>
+        <section id="pane-edit" hidden>
+        <h3>Úprava videa</h3>
+        <div class="pgroup"><div class="plabel">Pomer strán</div>
+          <div class="opts" id="aspects">
+            <button class="opt" data-v="9:16"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="2.5" width="10" height="19" rx="2"/></svg>9:16</button>
+            <button class="opt" data-v="1:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4.5" y="4.5" width="15" height="15" rx="2"/></svg>1:1</button>
+            <button class="opt" data-v="16:9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="7" width="19" height="10" rx="2"/></svg>16:9</button>
+          </div>
+          <p class="hint" id="aspectHint" style="margin-top:8px">Rozpoznané z nahraného videa. Zmeň ikonkou, výrez videa nastavíš nižšie.</p>
+        </div>
+        <div class="pgroup"><div class="plabel">Výrez a posun videa</div>
+            <div class="plabel"><span>Priblíženie</span><output id="zoomOut"></output></div>
+            <input type="range" id="zoom" min="1" max="3" step="0.05" value="1" aria-label="Priblíženie videa">
+            <button class="mini" id="cropReset" type="button">Obnoviť orez vybraného formátu</button>
+            <p class="hint" style="margin:6px 0 0">Ťahaním po náhľade posúvaš video, kolieskom myši alebo posuvníkom približuješ. Orez platí len pre vybraný formát.</p>
+        </div>
+        </section>
         <section id="pane-cut" hidden>
-        <h3>Strih</h3>
+        <h3 style="margin-top:22px">Strih</h3>
         <div class="pgroup"><div class="plabel">Strihanie</div>
           <div class="cut-tools">
             <button class="cut-btn" id="cutSplit" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg>Rozdeliť tu <kbd>S</kbd></button>
@@ -492,23 +508,6 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
           <div class="plabel" style="margin-top:12px"><span>Dĺžka prechodu</span><output id="trDurOut">0,6 s</output></div>
           <input type="range" id="trDur" min="0.2" max="2" step="0.1" value="0.6" aria-label="Dĺžka prechodu">
           <p class="hint" id="trHint" style="margin:8px 0 0"></p>
-        </div>
-        </section>
-        <section id="pane-edit" hidden>
-        <h3>Úprava videa</h3>
-        <div class="pgroup"><div class="plabel">Pomer strán</div>
-          <div class="opts" id="aspects">
-            <button class="opt" data-v="9:16"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="2.5" width="10" height="19" rx="2"/></svg>9:16</button>
-            <button class="opt" data-v="1:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4.5" y="4.5" width="15" height="15" rx="2"/></svg>1:1</button>
-            <button class="opt" data-v="16:9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="7" width="19" height="10" rx="2"/></svg>16:9</button>
-          </div>
-          <p class="hint" id="aspectHint" style="margin-top:8px">Rozpoznané z nahraného videa. Zmeň ikonkou, výrez videa nastavíš nižšie.</p>
-        </div>
-        <div class="pgroup"><div class="plabel">Výrez a posun videa</div>
-            <div class="plabel"><span>Priblíženie</span><output id="zoomOut"></output></div>
-            <input type="range" id="zoom" min="1" max="3" step="0.05" value="1" aria-label="Priblíženie videa">
-            <button class="mini" id="cropReset" type="button">Obnoviť orez vybraného formátu</button>
-            <p class="hint" style="margin:6px 0 0">Ťahaním po náhľade posúvaš video, kolieskom myši alebo posuvníkom približuješ. Orez platí len pre vybraný formát.</p>
         </div>
         </section>
         <section id="pane-export" hidden>
