@@ -21,15 +21,44 @@ const PRESETS = [
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true },
   segments: [], file: null, url: null, duration: 0, out: null, results: {}, busyExport: false, playable: null, job: 0, pos: {}, audio: null,
-  spkOn: false, spkTab: 1, style2: null, speakers: 1, crop: {}, tool: "captions",
+  spkOn: false, spkTab: 1, style2: null, tab: "subs", speakers: 1, crop: {}, tool: "captions",
   waveform: null, tlZoomVal: 1, tlPxPerSec: 100, tlDragging: false, collapsedSpk: new Set(), activeSeg: -1, segFilter: "", sel: new Set(), selAnchor: -1 };
 const video = $("video");
-const STEP_OF = { upload: 0, busy: 1, editor: 2 };
-const setStep = (i) => document.querySelectorAll("#steps .step").forEach((s, n) => s.classList.toggle("on", n === i));
+// Menu krokov je stále hore. Po nahratí videa sa ním prepína medzi časťami editora:
+// Titulkovanie (text, rečníci, štýl, poloha titulkov), Úprava (formát, výrez a posun videa), Export.
+let curView = "upload";
+const hasProject = () => !!state.out;
+function updateTabs() {
+  const active = curView === "upload" ? "upload" : curView === "busy" ? "subs" : state.tab;
+  document.querySelectorAll("#steps .step").forEach((b) => {
+    b.classList.toggle("on", b.dataset.tab === active);
+    b.disabled = b.dataset.tab !== "upload" && (curView === "busy" || !hasProject());
+  });
+}
 const show = (view) => {
+  curView = view;
   for (const v of ["upload", "busy", "editor"]) $("view-" + v).hidden = v !== view;
-  $("panel").hidden = view !== "editor"; setStep(STEP_OF[view]);
+  $("panel").hidden = view !== "editor";
+  if (view === "editor") applyTab(); else updateTabs();
 };
+function applyTab() { // zobrazí v editore len to, čo patrí k zvolenému kroku
+  const t = state.tab;
+  $("pane-subs").hidden = t !== "subs"; $("pane-edit").hidden = t !== "edit"; $("pane-export").hidden = t !== "export";
+  $("timelineCard").hidden = t === "export"; $("textCard").hidden = t !== "subs";
+  $("timelineCard").classList.toggle("video-only", t === "edit"); // v Úprave len prehrávanie a posun v čase, bez titulkov
+  if (t !== "subs" && state.sel && state.sel.size) clearSel();
+  state.tool = t === "edit" ? "crop" : t === "subs" ? "captions" : "none";
+  $("pvHint").textContent = t === "edit" ? "Ťahaním v náhľade posúvaš video, kolieskom myši alebo posuvníkom ho približuješ. Výrez platí pre zvolený formát."
+    : t === "subs" ? "Titulky presunieš ťahaním v náhľade. Posunie sa poloha rečníka, ktorého titulok práve vidíš."
+    : "Export beží v reálnom čase, nechaj kartu otvorenú.";
+  if (state.out) markActive();
+  updateTabs();
+}
+function setTab(t) {
+  if (t === "upload") { show("upload"); return; }
+  if (!hasProject()) return;
+  state.tab = t; show("editor");
+}
 const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const rgbOf = (hex) => [1, 3, 5].map((n) => parseInt(hex.slice(n, n + 2), 16)).join(",");
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -385,12 +414,20 @@ function speakerStyle(sp, seg) { // štýl titulku: vlastný štýl úseku > št
   const p = seg && seg.styleOv ? PRESETS.find((x) => x.id === seg.styleOv) : null;
   return p ? { ...p, preset: p.id, highlight: p.highlight ?? base.highlight, caps: p.caps ?? base.caps, on: state.style.on } : base;
 }
-const styleFor = (k, sp = 1, seg = null) => ({ ...speakerStyle(sp, seg), ...(state.pos[k] || defaultPos()) });
+function getPos(k, sp = 1) { // poloha titulkov: pre každý formát, a pri dvoch rečníkoch aj pre každého rečníka zvlášť
+  if (!state.pos[k]) state.pos[k] = defaultPos();
+  if (sp !== 2 || !state.spkOn) return state.pos[k];
+  const key = k + "|2";
+  if (!state.pos[key]) state.pos[key] = { ...state.pos[k] }; // rečník 2 začína na mieste rečníka 1
+  return state.pos[key];
+}
+const editSpk = () => (state.spkOn ? state.spkTab : 1); // rečník, ktorého polohu menia tlačidlá Hore/Stred/Dole
+const styleFor = (k, sp = 1, seg = null) => ({ ...speakerStyle(sp, seg), ...getPos(k, sp) });
 
 function playableBanner() {
   const bad = state.playable === false;
   $("noplay").hidden = !bad;
-  $("exportAll").disabled = bad;
+  $("exportAll").disabled = bad; $("exportCur").disabled = bad;
   if (state.out) state.out.dl.disabled = bad;
 }
 function saveUrl(url, name) {
@@ -428,7 +465,7 @@ function buildOut() {
   o.dl.onclick = () => { const r = state.results[k]; if (r) saveUrl(r.url, `titulky-${k.replace(":", "x")}.${r.ext}`); else exportAspects([k]); };
   // titulky sa presúvajú ťahaním priamo v náhľade
   const move = (e) => {
-    const r = o.cv.getBoundingClientRect(), q = state.pos[k];
+    const r = o.cv.getBoundingClientRect(), q = getPos(k, o.drag.spk);
     q.x = clamp((e.clientX - r.left) / r.width, 0, 1); q.y = clamp((e.clientY - r.top) / r.height, 0, 1); q.position = null;
     markActive(); invalidateResults();
   };
@@ -441,7 +478,11 @@ function buildOut() {
   };
   o.cv.addEventListener("pointerdown", (e) => {
     if (state.tool === "crop") { const q = state.crop[k]; o.drag = { mode: "pan", x: e.clientX, y: e.clientY, cx: q.cx, cy: q.cy }; }
-    else if (state.style.on) o.drag = { mode: "caption", x: e.clientX, y: e.clientY, active: false };
+    else if (state.tool === "captions" && state.style.on) { // presúva sa rečník, ktorého titulok je práve vidno
+      const i = segmentAt(video.currentTime), spk = i >= 0 ? (state.segments[i].speaker || 1) : editSpk();
+      if (state.spkOn && spk !== state.spkTab) { state.spkTab = spk; syncControls(); }
+      o.drag = { mode: "caption", x: e.clientX, y: e.clientY, active: false, spk };
+    }
     else return;
     o.cv.setPointerCapture(e.pointerId); e.preventDefault();
   });
@@ -635,8 +676,9 @@ function buildSegments() {
     const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.setAttribute("aria-label", "Text titulku " + (i + 1));
     const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
     ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); invalidateResults(); updateChip(i); };
-    const sp = document.createElement("button"); sp.className = "spk"; sp.dataset.i = i; sp.dataset.s = n; sp.textContent = "R" + n;
-    sp.title = "Rečník " + n + " — klikni pre zmenu";
+    const sp = document.createElement("button"); sp.type = "button"; sp.className = "spk"; sp.dataset.i = i; sp.dataset.s = n;
+    sp.innerHTML = `<i class="dot" data-s="${n}"></i><span>R${n}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg>`;
+    sp.title = "Rečník " + n + " · klikni a prepni na rečníka " + (n === 2 ? 1 : 2); sp.setAttribute("aria-label", sp.title);
     sp.onclick = () => {
       s.speaker = s.speaker === 2 ? 1 : 2; bumpDyn(); invalidateResults();
       buildSegments(); applySegFilter(); renderChips(tlDuration(), state.tlPxPerSec); // zmena rečníka prekreslí skupiny aj farbu na časovej osi
@@ -646,7 +688,7 @@ function buildSegments() {
   applySegFilter(); refreshSel();
 }
 function initEditor() {
-  state.pos = {}; state.crop = {}; state.tool = "captions"; state.results = {};
+  state.pos = {}; state.crop = {}; state.tool = "captions"; state.results = {}; state.tab = "subs";
   ASPECTS.forEach((a) => { state.pos[a.k] = defaultPos(); state.crop[a.k] = { zoom: 1, cx: 0.5, cy: 0.5 }; });
   state.speakers = 1; state.spkOn = false; state.spkTab = 1; state.activeSeg = -1; state.collapsedSpk.clear(); state.sel.clear(); state.selAnchor = -1;
   computeWaveform();
@@ -881,6 +923,7 @@ function applyPreset(p) {
   if (editingSpk2) {
     const o = state.style2 || {};
     state.style2 = { ...p, preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps };
+    if (p.y !== undefined) ASPECTS.forEach((a) => { Object.assign(getPos(a.k, 2), { x: 0.5, y: p.y, position: p.position ?? null }); });
   } else {
     const o = state.style;
     state.style = { ...p, preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, on: o.on };
@@ -889,12 +932,11 @@ function applyPreset(p) {
   bumpDyn(); syncControls();
 }
 function markActive() {
-  const q = state.pos[state.aspect];
+  const q = getPos(state.aspect, editSpk());
+  $("posLabel").textContent = "Pozícia" + (state.spkOn ? " — Rečník " + editSpk() : "") + " · " + state.aspect;
   document.querySelectorAll("#positions .opt").forEach((b) => b.classList.toggle("on", !!q && b.dataset.v === q.position));
   document.querySelectorAll("#aspects .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === state.aspect));
   if (state.out) state.out.cv.classList.toggle("crop", state.tool === "crop");
-  document.querySelectorAll("#tools .opt").forEach((b) => b.classList.toggle("on", b.dataset.v === state.tool));
-  $("cropBox").hidden = state.tool !== "crop";
   const c = state.crop[state.aspect]; if (c) { $("zoom").value = c.zoom; $("zoomOut").textContent = `${state.aspect} · ${c.zoom.toFixed(2)}×`; }
 }
 function syncControls() {
@@ -957,7 +999,7 @@ async function recordAspect(aspect, onProgress, job) {
 async function exportAspects(list) {
   if (state.busyExport || state.playable === false) return;
   const job = state.job, multi = list.length > 1;
-  state.busyExport = true; $("exportAll").disabled = true; $("export-error").hidden = true; setStep(3);
+  state.busyExport = true; $("exportAll").disabled = true; $("exportCur").disabled = true; $("export-error").hidden = true;
   try {
     for (let idx = 0; idx < list.length; idx++) {
       const k = list[idx]; if (job !== state.job) break;
@@ -983,7 +1025,7 @@ async function exportAspects(list) {
     }
   } finally {
     state.busyExport = false; $("exportStatus").textContent = "";
-    if (job === state.job) $("exportAll").disabled = state.playable === false;
+    if (job === state.job) { $("exportAll").disabled = state.playable === false; $("exportCur").disabled = state.playable === false; }
   }
 }
 
@@ -1004,7 +1046,7 @@ function setup() {
     t.append(smp, nm); t.onclick = () => applyPreset(p); $("styles").append(t);
   });
   document.querySelectorAll("#aspects .opt").forEach((b) => b.onclick = () => { state.aspect = b.dataset.v; buildOut(); syncControls(); });
-  document.querySelectorAll("#positions .opt").forEach((b) => b.onclick = () => { const q = state.pos[state.aspect]; if (!q) return; q.position = b.dataset.v; q.x = 0.5; q.y = POS_Y[b.dataset.v]; syncControls(); });
+  document.querySelectorAll("#positions .opt").forEach((b) => b.onclick = () => { const q = getPos(state.aspect, editSpk()); q.position = b.dataset.v; q.x = 0.5; q.y = POS_Y[b.dataset.v]; syncControls(); });
   // Karty Rečník 1 / Rečník 2: prepínajú, ktorého štýl práve upravuje panel nižšie (farba, font, dlaždice…).
   document.querySelectorAll("#spkTabs .opt").forEach((b) => b.onclick = () => {
     state.spkTab = +b.dataset.spk;
@@ -1032,7 +1074,8 @@ function setup() {
   $("dl-srt").onclick = () => saveText(toSrt(state.segments), "titulky.srt", "application/x-subrip");
   $("dl-vtt").onclick = () => saveText(toVtt(state.segments), "titulky.vtt", "text/vtt");
   $("newproject").onclick = reset;
-  document.querySelectorAll("#tools .opt").forEach((b) => b.onclick = () => { state.tool = b.dataset.v; markActive(); });
+  document.querySelectorAll("#steps .step").forEach((b) => b.onclick = () => setTab(b.dataset.tab));
+  $("exportCur").onclick = () => { const r = state.results[state.aspect]; if (r) saveUrl(r.url, `titulky-${state.aspect.replace(":", "x")}.${r.ext}`); else exportAspects([state.aspect]); };
   $("zoom").oninput = (e) => { const q = state.crop[state.aspect]; if (!q) return; q.zoom = +e.target.value; markActive(); invalidateResults(); };
   $("cropReset").onclick = () => { state.crop[state.aspect] = { zoom: 1, cx: 0.5, cy: 0.5 }; markActive(); invalidateResults(); };
   $("fontUp").onclick = () => $("fontFile").click();

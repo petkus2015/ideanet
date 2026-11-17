@@ -41,7 +41,8 @@ main{min-width:0}
 .icon-btn:hover{border-color:var(--a)}
 .icon-btn svg{width:15px;height:15px}
 .seg-search{width:100%;background:var(--card2);color:var(--text);border:1px solid var(--line2);border-radius:9px;padding:8px 10px;font:inherit;margin-bottom:10px}
-.spk-group{display:flex;align-items:center;gap:8px;padding:8px 2px 4px;cursor:pointer;color:#cfd4ee;font-size:13px;font-weight:600;user-select:none}
+.spk-group{display:flex;align-items:center;gap:8px;padding:6px 10px;margin-top:6px;border-radius:8px;cursor:pointer;color:#cfd4ee;font-size:13px;font-weight:600;user-select:none}
+.spk-group:hover{background:var(--card2)}
 .spk-group .dot{width:9px;height:9px}
 .spk-group .chev{margin-left:auto;color:var(--muted);transition:transform .15s}
 .spk-group.collapsed .chev{transform:rotate(-90deg)}
@@ -64,6 +65,7 @@ main{min-width:0}
 .chip .h{position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize}
 .chip .h.l{left:0}
 .chip .h.r{right:0}
+#timelineCard.video-only .tl-chips,#timelineCard.video-only #tlHint,#timelineCard.video-only .selbar{display:none!important}
 .tl-band{position:absolute;top:24px;height:34px;background:rgba(108,92,255,.22);border:1px solid var(--a);border-radius:4px;pointer-events:none;z-index:1}
 .chip.sel{box-shadow:0 0 0 2px #ffe066 inset}
 .chip.ov{border-style:dashed;border-color:#ffe066}
@@ -111,19 +113,29 @@ main{min-width:0}
 .banner{background:#2a1d12;border:1px solid #6b4a24;color:#f0c58a;border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:13px}
 .error{color:#ff7a8a;margin:12px 0 0}
 .segments{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:340px;overflow:auto;padding-right:4px}
-.spk{display:none;height:26px;margin-top:5px;padding:0 8px;border-radius:99px;border:0;cursor:pointer;font-size:11px;font-weight:700;color:#fff;letter-spacing:.02em}
-.spk[data-s="1"]{background:var(--spk1)}
-.spk[data-s="2"]{background:var(--spk2)}
-.segments.spk-on .spk{display:block}
+.segments .spk{display:none;align-items:center;justify-content:center;gap:5px;height:28px;margin-top:4px;padding:0 8px 0 7px;border-radius:99px;border:1px solid;cursor:pointer;font:inherit;font-size:11px;font-weight:700;letter-spacing:.02em;color:#fff;transition:background .15s,box-shadow .15s,transform .1s;white-space:nowrap}
+.segments .spk svg{width:12px;height:12px;opacity:.75}
+.segments .spk .dot{width:8px;height:8px}
+.segments .spk[data-s="1"]{background:color-mix(in srgb,var(--spk1) 28%,transparent);border-color:var(--spk1)}
+.segments .spk[data-s="2"]{background:color-mix(in srgb,var(--spk2) 28%,transparent);border-color:var(--spk2)}
+.segments .spk:hover{box-shadow:0 0 0 3px color-mix(in srgb,currentColor 12%,transparent);filter:brightness(1.2)}
+.segments .spk:hover svg{opacity:1}
+.segments .spk:active{transform:scale(.95)}
+.segments .spk:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.segments.spk-on .spk{display:inline-flex}
 .segments.spk-on .segment{border-left:3px solid transparent}
 .segments.spk-on .segment[data-s="1"]{border-left-color:var(--spk1)}
 .segments.spk-on .segment[data-s="2"]{border-left-color:var(--spk2)}
-.spk-tabs .opt{display:flex;align-items:center;justify-content:center;gap:7px}
+.spk-tabs{margin-top:10px}
+.spk-tabs .opt{flex-direction:row;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;padding:9px 6px;color:#cfd4ee}
+.spk-tabs .opt.on{color:#fff}
+.spk-tabs .opt[data-spk="1"].on{border-color:var(--spk1);background:color-mix(in srgb,var(--spk1) 22%,var(--card2))}
+.spk-tabs .opt[data-spk="2"].on{border-color:var(--spk2);background:color-mix(in srgb,var(--spk2) 22%,var(--card2))}
 .dot{width:9px;height:9px;border-radius:50%;flex:none}
 .dot[data-s="1"]{background:var(--spk1)}
 .dot[data-s="2"]{background:var(--spk2)}
 .segment{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:start;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:4px 10px}
-.segments.spk-on .segment{grid-template-columns:52px 1fr 42px}
+.segments.spk-on .segment{grid-template-columns:52px 1fr auto;align-items:center}
 .segment.active{border-color:var(--a)}
 .segment button{background:none;border:0;color:var(--b);font-size:12px;cursor:pointer;padding:6px 0;text-align:left}
 .segment textarea{width:100%;background:transparent;border:0;color:var(--text);font:inherit;resize:none;outline:none;overflow:hidden;padding:5px 0}
@@ -176,8 +188,11 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 .busy h2{margin:0 0 6px;font-size:18px}
 .busy p{margin:0;color:var(--muted)}
 /* kroky */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
-.step{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card);position:sticky;top:0;z-index:5}
+.step{display:flex;align-items:center;gap:12px;color:var(--muted);font:inherit;font-size:12px;text-align:left;background:none;border:1px solid transparent;border-radius:10px;padding:6px 8px;cursor:pointer}
+.step:hover:not(:disabled){border-color:var(--line2)}
+.step:disabled{opacity:.45;cursor:default}
+.step.on{border-color:#2a3277;background:#10153a}
 .step .ic{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line2);background:var(--card);flex:none}
 .step .ic svg{width:18px;height:18px}
 .step b{display:block;color:#cfd4ee;font-size:13px;font-weight:500}
@@ -220,6 +235,13 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
       <button class="btn" id="newproject">+ Nový projekt</button>
     </header>
 
+    <nav class="steps" id="steps" aria-label="Kroky">
+      <button class="step" data-tab="upload" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg></span><span><b>Nahratie</b>Pridaj video</span></button>
+      <button class="step" data-tab="subs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></span><span><b>Titulkovanie</b>Text, rečníci, štýl</span></button>
+      <button class="step" data-tab="edit" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span><b>Úprava</b>Formát, výrez, posun</span></button>
+      <button class="step" data-tab="export" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></span><span><b>Export</b>Stiahni súbory</span></button>
+    </nav>
+
     <div class="cols">
       <main>
         <section id="view-upload" class="card">
@@ -248,7 +270,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
           <p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľady a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>
           <video id="video" class="vhidden" playsinline preload="auto"></video>
           <div class="outs" id="outs"></div>
-          <p class="hint">Titulky môžeš presunúť ťahaním v ktoromkoľvek náhľade. Export beží v reálnom čase, nechaj kartu otvorenú.</p>
+          <p class="hint" id="pvHint"></p>
 
           <div class="card" id="timelineCard" style="margin-top:14px">
             <div class="tl-top">
@@ -278,10 +300,10 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
                 <button class="mini-btn" data-spk="2" type="button"><i class="dot" data-s="2"></i>Rečník 2</button></div>
               <div class="selrow"><span class="sellbl">Štýl</span><div class="selstyles" id="selStyles"></div></div>
             </div>
-            <p class="hint" style="margin-top:8px">Ťahaním v páse titulkov vyberieš úsek (alebo klik a Shift+klik na titulky), potom mu priradíš rečníka a štýl. Titulok presunieš ťahaním, ťahaním za okraj upravíš začiatok alebo koniec. Klik na pravítko alebo vlnovku pretočí video, medzerník spustí a zastaví prehrávanie.</p>
+            <p class="hint" id="tlHint" style="margin-top:8px">Ťahaním v páse titulkov vyberieš úsek (alebo klik a Shift+klik na titulky), potom mu priradíš rečníka a štýl. Titulok presunieš ťahaním, ťahaním za okraj upravíš začiatok alebo koniec. Klik na pravítko alebo vlnovku pretočí video, medzerník spustí a zastaví prehrávanie.</p>
           </div>
 
-          <div class="card" style="margin-top:14px">
+          <div class="card" style="margin-top:14px" id="textCard">
             <div class="card-title-row">
               <div class="card-title">Text titulkov</div>
               <button class="icon-btn" id="segSearchBtn" title="Hľadať v titulkoch" aria-label="Hľadať v titulkoch">
@@ -291,31 +313,14 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
             <input type="search" id="segSearch" class="seg-search" placeholder="Hľadať v texte titulkov…" hidden>
             <p class="hint" style="margin:0 0 4px">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>
             <div id="segments" class="segments"></div>
-            <div class="row-btns"><button id="dl-srt">Stiahnuť SRT</button><button id="dl-vtt">Stiahnuť VTT</button></div>
           </div>
           <p class="error" id="export-error" hidden></p>
         </section>
       </main>
 
       <aside class="panel" id="panel" hidden>
-        <h3>Úprava a prispôsobenie</h3>
-        <div class="pgroup"><div class="plabel">Pomer strán</div>
-          <div class="opts" id="aspects">
-            <button class="opt" data-v="9:16"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="2.5" width="10" height="19" rx="2"/></svg>9:16</button>
-            <button class="opt" data-v="1:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4.5" y="4.5" width="15" height="15" rx="2"/></svg>1:1</button>
-            <button class="opt" data-v="16:9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="7" width="19" height="10" rx="2"/></svg>16:9</button>
-          </div>
-          <p class="hint" id="aspectHint" style="margin-top:8px">Rozpoznané z nahraného videa. Zmeň ikonkou a video podľa seba oreže nástrojom nižšie.</p>
-        </div>
-        <div class="pgroup"><div class="plabel">Ťahanie v náhľade</div>
-          <div class="opts" id="tools"><button class="opt on" data-v="captions">Titulky</button><button class="opt" data-v="crop">Orez videa</button></div>
-          <div id="cropBox" hidden>
-            <div class="plabel" style="margin-top:12px"><span>Priblíženie</span><output id="zoomOut"></output></div>
-            <input type="range" id="zoom" min="1" max="3" step="0.05" value="1" aria-label="Priblíženie videa">
-            <button class="mini" id="cropReset" type="button">Obnoviť orez vybraného formátu</button>
-            <p class="hint" style="margin:6px 0 0">Ťahaním po náhľade posúvaš video, kolieskom myši alebo posuvníkom približuješ. Orez platí len pre vybraný formát.</p>
-          </div>
-        </div>
+        <section id="pane-subs">
+        <h3>Titulky</h3>
         <div class="pgroup"><div class="plabel"><span>Titulky</span><button class="sw" id="subsOn" role="switch" aria-checked="true" aria-label="Titulky zapnuté"></button></div></div>
         <div class="pgroup" id="speakers"><div class="plabel"><span>Viac rečníkov</span><button class="sw" id="spkOn" role="switch" aria-checked="false" aria-label="Rozlišovať rečníkov"></button></div>
           <p class="hint" id="spkInfo" style="margin:0"></p>
@@ -328,12 +333,13 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
           <div class="styles" id="styles"></div>
           <p class="hint" id="styleCustom" hidden>Vlastný štýl (upravený)</p>
         </div>
-        <div class="pgroup"><div class="plabel">Pozícia</div>
+        <div class="pgroup"><div class="plabel" id="posLabel">Pozícia</div>
           <div class="opts" id="positions">
             <button class="opt" data-v="top" aria-label="Hore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8"/></svg>Hore</button>
             <button class="opt" data-v="middle" aria-label="Stred"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 12h8"/></svg>Stred</button>
             <button class="opt" data-v="bottom" aria-label="Dole"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 17h8"/></svg>Dole</button>
           </div>
+          <p class="hint" id="posHint" style="margin:8px 0 0">Titulky môžeš aj potiahnuť priamo v náhľade.</p>
         </div>
         <div class="pgroup"><div class="plabel">Vzhľad (veľkosť)</div>
           <div class="inline"><span style="color:var(--muted)">A</span><input type="range" id="size" min="3" max="12" step="0.5" aria-label="Veľkosť titulkov"><output id="sizeOut"></output></div>
@@ -352,18 +358,39 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
           <label class="check"><input type="checkbox" id="roam"> Dynamický štýl: meniť polohu pri každej fráze</label>
           <label class="check"><input type="checkbox" id="caps"> Dynamický štýl: VEĽKÉ PÍSMENA (kapitálky)</label>
         </div></details>
-        <button class="export-all" id="exportAll">Exportovať všetky formáty</button>
-        <p class="hint" id="exportStatus"></p>
+        </section>
+        <section id="pane-edit" hidden>
+        <h3>Úprava videa</h3>
+        <div class="pgroup"><div class="plabel">Pomer strán</div>
+          <div class="opts" id="aspects">
+            <button class="opt" data-v="9:16"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="2.5" width="10" height="19" rx="2"/></svg>9:16</button>
+            <button class="opt" data-v="1:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4.5" y="4.5" width="15" height="15" rx="2"/></svg>1:1</button>
+            <button class="opt" data-v="16:9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="7" width="19" height="10" rx="2"/></svg>16:9</button>
+          </div>
+          <p class="hint" id="aspectHint" style="margin-top:8px">Rozpoznané z nahraného videa. Zmeň ikonkou, výrez videa nastavíš nižšie.</p>
+        </div>
+        <div class="pgroup"><div class="plabel">Výrez a posun videa</div>
+            <div class="plabel"><span>Priblíženie</span><output id="zoomOut"></output></div>
+            <input type="range" id="zoom" min="1" max="3" step="0.05" value="1" aria-label="Priblíženie videa">
+            <button class="mini" id="cropReset" type="button">Obnoviť orez vybraného formátu</button>
+            <p class="hint" style="margin:6px 0 0">Ťahaním po náhľade posúvaš video, kolieskom myši alebo posuvníkom približuješ. Orez platí len pre vybraný formát.</p>
+        </div>
+        </section>
+        <section id="pane-export" hidden>
+        <h3>Export</h3>
+        <div class="pgroup"><div class="plabel">Video s titulkami</div>
+          <button class="export-all" id="exportCur" style="margin-top:0">Exportovať tento formát</button>
+          <button class="mini" id="exportAll" type="button">Exportovať všetky formáty (9:16, 1:1, 16:9)</button>
+          <p class="hint" id="exportStatus"></p>
+        </div>
+        <div class="pgroup"><div class="plabel">Len titulky</div>
+          <div class="row-btns" style="margin-top:0"><button id="dl-srt">Stiahnuť SRT</button><button id="dl-vtt">Stiahnuť VTT</button></div>
+        </div>
         <p class="hint" id="expiry">Nič sa neukladá na server. Po zatvorení stránky je všetko preč, preto si súbory stiahni.</p>
+        </section>
       </aside>
     </div>
 
-    <footer class="steps" id="steps">
-      <div class="step"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg></span><span><b>Nahratie</b>Pridaj video</span></div>
-      <div class="step"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></span><span><b>Titulkovanie</b>AI vytvorí titulky</span></div>
-      <div class="step"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span><b>Úprava</b>Uprav a dolaď</span></div>
-      <div class="step"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></span><span><b>Export</b>Stiahni súbory</span></div>
-    </footer>
   </div>
 </div>
 <script>
