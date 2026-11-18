@@ -1,20 +1,22 @@
 // ---------- jazyk rozhrania podľa prehliadača ----------
 // Zdrojové texty sú po slovensky. Pre iný jazyk prehliadača sa texty v stránke preložia slovníkom nižšie,
 // aj tie, ktoré aplikácia zmení počas behu (MutationObserver). Čeština a angličtina; iné jazyky dostanú angličtinu.
-// Na skúšku: ?lang=en / ?lang=cs / ?lang=sk
-const LANG = (() => {
+// Poradie: ?lang=… v adrese, potom voľba v Nastaveniach (uložená v prehliadači), potom jazyk prehliadača.
+const UI_LANGS = { sk: "Slovenčina", cs: "Čeština", en: "English" };
+let savedLang = null; try { savedLang = localStorage.getItem("titulky-lang"); } catch {}
+let LANG = (() => {
   const q = new URLSearchParams(location.search).get("lang");
-  for (const l of [q, ...(navigator.languages || []), navigator.language]) {
+  for (const l of [q, savedLang, ...(navigator.languages || []), navigator.language]) {
     const c = String(l || "").slice(0, 2).toLowerCase();
     if (c === "sk" || c === "cs" || c === "en") return c;
     if (c === "cz") return "cs";
   }
   return "en";
 })();
-const LOCALE = { sk: "sk-SK", cs: "cs-CZ", en: "en-GB" }[LANG];
-const DEC = LANG === "en" ? "." : ",";
-const decTxt = (v) => String(v).replace(".", DEC);
-const LI = LANG === "cs" ? 0 : 1; // stĺpec v slovníku: [čeština, angličtina]
+let LOCALE, LI;
+const setLangVars = () => { LOCALE = { sk: "sk-SK", cs: "cs-CZ", en: "en-GB" }[LANG]; LI = LANG === "cs" ? 0 : 1; }; // LI = stĺpec v slovníku: [čeština, angličtina]
+setLangVars();
+const decTxt = (v) => String(v).replace(".", LANG === "en" ? "." : ",");
 const DICT = {
   // ---- hlavička, menu, kroky ----
   "Titulky do videa": ["Titulky do videa", "Video Subtitles"],
@@ -22,7 +24,7 @@ const DICT = {
   "Ukážka: titulky sú vzorové, video ostáva vo vašom prehliadači.": ["Ukázka: titulky jsou vzorové, video zůstává ve vašem prohlížeči.", "Demo: sample subtitles, the video stays in your browser."],
   "+ Nový projekt": ["+ Nový projekt", "+ New project"],
   "Titulkovanie": ["Titulkování", "Subtitles"], "Knižnica": ["Knihovna", "Library"], "Značka": ["Značka", "Brand"],
-  "Plán": ["Plán", "Plan"], "Pro": ["Pro", "Pro"], "2 € mesačne": ["2 € měsíčně", "€2 per month"], "Bez limitu exportov": ["Bez limitu exportů", "Unlimited exports"],
+  "Plán": ["Plán", "Plan"], "Nastavenia": ["Nastavení", "Settings"], "Jazyk rozhrania": ["Jazyk rozhraní", "Interface language"], "Pro": ["Pro", "Pro"], "2 € mesačne": ["2 € měsíčně", "€2 per month"], "Bez limitu exportov": ["Bez limitu exportů", "Unlimited exports"],
   "Kroky": ["Kroky", "Steps"],
   "Nahratie": ["Nahrání", "Upload"], "Pridaj video": ["Přidej video", "Add a video"],
   "Text, rečníci, štýl": ["Text, mluvčí, styl", "Text, speakers, style"],
@@ -238,13 +240,24 @@ function tr(s) {
 // Preklad stránky: statické texty hneď, zmenené texty a nové prvky priebežne.
 const I18N_SKIP = ".chip-label, .fsample, textarea, script, style, [data-noi18n]";
 const trSkip = (el) => !!(el && el.closest && el.closest(I18N_SKIP));
+// Pri každom preloženom texte sa pamätá slovenský originál, aby sa dal jazyk prepnúť aj späť za behu.
+const ORIG = new WeakMap();
 function trTextNode(n) {
   const v = n.nodeValue; if (!v || !/[A-Za-zÀ-ž]{2}/.test(v) || trSkip(n.parentElement)) return;
-  const t = v.trim(), x = tr(t); if (x !== t) n.nodeValue = v.replace(t, x);
+  const rec = ORIG.get(n), src = rec && rec.out === v ? rec.src : v;
+  const t = src.trim(), out = src.replace(t, tr(t));
+  if (out !== src || rec) ORIG.set(n, { src, out });
+  if (out !== v) n.nodeValue = out;
 }
 function trAttrs(el) {
   if (trSkip(el)) return;
-  for (const a of ["title", "aria-label", "placeholder"]) { const v = el.getAttribute(a); if (v) { const x = tr(v); if (x !== v) el.setAttribute(a, x); } }
+  let recs = ORIG.get(el);
+  for (const a of ["title", "aria-label", "placeholder"]) {
+    const v = el.getAttribute(a); if (!v) continue;
+    const rec = recs && recs[a], src = rec && rec.out === v ? rec.src : v, out = tr(src);
+    if (out !== src || rec) { if (!recs) ORIG.set(el, (recs = {})); recs[a] = { src, out }; }
+    if (out !== v) el.setAttribute(a, out);
+  }
 }
 function trTree(root) {
   if (root.nodeType === 3) { trTextNode(root); return; }
@@ -253,10 +266,18 @@ function trTree(root) {
   const w = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.nodeType === 1 && n.matches(I18N_SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
   for (let n = w.nextNode(); n; n = w.nextNode()) { if (n.nodeType === 3) trTextNode(n); else trAttrs(n); }
 }
-document.documentElement.lang = LANG;
-if (LANG !== "sk") {
-  document.title = tr(document.title);
+const TITLE_SK = document.title;
+function setLang(l) { // prepnutie jazyka rozhrania za behu (z Nastavení)
+  LANG = UI_LANGS[l] ? l : "sk"; setLangVars();
+  try { localStorage.setItem("titulky-lang", LANG); } catch {}
+  document.documentElement.lang = LANG; document.title = tr(TITLE_SK);
   trTree(document.body);
+  document.dispatchEvent(new Event("langchange"));
+}
+document.documentElement.lang = LANG;
+document.title = tr(TITLE_SK);
+if (LANG !== "sk") trTree(document.body);
+{
   new MutationObserver((ms) => {
     for (const m of ms) {
       if (m.type === "characterData") trTextNode(m.target);

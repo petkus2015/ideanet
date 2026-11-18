@@ -1529,10 +1529,11 @@ async function removeFont(name) {
 }
 // Knižnica: animovaná ukážka každého štýlu titulkov, kreslená tým istým kódom ako náhľad a export.
 const LIB_LOOP = 4.6;
-const LIB_SEGS = (() => {
+const libSegs = () => {
   const mk = (text, start, end) => { const ws = text.split(" "), d = (end - start) / ws.length; return { text, start, end, speaker: 1, words: ws.map((w, i) => ({ w, start: start + i * d, end: start + (i + 1) * d })) }; };
   return [mk(tr("Takto budú vyzerať"), 0.3, 1.9), mk(tr("tvoje titulky vo videu"), 2.05, 3.9)];
-})();
+};
+let LIB_SEGS = libSegs();
 let LIB_CHUNKS = null;
 let libCards = [];
 function renderLibrary() {
@@ -1876,7 +1877,14 @@ function setup() {
   $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
   loadSavedFonts(); loadSharedFonts();
   $("fontSampleText").value = tr($("fontSampleText").value);
-  if (LANG !== "sk" && [...$("lang").options].some((o) => o.value === LANG)) $("lang").value = LANG; // jazyk videa predvolene podľa jazyka prehliadača
+  Object.entries(UI_LANGS).forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; $("uiLang").append(o); });
+  $("uiLang").value = LANG;
+  $("uiLang").onchange = (e) => setLang(e.target.value);
+  document.addEventListener("langchange", () => { // texty kreslené v kóde (plátno, štítky) sa prekreslia v novom jazyku
+    $("uiLang").value = LANG; LIB_SEGS = libSegs(); LIB_CHUNKS = null;
+    if (state.out) { syncControls(); renderCutUi(); }
+    updateBrandUpload(); if (page === "brand") renderBrand(); if (page === "library") renderLibrary();
+  });
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   video.addEventListener("ended", () => { // to isté pri náhľade
     if (!isEdited()) return;
