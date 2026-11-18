@@ -1,6 +1,6 @@
 "use strict";
 const TF_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6";
-const LANGS = { sk: "slovak", cs: "czech", en: "english" };
+const LANGS = { sk: "slovak", cs: "czech", en: "english", es: "spanish", ar: "arabic", tr: "turkish", hi: "hindi" };
 /*I18N*/
 const DEMO = false; // true v ukážke na webe: vzorové titulky a výsledok sa prehrá priamo na stránke
 const MOCK = DEMO || new URLSearchParams(location.search).has("mock"); // len na skúšanie bez modelu

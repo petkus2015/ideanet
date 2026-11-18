@@ -408,6 +408,9 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 }
 @media(prefers-reduced-motion:reduce){.spinner{animation:none}}
 
+/* arabčina: rozhranie sprava doľava, časová os a náhľad ostávajú zľava doprava */
+[dir=rtl] #timelineCard,[dir=rtl] .out,[dir=rtl] .pv,[dir=rtl] .ct-tools,[dir=rtl] .tl-top,[dir=rtl] .speeds button,[dir=rtl] .cl-tag{direction:ltr}
+[dir=rtl] .nav.on{box-shadow:inset -2px 0 0 #e8853a}
 /* DaVinci Resolve vzhľad */
 body{font-size:13px}
 .grad{background:none;color:#e6e6e8}
@@ -467,7 +470,7 @@ h1{font-size:20px;letter-spacing:.01em}
       <main>
         <section id="view-upload" class="card">
           <div class="rowlang"><label for="lang">1. Jazyk videa</label>
-            <select id="lang"><option value="sk" selected>Slovenčina</option><option value="auto">Rozpoznať automaticky</option><option value="cs">Čeština</option><option value="en">Angličtina</option></select>
+            <select id="lang"><option value="sk" selected>Slovenčina</option><option value="auto">Rozpoznať automaticky</option><option value="cs">Čeština</option><option value="en">Angličtina</option><option value="es">Španielčina</option><option value="ar">Arabčina</option><option value="tr">Turečtina</option><option value="hi">Hindčina</option></select>
           </div>
           <label class="drop" id="drop">
             <input type="file" id="file" accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265" hidden>
