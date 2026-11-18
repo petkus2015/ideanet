@@ -39,6 +39,8 @@ button{font:inherit;color:inherit}
 .fmeta b{color:var(--text);font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .ftag{border:1px solid var(--line2);border-radius:99px;padding:1px 8px;font-size:10px;flex:none}
 .ftag.own{border-color:#8a5a35;color:#f0b27a}
+.ftag.shared{border-color:#2f6b45;color:#8fdcab}
+.fdrop.off{opacity:.55;pointer-events:none}
 .fmeta .spk-del{margin-left:auto}
 .fuse{margin-left:auto;border:1px solid var(--line2);background:var(--card2);border-radius:4px;padding:5px 11px;font-size:12px;cursor:pointer}
 .fuse:hover{border-color:var(--a)}
@@ -430,7 +432,6 @@ h1{font-size:20px;letter-spacing:.01em}
 <div class="app">
   <aside class="side">
     <div class="logo">▶</div>
-    <a class="nav" aria-disabled="true" title="Pripravujeme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Prehľad</a>
     <a class="nav on" href="#" data-page="work" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Titulkovanie</a>
     <a class="nav" href="#kniznica" data-page="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>Knižnica</a>
     <a class="nav" href="#znacka" data-page="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l9 9-9 9-9-9z"/></svg>Značka</a>
@@ -668,11 +669,12 @@ h1{font-size:20px;letter-spacing:.01em}
     </section>
     <section id="page-brand" class="xpage" hidden>
       <div class="brand-head"><div><h1><span class="grad">Značka</span></h1>
-        <p class="sub">Tvoje fonty pre titulky. Nahraté fonty ostanú v tomto prehliadači a nájdeš ich vo výbere fontu pri štýle titulkov.</p></div>
+        <p class="sub" id="brandSub">Fonty pre titulky. Nájdeš ich aj vo výbere fontu pri štýle titulkov.</p></div>
         <button class="btn" id="brandBack" type="button">← Späť na video</button></div>
       <label class="fdrop" id="fontDrop" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
-        <span><strong>Pridať font</strong> — pretiahni sem súbor alebo klikni<small>TTF, OTF, WOFF alebo WOFF2, najviac 15 MB</small></span>
-        <input type="file" id="brandFile" accept=".ttf,.otf,.woff,.woff2" multiple hidden></label>
+        <span><strong>Pridať font</strong> — pretiahni sem súbor alebo klikni<small id="fontRules">TTF, OTF, WOFF alebo WOFF2</small></span>
+        <input type="file" id="brandFile" accept=".ttf,.otf,.woff,.woff2" hidden></label>
+      <label class="check" id="fontRightsRow" hidden style="margin:-8px 0 14px"><input type="checkbox" id="fontRights"> Potvrdzujem, že tento font môžem zdieľať (je voľne šíriteľný alebo mám naň práva). Bude dostupný všetkým používateľom.</label>
       <p class="hint" id="brandMsg" role="status" style="margin:-8px 0 14px"></p>
       <div class="brand-tools"><input type="text" id="fontSampleText" value="Ahoj, toto sú moje titulky" aria-label="Text ukážky" maxlength="80"></div>
       <div class="fgrid" id="fontGrid"></div>

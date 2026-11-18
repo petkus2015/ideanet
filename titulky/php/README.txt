@@ -32,4 +32,15 @@ Ako to funguje:
   v prehliadači návštevníka. Video sa na server nenahráva. Pri prvom použití si prehliadač
   stiahne model (40 až 250 MB) z huggingface.co a zapamätá si ho.
 
+Spoločné fonty (Značka):
+  Font, ktorý niekto nahrá v časti Značka, sa uloží na server do priečinka data/ a je dostupný
+  pre všetkých používateľov. Pravidlá:
+  - prijímajú sa len skutočné fonty (TTF, OTF, WOFF, WOFF2), overené podľa obsahu súboru, najviac 10 MB,
+  - z jednej IP adresy jeden font za 7 dní (IP sa neukladá, len jej zašifrovaný odtlačok),
+  - nahrávajúci musí potvrdiť, že font môže zdieľať (licencia). Za fonty na serveri zodpovedá prevádzkovateľ webu.
+  Priečinok data/ si server vytvorí sám, potrebuje právo na zápis (overíš cez ?diag=1).
+  Zmazanie fontu: cez FTP zmaž súbor v data/fonts/ a jeho riadok v data/fonts.json.
+  Nastavenia (limit, veľkosť, počet) sú na začiatku časti "spoločné fonty" v index.php.
+  Ak je web za proxy (napr. Cloudflare), všetci môžu mať rovnakú IP. Vtedy daj vedieť vývojárovi.
+
 Nie je súčasťou: predplatné 2 € mesačne, aplikácia je voľne dostupná.

@@ -1481,7 +1481,7 @@ function setPage(p) {
   $("content").classList.toggle("ws", p === "work" && curView === "editor");
   $("page-brand").hidden = p !== "brand"; $("page-library").hidden = p !== "library";
   document.querySelectorAll(".nav[data-page]").forEach((a) => { const on = a.dataset.page === p; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-  if (p === "brand") renderBrand();
+  if (p === "brand") { updateBrandUpload(); renderBrand(); }
   if (p === "library") { renderLibrary(); requestAnimationFrame(libLoop); }
   scrollTo(0, 0);
 }
@@ -1489,13 +1489,13 @@ function setPage(p) {
 function renderBrand() {
   const grid = $("fontGrid"); grid.textContent = "";
   const text = $("fontSampleText").value.trim() || "Ahoj, toto sú moje titulky", cur = activeStyle().font;
-  [...customFonts, ...FONTS].forEach((name) => {
-    const own = customFonts.has(name);
+  [...sharedFonts, ...customFonts, ...FONTS].forEach((name) => {
+    const own = customFonts.has(name), shared = sharedFonts.has(name); ensureFont(name);
     const c = document.createElement("div"); c.className = "fcard" + (name === cur ? " on" : "");
     const smp = document.createElement("div"); smp.className = "fsample"; smp.textContent = text; smp.style.fontFamily = `"${name}", sans-serif`; smp.style.fontWeight = name === "Bebas Neue" ? 400 : 700;
     const meta = document.createElement("div"); meta.className = "fmeta";
     const nm = document.createElement("b"); nm.textContent = name; nm.title = name;
-    const tag = document.createElement("span"); tag.className = "ftag" + (own ? " own" : ""); tag.textContent = own ? "Vlastný" : "Vstavaný";
+    const tag = document.createElement("span"); tag.className = "ftag" + (own ? " own" : shared ? " shared" : ""); tag.textContent = own ? "Vlastný" : shared ? "Spoločný" : "Vstavaný";
     meta.append(nm, tag);
     if (own) {
       const del = document.createElement("button"); del.type = "button"; del.className = "spk-del"; del.title = "Odobrať font"; del.setAttribute("aria-label", "Odobrať font " + name);
@@ -1580,9 +1580,64 @@ async function loadSavedFonts() {
     for (const f of all) { try { await registerFont(f.name, f.buf.slice(0)); } catch { /* poškodený súbor sa preskočí */ } }
   } catch { /* bez trvalého úložiska ostanú fonty len do zatvorenia stránky */ }
 }
+// Spoločné fonty na serveri (PHP verzia): nahratý font je dostupný pre všetkých, jeden za týždeň z jednej IP.
+// Bez PHP (statická stránka, ukážka) sa fonty ukladajú len v tomto prehliadači.
+const fontServer = { on: false, next: 0, days: 7, maxBytes: 10 * 1048576 }, sharedFonts = new Set();
+const ensureFont = (name) => { const f = fontFaces.get(name); if (f && f.status === "unloaded") f.load().then(() => { if (page === "brand") renderBrand(); }).catch(() => {}); };
+function registerSharedFont(f) {
+  if (sharedFonts.has(f.name) || FONTS.includes(f.name)) return;
+  const face = new FontFace(f.name, `url("${f.url}")`, { weight: "100 900", style: "normal" }); // načíta sa až pri použití
+  document.fonts.add(face); sharedFonts.add(f.name); fontFaces.set(f.name, face); addFontOption(f.name);
+}
+async function loadSharedFonts() {
+  if (DEMO || !/^https?:$/.test(location.protocol)) { updateBrandUpload(); return; }
+  try {
+    const r = await fetch("?fonts=list", { cache: "no-store" });
+    const j = r.ok ? await r.json() : null;
+    if (j && Array.isArray(j.fonts)) {
+      Object.assign(fontServer, { on: true, next: j.nextUploadAt || 0, days: j.limitDays || 7, maxBytes: j.maxBytes || fontServer.maxBytes });
+      j.fonts.forEach(registerSharedFont);
+      [state.style, ...Object.values(state.spkStyle)].forEach((st) => ensureFont(st.font));
+    }
+  } catch { /* stránka bez PHP: fonty ostanú len v prehliadači */ }
+  updateBrandUpload(); if (page === "brand") renderBrand();
+}
+const limitMsg = () => `Z tvojej IP adresy už bol tento týždeň nahraný font. Ďalší môžeš nahrať ${new Date(fontServer.next * 1000).toLocaleDateString("sk-SK", { day: "numeric", month: "long" })}.`;
+function updateBrandUpload() {
+  const srv = fontServer.on, limited = srv && fontServer.next * 1000 > Date.now();
+  $("brandSub").textContent = srv ? "Spoločné fonty pre titulky. Nahraný font uvidia a môžu použiť všetci používatelia. Z jednej IP adresy sa dá nahrať jeden font za týždeň."
+    : "Fonty pre titulky. Nahraté fonty ostanú len v tomto prehliadači a nájdeš ich aj vo výbere fontu pri štýle titulkov.";
+  $("fontRules").textContent = srv ? `Len súbory fontov TTF, OTF, WOFF alebo WOFF2, najviac ${Math.round(fontServer.maxBytes / 1048576)} MB · 1 font za týždeň` : "TTF, OTF, WOFF alebo WOFF2, najviac 15 MB";
+  $("fontRightsRow").hidden = !srv || limited;
+  $("fontDrop").classList.toggle("off", limited);
+  if (limited && !$("brandMsg").textContent) $("brandMsg").textContent = limitMsg();
+  $("fontMsg").textContent = srv ? "Vlastný font nahráš v Značke, bude dostupný pre všetkých." : "Súbor TTF, OTF, WOFF alebo WOFF2. Font ostane len v tomto prehliadači.";
+}
+async function uploadShared(file, msg) {
+  if (fontServer.next * 1000 > Date.now()) { msg(limitMsg()); return; }
+  if (!$("fontRights").checked) { msg("Najprv potvrď, že font môžeš zdieľať so všetkými."); $("fontRights").focus(); return; }
+  if (file.size > fontServer.maxBytes) { msg(`Font je príliš veľký (najviac ${Math.round(fontServer.maxBytes / 1048576)} MB).`); return; }
+  const fd = new FormData(); fd.append("font", file);
+  msg("Nahrávam font na server…");
+  try {
+    const r = await fetch("?fonts=upload", { method: "POST", body: fd, headers: { "X-Requested-With": "titulky" } });
+    const j = await r.json().catch(() => ({ error: "Server neodpovedal správne." }));
+    if (j.error === "limit") { fontServer.next = j.nextUploadAt || 0; msg(limitMsg()); updateBrandUpload(); return; }
+    if (!r.ok || !j.ok) { msg(j.error || "Nahranie fontu zlyhalo."); return; }
+    registerSharedFont(j.font); ensureFont(j.font.name);
+    if (!j.duplicate) fontServer.next = j.nextUploadAt || 0;
+    $("fontRights").checked = false;
+    msg(j.duplicate ? `Tento font už v knižnici je ako „${j.font.name}“. Limit sa ti nezapočítal.` : `Font „${j.font.name}“ je nahraný a dostupný pre všetkých.`);
+    updateBrandUpload(); renderBrand();
+  } catch { msg("Spojenie so serverom zlyhalo. Skús to znova."); }
+}
 async function uploadFont(file, fromBrand = false) {
   const msg = (t) => { $(fromBrand ? "brandMsg" : "fontMsg").textContent = t; };
   msg("");
+  if (fontServer.on) {
+    if (!/\.(ttf|otf|woff2?)$/i.test(file.name)) { msg(`„${file.name}“ nie je font. Prijímame len súbory TTF, OTF, WOFF a WOFF2.`); return; }
+    return uploadShared(file, (t) => { $("brandMsg").textContent = t; });
+  }
   if (!/\.(ttf|otf|woff2?)$/i.test(file.name)) { msg(`„${file.name}“ nie je font. Použi súbor TTF, OTF, WOFF alebo WOFF2.`); return; }
   if (file.size > 15 * 1048576) { msg("Font je príliš veľký (najviac 15 MB)."); return; }
   const name = "Vlastný " + file.name.replace(/\.[^.]+$/, "").replace(/[^\p{L}\p{N} _-]/gu, " ").trim().slice(0, 40);
@@ -1780,7 +1835,7 @@ function setup() {
   $("bg").oninput = (e) => { activeStyle().bg = e.target.value; custom(); };
   $("bgOpacity").oninput = (e) => { activeStyle().bgOpacity = +e.target.value; custom(); };
   $("size").oninput = (e) => { activeStyle().size = +e.target.value; custom(); };
-  $("font").onchange = (e) => { activeStyle().font = e.target.value; custom(); };
+  $("font").onchange = (e) => { activeStyle().font = e.target.value; ensureFont(e.target.value); custom(); };
   $("highlight").onchange = (e) => { activeStyle().highlight = e.target.checked; syncControls(); };
   $("hl").oninput = (e) => { activeStyle().hl = e.target.value; syncControls(); };
   $("roam").onchange = (e) => { activeStyle().roam = e.target.checked; syncControls(); };
@@ -1793,21 +1848,21 @@ function setup() {
   $("exportCur").onclick = () => { const r = state.results[state.aspect]; if (r) saveUrl(r.url, `titulky-${state.aspect.replace(":", "x")}.${r.ext}`); else exportAspects([state.aspect]); };
   $("zoom").oninput = (e) => { const q = state.crop[state.aspect]; if (!q) return; q.zoom = +e.target.value; markActive(); invalidateResults(); };
   $("cropReset").onclick = () => { state.crop[state.aspect] = { zoom: 1, cx: 0.5, cy: 0.5 }; markActive(); invalidateResults(); };
-  $("fontUp").onclick = () => $("fontFile").click();
+  $("fontUp").onclick = () => { if (fontServer.on) setPage("brand"); else $("fontFile").click(); };
   document.querySelectorAll("#quality .opt").forEach((b) => b.onclick = () => { state.quality = b.dataset.q; invalidateResults(); refreshQuality(); });
   $("fontsAll").onclick = () => setPage("brand");
   $("exportStop").onclick = () => { if (state.busyExport) { state.exportCancel = true; $("exportStop").hidden = true; } };
   setupCut();
   document.querySelectorAll(".nav[data-page]").forEach((a) => a.onclick = (e) => { e.preventDefault(); setPage(a.dataset.page); });
   $("brandBack").onclick = $("libBack").onclick = () => setPage("work");
-  $("brandFile").onchange = async (e) => { for (const f of e.target.files) await uploadFont(f, true); e.target.value = ""; };
+  $("brandFile").onchange = async (e) => { const f = e.target.files[0]; if (f) await uploadFont(f, true); e.target.value = ""; };
   $("fontDrop").onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("brandFile").click(); } };
   ["dragenter", "dragover"].forEach((ev) => $("fontDrop").addEventListener(ev, (e) => { e.preventDefault(); $("fontDrop").classList.add("over"); }));
   ["dragleave", "drop"].forEach((ev) => $("fontDrop").addEventListener(ev, () => $("fontDrop").classList.remove("over")));
-  $("fontDrop").addEventListener("drop", async (e) => { e.preventDefault(); for (const f of e.dataTransfer.files) await uploadFont(f, true); });
+  $("fontDrop").addEventListener("drop", async (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) await uploadFont(f, true); });
   $("fontSampleText").addEventListener("input", renderBrand);
   $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
-  loadSavedFonts();
+  loadSavedFonts(); loadSharedFonts();
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   video.addEventListener("ended", () => { // to isté pri náhľade
     if (!isEdited()) return;
