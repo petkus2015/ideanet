@@ -1,9 +1,10 @@
 "use strict";
 const TF_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6";
 const LANGS = { sk: "slovak", cs: "czech", en: "english" };
+/*I18N*/
 const DEMO = false; // true v ukážke na webe: vzorové titulky a výsledok sa prehrá priamo na stránke
 const MOCK = DEMO || new URLSearchParams(location.search).has("mock"); // len na skúšanie bez modelu
-const SAMPLE = ["Ahoj, vitajte pri ukážke aplikácie.", "Nahráte video a titulky sa vytvoria automaticky.", "Vyberiete štýl z ponuky,", "zmeníte farbu textu, font alebo podklad,", "a práve vyslovené slovo sa zvýrazní."];
+const SAMPLE = ["Ahoj, vitajte pri ukážke aplikácie.", "Nahráte video a titulky sa vytvoria automaticky.", "Vyberiete štýl z ponuky,", "zmeníte farbu textu, font alebo podklad,", "a práve vyslovené slovo sa zvýrazní."].map((x) => tr(x)); // vzorové titulky (ukážka), v jazyku rozhrania
 
 const $ = (id) => document.getElementById(id);
 const OUT = { "9:16": [1080, 1920], "1:1": [1080, 1080], "16:9": [1920, 1080] };
@@ -436,7 +437,7 @@ function detectAspect(w, h) {
 // farbu (na časovej osi a v zozname), vlastný štýl titulkov a vlastnú polohu pre každý formát.
 // Rečník s id 1 je hlavný: jeho štýl je state.style a nedá sa odobrať.
 const SPK_COLORS = ["#6c5cff", "#19b8e8", "#f5a524", "#ef5da8", "#22c55e", "#f97316"];
-const newSpk = (id) => ({ id, name: "Rečník " + id, color: SPK_COLORS[(id - 1) % SPK_COLORS.length] });
+const newSpk = (id) => ({ id, name: tr("Rečník") + " " + id, color: SPK_COLORS[(id - 1) % SPK_COLORS.length] });
 const multiSpk = () => state.spk.length > 1;
 const spkById = (id) => state.spk.find((x) => x.id === id) || state.spk[0] || newSpk(1);
 const spkColor = (id) => spkById(id).color;
@@ -522,9 +523,14 @@ function buildOut() {
   o.play.onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   o.dl.onclick = () => { const r = state.results[k]; if (r) saveUrl(r.url, `titulky-${k.replace(":", "x")}.${r.ext}`); else exportAspects([k]); };
   // titulky sa presúvajú ťahaním priamo v náhľade
+  const SNAP = 10; // magnet: do 10 px od stredu sa titulok prichytí na stred (vodorovne aj zvisle), Alt magnet vypne
   const move = (e) => {
     const r = o.cv.getBoundingClientRect(), q = getPos(k, o.drag.spk);
-    q.x = clamp((e.clientX - r.left) / r.width, 0, 1); q.y = clamp((e.clientY - r.top) / r.height, 0, 1); q.position = null;
+    let x = e.clientX - r.left, y = e.clientY - r.top;
+    const gx = !e.altKey && Math.abs(x - r.width / 2) < SNAP, gy = !e.altKey && Math.abs(y - r.height / 2) < SNAP;
+    if (gx) x = r.width / 2; if (gy) y = r.height / 2;
+    o.guides = { x: gx, y: gy };
+    q.x = clamp(x / r.width, 0, 1); q.y = clamp(y / r.height, 0, 1); q.position = gy && gx ? "middle" : null;
     markActive(); invalidateResults();
   };
   const pan = (e) => { // posun videa (orez) ťahaním
@@ -555,7 +561,7 @@ function buildOut() {
     e.preventDefault(); const q = state.crop[k];
     q.zoom = clamp(q.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08), 1, 3); markActive(); invalidateResults();
   }, { passive: false });
-  const end = () => { o.drag = null; };
+  const end = () => { o.drag = null; o.guides = null; };
   o.cv.addEventListener("pointerup", end); o.cv.addEventListener("pointercancel", end);
   state.out = o;
   reflectResult();
@@ -926,7 +932,7 @@ function undoCut() { if (!state.undo.length) return; state.redo.push(JSON.string
 function redoCut() { if (!state.redo.length) return; state.undo.push(JSON.stringify(state.clips)); restoreClips(state.redo.pop()); cutHint("Znova použité."); cutsChanged(); }
 function cutsChanged() { invalidateResults(); renderCutUi(); }
 const cutHint = (t) => { const h = $("cutHint"); if (h) h.textContent = t; };
-const secTxt = (s) => s.toFixed(1).replace(".", ",") + " s";
+const secTxt = (s) => decTxt(s.toFixed(1)) + " s";
 
 // --- úpravy klipov ---
 function seekOut(o) { const r = outToSrc(o); state.pc = r.i; video.currentTime = r.t; }
@@ -1045,7 +1051,7 @@ function renderClipTrack() {
     const cv = document.createElement("canvas"); drawStrip(cv, c, w); el.append(cv);
     const tags = document.createElement("div"); tags.className = "cl-tags";
     const tag = (txt, cls = "") => { const s = document.createElement("span"); s.className = "cl-tag " + cls; s.textContent = txt; tags.append(s); };
-    if (c.speed !== 1) tag(String(c.speed).replace(".", ",") + "×", "sp");
+    if (c.speed !== 1) tag(decTxt(c.speed) + "×", "sp");
     if (c.fx !== "none") tag(nameOf(EFFECTS, c.fx)); if (c.filter !== "none") tag(nameOf(FILTERS, c.filter));
     const nm = document.createElement("div"); nm.className = "cl-name";
     const a = document.createElement("span"); a.textContent = "Klip " + (i + 1); const d = document.createElement("span"); d.className = "cl-dur"; d.textContent = secTxt(clipOut(c));
@@ -1180,7 +1186,7 @@ function setupCut() {
   FILTERS.forEach((x) => tile($("filterGrid"), x, `<span class="fv ${x.id}" aria-hidden="true"><canvas class="fl-${x.id}" width="96" height="60"></canvas><i>A</i></span>`).onclick = () => {
     const c = state.clips[state.clipSel]; if (!c) return; snapshot(); c.filter = x.id; cutsChanged(); if (video.paused) seekOut(clamp(srcToOut(video.currentTime) ?? 0, outStarts()[state.clipSel], outStarts()[state.clipSel] + clipOut(c) - 0.01));
   });
-  SPEEDS.forEach((v) => { const b = document.createElement("button"); b.type = "button"; b.dataset.v = v; b.setAttribute("role", "radio"); b.textContent = String(v).replace(".", ",") + "×";
+  SPEEDS.forEach((v) => { const b = document.createElement("button"); b.type = "button"; b.dataset.v = v; b.setAttribute("role", "radio"); b.textContent = decTxt(v) + "×";
     b.onclick = () => { const c = state.clips[state.clipSel]; if (!c || c.speed === v) return; snapshot(); c.speed = v; cutHint(`Klip ide rýchlosťou ${b.textContent}, trvá ${secTxt(clipOut(c))}.`); cutsChanged(); };
     $("speedOpts").append(b); });
   $("fxAll").onclick = () => { const c = state.clips[state.clipSel]; if (!c) return; snapshot(); state.clips.forEach((x) => { x.fx = c.fx; }); cutHint(`Efekt ${nameOf(EFFECTS, c.fx)} je na všetkých klipoch.`); cutsChanged(); };
@@ -1325,11 +1331,17 @@ function loop() {
       const pcc = state.clips[state.pc], rate = (pcc ? pcc.speed : 1) * state.pvRate;
       if (Math.abs(video.playbackRate - rate) > 1e-3) video.playbackRate = rate;
       renderFrame(ctx, video, t, w, h, (sp, seg) => styleFor(o.k, sp, seg), state.crop[o.k]);
+      if (o.drag && o.drag.active && o.guides && (o.guides.x || o.guides.y)) { // vodiace čiary magnetu
+        ctx.save(); ctx.strokeStyle = "#ff3ea5"; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]); ctx.beginPath();
+        if (o.guides.x) { ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); }
+        if (o.guides.y) { ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); }
+        ctx.stroke(); ctx.restore();
+      }
       video.volume = fxGain(transFx(t));
       if (isEdited() && clipAtSrc(t) < 0) { // zastavené vo vystrihnutej časti: jasne to ukáž
         ctx.fillStyle = "rgba(6,9,22,.72)"; ctx.fillRect(0, 0, w, h);
         ctx.fillStyle = "#ff9aab"; ctx.font = `600 ${Math.round(Math.min(w, h) * 0.06)}px Inter,sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("Vystrihnuté", w / 2, h / 2); ctx.textAlign = "left";
+        ctx.fillText(tr("Vystrihnuté"), w / 2, h / 2); ctx.textAlign = "left";
       }
       o.time.textContent = label;
       o.play.textContent = video.paused ? "▶ Prehrať" : "■ Stop";
@@ -1488,7 +1500,7 @@ function setPage(p) {
 // Značka: len fonty. Každý font má živú ukážku textu, vlastné sa dajú pridať a odobrať.
 function renderBrand() {
   const grid = $("fontGrid"); grid.textContent = "";
-  const text = $("fontSampleText").value.trim() || "Ahoj, toto sú moje titulky", cur = activeStyle().font;
+  const text = $("fontSampleText").value.trim() || tr("Ahoj, toto sú moje titulky"), cur = activeStyle().font;
   [...sharedFonts, ...customFonts, ...FONTS].forEach((name) => {
     const own = customFonts.has(name), shared = sharedFonts.has(name); ensureFont(name);
     const c = document.createElement("div"); c.className = "fcard" + (name === cur ? " on" : "");
@@ -1519,7 +1531,7 @@ async function removeFont(name) {
 const LIB_LOOP = 4.6;
 const LIB_SEGS = (() => {
   const mk = (text, start, end) => { const ws = text.split(" "), d = (end - start) / ws.length; return { text, start, end, speaker: 1, words: ws.map((w, i) => ({ w, start: start + i * d, end: start + (i + 1) * d })) }; };
-  return [mk("Takto budú vyzerať", 0.3, 1.9), mk("tvoje titulky vo videu", 2.05, 3.9)];
+  return [mk(tr("Takto budú vyzerať"), 0.3, 1.9), mk(tr("tvoje titulky vo videu"), 2.05, 3.9)];
 })();
 let LIB_CHUNKS = null;
 let libCards = [];
@@ -1602,7 +1614,7 @@ async function loadSharedFonts() {
   } catch { /* stránka bez PHP: fonty ostanú len v prehliadači */ }
   updateBrandUpload(); if (page === "brand") renderBrand();
 }
-const limitMsg = () => `Z tvojej IP adresy už bol tento týždeň nahraný font. Ďalší môžeš nahrať ${new Date(fontServer.next * 1000).toLocaleDateString("sk-SK", { day: "numeric", month: "long" })}.`;
+const limitMsg = () => `Z tvojej IP adresy už bol tento týždeň nahraný font. Ďalší môžeš nahrať ${new Date(fontServer.next * 1000).toLocaleDateString(LOCALE, { day: "numeric", month: "long" })}.`;
 function updateBrandUpload() {
   const srv = fontServer.on, limited = srv && fontServer.next * 1000 > Date.now();
   $("brandSub").textContent = srv ? "Spoločné fonty pre titulky. Nahraný font uvidia a môžu použiť všetci používatelia. Z jednej IP adresy sa dá nahrať jeden font za týždeň."
@@ -1661,10 +1673,10 @@ function renderSample(box, st, scale = 1) {
     const b = document.createElement("div"); b.textContent = word("effect"); b.style.cssText = `font:800 ${11 * scale}px "${st.font}",sans-serif;color:${st.color}`;
     wrap.append(a, b); box.append(wrap); return;
   }
-  const sp = document.createElement("span"); sp.className = "t"; sp.textContent = "Ahoj svet";
+  const sp = document.createElement("span"); sp.className = "t"; sp.textContent = tr("Ahoj svet");
   sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:${16 * scale}px;color:${st.color}`;
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
-  else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = "Ahoj "; const b2 = document.createElement("span"); b2.textContent = "svet"; b2.style.color = st.hl; sp.append(a, b2); } }
+  else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = tr("Ahoj") + " "; const b2 = document.createElement("span"); b2.textContent = tr("svet"); b2.style.color = st.hl; sp.append(a, b2); } }
   box.append(sp);
 }
 function applyPreset(p) {
@@ -1863,6 +1875,8 @@ function setup() {
   $("fontSampleText").addEventListener("input", renderBrand);
   $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
   loadSavedFonts(); loadSharedFonts();
+  $("fontSampleText").value = tr($("fontSampleText").value);
+  if (LANG !== "sk" && [...$("lang").options].some((o) => o.value === LANG)) $("lang").value = LANG; // jazyk videa predvolene podľa jazyka prehliadača
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   video.addEventListener("ended", () => { // to isté pri náhľade
     if (!isEdited()) return;

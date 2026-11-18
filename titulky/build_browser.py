@@ -20,7 +20,7 @@ except ImportError:
 
 here = Path(__file__).parent
 template = (here / "browser.html").read_text(encoding="utf-8")
-js = (here / "browser.js").read_text(encoding="utf-8")
+js = (here / "browser.js").read_text(encoding="utf-8").replace("/*I18N*/", (here / "i18n.js").read_text(encoding="utf-8"))
 
 
 def minify(html):
