@@ -112,10 +112,17 @@ function estimateWords(text, start, end) {
   return ws.map((w) => { const d = (end - start) * w.length / total; const o = { w, start: t, end: t + d }; t += d; return o; });
 }
 // Slová titulku: ak sa text nezmenil v počte slov, platia pôvodné časy, inak sa čas rozdelí podľa dĺžky slov.
+// Ručné zalomenie riadku (Enter v texte titulku): slovo na začiatku nového riadku dostane br = true.
+function lineBreaks(text) {
+  const out = [];
+  text.trim().split(/\n/).forEach((line, li) => line.trim().split(/\s+/).filter(Boolean).forEach((w, k) => out.push(li > 0 && k === 0)));
+  return out;
+}
 function wordsFor(seg) {
-  const ws = seg.text.trim().split(/\s+/).filter(Boolean);
-  if (seg.words && seg.words.length === ws.length) return seg.words.map((o, i) => ({ ...o, w: ws[i] }));
-  return estimateWords(seg.text, seg.start, seg.end);
+  const ws = seg.text.trim().split(/\s+/).filter(Boolean), br = lineBreaks(seg.text);
+  const words = seg.words && seg.words.length === ws.length ? seg.words.map((o, i) => ({ ...o, w: ws[i] })) : estimateWords(seg.text, seg.start, seg.end);
+  words.forEach((o, i) => { o.br = !!br[i]; });
+  return words;
 }
 function groupWords(words) {
   const segs = []; let cur = [];
@@ -1986,7 +1993,7 @@ function buildChunks(segments) {
     const flush = () => { if (cur.length) { all.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end, speaker: seg.speaker || 1, seg }); cur = []; } };
     for (const o of wordsFor(seg)) {
       const len = cur.reduce((a, x) => a + x.w.length + 1, 0) + o.w.length;
-      if (cur.length && (cur.length >= 3 || len > 20 || o.start - cur[cur.length - 1].end > 0.5)) flush();
+      if (cur.length && (o.br || cur.length >= 3 || len > 20 || o.start - cur[cur.length - 1].end > 0.5)) flush(); // ručné zalomenie začne novú frázu
       cur.push(o);
       if (/[.,!?…;:]$/.test(o.w)) flush();
     }
@@ -2064,7 +2071,7 @@ function wrapWords(ctx, words, maxW) {
   const sp = ctx.measureText(" ").width, lines = []; let cur = [], w = 0;
   words.forEach((o, n) => {
     const ww = ctx.measureText(o.w).width;
-    if (cur.length && w + sp + ww > maxW) { lines.push({ idx: cur, w }); cur = []; w = 0; }
+    if (cur.length && (o.br || w + sp + ww > maxW)) { lines.push({ idx: cur, w }); cur = []; w = 0; } // ručné zalomenie alebo nedostatok miesta
     w += (cur.length ? sp : 0) + ww; cur.push(n);
   });
   if (cur.length) lines.push({ idx: cur, w });
@@ -2096,8 +2103,9 @@ function drawCaption(ctx, seg, t, W, H, st) {
 }
 const srtTime = (s, sep) => { const ms = Math.round(s * 1000), p = (n, l = 2) => String(n).padStart(l, "0");
   return `${p(Math.floor(ms / 3600000))}:${p(Math.floor(ms / 60000) % 60)}:${p(Math.floor(ms / 1000) % 60)}${sep}${p(ms % 1000, 3)}`; };
-const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} --> ${srtTime(s.end, ",")}\n${s.text}\n`).join("\n");
-const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${s.text}\n`).join("\n");
+const cueText = (t) => t.split("\n").map((x) => x.trim()).filter(Boolean).join("\n"); // riadky titulku tak, ako sú zalomené v texte
+const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} --> ${srtTime(s.end, ",")}\n${cueText(s.text)}\n`).join("\n");
+const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${cueText(s.text)}\n`).join("\n");
 
 
 if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels, segmentFeatures, detectSpeakers, uploadFont, customFonts };
