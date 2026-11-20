@@ -42,7 +42,8 @@ const PRESETS = [
   { hl: "#ffe066", id: "jemny",   name: "Jemný",   font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 35, size: 5.5, bold: false },
   { hl: "#6c5cff", id: "svetly",  name: "Svetlý",  font: "Montserrat", color: "#111111", bg: "#ffffff", bgOpacity: 90, size: 6, bold: true },
   { hl: "#00b8fc", id: "modry", name: "PS blue", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#00007d", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" },
-  { hl: "#f8a0b6", id: "cerveny", name: "PS red", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#f50306", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.72, position: null },
+  { hl: "#f8a0b6", id: "cerveny", name: "PS red", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#f50306", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" }, // ako PS blue, len červený
+  { hl: "#ffffff", id: "slowdown", name: "Slow down", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.4, bold: true, anim: "slowdown", lineH: 1.3, y: 0.58, position: null },
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true, anim: "none" },
@@ -1555,7 +1556,7 @@ function renderLibrary() {
     const use = document.createElement("button"); use.type = "button"; use.className = "fuse"; use.textContent = p.id === curPreset ? "Použitý" : "Použiť";
     use.onclick = () => { applyPreset(p); setPage("work"); };
     foot.append(nm, use); c.append(cv, foot); grid.append(c);
-    libCards.push({ cv, ctx: cv.getContext("2d"), st: { ...p, preset: p.id, on: true, x: 0.5, y: p.y ?? 0.78, position: null, highlight: p.highlight ?? true, anim: "none" } });
+    libCards.push({ cv, ctx: cv.getContext("2d"), st: { ...p, preset: p.id, on: true, x: 0.5, y: p.y ?? 0.78, position: null, highlight: p.highlight ?? true, anim: p.anim || "none" } });
   });
   const ag = $("libAnimGrid"); ag.textContent = ""; // animácie v aktuálnom štýle (alebo Modern, ak je vybraný Dynamický)
   const base = activeStyle().dynamic ? { ...PRESETS[0], preset: PRESETS[0].id } : { ...activeStyle() }, curAnim = activeStyle().anim || "none";
@@ -1697,17 +1698,20 @@ function renderSample(box, st, scale = 1) {
   const sp = document.createElement("span"); sp.className = "t"; sp.textContent = tr("Ahoj svet");
   sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:${16 * scale}px;color:${st.color}`;
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
+  else if (st.shadow) sp.style.textShadow = "0 1px 4px rgba(0,0,0,.7)";
   else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = tr("Ahoj") + " "; const b2 = document.createElement("span"); b2.textContent = tr("svet"); b2.style.color = st.hl; sp.append(a, b2); } }
   box.append(sp);
 }
+// Štýl s vlastnou animáciou (Slow down) ju zapne; pri prechode z neho na iný štýl sa jeho animácia vypne.
+const animFor = (p, o) => p.anim || ((PRESETS.find((x) => x.id === o.preset) || {}).anim ? "none" : o.anim || "none");
 function applyPreset(p) {
   if (state.cur !== 1 && state.spkStyle[state.cur]) {
     const o = state.spkStyle[state.cur], id = state.cur;
-    state.spkStyle[id] = { ...p, preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, anim: o.anim || "none" };
+    state.spkStyle[id] = { ...p, preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, anim: animFor(p, o) };
     if (p.y !== undefined) ASPECTS.forEach((a) => { Object.assign(getPos(a.k, id), { x: 0.5, y: p.y, position: p.position ?? null }); });
   } else {
     const o = state.style;
-    state.style = { ...p, preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, on: o.on, anim: o.anim || "none" };
+    state.style = { ...p, preset: p.id, highlight: p.highlight ?? o.highlight, caps: p.caps ?? o.caps, on: o.on, anim: animFor(p, o) };
     if (p.y !== undefined) ASPECTS.forEach((a) => { state.pos[a.k] = { x: 0.5, y: p.y, position: p.position ?? null }; });
   }
   bumpDyn(); syncControls();
@@ -2144,7 +2148,7 @@ function drawCaption(ctx, seg, t, W, H, st) {
     if (ctx.roundRect) ctx.roundRect(bx - pad, by - px * 0.62, bw + 2 * pad, px * 1.24, px * 0.22); else ctx.rect(bx - pad, by - px * 0.62, bw + 2 * pad, px * 1.24);
     ctx.fill();
   }
-  const outline = (txt, x, y) => { if (st.bgOpacity <= 0 && anim !== "box") { ctx.strokeStyle = st.stroke || "#000"; ctx.lineWidth = px * (st.strokeW ?? .16); ctx.strokeText(txt, x, y); } };
+  const outline = (txt, x, y) => { if (st.bgOpacity <= 0 && anim !== "box" && !st.shadow) { ctx.strokeStyle = st.stroke || "#000"; ctx.lineWidth = px * (st.strokeW ?? .16); ctx.strokeText(txt, x, y); } };
   words.forEach((o, n) => {
     const P = pos[n]; if (!P) return;
     let txt = o.w, scale = 1, dy = 0, a = 1, color = st.highlight && n === active ? hl : st.color, glow = false;
@@ -2162,6 +2166,7 @@ function drawCaption(ctx, seg, t, W, H, st) {
     const cxw = P.x + P.ww / 2, cy = P.y + dy;
     if (scale !== 1) { ctx.translate(cxw, cy); ctx.scale(scale, scale); ctx.translate(-cxw, -cy); }
     if (glow) { ctx.shadowColor = hl; ctx.shadowBlur = px * 0.7; }
+    else if (st.shadow) { ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = px * 0.28; ctx.shadowOffsetY = px * 0.05; } // jemný tieň namiesto obrysu
     outline(txt, P.x, cy);
     ctx.fillStyle = color; ctx.fillText(txt, P.x, cy);
     if (anim === "karaoke" && n === active && since < dur) { // vyslovované slovo sa plní farbou zľava doprava
