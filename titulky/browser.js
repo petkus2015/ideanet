@@ -66,13 +66,15 @@ const show = (view) => {
   curView = view;
   for (const v of ["upload", "busy", "editor"]) $("view-" + v).hidden = v !== view;
   $("panel").hidden = view !== "editor";
+  $("sideEmpty").hidden = view === "editor"; if (view !== "editor") $("textCard").hidden = true;
   $("content").classList.toggle("ws", view === "editor" && page === "work");
   if (view === "editor") applyTab(); else updateTabs();
 };
 function applyTab() { // zobrazí v editore len to, čo patrí k zvolenému kroku
   const t = state.tab;
   $("pane-subs").hidden = t !== "subs"; $("pane-cut").hidden = t !== "edit"; $("pane-edit").hidden = t !== "edit"; $("pane-export").hidden = t !== "export";
-  $("timelineCard").hidden = t === "export"; $("textCard").hidden = t !== "subs";
+  $("timelineCard").hidden = t === "export";
+  $("textCard").hidden = $("textCard").parentElement === $("sideSubs") ? false : t !== "subs"; // vľavo je stále, na mobile len pri Titulkovaní
   $("timelineCard").classList.toggle("video-only", t === "edit"); // v Úprave len prehrávanie a posun v čase, bez titulkov
   $("timelineCard").classList.toggle("cut-mode", t === "edit"); // v Úprave časti videa a prechody namiesto titulkov
   if (t === "edit") renderCutUi();
@@ -669,7 +671,23 @@ function selectSeg(i, e) { // klik = jeden titulok, Shift+klik = úsek, Ctrl/Cmd
     if (state.sel.has(i)) state.sel.delete(i); else state.sel.add(i);
     state.selAnchor = i;
   } else { state.sel.clear(); state.sel.add(i); state.selAnchor = i; }
+  const el = e && e.target && e.target.closest ? e.target.closest(".segment, .chip") : null; // kde ukázať okienko výberu
+  selAt = el ? { kind: el.classList.contains("chip") ? "chip" : "segment" } : { kind: "point", x: e ? e.clientX : innerWidth / 2, y: e ? e.clientY : innerHeight / 2 };
   refreshSel();
+}
+// Okienko výberu (rečník a štýl) sa ukáže pri vybranom titulku: vedľa riadku v zozname, nad titulkom na časovej osi.
+let selAt = null;
+function placeSelDlg() {
+  const bar = $("selBar"); if (!bar || bar.hidden) return;
+  const ids = [...state.sel].sort((a, b) => a - b), bw = bar.offsetWidth, bh = bar.offsetHeight;
+  let x = innerWidth / 2 - bw / 2, y = innerHeight / 2 - bh / 2;
+  const at = selAt || { kind: "segment" };
+  const el = at.kind === "point" ? null : document.querySelector(`.${at.kind}[data-i="${ids[0]}"]`);
+  const r = el && el.getClientRects().length ? el.getBoundingClientRect() : null;
+  if (r && at.kind === "segment") { x = r.right + 10; y = r.top; if (x + bw > innerWidth - 8) { x = r.left; y = r.bottom + 8; } }
+  else if (r) { x = r.left; y = r.top - bh - 10; if (y < 8) y = r.bottom + 10; }
+  else if (at.kind === "point") { x = at.x - bw / 2; y = at.y + 16; }
+  bar.style.left = Math.round(clamp(x, 8, innerWidth - bw - 8)) + "px"; bar.style.top = Math.round(clamp(y, 8, innerHeight - bh - 8)) + "px";
 }
 function clearSel() { state.sel.clear(); state.selAnchor = -1; refreshSel(); }
 function refreshSel() {
@@ -679,6 +697,7 @@ function refreshSel() {
   const ids = [...state.sel].sort((a, b) => a - b).filter((k) => state.segments[k]);
   bar.hidden = ids.length === 0;
   if (!ids.length) return;
+  requestAnimationFrame(placeSelDlg);
   const a = state.segments[ids[0]], b = state.segments[ids[ids.length - 1]];
   $("selInfo").textContent = `Vybraté: ${ids.length} ${ids.length === 1 ? "titulok" : ids.length < 5 ? "titulky" : "titulkov"} · ${fmtTime(a.start)}–${fmtTime(b.end)}`;
   const spks = new Set(ids.map((k) => state.segments[k].speaker || 1)), ovs = new Set(ids.map((k) => state.segments[k].styleOv || ""));
@@ -758,6 +777,7 @@ function buildSegments() {
     const dot = document.createElement("i"); dot.className = "dot"; const lab = document.createElement("span"); lab.textContent = who.name;
     sp.append(dot, lab); sp.insertAdjacentHTML("beforeend", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>');
     sp.onclick = (e) => { e.stopPropagation(); openSpkMenu(sp, (id) => { s.speaker = id === "new" ? addSpeaker(true) : id; speakersChanged(); }, n); };
+    row.onclick = (e) => { if (e.target === row) selectSeg(i, e); }; // klik na riadok mimo textu tiež vyberie titulok
     row.append(t, ta, sp); box.append(row); requestAnimationFrame(fit);
   });
   applySegFilter(); refreshSel();
@@ -1496,7 +1516,7 @@ function runDetectSpeakers() {
 // ---------- stránky v bočnej lište: Titulkovanie (práca s videom), Knižnica štýlov, Značka (fonty) ----------
 let page = "work";
 function setPage(p) {
-  page = p; closeSpkMenu();
+  page = p; closeSpkMenu(); if (p !== "work" && state.sel && state.sel.size) clearSel();
   if (p !== "work") video.pause();
   $("content").classList.toggle("alt-page", p !== "work");
   $("content").classList.toggle("ws", p === "work" && curView === "editor");
@@ -1898,6 +1918,20 @@ function setup() {
   $("fontUp").onclick = () => { if (fontServer.on) setPage("brand"); else $("fontFile").click(); };
   document.querySelectorAll("#quality .opt").forEach((b) => b.onclick = () => { state.quality = b.dataset.q; invalidateResults(); refreshQuality(); });
   $("fontsAll").onclick = () => setPage("brand");
+  // Text titulkov v ľavom stĺpci (na mobile pod časovou osou), menu v Nastaveniach pod ozubeným kolieskom
+  const wide = matchMedia("(min-width: 821px)");
+  const placeText = () => {
+    const card = $("textCard"), home = $("textCardHome");
+    if (wide.matches && card.parentElement !== $("sideSubs")) $("sideSubs").append(card);
+    if (!wide.matches && card.previousElementSibling !== home) home.after(card);
+    if (curView === "editor") applyTab(); else card.hidden = true;
+  };
+  wide.addEventListener("change", placeText); placeText();
+  const closeSet = () => { $("setMenu").hidden = true; $("setBtn").setAttribute("aria-expanded", "false"); };
+  $("setBtn").onclick = (e) => { e.stopPropagation(); const open = $("setMenu").hidden; $("setMenu").hidden = !open; $("setBtn").setAttribute("aria-expanded", String(open)); };
+  document.addEventListener("pointerdown", (e) => { if (!$("setMenu").hidden && !$("setMenu").contains(e.target) && !$("setBtn").contains(e.target)) closeSet(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("setMenu").hidden) { closeSet(); $("setBtn").focus(); } });
+  document.querySelectorAll(".setmenu .nav").forEach((a) => a.addEventListener("click", closeSet));
   $("exportStop").onclick = () => { if (state.busyExport) { state.exportCancel = true; $("exportStop").hidden = true; } };
   setupCut();
   document.querySelectorAll(".nav[data-page]").forEach((a) => a.onclick = (e) => { e.preventDefault(); setPage(a.dataset.page); });
@@ -1959,6 +1993,7 @@ function setup() {
       if (Math.abs(tAt(e) - band.t0) * state.tlPxPerSec < 4 && !band.add) { clearSel(); video.currentTime = band.t0; } // len klik = zrušiť výber a pretočiť
       else state.selAnchor = [...state.sel].sort((x, y) => x - y)[0] ?? -1;
       band = null; $("tlBand").hidden = true;
+      if (state.sel.size) { selAt = { kind: "point", x: e.clientX, y: e.clientY - 40 }; placeSelDlg(); }
     }
   });
   // lišta výberu: rečník a štýl pre vybrané titulky
@@ -1969,6 +2004,12 @@ function setup() {
     b.onclick = () => assignStyle(p.id); $("selStyles").append(b);
   });
   $("selClear").onclick = clearSel;
+  document.body.append($("selBar")); // plávajúce okienko nad stránkou
+  addEventListener("resize", placeSelDlg); document.addEventListener("scroll", () => placeSelDlg(), true);
+  document.addEventListener("pointerdown", (e) => { // klik mimo okienka a titulkov výber zruší
+    if ($("selBar").hidden || e.target.closest("#selBar, .segments, #tlInner, .spk-menu, .chip")) return;
+    clearSel();
+  });
   // medzerník = prehrať/zastaviť, Esc = zrušiť výber
   document.addEventListener("keydown", (e) => {
     if ($("view-editor").hidden || page !== "work" || e.defaultPrevented) return;
