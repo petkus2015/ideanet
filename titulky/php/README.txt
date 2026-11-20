@@ -43,4 +43,25 @@ Spoločné fonty (Značka):
   Nastavenia (limit, veľkosť, počet) sú na začiatku časti "spoločné fonty" v index.php.
   Ak je web za proxy (napr. Cloudflare), všetci môžu mať rovnakú IP. Vtedy daj vedieť vývojárovi.
 
+Účty a predplatné (Stripe, 4,90 € ročne):
+  Nahrať video a titulkovať môže každý. Export videa je len pre prihlásených s platným predplatným.
+  Registrácia: e-mail -> platba cez Stripe Payment Link -> návrat na web -> server si platbu overí
+  priamo v Stripe a používateľ si nastaví heslo. Prihlásenie potom e-mailom a heslom.
+  Nastavenie (raz):
+  1. Stripe -> Products: produkt "Subgen" za 4,90 € ročne (Recurring, Yearly).
+  2. Stripe -> Payment Links -> nový odkaz na tento produkt. V časti "After payment" zvoľ
+     "Don't show confirmation page" a presmerovanie na:
+        https://titulkovac.ideanet.sk/?platba={CHECKOUT_SESSION_ID}
+  3. Stripe -> Developers -> API keys -> "Create restricted key": práva Read pre Checkout Sessions
+     a Subscriptions (stačí to, nič iné). Skopíruj kľúč rk_live_...
+  4. Súbor config-vzor.php premenuj na config.php, vlož doň kľúč a odkaz z kroku 2, nahraj cez FTP.
+     config.php pri ďalších aktualizáciách NEPREPISUJ (v ZIP-e nie je).
+  5. Odporúčané: Stripe -> Developers -> Webhooks -> endpoint https://titulkovac.ideanet.sk/?auth=webhook
+     s udalosťami invoice.paid a customer.subscription.deleted. "Signing secret" (whsec_...) daj do config.php.
+     Vďaka tomu sa ročné obnovenie a zrušenie predplatného prejaví v účte samo.
+  6. Over cez ?diag=1: má ukázať "config.php: ok, Stripe kľúč: nastavený, platobný odkaz: nastavený".
+  Účty sú v data/users.php (heslá len ako bezpečný hash). Obnova hesla posiela e-mail cez PHP mail().
+  Pozor: export beží v prehliadači, takže zručný používateľ by ho vedel obísť úpravou kódu stránky.
+  Pre bežných používateľov to stačí; úplná ochrana by vyžadovala export na serveri.
+
 Nie je súčasťou: predplatné 2 € mesačne, aplikácia je voľne dostupná.

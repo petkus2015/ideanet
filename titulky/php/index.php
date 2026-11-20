@@ -17,6 +17,8 @@ if (isset($_GET['diag'])) {
     echo "Priečinok: " . __DIR__ . "\n";
     echo "Zápis do data/: " . (is_writable(is_dir(__DIR__ . '/data') ? __DIR__ . '/data' : __DIR__) ? 'ok' : 'NIE (nastav práva na zápis)') . "\n";
     echo "upload_max_filesize: " . ini_get('upload_max_filesize') . "\n";
+    $c = is_file(__DIR__ . '/config.php') ? (include __DIR__ . '/config.php') : [];
+    echo "config.php: " . (is_array($c) ? 'ok' : 'CHÝBA') . ", Stripe kľúč: " . (!empty($c['stripe_secret_key']) ? 'nastavený' : 'chýba') . ", platobný odkaz: " . (!empty($c['payment_link']) ? 'nastavený' : 'chýba') . "\n";
     exit;
 }
 
@@ -133,6 +135,159 @@ if (($_GET['fonts'] ?? '') === 'upload') { // nahranie fontu
     $limits[ipKey($dataDir)] = time();
     writeJson($dataDir . '/limits.php', $limits);
     jsonOut(['ok' => true, 'font' => ['id' => $id, 'name' => $name, 'url' => '?font=' . $id], 'nextUploadAt' => time() + $fontLimitDays * 86400]);
+}
+
+// ---------- účty: prihlásenie a ročné predplatné cez Stripe ----------
+// Export videa je len pre prihlásených s platným predplatným. Registrácia = platba cez Stripe Payment Link
+// (4,90 € ročne); po návrate zo Stripe server overí platbu a používateľ si nastaví heslo.
+// Nastavenia sú v config.php (vzor: config-vzor.php). Bez nich prihlásenie nefunguje, appka beží ďalej.
+$cfg = is_file(__DIR__ . '/config.php') ? (include __DIR__ . '/config.php') : [];
+if (!is_array($cfg)) $cfg = [];
+$cfg += ['stripe_secret_key' => '', 'stripe_webhook_secret' => '', 'payment_link' => '', 'price_label' => '4,90 € ročne',
+         'mail_from' => '', 'stripe_api' => 'https://api.stripe.com', 'site_name' => 'Subgen'];
+
+function authStart() {
+    global $https;
+    session_name('subgen');
+    session_set_cookie_params(['lifetime' => 60 * 60 * 24 * 60, 'path' => '/', 'secure' => (bool)$https, 'httponly' => true, 'samesite' => 'Lax']);
+    session_start();
+}
+function stripeGet($path) { // čítanie zo Stripe API tajným kľúčom zo servera
+    global $cfg;
+    if (!$cfg['stripe_secret_key']) return null;
+    $ctx = stream_context_create(['http' => ['method' => 'GET', 'timeout' => 15, 'ignore_errors' => true,
+        'header' => "Authorization: Bearer " . $cfg['stripe_secret_key'] . "\r\n"]]);
+    $r = @file_get_contents(rtrim($cfg['stripe_api'], '/') . $path, false, $ctx);
+    $j = $r ? json_decode($r, true) : null;
+    return is_array($j) && !isset($j['error']) ? $j : null;
+}
+function userKey($email) { return mb_strtolower(trim($email)); }
+function userPublic($u) { return $u ? ['email' => $u['email'], 'until' => (int)$u['until'], 'active' => (int)$u['until'] > time()] : null; }
+function untilFrom($sess) { // platnosť: koniec obdobia predplatného, pri jednorazovej platbe rok od zaplatenia
+    $sub = $sess['subscription'] ?? null;
+    if (is_array($sub) && !empty($sub['current_period_end'])) return (int)$sub['current_period_end'];
+    if (is_array($sub) && !empty($sub['items']['data'][0]['current_period_end'])) return (int)$sub['items']['data'][0]['current_period_end'];
+    return time() + 365 * 86400;
+}
+function needPost() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonOut(['error' => 'Použi POST.'], 405);
+    if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') !== 'titulky') jsonOut(['error' => 'Neplatná požiadavka.'], 403);
+    $b = json_decode(file_get_contents('php://input'), true);
+    return is_array($b) ? $b : [];
+}
+function tooMany($d, $what, $max, $sec) { // jednoduchá ochrana proti skúšaniu hesiel
+    $f = $d . '/attempts.php'; $a = readJson($f); $k = $what . ':' . ipKey($d);
+    $list = array_values(array_filter($a[$k] ?? [], fn($t) => $t > time() - $sec));
+    if (count($list) >= $max) return true;
+    $list[] = time(); $a[$k] = $list;
+    foreach ($a as $kk => $v) if (!array_filter($v, fn($t) => $t > time() - 86400)) unset($a[$kk]);
+    writeJson($f, $a); return false;
+}
+
+if (isset($_GET['auth'])) {
+    $act = (string)$_GET['auth'];
+    $ready = $cfg['stripe_secret_key'] !== '' && $cfg['payment_link'] !== '';
+
+    if ($act === 'webhook') { // voliteľné: Stripe oznámi obnovenie alebo zrušenie predplatného
+        $payload = file_get_contents('php://input'); $sig = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
+        if (!$cfg['stripe_webhook_secret'] || !preg_match('/t=(\d+)/', $sig, $tm) || !preg_match_all('/v1=([a-f0-9]+)/', $sig, $vs)) jsonOut(['error' => 'bad signature'], 400);
+        $exp = hash_hmac('sha256', $tm[1] . '.' . $payload, $cfg['stripe_webhook_secret']);
+        if (abs(time() - (int)$tm[1]) > 600 || !in_array($exp, $vs[1], true)) jsonOut(['error' => 'bad signature'], 400);
+        $ev = json_decode($payload, true); $o = $ev['data']['object'] ?? [];
+        dataInit($dataDir); $lock = fopen($dataDir . '/.lock', 'c'); flock($lock, LOCK_EX);
+        $users = readJson($dataDir . '/users.php');
+        if (($ev['type'] ?? '') === 'invoice.paid' && !empty($o['customer'])) {
+            $end = (int)($o['lines']['data'][0]['period']['end'] ?? 0);
+            foreach ($users as $k => $u) if (($u['customer'] ?? '') === $o['customer'] && $end > (int)$u['until']) $users[$k]['until'] = $end;
+        }
+        if (($ev['type'] ?? '') === 'customer.subscription.deleted' && !empty($o['customer'])) {
+            $end = (int)($o['current_period_end'] ?? $o['ended_at'] ?? time());
+            foreach ($users as $k => $u) if (($u['customer'] ?? '') === $o['customer']) $users[$k]['until'] = min((int)$u['until'], $end);
+        }
+        writeJson($dataDir . '/users.php', $users);
+        jsonOut(['ok' => true]);
+    }
+
+    authStart();
+    if ($act === 'me') {
+        $u = null;
+        if (!empty($_SESSION['email'])) { $users = readJson($dataDir . '/users.php'); $u = $users[userKey($_SESSION['email'])] ?? null; }
+        jsonOut(['user' => userPublic($u), 'ready' => $ready, 'payLink' => $ready ? $cfg['payment_link'] : '', 'price' => $cfg['price_label']]);
+    }
+    if ($act === 'logout') { needPost(); $_SESSION = []; session_destroy(); jsonOut(['ok' => true]); }
+
+    $b = needPost();
+    dataInit($dataDir);
+    $lock = fopen($dataDir . '/.lock', 'c'); flock($lock, LOCK_EX);
+    $users = readJson($dataDir . '/users.php');
+
+    if ($act === 'login') {
+        if (tooMany($dataDir, 'login', 10, 900)) jsonOut(['error' => 'Príliš veľa pokusov. Skús to o 15 minút.'], 429);
+        $u = $users[userKey($b['email'] ?? '')] ?? null;
+        if (!$u || empty($u['hash']) || !password_verify((string)($b['password'] ?? ''), $u['hash'])) jsonOut(['error' => 'Nesprávny e-mail alebo heslo.'], 401);
+        session_regenerate_id(true); $_SESSION['email'] = $u['email'];
+        jsonOut(['ok' => true, 'user' => userPublic($u)]);
+    }
+    if ($act === 'claim') { // návrat zo Stripe: overenie platby podľa ID platobnej relácie
+        if (!$ready) jsonOut(['error' => 'Platby ešte nie sú na serveri nastavené.'], 503);
+        $sid = (string)($b['session_id'] ?? '');
+        if (!preg_match('/^cs_[A-Za-z0-9_]+$/', $sid)) jsonOut(['error' => 'Neplatná platba.'], 400);
+        $claims = readJson($dataDir . '/claims.php');
+        if (!isset($claims[$sid])) {
+            $sess = stripeGet('/v1/checkout/sessions/' . rawurlencode($sid) . '?expand[]=subscription');
+            if (!$sess) jsonOut(['error' => 'Platbu sa nepodarilo overiť v Stripe. Skús obnoviť stránku.'], 502);
+            if (($sess['status'] ?? '') !== 'complete' || !in_array($sess['payment_status'] ?? '', ['paid', 'no_payment_required'], true)) jsonOut(['error' => 'Platba ešte nie je dokončená.'], 402);
+            $email = $sess['customer_details']['email'] ?? $sess['customer_email'] ?? '';
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) jsonOut(['error' => 'V platbe chýba e-mail.'], 400);
+            $claims[$sid] = ['email' => $email, 'until' => untilFrom($sess), 'customer' => is_string($sess['customer'] ?? null) ? $sess['customer'] : '', 'used' => false, 't' => time()];
+            writeJson($dataDir . '/claims.php', $claims);
+        }
+        $c = $claims[$sid]; $k = userKey($c['email']);
+        if (isset($users[$k]) && !empty($users[$k]['hash'])) { // existujúci účet: predĺženie a prihlásenie
+            if (!$c['used']) { $users[$k]['until'] = max((int)$users[$k]['until'], (int)$c['until']); if ($c['customer']) $users[$k]['customer'] = $c['customer']; $claims[$sid]['used'] = true; writeJson($dataDir . '/claims.php', $claims); writeJson($dataDir . '/users.php', $users); }
+            session_regenerate_id(true); $_SESSION['email'] = $users[$k]['email'];
+            jsonOut(['ok' => true, 'user' => userPublic($users[$k]), 'needsPassword' => false]);
+        }
+        jsonOut(['ok' => true, 'email' => $c['email'], 'needsPassword' => true]);
+    }
+    if ($act === 'setpw') { // nový účet po platbe: nastavenie hesla
+        $sid = (string)($b['session_id'] ?? ''); $pw = (string)($b['password'] ?? '');
+        $claims = readJson($dataDir . '/claims.php'); $c = $claims[$sid] ?? null;
+        if (!$c || $c['used']) jsonOut(['error' => 'Tento odkaz už bol použitý. Prihlás sa.'], 400);
+        if (mb_strlen($pw) < 8) jsonOut(['error' => 'Heslo musí mať aspoň 8 znakov.'], 400);
+        $k = userKey($c['email']);
+        $users[$k] = ['email' => $c['email'], 'hash' => password_hash($pw, PASSWORD_DEFAULT), 'until' => max((int)($users[$k]['until'] ?? 0), (int)$c['until']), 'customer' => $c['customer'], 'created' => time()];
+        $claims[$sid]['used'] = true;
+        writeJson($dataDir . '/users.php', $users); writeJson($dataDir . '/claims.php', $claims);
+        session_regenerate_id(true); $_SESSION['email'] = $c['email'];
+        jsonOut(['ok' => true, 'user' => userPublic($users[$k])]);
+    }
+    if ($act === 'forgot') { // obnova hesla e-mailom (vždy rovnaká odpoveď, aby sa nedalo zisťovať, kto má účet)
+        if (tooMany($dataDir, 'forgot', 5, 3600)) jsonOut(['error' => 'Príliš veľa pokusov. Skús to neskôr.'], 429);
+        $u = $users[userKey($b['email'] ?? '')] ?? null;
+        if ($u) {
+            $tok = bin2hex(random_bytes(20)); $resets = readJson($dataDir . '/resets.php');
+            foreach ($resets as $h => $r) if ($r['exp'] < time()) unset($resets[$h]);
+            $resets[hash('sha256', $tok)] = ['email' => $u['email'], 'exp' => time() + 3600]; writeJson($dataDir . '/resets.php', $resets);
+            $link = ($https ? 'https' : 'http') . '://' . $host . strtok($_SERVER['REQUEST_URI'] ?? '/', '?') . '?reset=' . $tok;
+            $from = $cfg['mail_from'] ?: ('no-reply@' . preg_replace('/:\d+$/', '', $host));
+            @mail($u['email'], '=?UTF-8?B?' . base64_encode($cfg['site_name'] . ': nové heslo') . '?=', "Nové heslo si nastavíš tu (platí 1 hodinu):\n\n" . $link . "\n\nAk si o zmenu nežiadal(a), správu ignoruj.\n",
+                "From: " . $from . "\r\nContent-Type: text/plain; charset=utf-8");
+        }
+        jsonOut(['ok' => true]);
+    }
+    if ($act === 'reset') {
+        $tok = (string)($b['token'] ?? ''); $pw = (string)($b['password'] ?? '');
+        $resets = readJson($dataDir . '/resets.php'); $h = hash('sha256', $tok); $r = $resets[$h] ?? null;
+        if (!$r || $r['exp'] < time()) jsonOut(['error' => 'Odkaz na zmenu hesla je neplatný alebo vypršal.'], 400);
+        if (mb_strlen($pw) < 8) jsonOut(['error' => 'Heslo musí mať aspoň 8 znakov.'], 400);
+        $k = userKey($r['email']); if (!isset($users[$k])) jsonOut(['error' => 'Účet neexistuje.'], 400);
+        $users[$k]['hash'] = password_hash($pw, PASSWORD_DEFAULT); unset($resets[$h]);
+        writeJson($dataDir . '/users.php', $users); writeJson($dataDir . '/resets.php', $resets);
+        session_regenerate_id(true); $_SESSION['email'] = $users[$k]['email'];
+        jsonOut(['ok' => true, 'user' => userPublic($users[$k])]);
+    }
+    jsonOut(['error' => 'Neznáma akcia.'], 404);
 }
 
 if (!is_file($file)) {

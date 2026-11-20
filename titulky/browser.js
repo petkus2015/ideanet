@@ -1613,6 +1613,127 @@ function libLoop(now) {
   requestAnimationFrame(libLoop);
 }
 
+// ---------- účet: prihlásenie a ročné predplatné (Stripe) ----------
+// Export videa je len pre prihlásených s platným predplatným. Registrácia: e-mail → platba cez Stripe
+// v novej karte (projekt v tejto karte ostane) → návrat na stránku → heslo. Bez PHP servera (ukážka) sa export neobmedzuje.
+const auth = { on: false, user: null, ready: false, payLink: "", price: "", pending: null, sid: "", resetTok: "" };
+const canExport = () => !auth.on || !!(auth.user && auth.user.active);
+async function authApi(act, body) {
+  const r = await fetch("?auth=" + act, body === undefined ? { cache: "no-store" } : { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json", "X-Requested-With": "titulky" }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({ error: "Server neodpovedal správne." }));
+  if (!r.ok && !j.error) j.error = "Spojenie so serverom zlyhalo. Skús to znova.";
+  return j;
+}
+async function loadAuth() {
+  if (DEMO || !/^https?:$/.test(location.protocol)) { renderAcct(); return; }
+  try {
+    const j = await authApi("me");
+    if (j && "user" in j) Object.assign(auth, { on: true, user: j.user, ready: !!j.ready, payLink: j.payLink || "", price: j.price || "" });
+  } catch { /* bez PHP: bez účtov */ }
+  renderAcct();
+  const q = new URLSearchParams(location.search), sid = q.get("platba") || q.get("session_id"), tok = q.get("reset");
+  if (sid || tok) { q.delete("platba"); q.delete("session_id"); q.delete("reset"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "")); }
+  if (auth.on && sid) claimPayment(sid);
+  if (auth.on && tok) { auth.resetTok = tok; openAuth("reset"); }
+}
+function renderAcct() {
+  const u = auth.user;
+  $("acctName").textContent = u ? u.email : "Hosť";
+  $("acctPlan").textContent = u ? (u.active ? "Aktívne do " + new Date(u.until * 1000).toLocaleDateString(LOCALE) : "Predplatné vypršalo") : "4,90 € ročne";
+  $("acctAv").textContent = u ? u.email[0].toUpperCase() : "?";
+  $("loginBtn").disabled = !auth.on; $("loginLbl").textContent = u ? "Odhlásiť sa" : "Prihlásiť sa";
+}
+function authMsg(t, ok) { $("authMsg").textContent = t || ""; $("authMsg").classList.toggle("ok", !!ok); }
+function openAuth(view, then) {
+  if (then) auth.pending = then;
+  $("authModal").hidden = false; showAuthView(view); authMsg("");
+}
+function showAuthView(v) {
+  document.querySelectorAll("#authModal .mform").forEach((f) => f.classList.toggle("on", f.dataset.v === v));
+  const tabs = v === "login" || v === "register";
+  $("authTabs").hidden = !tabs;
+  document.querySelectorAll("#authTabs button").forEach((b) => { const on = b.dataset.v === v; b.classList.toggle("on", on); b.setAttribute("aria-selected", String(on)); });
+  const titles = { login: "Prihlás sa a exportuj", register: "Prihlás sa a exportuj", setpw: "Vitaj v Subgen", forgot: "Zabudnuté heslo?", reset: "Nové heslo", renew: "Predplatné vypršalo", done: "Vitaj v Subgen" };
+  $("authTitle").textContent = titles[v] || titles.login;
+  $("authSub").hidden = !tabs;
+  const f = document.querySelector(`#authModal .mform[data-v="${v}"] input`); if (f) setTimeout(() => f.focus(), 30);
+}
+function closeAuth() { $("authModal").hidden = true; auth.pending = null; }
+function authDone(user) {
+  auth.user = user; renderAcct(); showAuthView("done"); authMsg("");
+}
+function payUrl(email) { // Stripe Payment Link s predvyplneným e-mailom
+  return auth.payLink + (auth.payLink.includes("?") ? "&" : "?") + "prefilled_email=" + encodeURIComponent(email || "");
+}
+async function claimPayment(sid) {
+  openAuth("setpw"); authMsg("Overujem platbu…", true); $("setpwEmail").textContent = "";
+  const j = await authApi("claim", { session_id: sid });
+  if (j.error) { authMsg(j.error); return; }
+  if (!j.needsPassword) { authDone(j.user); return; }
+  auth.sid = sid; $("setpwEmail").textContent = j.email; authMsg("");
+}
+async function refreshMe() { // po platbe v inej karte sa táto karta dozvie, že je účet aktívny
+  if (!auth.on) return;
+  const j = await authApi("me").catch(() => null); if (!j || !("user" in j)) return;
+  auth.user = j.user; renderAcct();
+  if (!$("authModal").hidden && canExport() && auth.user) authDone(auth.user);
+}
+function requireAccount(then) { // true = môže exportovať hneď
+  if (canExport()) return true;
+  if (auth.user && !auth.user.active) { $("renewTxt").textContent = "Predplatné vypršalo " + new Date(auth.user.until * 1000).toLocaleDateString(LOCALE) + ". Obnov ho a exportuj ďalej."; openAuth("renew", then); }
+  else openAuth("register", then); // neprihlásenému rovno ponúkne ročnú platbu
+  return false;
+}
+function setupAuth() {
+  $("authClose").onclick = closeAuth;
+  $("authModal").addEventListener("pointerdown", (e) => { if (e.target === $("authModal")) closeAuth(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("authModal").hidden) closeAuth(); });
+  document.querySelectorAll("#authTabs button").forEach((b) => b.onclick = () => { showAuthView(b.dataset.v); authMsg(""); });
+  document.querySelectorAll("#authModal [data-go]").forEach((b) => b.onclick = () => { showAuthView(b.dataset.go); authMsg(""); });
+  $("authDone").onclick = () => { const f = auth.pending; closeAuth(); if (f) f(); };
+  const okEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  document.querySelectorAll("#authModal form.mform").forEach((f) => f.addEventListener("submit", async (e) => {
+    e.preventDefault(); const v = f.dataset.v, d = Object.fromEntries(new FormData(f)); authMsg("");
+    const btn = f.querySelector("button[type=submit]"); btn.disabled = true;
+    try {
+      if (v === "login") {
+        if (!okEmail(d.email)) return authMsg("Zadaj platný e-mail.");
+        const j = await authApi("login", { email: d.email, password: d.password });
+        if (j.error) return authMsg(j.error);
+        auth.user = j.user; renderAcct();
+        if (!j.user.active) { $("renewTxt").textContent = "Predplatné vypršalo " + new Date(j.user.until * 1000).toLocaleDateString(LOCALE) + ". Obnov ho a exportuj ďalej."; showAuthView("renew"); return; }
+        authDone(j.user);
+      }
+      if (v === "register" || v === "renew") {
+        if (!auth.ready) return authMsg("Platby ešte nie sú na serveri nastavené.");
+        const email = v === "renew" ? auth.user.email : d.email;
+        if (!okEmail(email)) return authMsg("Zadaj platný e-mail.");
+        window.open(payUrl(email), "_blank", "noopener");
+        authMsg("Dokonči platbu v novej karte. Keď si potom nastavíš heslo, export sa tu odomkne sám.", true);
+      }
+      if (v === "setpw" || v === "reset") {
+        if ((d.password || "").length < 8) return authMsg("Heslo musí mať aspoň 8 znakov.");
+        if (d.password !== d.password2) return authMsg("Heslá sa nezhodujú.");
+        const j = v === "setpw" ? await authApi("setpw", { session_id: auth.sid, password: d.password }) : await authApi("reset", { token: auth.resetTok, password: d.password });
+        if (j.error) return authMsg(j.error);
+        authDone(j.user);
+      }
+      if (v === "forgot") {
+        if (!okEmail(d.email)) return authMsg("Zadaj platný e-mail.");
+        const j = await authApi("forgot", { email: d.email });
+        if (j.error) return authMsg(j.error);
+        authMsg("Ak k tomuto e-mailu existuje účet, poslali sme naň odkaz na nové heslo.", true);
+      }
+    } finally { btn.disabled = false; }
+  }));
+  $("loginBtn").onclick = async () => {
+    $("setMenu").hidden = true; $("setBtn").setAttribute("aria-expanded", "false");
+    if (auth.user) { await authApi("logout", {}); auth.user = null; renderAcct(); } else openAuth("login");
+  };
+  addEventListener("focus", refreshMe); document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshMe(); });
+  loadAuth();
+}
+
 // ---------- vlastný font (nahratý súbor, ostáva v tomto prehliadači) ----------
 function fontsDb() {
   return new Promise((res, rej) => {
@@ -1829,6 +1950,7 @@ async function recordAspect(aspect, onProgress, job) {
 // sa hneď, ako na daný formát prepneš ikonkou.
 async function exportAspects(list) {
   if (state.busyExport || state.playable === false) return;
+  if (!requireAccount(() => exportAspects(list))) return; // export len s predplatným
   const job = state.job, multi = list.length > 1;
   state.busyExport = true; state.exportCancel = false; $("exportAll").disabled = true; $("exportCur").disabled = true; $("export-error").hidden = true; $("exportStop").hidden = false; $("exportStatus").textContent = "";
   try {
@@ -1947,7 +2069,7 @@ function setup() {
   $("fontDrop").addEventListener("drop", async (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) await uploadFont(f, true); });
   $("fontSampleText").addEventListener("input", renderBrand);
   $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
-  loadSavedFonts(); loadSharedFonts();
+  loadSavedFonts(); loadSharedFonts(); setupAuth();
   $("fontSampleText").value = tr($("fontSampleText").value);
   Object.entries(UI_LANGS).forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; $("uiLang").append(o); });
   $("uiLang").value = LANG;

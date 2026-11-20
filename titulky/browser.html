@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Titulky</title>
+<title>Subgen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,400;0,700;1,800&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&display=swap">
 <style>
@@ -477,6 +477,28 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 .side-subs #textCard[hidden]{display:none!important}
 .side-subs .segments{max-height:none;flex:1;min-height:0}
 .side-empty{margin:0;padding:16px 12px;border:1px dashed var(--line2);border-radius:6px;color:var(--muted);font-size:12px;text-align:center}
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+.modal[hidden]{display:none!important}
+.mbox{position:relative;width:380px;max-width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:26px 24px 20px;background:#232325;border:1px solid var(--line2);border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.7)}
+.mclose{position:absolute;top:10px;right:10px}
+.mlogo{display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#e8853a,#c0392b);margin-bottom:12px}
+.mbox h2{margin:0 0 4px;font-size:18px}
+.msub{margin:0 0 16px;color:var(--muted);font-size:13px}
+.mtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#1a1a1c;border-radius:8px;margin-bottom:14px}
+.mtabs button{border:0;border-radius:6px;padding:8px;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer}
+.mtabs button.on{background:#3a3a3e;color:#fff}
+.mform{display:none;flex-direction:column;gap:10px}
+.mform.on{display:flex}
+.mform label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#c8c8cc}
+.mform input{background:var(--card2);color:var(--text);border:1px solid var(--line2);border-radius:6px;padding:10px 12px;font:inherit;font-size:14px}
+.mform input:focus{outline:none;border-color:var(--a)}
+.mform .export-all{margin-top:4px}
+.mlink{border:0;background:none;color:var(--b);font:inherit;font-size:12px;cursor:pointer;padding:2px;align-self:center}
+.mfeat{margin:0 0 4px;padding-left:18px;color:#c8c8cc;font-size:13px;line-height:1.7}
+.mok{margin:0;color:#7fe0a0;font-weight:600}
+.mmsg{min-height:1em;margin:12px 0 0;color:#ffb3bf}
+.mmsg.ok{color:#7fe0a0}
+.login-btn:not(:disabled) small{display:none}
 /* arabčina: rozhranie sprava doľava, časová os a náhľad ostávajú zľava doprava */
 [dir=rtl] #timelineCard,[dir=rtl] .out,[dir=rtl] .pv,[dir=rtl] .ct-tools,[dir=rtl] .tl-top,[dir=rtl] .speeds button,[dir=rtl] .cl-tag{direction:ltr}
 [dir=rtl] .nav.on{box-shadow:inset -2px 0 0 #e8853a}
@@ -517,7 +539,7 @@ h1{font-size:20px;letter-spacing:.01em}
   <aside class="side" id="side">
     <div class="side-top">
       <div class="logo">▶</div>
-      <span class="side-name">Titulkovač</span>
+      <span class="side-name">Subgen</span>
     </div>
     <div class="setmenu" id="setMenu" hidden>
     <a class="nav on" href="#" data-page="work" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Titulkovanie</a>
@@ -526,15 +548,15 @@ h1{font-size:20px;letter-spacing:.01em}
     <div class="side-set"><span class="side-h">Nastavenia</span>
       <label for="uiLang"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg><span>Jazyk rozhrania</span></label>
       <select id="uiLang" data-noi18n></select></div>
-    <button class="login-btn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span>Prihlásiť sa</span><small>Pripravujeme</small></button>
-    <div class="plan"><small>Plán</small><strong>Pro</strong><small>2 € mesačne</small><div class="bar"><i style="width:100%"></i></div><small>Bez limitu exportov</small></div>
+    <button class="login-btn" id="loginBtn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span id="loginLbl">Prihlásiť sa</span><small id="loginSoon">Pripravujeme</small></button>
+    <div class="plan"><small>Plán</small><strong>Subgen</strong><small>4,90 € ročne</small><div class="bar"><i style="width:100%"></i></div><small>Bez limitu exportov</small></div>
     </div>
     <div class="side-subs" id="sideSubs">
       <p class="side-empty" id="sideEmpty">Po nahratí videa sa tu zobrazí text titulkov.</p>
     </div>
     <button class="acct" id="setBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Účet a nastavenia" aria-label="Účet a nastavenia">
-      <span class="avatar" aria-hidden="true">?</span>
-      <span class="acct-txt"><b>Hosť</b><small>Plán Pro · 2 € mesačne</small></span>
+      <span class="avatar" id="acctAv" aria-hidden="true">?</span>
+      <span class="acct-txt"><b id="acctName">Hosť</b><small id="acctPlan">4,90 € ročne</small></span>
       <svg class="acct-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 15l5-5 5 5"/></svg>
     </button>
   </aside>
@@ -790,6 +812,53 @@ h1{font-size:20px;letter-spacing:.01em}
       <div class="fgrid" id="fontGrid"></div>
     </section>
 
+  </div>
+</div>
+
+<div class="modal" id="authModal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="sel-x mclose" id="authClose" type="button" aria-label="Zavrieť" title="Zavrieť">✕</button>
+    <div class="mlogo">▶</div>
+    <h2 id="authTitle">Prihlás sa a exportuj</h2>
+    <p class="msub" id="authSub">Export videa je pre predplatiteľov Subgen za 4,90 € ročne.</p>
+    <div class="mtabs" id="authTabs" role="tablist">
+      <button type="button" role="tab" data-v="login">Prihlásiť sa</button><button type="button" role="tab" data-v="register">Registrácia</button>
+    </div>
+    <form class="mform" data-v="login" novalidate>
+      <label>E-mail<input type="email" name="email" autocomplete="email" required></label>
+      <label>Heslo<input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="export-all" type="submit">Prihlásiť sa</button>
+      <button class="mlink" type="button" data-go="forgot">Zabudnuté heslo?</button>
+    </form>
+    <form class="mform" data-v="register" novalidate>
+      <ul class="mfeat"><li>Export videí bez obmedzení počas celého roka</li><li>Všetky štýly, animácie, strih a formáty</li></ul>
+      <label>E-mail<input type="email" name="email" autocomplete="email" required></label>
+      <button class="export-all" type="submit">Pokračovať na platbu · 4,90 € ročne</button>
+      <p class="hint">Platba prebehne bezpečne cez Stripe v novej karte. Po zaplatení si nastavíš heslo.</p>
+    </form>
+    <form class="mform" data-v="setpw" novalidate>
+      <p class="mok">✓ Platba prebehla</p>
+      <p class="hint" style="margin:0">Nastav si heslo k účtu <b id="setpwEmail"></b></p>
+      <label>Heslo<input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+      <label>Zopakuj heslo<input type="password" name="password2" autocomplete="new-password" required></label>
+      <button class="export-all" type="submit">Dokončiť registráciu</button>
+    </form>
+    <form class="mform" data-v="forgot" novalidate>
+      <label>E-mail<input type="email" name="email" autocomplete="email" required></label>
+      <button class="export-all" type="submit">Pošli odkaz na nové heslo</button>
+      <button class="mlink" type="button" data-go="login">Späť na prihlásenie</button>
+    </form>
+    <form class="mform" data-v="reset" novalidate>
+      <label>Nové heslo<input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+      <label>Zopakuj heslo<input type="password" name="password2" autocomplete="new-password" required></label>
+      <button class="export-all" type="submit">Uložiť heslo</button>
+    </form>
+    <form class="mform" data-v="renew" novalidate>
+      <p class="hint" style="margin:0" id="renewTxt"></p>
+      <button class="export-all" type="submit">Obnoviť za 4,90 € ročne</button>
+    </form>
+    <div class="mform" data-v="done"><p class="mok">✓ Hotovo, si prihlásený. Export je odomknutý.</p><button class="export-all" type="button" id="authDone">Pokračovať</button></div>
+    <p class="hint mmsg" id="authMsg" role="status"></p>
   </div>
 </div>
 <script>
