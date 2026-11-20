@@ -321,6 +321,10 @@ main{min-width:0}
 @keyframes aZoom{0%,30%{transform:scale(1);color:#fff}45%,80%{transform:scale(1.3);color:#ffe066}100%{transform:scale(1)}}
 @keyframes aGlow{0%,30%,100%{text-shadow:0 1px 2px #000;color:#fff}50%,80%{text-shadow:0 0 10px #ffe066,0 0 18px #ffe066;color:#ffe066}}
 @media(prefers-reduced-motion:reduce){.atile .asmp,.atile .asmp i{animation:none!important;clip-path:none}}
+.libpos{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
+.libpos span{font-size:12px;color:var(--muted);margin-right:4px}
+.libpos button{border:1px solid var(--line2);background:var(--card2);color:var(--muted);border-radius:5px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer}
+.libpos button.on{border-color:var(--a);background:#3a2a1c;color:#fff}
 .lsec{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 12px}
 .tile{border:1px solid var(--line2);border-radius:5px;padding:0;cursor:pointer;overflow:hidden;background:#111112;color:#fff;text-align:center}
 .tile.on{border-color:var(--a);box-shadow:0 0 0 1px var(--a)}
@@ -745,6 +749,8 @@ h1{font-size:20px;letter-spacing:.01em}
       <div class="brand-head"><div><h1><span class="grad">Knižnica štýlov</span></h1>
         <p class="sub">Všetky štýly titulkov, ktoré Titulkovač má, v pohybe. Klikni na Použiť a štýl sa nastaví pre vybraného rečníka.</p></div>
         <button class="btn" id="libBack" type="button">← Späť na video</button></div>
+      <div class="libpos" role="radiogroup" aria-label="Poloha ukážok"><span>Poloha ukážok</span>
+        <button type="button" data-y="0.5" role="radio">Stred</button><button type="button" data-y="0.67" role="radio">Spodná tretina</button></div>
       <h2 class="lsec">Štýly titulkov</h2>
       <div class="lgrid" id="libGrid"></div>
       <h2 class="lsec">Animácie titulkov</h2>

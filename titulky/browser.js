@@ -1565,7 +1565,10 @@ const libSegs = () => {
 let LIB_SEGS = libSegs();
 let LIB_CHUNKS = null;
 let libCards = [];
+// Všetky ukážky v Knižnici majú titulok na jednej úrovni: v strede, alebo v spodnej tretine (predvolené).
+const libY = () => { try { return +(localStorage.getItem("titulky-libY") || 0.67); } catch { return 0.67; } };
 function renderLibrary() {
+  document.querySelectorAll(".libpos button").forEach((b) => { const on = Math.abs(+b.dataset.y - libY()) < 0.01; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
   const grid = $("libGrid"); grid.textContent = ""; libCards = []; LIB_CHUNKS = LIB_CHUNKS || buildChunks(LIB_SEGS);
   const curPreset = activeStyle().preset;
   PRESETS.forEach((p) => {
@@ -1576,7 +1579,7 @@ function renderLibrary() {
     const use = document.createElement("button"); use.type = "button"; use.className = "fuse"; use.textContent = p.id === curPreset ? "Použitý" : "Použiť";
     use.onclick = () => { applyPreset(p); setPage("work"); };
     foot.append(nm, use); c.append(cv, foot); grid.append(c);
-    libCards.push({ cv, ctx: cv.getContext("2d"), st: { ...p, preset: p.id, on: true, x: 0.5, y: p.y ?? 0.78, position: null, highlight: p.highlight ?? true, anim: p.anim || "none" } });
+    libCards.push({ cv, ctx: cv.getContext("2d"), st: { ...p, preset: p.id, on: true, x: 0.5, y: libY(), position: null, roam: false, highlight: p.highlight ?? true, anim: p.anim || "none" } });
   });
   const ag = $("libAnimGrid"); ag.textContent = ""; // animácie v aktuálnom štýle (alebo Modern, ak je vybraný Dynamický)
   const base = activeStyle().dynamic ? { ...PRESETS[0], preset: PRESETS[0].id } : { ...activeStyle() }, curAnim = activeStyle().anim || "none";
@@ -1588,7 +1591,7 @@ function renderLibrary() {
     const use = document.createElement("button"); use.type = "button"; use.className = "fuse"; use.textContent = x.id === curAnim ? "Použitý" : "Použiť";
     use.onclick = () => { if (activeStyle().dynamic) applyPreset(PRESETS[0]); activeStyle().anim = x.id; syncControls(); setPage("work"); };
     foot.append(nm, use); c.append(cv, foot); ag.append(c);
-    libCards.push({ cv, ctx: cv.getContext("2d"), st: { ...base, on: true, x: 0.5, y: 0.7, position: null, anim: x.id, size: Math.max(base.size, 7) } });
+    libCards.push({ cv, ctx: cv.getContext("2d"), st: { ...base, on: true, x: 0.5, y: libY(), position: null, roam: false, anim: x.id, size: Math.max(base.size, 7) } });
   });
 }
 function libBackdrop(ctx, W, H, t) { // pohyblivé farebné pozadie namiesto videa
@@ -1936,6 +1939,7 @@ function setup() {
   setupCut();
   document.querySelectorAll(".nav[data-page]").forEach((a) => a.onclick = (e) => { e.preventDefault(); setPage(a.dataset.page); });
   $("brandBack").onclick = $("libBack").onclick = () => setPage("work");
+  document.querySelectorAll(".libpos button").forEach((b) => b.onclick = () => { try { localStorage.setItem("titulky-libY", b.dataset.y); } catch {} renderLibrary(); });
   $("brandFile").onchange = async (e) => { const f = e.target.files[0]; if (f) await uploadFont(f, true); e.target.value = ""; };
   $("fontDrop").onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("brandFile").click(); } };
   ["dragenter", "dragover"].forEach((ev) => $("fontDrop").addEventListener(ev, (e) => { e.preventDefault(); $("fontDrop").classList.add("over"); }));

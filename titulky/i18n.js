@@ -296,6 +296,8 @@ const DICT = {
   "Po nahratí videa sa tu zobrazí text titulkov.": ["Po nahrání videa se tu zobrazí text titulků.", "The subtitle text appears here after you upload a video.", "El texto de los subtítulos aparecerá aquí cuando subas un vídeo.", "سيظهر نص الترجمة هنا بعد رفع الفيديو.", "Video yükledikten sonra altyazı metni burada görünür.", "वीडियो अपलोड करने के बाद सबटाइटल टेक्स्ट यहाँ दिखेगा।"],
   "Titulkovač": ["Titulkovač", "Titulkovač", "Titulkovač", "Titulkovač", "Titulkovač", "Titulkovač"],
   "Rečník a štýl vybraných titulkov": ["Mluvčí a styl vybraných titulků", "Speaker and style of selected subtitles", "Hablante y estilo de los subtítulos seleccionados", "المتحدث ونمط الترجمات المحددة", "Seçili altyazıların konuşmacısı ve stili", "चुने हुए सबटाइटल का वक्ता और स्टाइल"],
+  "Poloha ukážok": ["Pozice ukázek", "Preview position", "Posición de las muestras", "موضع المعاينات", "Önizleme konumu", "प्रीव्यू की जगह"],
+  "Spodná tretina": ["Spodní třetina", "Lower third", "Tercio inferior", "الثلث السفلي", "Alt üçte bir", "निचला तिहाई"],
   "Animácia": ["Animace", "Animation", "Animación", "الحركة", "Animasyon", "एनिमेशन"],
   "Žiadna": ["Žádná", "None", "Ninguna", "بلا", "Yok", "कोई नहीं"],
   "Pop": ["Pop", "Pop", "Pop", "ظهور", "Pop", "पॉप"],
