@@ -1,6 +1,6 @@
 "use strict";
 const TF_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6";
-const LANGS = { sk: "slovak", cs: "czech", en: "english", es: "spanish", ar: "arabic", tr: "turkish", hi: "hindi" };
+const LANGS = { sk: "slovak", cs: "czech", en: "english", es: "spanish", ar: "arabic", tr: "turkish", hi: "hindi", pl: "polish", zh: "chinese" };
 /*I18N*/
 const DEMO = false; // true v ukážke na webe: vzorové titulky a výsledok sa prehrá priamo na stránke
 const MOCK = DEMO || new URLSearchParams(location.search).has("mock"); // len na skúšanie bez modelu
@@ -648,7 +648,7 @@ function renderChips(dur, px) {
     const el = document.createElement("div"); el.className = "chip" + (i === state.activeSeg ? " active" : "") + (state.sel.has(i) ? " sel" : "") + (s.styleOv ? " ov" : ""); el.dataset.i = i;
     el.style.left = Math.round(s.start * px) + "px"; el.style.width = Math.max(10, Math.round((s.end - s.start) * px)) + "px";
     el.style.background = spkColor(s.speaker || 1); el.title = s.text;
-    const label = document.createElement("span"); label.className = "chip-label"; label.textContent = s.text.slice(0, 36);
+    const label = document.createElement("span"); label.className = "chip-label"; label.dir = "auto"; label.textContent = s.text.slice(0, 36);
     const hl = document.createElement("div"); hl.className = "h l"; const hr = document.createElement("div"); hr.className = "h r";
     el.append(label, hl, hr); wireChip(el, s, i, hl, hr); box.append(el);
   });
@@ -769,7 +769,7 @@ function buildSegments() {
       state.activeSeg = i; markActiveSeg();
     };
     if (s.styleOv) { const p = PRESETS.find((x) => x.id === s.styleOv); if (p) { const tag = document.createElement("span"); tag.className = "ovtag"; tag.textContent = p.name; t.append(tag); } }
-    const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.setAttribute("aria-label", "Text titulku " + (i + 1));
+    const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.dir = "auto"; // arabčina sa píše sprava ta.setAttribute("aria-label", "Text titulku " + (i + 1));
     const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
     ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); invalidateResults(); updateChip(i); };
     const sp = document.createElement("button"); sp.type = "button"; sp.className = "spk"; sp.dataset.i = i; sp.dataset.s = n; sp.style.setProperty("--c", who.color);
@@ -1596,7 +1596,7 @@ function renderLibrary() {
 }
 function libBackdrop(ctx, W, H, t) { // pohyblivé farebné pozadie namiesto videa
   const g = ctx.createLinearGradient(0, 0, W, H), a = (t / LIB_LOOP) * Math.PI * 2;
-  g.addColorStop(0, `hsl(${285 + 18 * Math.sin(a)},45%,18%)`); g.addColorStop(1, `hsl(${330 + 15 * Math.cos(a)},55%,12%)`); // súmrak ako vo Vice City
+  g.addColorStop(0, `hsl(${250 + 20 * Math.sin(a)},50%,22%)`); g.addColorStop(1, `hsl(${205 + 25 * Math.cos(a)},55%,14%)`); // fialovo-modrá ako v prvej verzii
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = "rgba(255,255,255,.05)"; ctx.beginPath(); ctx.arc(W * (0.5 + 0.2 * Math.sin(a)), H * 0.38, W * 0.28, 0, Math.PI * 2); ctx.fill();
 }
@@ -2212,7 +2212,8 @@ function drawChunk(ctx, c, t, W, H, st) {
   const exit = t > c.exitStart ? clamp((t - c.exitStart) / c.exitDur, 0, 1) : 0;
   const h = hashStr(c.words.map((o) => o.w).join(" "));
   ctx.textBaseline = "middle"; ctx.textAlign = "center";
-  if ("letterSpacing" in ctx) ctx.letterSpacing = `${-base * 0.02}px`;
+  const rtl = isRtl(c.words.map((o) => o.w).join(" ")); ctx.direction = rtl ? "rtl" : "ltr";
+  if ("letterSpacing" in ctx) ctx.letterSpacing = rtl ? "0px" : `${-base * 0.02}px`; // arabské písmo sa nesmie roztrhnúť
   const n = c.words.length;
   const split = n === 1 ? [1] : n === 2 ? (h % 2 ? [1, 1] : [2]) : [h % 2 ? 1 : 2, h % 2 ? 2 : 1];
   const lines = []; let k = 0;
@@ -2237,7 +2238,7 @@ function drawChunk(ctx, c, t, W, H, st) {
   let y = top;
   lines.forEach((line, li) => {
     let x = cx - widths[li] / 2; const cy = y + heights[li] / 2; y += heights[li];
-    for (const it of line) {
+    for (const it of rtl ? [...line].reverse() : line) { // sprava doľava: prvé slovo je vpravo
       const p = easeOut(clamp((t - (it.k === 0 ? c.start : it.o.start)) / ENTER, 0, 1));
       if (p > 0) {
         ctx.save();
@@ -2254,6 +2255,7 @@ function drawChunk(ctx, c, t, W, H, st) {
     }
   });
   if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+  ctx.direction = "ltr";
 }
 function drawDynamic(ctx, t, W, H, stOf) { // stOf(rečník) -> štýl; kreslia sa len frázy, ktorých štýl je dynamický
   for (const c of dynChunks()) {
@@ -2277,6 +2279,9 @@ const ANIMS = [
   { id: "bounce", name: "Skok" }, { id: "typewriter", name: "Písací stroj" }, { id: "fade", name: "Plynulé slová" },
   { id: "slide", name: "Vysunutie" }, { id: "zoom", name: "Zväčšenie" }, { id: "glow", name: "Žiara" },
 ];
+// Písmo sprava doľava (arabčina, hebrejčina, perzština): slová sa kladú sprava, ako sa v tých krajinách píše.
+const RTL_RE = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
+const isRtl = (text) => RTL_RE.test(text || "");
 const easeBack = (k) => { const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); }; // s miernym preskokom
 const lumOf = (hex) => { const [r, g, b] = rgbOf(hex).split(",").map(Number); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; };
 function drawCaption(ctx, seg, t, W, H, st) {
@@ -2298,12 +2303,18 @@ function drawCaption(ctx, seg, t, W, H, st) {
   if (alpha <= 0) return;
   ctx.save(); ctx.globalAlpha = alpha;
   const pos = [], reveal = ["slowdown", "pop", "fade", "typewriter"].includes(anim); // pri postupnom príchode slov rastie aj podklad
+  const rtl = isRtl(seg.text); ctx.direction = rtl ? "rtl" : "ltr"; ctx.textAlign = "left";
   lines.forEach((line, li) => {
-    const y = top + li * lh, x0 = cx - line.w / 2; let x = x0, wv = 0;
-    line.idx.forEach((n) => { const ww = ctx.measureText(words[n].w).width; pos[n] = { x, y: y + lh / 2, ww }; if (!reveal || t >= words[n].start) wv = x + ww - x0; x += ww + sp; });
+    const y = top + li * lh, x0 = cx - line.w / 2, x1 = cx + line.w / 2; let x = rtl ? x1 : x0, wv = 0;
+    line.idx.forEach((n) => {
+      const ww = ctx.measureText(words[n].w).width;
+      if (rtl) { x -= ww; pos[n] = { x, y: y + lh / 2, ww }; if (!reveal || t >= words[n].start) wv = x1 - x; x -= sp; } // sprava doľava
+      else { pos[n] = { x, y: y + lh / 2, ww }; if (!reveal || t >= words[n].start) wv = x + ww - x0; x += ww + sp; }
+    });
     if (st.bgOpacity > 0 && wv > 0) {
+      const bx = rtl ? x1 - wv : x0;
       ctx.fillStyle = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`; ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(x0 - padX, y, wv + 2 * padX, lh, px * .12); else ctx.rect(x0 - padX, y, wv + 2 * padX, lh);
+      if (ctx.roundRect) ctx.roundRect(bx - padX, y, wv + 2 * padX, lh, px * .12); else ctx.rect(bx - padX, y, wv + 2 * padX, lh);
       ctx.fill();
     }
   });
@@ -2337,12 +2348,13 @@ function drawCaption(ctx, seg, t, W, H, st) {
     outline(txt, P.x, cy);
     ctx.fillStyle = color; ctx.fillText(txt, P.x, cy);
     if (anim === "karaoke" && n === active && since < dur) { // vyslovované slovo sa plní farbou zľava doprava
-      ctx.save(); ctx.beginPath(); ctx.rect(P.x, cy - px, P.ww * clamp(since / dur, 0, 1), px * 2); ctx.clip();
+      const fw = P.ww * clamp(since / dur, 0, 1);
+      ctx.save(); ctx.beginPath(); ctx.rect(rtl ? P.x + P.ww - fw : P.x, cy - px, fw, px * 2); ctx.clip(); // pri arabčine sa plní sprava
       ctx.fillStyle = hl; ctx.fillText(txt, P.x, cy); ctx.restore();
     }
     ctx.restore();
   });
-  ctx.restore();
+  ctx.restore(); ctx.direction = "ltr";
 }
 const srtTime = (s, sep) => { const ms = Math.round(s * 1000), p = (n, l = 2) => String(n).padStart(l, "0");
   return `${p(Math.floor(ms / 3600000))}:${p(Math.floor(ms / 60000) % 60)}:${p(Math.floor(ms / 1000) % 60)}${sep}${p(ms % 1000, 3)}`; };

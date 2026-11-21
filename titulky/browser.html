@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,400;0,700;1,800&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&display=swap">
 <style>
-:root{color-scheme:dark;--bg:#000;--side:#040406;--card:rgba(12,12,16,.78);--card2:#101015;--line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.14);--text:#f5f5f7;--muted:#8b8b96;--a:#ff3d7f;--b:#ffae42;--grad:linear-gradient(90deg,#ff2e88,#ff7a3d 55%,#ffc04a);--sun:linear-gradient(135deg,#ff2e88,#ff7a3d 60%,#ffc04a);--disp:"Barlow",Inter,system-ui,sans-serif}
+:root{color-scheme:dark;--bg:#060916;--side:#070b1d;--card:rgba(13,19,46,.72);--card2:#111836;--line:rgba(130,150,255,.12);--line2:rgba(130,150,255,.22);--text:#eef0fb;--muted:#8c93b8;--a:#7c6cff;--b:#19b8e8;--grad:linear-gradient(90deg,#7c6cff,#19b8e8);--sun:linear-gradient(135deg,#6c5cff,#c04dff 40%,#ff3d8a 70%,#ff9a3d);--disp:"Barlow",Inter,system-ui,sans-serif}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 [hidden]{display:none!important}
@@ -38,7 +38,7 @@ button{font:inherit;color:inherit}
 .fmeta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
 .fmeta b{color:var(--text);font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .ftag{border:1px solid var(--line2);border-radius:99px;padding:1px 8px;font-size:10px;flex:none}
-.ftag.own{border-color:#7a1f45;color:#f0b27a}
+.ftag.own{border-color:#3b3591;color:#f0b27a}
 .ftag.shared{border-color:#2f6b45;color:#8fdcab}
 .fdrop.off{opacity:.55;pointer-events:none}
 .fmeta .spk-del{margin-left:auto}
@@ -190,23 +190,23 @@ main{min-width:0}
 .clip .cl-name{position:absolute;left:0;right:0;bottom:0;height:18px;display:flex;align-items:center;gap:5px;padding:0 6px;background:#3a1a5e;border-radius:0 0 4px 4px;font-size:10.5px;color:#e8eef6;white-space:nowrap;overflow:hidden;pointer-events:none}
 .clip .cl-tags{position:absolute;left:4px;top:4px;right:4px;display:flex;gap:3px;flex-wrap:wrap;pointer-events:none}
 .clip .cl-tag{font-size:9px;font-weight:700;background:rgba(10,10,12,.78);color:#fff;border-radius:3px;padding:1px 4px;white-space:nowrap}
-.clip .cl-tag.sp{background:#ff3d7f;color:#1a1206}
+.clip .cl-tag.sp{background:#7c6cff;color:#1a1206}
 .clip .cl-dur{margin-left:auto;font-variant-numeric:tabular-nums;opacity:.85}
-.clip.sel{box-shadow:inset 0 0 0 2px #ff3d7f;z-index:3}
-.clip.sel .cl-name{background:#7a1f45}
+.clip.sel{box-shadow:inset 0 0 0 2px #7c6cff;z-index:3}
+.clip.sel .cl-name{background:#3b3591}
 .aclip{position:absolute;top:0;height:48px;border-radius:4px;background:#0b3540;box-shadow:inset 0 0 0 1px #2fd3e6;overflow:hidden;cursor:grab;touch-action:none}
 .aclip canvas{position:absolute;inset:0 0 14px 0;width:100%;height:34px;pointer-events:none}
 .aclip span{position:absolute;left:6px;bottom:1px;font-size:10px;color:#dff3e6;white-space:nowrap;pointer-events:none}
-.aclip.sel{box-shadow:inset 0 0 0 2px #ff3d7f}
-.clip.dragging,.aclip.dragging{z-index:6;cursor:grabbing;opacity:.9;box-shadow:0 10px 24px rgba(0,0,0,.6),inset 0 0 0 2px #ff3d7f}
-.trim{position:absolute;top:0;bottom:0;width:10px;background:#ff3d7f;display:none;place-items:center;cursor:ew-resize;touch-action:none;z-index:4}
+.aclip.sel{box-shadow:inset 0 0 0 2px #7c6cff}
+.clip.dragging,.aclip.dragging{z-index:6;cursor:grabbing;opacity:.9;box-shadow:0 10px 24px rgba(0,0,0,.6),inset 0 0 0 2px #7c6cff}
+.trim{position:absolute;top:0;bottom:0;width:10px;background:#7c6cff;display:none;place-items:center;cursor:ew-resize;touch-action:none;z-index:4}
 .trim::after{content:"";width:2px;height:20px;border-radius:2px;background:#1a1206}
 .trim.l{left:-10px;border-radius:4px 0 0 4px}.trim.r{right:-10px;border-radius:0 4px 4px 0}
 .clip.sel .trim{display:grid}
-.ct-ins{position:absolute;top:36px;width:3px;height:128px;margin-left:-1.5px;border-radius:2px;background:#ff3d7f;box-shadow:0 0 8px #ff3d7f;z-index:7;pointer-events:none}
+.ct-ins{position:absolute;top:36px;width:3px;height:128px;margin-left:-1.5px;border-radius:2px;background:#7c6cff;box-shadow:0 0 8px #7c6cff;z-index:7;pointer-events:none}
 .ctr{position:absolute;top:22px;width:22px;height:22px;margin-left:-11px;border-radius:4px;border:1px solid #0c0c0d;background:#d8d8da;color:#1c1c1e;display:grid;place-items:center;cursor:pointer;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.6);padding:0}
 .ctr svg{width:13px;height:13px}
-.ctr.on{background:#ff3d7f}
+.ctr.on{background:#7c6cff}
 .ctr.sel{outline:2px solid #fff;outline-offset:1px}
 .ctr:hover{transform:scale(1.12)}
 .ct-playhead{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#ff2e88;z-index:8;pointer-events:none}
@@ -236,7 +236,7 @@ main{min-width:0}
 .trt.on{border-color:var(--a);color:#fff;background:#3a3a3e}
 .tv{position:relative;width:100%;aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#000}
 .tv i{position:absolute;inset:0;display:grid;place-items:center;font:800 13px/1 Inter,sans-serif;color:#fff;font-style:normal}
-.tv .a{background:linear-gradient(135deg,#ff3d7f,#9a4f1c)}
+.tv .a{background:linear-gradient(135deg,#7c6cff,#9a4f1c)}
 .tv .b{background:linear-gradient(135deg,#4c9be8,#2a5f96);opacity:0}
 .tv .w{background:#fff;opacity:0}
 .trt .tv i{animation:2.4s infinite both}
@@ -265,7 +265,7 @@ main{min-width:0}
 @keyframes tB-glitch{0%,49.9%{opacity:0}50%{opacity:1;transform:translateX(12%) skewX(-8deg);filter:hue-rotate(-90deg)}55%{transform:translateX(-8%)}60%,100%{opacity:1;transform:none;filter:none}}
 .fv{position:relative;width:100%;aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#000}
 .fv canvas,.fv i{position:absolute;inset:0;width:100%;height:100%}
-.fv i{display:grid;place-items:center;font:800 13px/1 Inter,sans-serif;color:#fff;font-style:normal;background:linear-gradient(135deg,#ff3d7f,#4c9be8)}
+.fv i{display:grid;place-items:center;font:800 13px/1 Inter,sans-serif;color:#fff;font-style:normal;background:linear-gradient(135deg,#7c6cff,#4c9be8)}
 .fv canvas+i{background:none}
 .trt .fv.kenburns>*{animation:fvKen 3s ease-in-out infinite alternate}
 .trt .fv.pulse>*{animation:fvPulse .6s ease-out infinite}
@@ -324,7 +324,7 @@ main{min-width:0}
 .libpos{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
 .libpos span{font-size:12px;color:var(--muted);margin-right:4px}
 .libpos button{border:1px solid var(--line2);background:var(--card2);color:var(--muted);border-radius:5px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer}
-.libpos button.on{border-color:var(--a);background:#2a0f1e;color:#fff}
+.libpos button.on{border-color:var(--a);background:#1a1d52;color:#fff}
 .lsec{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 12px}
 .tile{border:1px solid var(--line2);border-radius:5px;padding:0;cursor:pointer;overflow:hidden;background:#111112;color:#fff;text-align:center}
 .tile.on{border-color:var(--a);box-shadow:0 0 0 1px var(--a)}
@@ -458,12 +458,14 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 .setmenu{position:absolute;top:auto;bottom:66px;left:12px;width:270px;z-index:60;display:flex;flex-direction:column;gap:4px;padding:10px;background:#232325;border:1px solid var(--line2);border-radius:8px;box-shadow:0 16px 40px rgba(0,0,0,.6)}
 .acct{display:flex;align-items:center;gap:10px;width:100%;flex:none;padding:8px;border:1px solid transparent;border-radius:8px;background:none;color:var(--text);font:inherit;text-align:left;cursor:pointer}
 .acct:hover,.acct[aria-expanded=true]{background:var(--card2);border-color:var(--line2)}
-.avatar{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#ff3d7f,#ff8a3d);color:#fff;font-weight:700;font-size:14px;flex:none}
+.avatar{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7c6cff,#ff8a3d);color:#fff;font-weight:700;font-size:14px;flex:none}
 .acct-txt{display:flex;flex-direction:column;min-width:0;flex:1}
 .acct-txt b{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .acct-txt small{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.acct-chev{width:16px;height:16px;color:var(--muted);flex:none;transition:transform .15s}
-.acct[aria-expanded=true] .acct-chev{transform:rotate(180deg)}
+.acct-chev{width:20px;height:20px;color:#c8ccec;flex:none;transition:transform .3s,color .2s}
+.acct:hover .acct-chev{color:#fff}
+.acct-set{color:#a9b0ff}
+.acct[aria-expanded=true] .acct-chev{transform:rotate(90deg);color:#fff}
 .login-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;margin-top:8px;border:1px solid var(--line2);border-radius:6px;background:var(--card2);color:var(--text);font:inherit;font-size:13px;cursor:pointer;text-align:left}
 .login-btn svg{width:16px;height:16px;flex:none}
 .login-btn small{margin-left:auto;font-size:10px;color:var(--muted);border:1px solid var(--line2);border-radius:99px;padding:1px 7px}
@@ -481,7 +483,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 .modal[hidden]{display:none!important}
 .mbox{position:relative;width:380px;max-width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:26px 24px 20px;background:#232325;border:1px solid var(--line2);border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.7)}
 .mclose{position:absolute;top:10px;right:10px}
-.mlogo{display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#ff3d7f,#ff8a3d);margin-bottom:12px}
+.mlogo{display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#7c6cff,#ff8a3d);margin-bottom:12px}
 .mbox h2{margin:0 0 4px;font-size:18px}
 .msub{margin:0 0 16px;color:var(--muted);font-size:13px}
 .mtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#1a1a1c;border-radius:8px;margin-bottom:14px}
@@ -501,7 +503,7 @@ details .body{padding-top:12px;display:flex;flex-direction:column;gap:12px}
 .login-btn:not(:disabled) small{display:none}
 /* arabčina: rozhranie sprava doľava, časová os a náhľad ostávajú zľava doprava */
 [dir=rtl] #timelineCard,[dir=rtl] .out,[dir=rtl] .pv,[dir=rtl] .ct-tools,[dir=rtl] .tl-top,[dir=rtl] .speeds button,[dir=rtl] .cl-tag{direction:ltr}
-[dir=rtl] .nav.on{box-shadow:inset -2px 0 0 #ff3d7f}
+[dir=rtl] .nav.on{box-shadow:inset -2px 0 0 #7c6cff}
 /* DaVinci Resolve vzhľad */
 body{font-size:13px}
 .grad{background:none;color:#e6e6e8}
@@ -511,10 +513,10 @@ h1{font-size:20px;letter-spacing:.01em}
 .export-all{color:#1a1206}
 .panel h3,.card h3{text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:#a5a5aa}
 .plabel{font-size:11px}
-.step.on{border-color:#ff3d7f55;background:#2c2c2f}
-.step.on .ic{border-color:#ff3d7f;background:#2a0f1e;color:#ff3d7f}
-.nav.on{background:#2c2c2f;box-shadow:inset 2px 0 0 #ff3d7f}
-.logo{background:linear-gradient(135deg,#ff3d7f,#ff8a3d)}
+.step.on{border-color:#7c6cff55;background:#2c2c2f}
+.step.on .ic{border-color:#7c6cff;background:#1a1d52;color:#7c6cff}
+.nav.on{background:#2c2c2f;box-shadow:inset 2px 0 0 #7c6cff}
+.logo{background:linear-gradient(135deg,#7c6cff,#ff8a3d)}
 /* pracovná plocha: stred stojí, pravý panel sa posúva samostatne */
 @media(min-width:1001px){
   .content.ws{height:100vh;display:flex;flex-direction:column;overflow:hidden;padding-bottom:12px}
@@ -530,18 +532,19 @@ h1{font-size:20px;letter-spacing:.01em}
   .side{overflow:visible;position:relative;flex-direction:row;align-items:center;gap:10px}
   .side-top{flex:1}.side-subs{display:none!important}
   .setmenu{top:62px;bottom:auto;left:auto;right:16px;max-height:calc(100vh - 80px);overflow:auto}
-  .acct{width:auto;padding:4px}.acct-txt,.acct-chev{display:none}
+  .acct{width:auto;padding:4px 8px 4px 4px;gap:6px}.acct-txt{display:none}
 }
 
 /* ===== vzhľad: Starlink (čierny vesmír, biele tenké písmo, štítky VEĽKÝMI) + GTA VI (neónový západ slnka) ===== */
-html,body{background:#000}
+html,body{background:#060916}
 .app{background:
   radial-gradient(1px 1px at 12% 18%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1px 1px at 72% 9%,rgba(255,255,255,.45),transparent 60%),
   radial-gradient(1.2px 1.2px at 38% 42%,rgba(255,255,255,.35),transparent 60%),radial-gradient(1px 1px at 88% 36%,rgba(255,255,255,.4),transparent 60%),
   radial-gradient(1px 1px at 22% 72%,rgba(255,255,255,.3),transparent 60%),radial-gradient(1.3px 1.3px at 58% 66%,rgba(255,255,255,.35),transparent 60%),
   radial-gradient(1px 1px at 94% 82%,rgba(255,255,255,.3),transparent 60%),radial-gradient(1px 1px at 6% 92%,rgba(255,255,255,.25),transparent 60%),
-  radial-gradient(1200px 420px at 60% 118%,rgba(255,46,136,.22),rgba(123,44,255,.10) 45%,transparent 70%),
-  #000;background-attachment:fixed}
+  radial-gradient(1200px 520px at 50% -12%,rgba(108,92,255,.28),rgba(25,184,232,.08) 45%,transparent 70%),
+  radial-gradient(1100px 380px at 70% 120%,rgba(255,61,138,.20),rgba(255,154,61,.08) 40%,transparent 70%),
+  #060916;background-attachment:fixed}
 body{font-family:Inter,system-ui,sans-serif;letter-spacing:.005em}
 h1,h2,h3,.side-name,.step b,.plabel,.panel h3,.card h3,.card-title,.side-h,.lsec,.nav,.mbox h2,.mtabs button,.tb .lbl,.cbt,.ct-hd b,.tname,.fuse,.export-all,.btn,.mini,.libpos button,.speeds button,.cut-head{font-family:var(--disp)}
 h1{font-weight:600;font-size:26px;letter-spacing:.14em;text-transform:uppercase}
@@ -549,43 +552,43 @@ h1{font-weight:600;font-size:26px;letter-spacing:.14em;text-transform:uppercase}
 .sub{color:var(--muted);letter-spacing:.02em}
 .plabel,.panel h3,.card h3,.side-h,.lsec,.sellbl{text-transform:uppercase;letter-spacing:.16em;font-size:10.5px;font-weight:500;color:#a6a6b2}
 .card-title{text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:500}
-.side{background:rgba(4,4,6,.85);border-right:1px solid var(--line);backdrop-filter:blur(12px)}
+.side{background:rgba(7,11,29,.82);border-right:1px solid var(--line);backdrop-filter:blur(12px)}
 .side-name{font-size:16px;font-weight:600;letter-spacing:.22em;text-transform:uppercase}
-.logo,.side .logo,.mlogo,.avatar{background:var(--sun);box-shadow:0 0 18px rgba(255,46,136,.45)}
-.card,.panel,.steps,#timelineCard,.lcard,.fcard,.mbox,.selbar,.setmenu,.spk-menu{background:rgba(10,10,14,.72);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(14px)}
-#timelineCard.cut-mode{background:rgba(6,6,9,.85);border-color:var(--line)}
+.logo,.side .logo,.mlogo,.avatar{background:var(--sun);box-shadow:0 0 20px rgba(192,77,255,.5)}
+.card,.panel,.steps,#timelineCard,.lcard,.fcard,.mbox,.selbar,.setmenu,.spk-menu{background:rgba(13,19,46,.72);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(14px)}
+#timelineCard.cut-mode{background:rgba(9,13,34,.88);border-color:var(--line)}
 .steps{padding:8px}
 .step{border-radius:12px}
 .step b{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:600}
 .step .ic{border-radius:50%;background:transparent;border-color:var(--line2)}
-.step.on{background:rgba(255,46,136,.07);border-color:rgba(255,61,127,.35);box-shadow:inset 0 -2px 0 #ff3d7f}
-.step.on .ic{background:var(--sun);border-color:transparent;color:#fff;box-shadow:0 0 16px rgba(255,46,136,.5)}
+.step.on{background:rgba(124,108,255,.12);border-color:rgba(124,108,255,.45);box-shadow:inset 0 -2px 0 #19b8e8}
+.step.on .ic{background:var(--sun);border-color:transparent;color:#fff;box-shadow:0 0 18px rgba(192,77,255,.55)}
 /* tlačidlá: hlavné so západom slnka, ostatné ako Starlink – priehľadné s tenkým rámom */
-.export-all{background:var(--grad);color:#fff;border-radius:999px;text-transform:uppercase;letter-spacing:.16em;font-weight:600;font-size:13px;box-shadow:0 8px 28px rgba(255,46,136,.35);transition:box-shadow .2s,transform .2s}
-.export-all:hover:not(:disabled){box-shadow:0 10px 36px rgba(255,46,136,.55);transform:translateY(-1px)}
+.export-all{background:var(--sun);color:#fff;border-radius:999px;text-transform:uppercase;letter-spacing:.16em;font-weight:600;font-size:13px;box-shadow:0 8px 28px rgba(192,77,255,.35);transition:box-shadow .2s,transform .2s}
+.export-all:hover:not(:disabled){box-shadow:0 10px 36px rgba(255,61,138,.5);transform:translateY(-1px)}
 .btn,.mini,.mini-btn,.fuse,.libpos button,.btn-stop{background:transparent;border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:999px;text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:500}
 .btn{padding:10px 20px}
 .btn:hover,.mini:hover,.mini-btn:hover,.fuse:hover,.libpos button:hover{background:#fff;color:#000;border-color:#fff}
 .btn-stop{border-color:rgba(255,46,136,.6);color:#ff8fb6}
 .btn-stop:hover{background:#ff2e88;color:#fff}
-.fcard.on .fuse,.libpos button.on,.mini-btn.on{background:var(--grad);border-color:transparent;color:#fff}
+.fcard.on .fuse,.libpos button.on,.mini-btn.on{background:var(--sun);border-color:transparent;color:#fff}
 /* aktívne voľby */
 .opt,.tile,.atile,.trt,.speeds button,.stile,.cbt,.spk-row,.part,.segment{border-radius:12px}
-.opt.on,.tile.on,.atile.on,.trt.on,.speeds button.on,.stile.on,.lcard.on,.fcard.on{border-color:#ff3d7f;box-shadow:0 0 0 1px #ff3d7f,0 0 22px rgba(255,46,136,.25)}
+.opt.on,.tile.on,.atile.on,.trt.on,.speeds button.on,.stile.on,.lcard.on,.fcard.on{border-color:#7c6cff;box-shadow:0 0 0 1px #7c6cff,0 0 22px rgba(124,108,255,.35)}
 .nav{text-transform:uppercase;letter-spacing:.14em;font-size:12px}
-.nav.on{background:rgba(255,46,136,.08);box-shadow:inset 2px 0 0 #ff3d7f}
+.nav.on{background:rgba(124,108,255,.12);box-shadow:inset 2px 0 0 #7c6cff}
 .acct:hover,.acct[aria-expanded=true]{background:rgba(255,255,255,.05)}
 .segment{background:rgba(255,255,255,.03);border-color:var(--line)}
-.segment.sel{background:rgba(255,46,136,.08);border-color:#ff3d7f}
-.segments .segment button:first-child{color:#ffae42}
-input[type=range]{accent-color:#ff3d7f}
+.segment.sel{background:rgba(124,108,255,.12);border-color:#7c6cff}
+.segments .segment button:first-child{color:#5fd4ff}
+input[type=range]{accent-color:#7c6cff}
 .mtabs{background:rgba(255,255,255,.04);border-radius:999px}
 .mtabs button{border-radius:999px;text-transform:uppercase;letter-spacing:.12em;font-size:11px}
 .mtabs button.on{background:#fff;color:#000}
 .mform input,.seg-search,select{border-radius:10px}
 .switch[aria-checked=true],[role=switch][aria-checked=true]{background:var(--grad)}
 /* časová os */
-.ct-tools,.ct-heads,.ct-tc{background:rgba(4,4,6,.9)}
+.ct-tools,.ct-heads,.ct-tc{background:rgba(8,12,32,.92)}
 .ct-tc{color:#fff;letter-spacing:.08em}
 .ct-hd .tk{background:transparent;border-color:rgba(255,255,255,.3);color:#fff}
 .clip{background:#22123f;box-shadow:inset 0 0 0 1px rgba(138,77,255,.7)}
@@ -601,12 +604,12 @@ input[type=range]{accent-color:#ff3d7f}
 .tb.red svg{color:#ff2e88}
 .out-prog .bar i,.plan .bar i{background:var(--grad)}
 .plan{background:rgba(255,255,255,.03);border-radius:14px}
-.plan strong{font-family:var(--disp);letter-spacing:.16em;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-::selection{background:rgba(255,46,136,.45)}
+.plan strong{font-family:var(--disp);letter-spacing:.16em;text-transform:uppercase;background:var(--sun);-webkit-background-clip:text;background-clip:text;color:transparent}
+::selection{background:rgba(124,108,255,.5)}
 .drop{background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.18);border-radius:16px;transition:border-color .2s,background .2s}
-.drop:hover,.drop.over{border-color:#ff3d7f;background:rgba(255,46,136,.06)}
+.drop:hover,.drop.over{border-color:#7c6cff;background:rgba(124,108,255,.08)}
 .drop strong{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-weight:600}
-.drop-icon{color:#ff3d7f;text-shadow:0 0 18px rgba(255,46,136,.6)}
+.drop-icon{color:#19b8e8;text-shadow:0 0 18px rgba(25,184,232,.6)}
 </style>
 </head>
 <body>
@@ -631,8 +634,8 @@ input[type=range]{accent-color:#ff3d7f}
     </div>
     <button class="acct" id="setBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Účet a nastavenia" aria-label="Účet a nastavenia">
       <span class="avatar" id="acctAv" aria-hidden="true">?</span>
-      <span class="acct-txt"><b id="acctName">Hosť</b><small id="acctPlan">4,90 € ročne</small></span>
-      <svg class="acct-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 15l5-5 5 5"/></svg>
+      <span class="acct-txt"><b id="acctName">Hosť</b><small><span id="acctPlan">4,90 € ročne</span> · <span class="acct-set">Nastavenia</span></small></span>
+      <svg class="acct-chev acct-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
     </button>
   </aside>
 
@@ -656,7 +659,7 @@ input[type=range]{accent-color:#ff3d7f}
       <main>
         <section id="view-upload" class="card">
           <div class="rowlang"><label for="lang">1. Jazyk videa</label>
-            <select id="lang"><option value="sk" selected>Slovenčina</option><option value="auto">Rozpoznať automaticky</option><option value="cs">Čeština</option><option value="en">Angličtina</option><option value="es">Španielčina</option><option value="ar">Arabčina</option><option value="tr">Turečtina</option><option value="hi">Hindčina</option></select>
+            <select id="lang"><option value="sk" selected>Slovenčina</option><option value="auto">Rozpoznať automaticky</option><option value="cs">Čeština</option><option value="en">Angličtina</option><option value="es">Španielčina</option><option value="ar">Arabčina</option><option value="tr">Turečtina</option><option value="hi">Hindčina</option><option value="pl">Poľština</option><option value="zh">Čínština</option></select>
           </div>
           <label class="drop" id="drop">
             <input type="file" id="file" accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265" hidden>
