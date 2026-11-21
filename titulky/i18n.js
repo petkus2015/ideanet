@@ -56,6 +56,9 @@ const DICT = {
   "Vyber súbor s videom (MP4, MOV, MKV, WEBM a podobne).": ["Vyber soubor s videem (MP4, MOV, MKV, WEBM a podobně).","Choose a video file (MP4, MOV, MKV, WEBM and similar).","Elige un archivo de vídeo (MP4, MOV, MKV, WEBM y similares).","اختر ملف فيديو (MP4 وMOV وMKV وWEBM وما شابه).","Bir video dosyası seç (MP4, MOV, MKV, WEBM ve benzeri).","एक वीडियो फ़ाइल चुनें (MP4, MOV, MKV, WEBM आदि)।","Wybierz plik wideo (MP4, MOV, MKV, WEBM i podobne).","请选择视频文件（MP4、MOV、MKV、WEBM 等）。"],
   "Spracúvam…": ["Zpracovávám…","Processing…","Procesando…","جارٍ المعالجة…","İşleniyor…","प्रोसेस हो रहा है…","Przetwarzanie…","处理中…"],
   "Čítam zvuk…": ["Čtu zvuk…","Reading audio…","Leyendo el audio…","جارٍ قراءة الصوت…","Ses okunuyor…","ऑडियो पढ़ा जा रहा है…","Odczytuję dźwięk…","正在读取音频…"],
+  "▶ Spustiť čítanie zvuku": ["▶ Spustit čtení zvuku","▶ Start reading audio","▶ Empezar a leer el audio","▶ ابدأ قراءة الصوت","▶ Ses okumayı başlat","▶ ऑडियो पढ़ना शुरू करें","▶ Rozpocznij odczyt dźwięku","▶ 开始读取音频"],
+  "Klepni na tlačidlo, prehliadač potom prečíta zvuk z videa.": ["Klepni na tlačítko, prohlížeč pak přečte zvuk z videa.","Tap the button and the browser will read the audio from the video.","Toca el botón y el navegador leerá el audio del vídeo.","اضغط على الزر وسيقرأ المتصفح الصوت من الفيديو.","Düğmeye dokun, tarayıcı videodaki sesi okuyacak.","बटन पर टैप करें, ब्राउज़र वीडियो से ऑडियो पढ़ेगा।","Stuknij przycisk, a przeglądarka odczyta dźwięk z wideo.","点击按钮，浏览器将读取视频中的音频。"],
+  "Rozbaľujem zvuk…": ["Rozbaluji zvuk…","Decoding audio…","Decodificando el audio…","جارٍ فك ترميز الصوت…","Ses çözülüyor…","ऑडियो डिकोड हो रहा है…","Dekoduję dźwięk…","正在解码音频…"],
   "Načítavam zvuk…": ["Načítám zvuk…","Loading audio…","Cargando el audio…","جارٍ تحميل الصوت…","Ses yükleniyor…","ऑडियो लोड हो रहा है…","Wczytuję dźwięk…","正在加载音频…"],
   "Načítavam model…": ["Načítám model…","Loading model…","Cargando el modelo…","جارٍ تحميل النموذج…","Model yükleniyor…","मॉडल लोड हो रहा है…","Wczytuję model…","正在加载模型…"],
   "Sťahujem model…": ["Stahuji model…","Downloading model…","Descargando el modelo…","جارٍ تنزيل النموذج…","Model indiriliyor…","मॉडल डाउनलोड हो रहा है…","Pobieram model…","正在下载模型…"],
@@ -378,6 +381,8 @@ const DICT = {
 // Texty s premennými časťami: [vzor, { jazyk: šablóna alebo funkcia }]; $1… sa doplní (a ak je v slovníku, aj preloží).
 const pl = (n, one, few, many) => (+n === 1 ? one : +n > 1 && +n < 5 ? few : many);
 const PATTERNS = [
+  [/^Načítavam zvukovú stopu z videa \((\d+) MB\)…$/, { cs: "Načítám zvukovou stopu z videa ($1 MB)…", en: "Loading the audio track from the video ($1 MB)…", es: "Cargando la pista de audio del vídeo ($1 MB)…", ar: "جارٍ تحميل المسار الصوتي من الفيديو ($1 ميغابايت)…", tr: "Videodan ses kanalı yükleniyor ($1 MB)…", hi: "वीडियो से ऑडियो ट्रैक लोड हो रहा है ($1 MB)…", pl: "Wczytuję ścieżkę dźwiękową z wideo ($1 MB)…", zh: "正在从视频加载音轨（$1 MB）…" }],
+  [/^Načítavam video \((\d+) MB\)…$/, { cs: "Načítám video ($1 MB)…", en: "Loading the video ($1 MB)…", es: "Cargando el vídeo ($1 MB)…", ar: "جارٍ تحميل الفيديو ($1 ميغابايت)…", tr: "Video yükleniyor ($1 MB)…", hi: "वीडियो लोड हो रहा है ($1 MB)…", pl: "Wczytuję wideo ($1 MB)…", zh: "正在加载视频（$1 MB）…" }],
   [/^Klip (\d+)$/, { cs: "Klip $1", en: "Clip $1", es: "Clip $1", ar: "مقطع $1", tr: "Klip $1", hi: "क्लिप $1", pl: "Klip $1", zh: "片段 $1" }],
   [/^(.+) \((\d+:\d+)\)$/, { cs: "$1 ($2)", en: "$1 ($2)", es: "$1 ($2)", ar: "$1 ($2)", tr: "$1 ($2)", hi: "$1 ($2)", pl: "$1 ($2)", zh: "$1 ($2)" }],
   [/^Klip (\d+) z (\d+)$/, { cs: "Klip $1 z $2", en: "Clip $1 of $2", es: "Clip $1 de $2", ar: "المقطع $1 من $2", tr: "Klip $1 / $2", hi: "क्लिप $1 / $2", pl: "Klip $1 z $2", zh: "片段 $1 / $2" }],

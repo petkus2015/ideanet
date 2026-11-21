@@ -65,6 +65,7 @@ button{font:inherit;color:inherit}
 .bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:8px 0 6px}
 .bar i{display:block;height:100%;width:0;background:var(--grad);transition:width .3s}
 .busy .bar{max-width:280px;margin-left:auto;margin-right:auto}
+#busy-go{margin-top:18px;width:auto;padding:13px 22px}
 .busy output{display:block;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
 .content{padding:24px 28px 20px;min-width:0}
 .head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
@@ -709,6 +710,7 @@ input[type=range]{accent-color:#7c6cff}
           <p id="busy-text"></p>
           <div class="bar"><i id="busy-fill"></i></div>
           <output id="busy-pct">0 %</output>
+          <button type="button" class="export-all" id="busy-go" hidden>▶ Spustiť čítanie zvuku</button>
         </section>
 
         <section id="view-editor" hidden>

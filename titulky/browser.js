@@ -169,26 +169,156 @@ const decodeBuffer = async (arrayBuffer) => {
   const ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
   try { return toMono(await ctx.decodeAudioData(arrayBuffer)); } finally { ctx.close(); }
 };
+// Zvuk z MP4/MOV (aj HEVC z iPhonu): z kontajnera sa po kúskoch prečíta iba zvuková stopa AAC
+// a zabalí sa do ADTS, ktoré vie rozbaliť každý prehliadač. Celé video sa nenačíta do pamäte.
+async function readBytes(file, a, b) { return new Uint8Array(await file.slice(a, b).arrayBuffer()); }
+const u32 = (d, o) => ((d[o] << 24) | (d[o + 1] << 16) | (d[o + 2] << 8) | d[o + 3]) >>> 0;
+const fourcc = (d, o) => String.fromCharCode(d[o], d[o + 1], d[o + 2], d[o + 3]);
+function boxes(d, a, b) {
+  const out = [];
+  for (let o = a; o + 8 <= b;) {
+    let size = u32(d, o), hdr = 8;
+    if (size === 1) { size = u32(d, o + 8) * 4294967296 + u32(d, o + 12); hdr = 16; } else if (size === 0) size = b - o;
+    if (size < hdr || o + size > b) break;
+    out.push({ type: fourcc(d, o + 4), s: o + hdr, e: o + size }); o += size;
+  }
+  return out;
+}
+const child = (d, box, type) => box && boxes(d, box.s, box.e).find((x) => x.type === type);
+const path = (d, box, ...types) => types.reduce((b, t) => child(d, b, t), box);
+async function findMoov(file) {
+  for (let o = 0; o + 8 <= file.size;) {
+    const h = await readBytes(file, o, Math.min(o + 16, file.size));
+    let size = u32(h, 0), hdr = 8;
+    if (size === 1) { size = u32(h, 8) * 4294967296 + u32(h, 12); hdr = 16; } else if (size === 0) size = file.size - o;
+    if (size < hdr) return null;
+    if (fourcc(h, 4) === "moov") return size > 200e6 ? null : readBytes(file, o + hdr, o + size);
+    o += size;
+  }
+  return null;
+}
+// AudioSpecificConfig z esds (deskriptor s tagom 5)
+function ascFrom(d, s, e) {
+  for (let o = s; o < e - 2; o++) {
+    if (d[o] !== 5) continue;
+    let len = 0, p = o + 1;
+    for (let k = 0; k < 4; k++) { const c = d[p++]; len = (len << 7) | (c & 127); if (!(c & 128)) break; }
+    if (len >= 2 && len < 64 && p + len <= e) {
+      const ot = d[p] >> 3, fi = ((d[p] & 7) << 1) | (d[p + 1] >> 7), ch = (d[p + 1] >> 3) & 15;
+      if (ot >= 1 && ot <= 4 && fi < 13 && ch > 0 && ch < 8) return { ot, fi, ch };
+    }
+  }
+  return null;
+}
+function audioTrack(d) {
+  for (const trak of boxes(d, 0, d.length).filter((b) => b.type === "trak")) {
+    const mdia = child(d, trak, "mdia"), hdlr = child(d, mdia, "hdlr");
+    if (!hdlr || fourcc(d, hdlr.s + 8) !== "soun") continue;
+    const stbl = path(d, mdia, "minf", "stbl"), stsd = child(d, stbl, "stsd");
+    if (!stsd) continue;
+    const entry = boxes(d, stsd.s + 8, stsd.e)[0];
+    if (!entry || entry.type !== "mp4a") continue;
+    const ver = (d[entry.s + 8] << 8) | d[entry.s + 9]; // QuickTime verzia zvukového záznamu
+    const asc = ascFrom(d, entry.s + 28 + (ver === 1 ? 16 : ver === 2 ? 36 : 0), entry.e);
+    if (!asc) continue;
+    const stsz = child(d, stbl, "stsz"), stsc = child(d, stbl, "stsc"), stco = child(d, stbl, "stco") || child(d, stbl, "co64");
+    if (!stsz || !stsc || !stco) continue;
+    const fixed = u32(d, stsz.s + 4), count = u32(d, stsz.s + 8);
+    const sizes = new Uint32Array(count);
+    for (let i = 0; i < count; i++) sizes[i] = fixed || u32(d, stsz.s + 12 + i * 4);
+    const nc = u32(d, stco.s + 4), big = stco.type === "co64", offs = new Array(nc);
+    for (let i = 0; i < nc; i++) offs[i] = big ? u32(d, stco.s + 8 + i * 8) * 4294967296 + u32(d, stco.s + 12 + i * 8) : u32(d, stco.s + 8 + i * 4);
+    const ns = u32(d, stsc.s + 4), runs = [];
+    for (let i = 0; i < ns; i++) runs.push([u32(d, stsc.s + 8 + i * 12) - 1, u32(d, stsc.s + 12 + i * 12)]);
+    const chunks = []; let si = 0; // [posun v súbore, prvá vzorka, počet vzoriek]
+    for (let r = 0; r < runs.length; r++) {
+      const end = r + 1 < runs.length ? runs[r + 1][0] : nc;
+      for (let c = runs[r][0]; c < end && si < count; c++) { const n = Math.min(runs[r][1], count - si); chunks.push([offs[c], si, n]); si += n; }
+    }
+    if (chunks.length) return { asc, sizes, chunks };
+  }
+  return null;
+}
+async function extractMp4Audio(file, onProgress) {
+  const head = await readBytes(file, 0, 12);
+  if (head.length < 12 || !["ftyp", "moov", "wide", "mdat", "free"].includes(fourcc(head, 4))) return null;
+  const moov = await findMoov(file);
+  if (!moov) return null;
+  const t = audioTrack(moov);
+  if (!t) return null;
+  const { asc, sizes, chunks } = t;
+  let total = 0; for (const s of sizes) total += s;
+  const out = new Uint8Array(total + sizes.length * 7);
+  let w = 0, done = 0, lastP = 0;
+  // Susedné kúsky zvuku sa čítajú naraz (najviac ~4 MB), aby čítanie bolo rýchle aj na mobile.
+  for (let i = 0; i < chunks.length;) {
+    const start = chunks[i][0]; let j = i, end = start;
+    while (j < chunks.length) {
+      const [off, s0, n] = chunks[j]; let len = 0;
+      for (let k = 0; k < n; k++) len += sizes[s0 + k];
+      if (j > i && (off < end || off + len - start > 4e6)) break;
+      end = off + len; j++;
+    }
+    const buf = await readBytes(file, start, end);
+    for (let c = i; c < j; c++) {
+      let p = chunks[c][0] - start;
+      for (let k = 0; k < chunks[c][2]; k++) {
+        const len = sizes[chunks[c][1] + k], fl = len + 7;
+        if (p + len > buf.length) throw new Error("mp4");
+        out[w] = 0xff; out[w + 1] = 0xf1;
+        out[w + 2] = ((asc.ot - 1) << 6) | (asc.fi << 2) | (asc.ch >> 2);
+        out[w + 3] = ((asc.ch & 3) << 6) | (fl >> 11);
+        out[w + 4] = (fl >> 3) & 255; out[w + 5] = ((fl & 7) << 5) | 0x1f; out[w + 6] = 0xfc;
+        out.set(buf.subarray(p, p + len), w + 7); w += fl; p += len;
+      }
+    }
+    for (let c = i; c < j; c++) for (let k = 0; k < chunks[c][2]; k++) done += sizes[chunks[c][1] + k];
+    i = j;
+    if (onProgress && performance.now() - lastP > 150) { lastP = performance.now(); onProgress(done / (total || 1)); await new Promise((r) => setTimeout(r)); }
+  }
+  return out.buffer;
+}
 // Záloha: ak prehliadač nevie rozbaliť zvuk zo súboru, zvuk sa nahrá pri prehrávaní videa (trvá dĺžku videa).
+// iPhone dovolí prehrať zvuk až po klepnutí, preto sa v prípade potreby ukáže tlačidlo.
+function waitTap() {
+  const b = $("busy-go"); b.hidden = false;
+  return new Promise((r) => { b.onclick = () => { b.hidden = true; r(); }; });
+}
 async function captureAudio(url) {
-  const tv = document.createElement("video"); tv.src = url; tv.playsInline = true;
-  await new Promise((res, rej) => { tv.onloadedmetadata = res; tv.onerror = () => rej(new Error("play")); });
+  const tv = document.createElement("video"); tv.playsInline = true; tv.preload = "auto"; tv.src = url;
+  await Promise.race([
+    new Promise((res, rej) => { tv.onloadedmetadata = res; tv.onerror = () => rej(new Error("play")); tv.load(); }),
+    new Promise((_, rej) => setTimeout(() => rej(new Error("play")), 20000)),
+  ]);
   const ac = new (window.AudioContext || window.webkitAudioContext)();
   const dest = ac.createMediaStreamDestination();
   ac.createMediaElementSource(tv).connect(dest);
   const rec = new MediaRecorder(dest.stream), chunks = [];
   rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
   const stopped = new Promise((r) => (rec.onstop = r));
-  rec.start(); await ac.resume(); await tv.play();
+  try { await ac.resume(); await tv.play(); }
+  catch {
+    setBusy("Čítam zvuk…", "Klepni na tlačidlo, prehliadač potom prečíta zvuk z videa.");
+    await waitTap(); await ac.resume(); await tv.play();
+  }
+  rec.start();
   const iv = setInterval(() => setBusy("Čítam zvuk…", `Prehliadač číta zvuk v reálnom čase: ${fmtTime(tv.currentTime)} z ${fmtTime(tv.duration)}`, phasePct("audio", tv.currentTime / tv.duration)), 400);
   await new Promise((r) => (tv.onended = r));
   clearInterval(iv); rec.stop(); await stopped; ac.close();
   return decodeBuffer(await new Blob(chunks).arrayBuffer());
 }
 async function decodeAudio(file) {
-  try { return await decodeBuffer(await file.arrayBuffer()); } catch { /* skúsi sa záloha */ }
+  const mb = (file.size / 1048576).toFixed(0);
+  try {
+    const aac = await extractMp4Audio(file, (f) => setBusy("Čítam zvuk…", `Načítavam zvukovú stopu z videa (${mb} MB)…`, phasePct("audio", f * 0.8)));
+    if (aac) { setBusy("Čítam zvuk…", "Rozbaľujem zvuk…", phasePct("audio", 0.85)); return await decodeBuffer(aac); }
+  } catch (e) { console.warn("MP4 zvuk", e); }
+  // Celé video do pamäte len pri menších súboroch, veľké videá by mobil nezvládol.
+  if (file.size < 400e6) {
+    try { setBusy("Čítam zvuk…", `Načítavam video (${mb} MB)…`, phasePct("audio", 0.1)); return await decodeBuffer(await file.arrayBuffer()); } catch { /* skúsi sa záloha */ }
+  }
   try { setBusy("Čítam zvuk…", "Prehliadač nevie rozbaliť zvuk priamo, číta ho pri prehrávaní."); return await captureAudio(state.url); }
-  catch { throw new Error("Zo súboru sa nepodarilo prečítať zvuk. Súbor je asi poškodený, bez zvuku alebo má zvukový kodek, ktorý prehliadač nepozná. Skús ho previesť do MP4 (H.264 + AAC)."); }
+  catch { $("busy-go").hidden = true; throw new Error("Zo súboru sa nepodarilo prečítať zvuk. Súbor je asi poškodený, bez zvuku alebo má zvukový kodek, ktorý prehliadač nepozná. Skús ho previesť do MP4 (H.264 + AAC)."); }
 }
 // Rozdelí dlhý úsek textu na titulky (najviac 32 znakov), čas rozdelí podľa dĺžky textu.
 function splitChunk(text, start, end) {
