@@ -358,6 +358,7 @@ const DICT = {
   "Načítavam prekladový model…": ["Načítám překladový model…", "Loading translation model…", "Cargando el modelo de traducción…", "جارٍ تحميل نموذج الترجمة…", "Çeviri modeli yükleniyor…", "ट्रांसलेशन मॉडल लोड हो रहा है…", "Wczytuję model tłumaczenia…", "正在加载翻译模型…"],
   "Vyber iný cieľový jazyk.": ["Vyber jiný cílový jazyk.", "Choose a different target language.", "Elige otro idioma de destino.", "اختر لغة هدف مختلفة.", "Farklı bir hedef dil seç.", "कोई दूसरी लक्ष्य भाषा चुनें।", "Wybierz inny język docelowy.", "请选择不同的目标语言。"],
   "Pôvodný text je späť.": ["Původní text je zpět.", "The original text is back.", "El texto original ha vuelto.", "عاد النص الأصلي.", "Orijinal metin geri geldi.", "मूल टेक्स्ट वापस आ गया।", "Oryginalny tekst wrócił.", "已恢复原文。"],
+  "Podpora": ["Podpora", "Support", "Soporte", "الدعم", "Destek", "सहायता", "Pomoc", "支持"],
   "Animácia": ["Animace","Animation","Animación","الحركة","Animasyon","एनिमेशन","Animacja","动画"],
   "Žiadna": ["Žádná","None","Ninguna","بلا","Yok","कोई नहीं","Brak","无"],
   "Pop": ["Pop","Pop","Pop","ظهور","Pop","पॉप","Pop","弹出"],
