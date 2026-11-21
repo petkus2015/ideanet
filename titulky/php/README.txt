@@ -9,14 +9,17 @@ Požiadavky:
   - HTTPS (certifikát)
   - Návštevník potrebuje Chrome, Edge alebo Safari a internet
 
-Model na vlastnom FTP (voliteľné, ale odporúčané):
-  Prehliadač si model inak sťahuje z huggingface.co, čo niektoré siete a aplikácie blokujú.
-  Môžeš ho dať na svoj server, odkiaľ sa potom sťahuje:
-  1. Na počítači s internetom spusti:  pip install huggingface_hub  a potom  python3 stiahni_model.py
-     (pridaj --turbo pre presnejší model large-v3-turbo, približne 1,5 GB, pre prehliadače s WebGPU)
-  2. Vznikne priečinok models/. Nahraj ho cez FTP vedľa index.php (celý, aj s podpriečinkami).
-  3. Hotovo. Stránka sama nájde models/ a pod výberom videa napíše, že model je na serveri.
-  Ak priečinok models/ nie je, použije sa huggingface.co ako predtým.
+Modely na vlastnom FTP (odporúčané – návštevníci ich potom nesťahujú z huggingface.co):
+  Subgen používa dva modely: rozpoznávanie reči (Whisper) a preklad titulkov (NLLB-200).
+  1. Na počítači nainštaluj Python (python.org). Na Windows pri inštalácii zaškrtni "Add Python to PATH".
+  2. V priečinku so stiahni_model.py otvor príkazový riadok a spusti:
+        pip install huggingface_hub
+        python3 stiahni_model.py          (na Windows: py stiahni_model.py)
+     Pridaj --turbo, ak chceš aj presnejší model large-v3-turbo (približne 1,5 GB, pre prehliadače s WebGPU).
+  3. Vznikne priečinok models/ (spolu približne 1 GB, s --turbo vyše 2,5 GB; skript vypíše presnú veľkosť). Nahraj ho cez FTP celý,
+     aj s podpriečinkami, vedľa index.php. Over, že existuje napr. models/Xenova/whisper-small/config.json.
+  4. Hotovo. Stránka sama nájde models/ a pod výberom videa napíše, že model je na serveri.
+  Ak priečinok models/ nie je, modely sa sťahujú z huggingface.co ako predtým.
 
 Ak sa stránka nenačíta:
   1. Otvor adresu s ?diag=1 na konci, napr. https://captions.tvojweb.sk/?diag=1

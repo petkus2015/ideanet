@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Stiahne model Whisper do priečinka models/, ktorý potom nahráš cez FTP vedľa index.php.
+"""Stiahne jazykové modely Subgen do priečinka models/, ktorý potom nahráš cez FTP vedľa index.php.
 
 Spusti na počítači s internetom (nie na hostingu):
     pip install huggingface_hub
-    python3 stiahni_model.py            # model small (približne 250 MB), odporúčané
-    python3 stiahni_model.py --turbo    # navyše large-v3-turbo (približne 1,5 GB, pre prehliadače s WebGPU)
+    python3 stiahni_model.py            # rozpoznávanie reči (Whisper small, ~250 MB) + preklad titulkov (NLLB-200, niekoľko stoviek MB)
+    python3 stiahni_model.py --turbo    # navyše presnejšie rozpoznávanie large-v3-turbo (~1,5 GB, pre prehliadače s WebGPU)
 
-Výsledok: priečinok models/ s podpriečinkami Xenova/whisper-small a onnx-community/whisper-large-v3-turbo.
-Nahraj celý priečinok models/ na FTP do rovnakého priečinka ako index.php.
-Stránka potom model sťahuje z tvojho servera a nie z huggingface.co.
+Na Windows namiesto "python3" napíš "py" (napr. py stiahni_model.py).
+
+Výsledok: priečinok models/ s podpriečinkami Xenova/whisper-small, Xenova/nllb-200-distilled-600M
+(a onnx-community/whisper-large-v3-turbo). Nahraj celý priečinok models/ na FTP do rovnakého
+priečinka ako index.php. Stránka potom modely sťahuje z tvojho servera a nie z huggingface.co.
 """
 import os
 import sys
@@ -16,6 +18,10 @@ import sys
 MODELS = {
     "small": {
         "repo": "Xenova/whisper-small",
+        "onnx": {"encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"},
+    },
+    "preklad": {  # preklad titulkov medzi 9 jazykmi aplikácie
+        "repo": "Xenova/nllb-200-distilled-600M",
         "onnx": {"encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"},
     },
     "turbo": {
@@ -48,7 +54,7 @@ def main():
         from huggingface_hub import HfApi, hf_hub_download
     except ImportError:
         sys.exit("Najprv spusti: pip install huggingface_hub")
-    keys = ["small"] + (["turbo"] if "--turbo" in sys.argv or "--all" in sys.argv else [])
+    keys = ["small", "preklad"] + (["turbo"] if "--turbo" in sys.argv or "--all" in sys.argv else [])
     api, root = HfApi(), os.path.join(os.getcwd(), "models")
     for key in keys:
         cfg = MODELS[key]
@@ -63,6 +69,8 @@ def main():
         for f in chosen:
             print("  ", f)
             hf_hub_download(cfg["repo"], f, local_dir=target)
+        size = sum(os.path.getsize(os.path.join(dp, n)) for dp, _, fs in os.walk(target) for n in fs)
+        print(f"   spolu {size / 1048576:.0f} MB")
     print("\nHotovo. Nahraj priečinok 'models' na FTP vedľa index.php.")
 
 
