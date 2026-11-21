@@ -700,7 +700,8 @@ function placeSelDlg() {
   const at = selAt || { kind: "segment" };
   const el = at.kind === "point" ? null : document.querySelector(`.${at.kind}[data-i="${ids[0]}"]`);
   const r = el && el.getClientRects().length ? el.getBoundingClientRect() : null;
-  if (r && at.kind === "segment") { x = r.right + 10; y = r.top; if (x + bw > innerWidth - 8) { x = r.left; y = r.bottom + 8; } }
+  const rtl = document.documentElement.dir === "rtl"; // v arabčine je zoznam vpravo, okienko patrí naľavo od neho
+  if (r && at.kind === "segment") { x = rtl ? r.left - bw - 10 : r.right + 10; y = r.top; if (x + bw > innerWidth - 8 || x < 8) { x = rtl ? r.right - bw : r.left; y = r.bottom + 8; } }
   else if (r) { x = r.left; y = r.top - bh - 10; if (y < 8) y = r.bottom + 10; }
   else if (at.kind === "point") { x = at.x - bw / 2; y = at.y + 16; }
   bar.style.left = Math.round(clamp(x, 8, innerWidth - bw - 8)) + "px"; bar.style.top = Math.round(clamp(y, 8, innerHeight - bh - 8)) + "px";

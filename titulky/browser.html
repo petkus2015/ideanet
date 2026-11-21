@@ -612,6 +612,20 @@ input[type=range]{accent-color:#7c6cff}
 .plan{background:rgba(255,255,255,.03);border-radius:14px}
 .plan strong{font-family:var(--disp);letter-spacing:.16em;text-transform:uppercase;background:var(--sun);-webkit-background-clip:text;background-clip:text;color:transparent}
 ::selection{background:rgba(124,108,255,.5)}
+/* arabčina, hindčina, čínština: vlastné písmo rozhrania, bez rozostupov a veľkých písmen (rozostup trhá spojené arabské písmo) */
+:root[lang=ar]{--disp:"Cairo",system-ui,sans-serif}
+:root[lang=ar] body{font-family:"Cairo",Inter,system-ui,sans-serif}
+:root[lang=hi]{--disp:"Noto Sans Devanagari",Inter,sans-serif}
+:root[lang=hi] body{font-family:"Noto Sans Devanagari",Inter,system-ui,sans-serif}
+:root[lang=zh]{--disp:"Noto Sans SC",Inter,sans-serif}
+:root[lang=zh] body{font-family:Inter,"Noto Sans SC",system-ui,sans-serif}
+:root:is([lang=ar],[lang=hi],[lang=zh]) :is(h1,h2,h3,.side-name,.step b,.plabel,.panel h3,.card h3,.card-title,.side-h,.lsec,.nav,.mtabs button,.tb .lbl,.cbt,.tname,.fuse,.export-all,.btn,.mini,.mini-btn,.libpos button,.speeds button,.cut-head,.sellbl,.drop strong,.tr-btn,.trsubs-row label,.plan strong){letter-spacing:0;text-transform:none}
+:root[lang=ar] h1{font-weight:700}
+[dir=rtl] .trsubs-arrow{transform:scaleX(-1)}
+@media(max-width:820px){[dir=rtl] .setmenu{right:auto;left:16px}}
+[dir=rtl] .segments .segment{border-left-width:1px}
+[dir=rtl] .segments.spk-on .segment{border-left:1px solid var(--line);border-right:3px solid var(--c)}
+[dir=rtl] .mmsg,[dir=rtl] .mform{text-align:right}
 .ct-row-btns{display:flex;align-items:center;gap:6px}
 .tr-btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid var(--line2);border-radius:999px;background:transparent;color:#dfe2ff;font:500 11px var(--disp);text-transform:uppercase;letter-spacing:.12em;cursor:pointer}
 .tr-btn svg{width:16px;height:16px;color:#5fd4ff}
