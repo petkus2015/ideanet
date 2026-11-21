@@ -606,6 +606,17 @@ input[type=range]{accent-color:#7c6cff}
 .plan{background:rgba(255,255,255,.03);border-radius:14px}
 .plan strong{font-family:var(--disp);letter-spacing:.16em;text-transform:uppercase;background:var(--sun);-webkit-background-clip:text;background-clip:text;color:transparent}
 ::selection{background:rgba(124,108,255,.5)}
+.ct-row-btns{display:flex;align-items:center;gap:6px}
+.tr-btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid var(--line2);border-radius:999px;background:transparent;color:#dfe2ff;font:500 11px var(--disp);text-transform:uppercase;letter-spacing:.12em;cursor:pointer}
+.tr-btn svg{width:16px;height:16px;color:#5fd4ff}
+.tr-btn:hover,.tr-btn[aria-expanded=true]{border-color:#7c6cff;background:rgba(124,108,255,.12)}
+.trsubs{display:flex;flex-direction:column;gap:8px;padding:12px;margin-bottom:10px;border:1px solid var(--line2);border-radius:12px;background:rgba(124,108,255,.07)}
+.trsubs[hidden]{display:none!important}
+.trsubs-row{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:end}
+.trsubs-row label{display:flex;flex-direction:column;gap:4px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#a6abd0;font-family:var(--disp);min-width:0}
+.trsubs-row select{width:100%;background:var(--card2);color:var(--text);border:1px solid var(--line2);border-radius:10px;padding:7px 8px;font:inherit;font-size:12px;letter-spacing:0;text-transform:none}
+.trsubs-arrow{color:#5fd4ff;padding-bottom:8px}
+.trsubs .export-all{margin:0;padding:10px}
 .drop{background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.18);border-radius:16px;transition:border-color .2s,background .2s}
 .drop:hover,.drop.over{border-color:#7c6cff;background:rgba(124,108,255,.08)}
 .drop strong{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-weight:600}
@@ -748,9 +759,18 @@ input[type=range]{accent-color:#7c6cff}
           <span id="textCardHome" hidden></span><div class="card" style="margin-top:14px" id="textCard">
             <div class="card-title-row">
               <div class="card-title">Text titulkov</div>
+              <span class="ct-row-btns"><button class="tr-btn" id="trBtn" type="button" title="Preložiť titulky" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h9M8.5 3v2M11 5c-.8 4-3.5 7-7 8.5M6 8.5c1.2 2.2 3 3.8 5 4.6"/><path d="M13 21l4-9 4 9M14.5 18h5"/></svg><span>Preložiť</span></button>
               <button class="icon-btn" id="segSearchBtn" title="Hľadať v titulkoch" aria-label="Hľadať v titulkoch">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
-              </button>
+              </button></span>
+            </div>
+            <div class="trsubs" id="trSubs" hidden>
+              <div class="trsubs-row"><label>Z jazyka<select id="trFrom" aria-label="Z jazyka"></select></label><span class="trsubs-arrow" aria-hidden="true">→</span><label>Do jazyka<select id="trTo" aria-label="Do jazyka"></select></label></div>
+              <button class="export-all" id="trGo" type="button">Preložiť titulky</button>
+              <div class="out-prog" id="trProg" hidden><div class="bar"><i></i></div><span></span></div>
+              <p class="hint" id="trMsg" role="status" style="margin:0"></p>
+              <button class="mlink" id="trUndo" type="button" hidden>Vrátiť pôvodný text</button>
+              <p class="hint" style="margin:0">Prvý preklad stiahne prekladový model (asi 600 MB), potom sa uloží v prehliadači a ďalej funguje rýchlo.</p>
             </div>
             <input type="search" id="segSearch" class="seg-search" placeholder="Hľadať v texte titulkov…" hidden>
             <p class="hint" style="margin:0 0 4px">Oprav chyby v rozpoznanom texte. Klik na čas skočí na dané miesto vo videu.</p>

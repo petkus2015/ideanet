@@ -306,6 +306,7 @@ async function loadModel(spec, quiet) {
     files[p.file] = { loaded: p.loaded, total: p.total };
     const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
     if (!quiet) setBusy("Sťahujem model…", `${spec.label}: ${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB (len pri prvom použití)`, phasePct("model", loaded / total));
+    if (spec.onProgress) spec.onProgress(loaded, total);
   };
   let reach = null;
   try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
@@ -326,7 +327,7 @@ async function loadModel(spec, quiet) {
       tf.env.useCustomCache = a.cache === "idb"; if (a.cache === "idb") tf.env.customCache = idbCache;
       tf.env.useBrowserCache = a.cache === "browser"; tf.env.remoteHost = a.host;
       for (const k of Object.keys(files)) delete files[k];
-      return await tf.pipeline("automatic-speech-recognition", spec.id, { ...spec.opts, progress_callback: progress });
+      return await tf.pipeline(spec.task || "automatic-speech-recognition", spec.id, { ...spec.opts, progress_callback: progress });
     } catch (e) { lastErr = e; console.error("Model:", spec.label, a.label, e); }
   }
   throw await explainFailure(tf, spec.id, lastErr, reach);
@@ -857,6 +858,7 @@ function initEditor() {
   renderTimeline();
   renderSpkList(); renderSelSpk(); $("spkDetect").disabled = !state.audio;
   resetClips(); makeThumbs(state.job); renderCutUi();
+  trOriginal = null; $("trUndo").hidden = true; $("trProg").hidden = true; $("trMsg").textContent = ""; $("trSubs").hidden = true;
 }
 
 // ---------- kreslenie snímky (rovnaké pre náhľady aj export) ----------
@@ -1613,6 +1615,61 @@ function libLoop(now) {
   requestAnimationFrame(libLoop);
 }
 
+// ---------- preklad titulkov (model NLLB-200 v prehliadači) ----------
+// Prekladá text titulkov medzi jazykmi, ktoré ponúka aplikácia. Časy ostávajú, rozloženie slov sa prepočíta.
+const NLLB = { sk: "slk_Latn", cs: "ces_Latn", en: "eng_Latn", es: "spa_Latn", ar: "arb_Arab", tr: "tur_Latn", hi: "hin_Deva", pl: "pol_Latn", zh: "zho_Hans" };
+const TR_NAMES = { sk: "Slovenčina", cs: "Čeština", en: "Angličtina", es: "Španielčina", ar: "Arabčina", tr: "Turečtina", hi: "Hindčina", pl: "Poľština", zh: "Čínština" };
+const TR_MOCK = new URLSearchParams(location.search).has("mock"); // len na skúšanie: preklad bez modelu
+let translator = null, trOriginal = null, trBusy = false;
+function trProgress(p, label) { $("trProg").hidden = false; $("trProg").querySelector("i").style.width = Math.round(p) + "%"; $("trProg").querySelector("span").textContent = label; }
+async function runTranslate() {
+  if (trBusy || !state.segments.length) return;
+  const from = $("trFrom").value, to = $("trTo").value;
+  if (from === to) { $("trMsg").textContent = "Vyber iný cieľový jazyk."; return; }
+  trBusy = true; $("trGo").disabled = true; $("trMsg").textContent = "";
+  const texts = state.segments.map((s) => s.text.replace(/\s*\n\s*/g, " ").trim());
+  try {
+    let out;
+    if (TR_MOCK) { out = texts.map((t) => `[${to}] ${t}`); trProgress(100, "Prekladám… 100 %"); }
+    else {
+      if (!translator) {
+        trProgress(0, "Načítavam prekladový model…");
+        translator = await loadModel({ id: "Xenova/nllb-200-distilled-600M", label: "NLLB-200", task: "translation", opts: { dtype: "q8" },
+          onProgress: (l, t) => trProgress(l / t * 100, `Sťahujem prekladový model… ${Math.round(l / t * 100)} %`) }, true);
+      }
+      out = [];
+      for (let i = 0; i < texts.length; i += 6) {
+        trProgress(i / texts.length * 100, `Prekladám… ${Math.round(i / texts.length * 100)} %`);
+        const batch = texts.slice(i, i + 6);
+        const res = await translator(batch, { src_lang: NLLB[from], tgt_lang: NLLB[to], max_new_tokens: 256 });
+        (Array.isArray(res) ? res : [res]).forEach((r, k) => out.push((r && r.translation_text) || batch[k]));
+      }
+    }
+    if (!trOriginal) trOriginal = state.segments.map((s) => ({ text: s.text, words: s.words }));
+    state.segments.forEach((s, i) => { s.text = out[i] || s.text; s.words = null; }); // časy slov sa prepočítajú podľa nového textu
+    bumpDyn(); invalidateResults(); buildSegments(); renderChips(tlDuration(), state.tlPxPerSec);
+    trProgress(100, `Preklad hotový: ${TR_NAMES[from]} → ${TR_NAMES[to]}.`);
+    $("trUndo").hidden = false; $("trFrom").value = to;
+  } catch (e) {
+    console.error("Preklad:", e); $("trProg").hidden = true; $("trMsg").textContent = "Preklad zlyhal. " + (e && e.message ? e.message : "");
+  } finally { trBusy = false; $("trGo").disabled = false; }
+}
+function undoTranslate() {
+  if (!trOriginal) return;
+  state.segments.forEach((s, i) => { if (trOriginal[i]) { s.text = trOriginal[i].text; s.words = trOriginal[i].words; } });
+  trOriginal = null; bumpDyn(); invalidateResults(); buildSegments(); renderChips(tlDuration(), state.tlPxPerSec);
+  $("trUndo").hidden = true; $("trProg").hidden = true; $("trMsg").textContent = "Pôvodný text je späť.";
+  $("trFrom").value = $("lang").value === "auto" ? "sk" : $("lang").value;
+}
+function setupTranslate() {
+  for (const [k, n] of Object.entries(TR_NAMES)) for (const id of ["trFrom", "trTo"]) { const o = document.createElement("option"); o.value = k; o.textContent = n; $(id).append(o); }
+  $("trBtn").onclick = () => {
+    const open = $("trSubs").hidden; $("trSubs").hidden = !open; $("trBtn").setAttribute("aria-expanded", String(open));
+    if (open && !trOriginal) { const src = $("lang").value === "auto" ? "sk" : $("lang").value; $("trFrom").value = src; $("trTo").value = LANG !== src && NLLB[LANG] ? LANG : (src === "en" ? "sk" : "en"); }
+  };
+  $("trGo").onclick = runTranslate; $("trUndo").onclick = undoTranslate;
+}
+
 // ---------- účet: prihlásenie a ročné predplatné (Stripe) ----------
 // Export videa je len pre prihlásených s platným predplatným. Registrácia: e-mail → platba cez Stripe
 // v novej karte (projekt v tejto karte ostane) → návrat na stránku → heslo. Bez PHP servera (ukážka) sa export neobmedzuje.
@@ -2069,7 +2126,7 @@ function setup() {
   $("fontDrop").addEventListener("drop", async (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) await uploadFont(f, true); });
   $("fontSampleText").addEventListener("input", renderBrand);
   $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
-  loadSavedFonts(); loadSharedFonts(); setupAuth();
+  loadSavedFonts(); loadSharedFonts(); setupAuth(); setupTranslate();
   $("fontSampleText").value = tr($("fontSampleText").value);
   Object.entries(UI_LANGS).forEach(([k, n]) => { const o = document.createElement("option"); o.value = k; o.textContent = n; $("uiLang").append(o); });
   $("uiLang").value = LANG;
