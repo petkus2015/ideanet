@@ -33,7 +33,22 @@ function refreshQuality() {
     (state.quality === "4k" ? " 4K export trvá dlhšie a na slabších zariadeniach môže sekať." : "") +
     ((state.crop[state.aspect]?.zoom || 1) > 1.05 && state.quality !== "small" ? " Priblížený výrez používa menej pixelov originálu, obraz môže byť menej ostrý." : "");
 }
-const FONTS = ["Inter", "Montserrat", "Poppins", "Bebas Neue", "Roboto Slab", "Arial", "Georgia"];
+const FONTS = ["Inter", "Montserrat", "Poppins", "Bebas Neue", "Roboto Slab", "Arial", "Georgia", "Cairo", "Noto Sans Devanagari", "Noto Sans SC"];
+// Písma pre arabčinu, hindčinu a čínštinu: každý štýl ich použije pre znaky, ktoré jeho písmo nemá.
+const SCRIPT_FALLBACK = '"Cairo", "Noto Sans Devanagari", "Noto Sans SC", sans-serif';
+const SCRIPTS = [ // písmo, ktoré sa pri titulkoch v danom písme ponúkne a nastaví
+  { re: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/, font: "Cairo", name: "arabské" },
+  { re: /[\u0900-\u097F]/, font: "Noto Sans Devanagari", name: "hindské" },
+  { re: /[\u3400-\u9FFF\uF900-\uFAFF]/, font: "Noto Sans SC", name: "čínske" },
+];
+function scriptOf(text) { // ktoré písmo prevažuje v titulkoch (null = latinka a pod.)
+  let best = null, n = 0;
+  for (const sc of SCRIPTS) { const c = (text.match(new RegExp(sc.re.source, "g")) || []).length; if (c > n) { n = c; best = sc; } }
+  return n > 5 ? best : null;
+}
+function loadScriptFonts(text) { // webové písmo sa pre plátno načíta len na požiadanie
+  for (const sc of SCRIPTS) if (sc.re.test(text)) for (const w of [400, 700, 800]) document.fonts.load(`${w} 40px "${sc.font}"`, text.slice(0, 200)).catch(() => {});
+}
 const PRESETS = [
   { hl: "#ffe066", id: "modern",  name: "Modern",  font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 60, size: 6.5, bold: true },
   { hl: "#ffe066", id: "klasik",  name: "Klasik",  font: "Arial", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 6, bold: true },
@@ -772,7 +787,7 @@ function buildSegments() {
     if (s.styleOv) { const p = PRESETS.find((x) => x.id === s.styleOv); if (p) { const tag = document.createElement("span"); tag.className = "ovtag"; tag.textContent = p.name; t.append(tag); } }
     const ta = document.createElement("textarea"); ta.value = s.text; ta.rows = 1; ta.dir = "auto"; // arabčina sa píše sprava ta.setAttribute("aria-label", "Text titulku " + (i + 1));
     const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
-    ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); invalidateResults(); updateChip(i); };
+    ta.oninput = () => { s.text = ta.value; fit(); bumpDyn(); invalidateResults(); updateChip(i); loadScriptFonts(ta.value); };
     const sp = document.createElement("button"); sp.type = "button"; sp.className = "spk"; sp.dataset.i = i; sp.dataset.s = n; sp.style.setProperty("--c", who.color);
     sp.setAttribute("aria-haspopup", "menu"); sp.title = who.name + " · klikni a vyber iného rečníka"; sp.setAttribute("aria-label", sp.title);
     const dot = document.createElement("i"); dot.className = "dot"; const lab = document.createElement("span"); lab.textContent = who.name;
@@ -859,6 +874,15 @@ function initEditor() {
   renderSpkList(); renderSelSpk(); $("spkDetect").disabled = !state.audio;
   resetClips(); makeThumbs(state.job); renderCutUi();
   trOriginal = null; $("trUndo").hidden = true; $("trProg").hidden = true; $("trMsg").textContent = ""; $("trSubs").hidden = true;
+  applyScriptFont();
+}
+// Arabské, hindské alebo čínske titulky: načíta sa vhodné písmo a titulkom sa rovno nastaví (dá sa zmeniť).
+function applyScriptFont() {
+  const all = state.segments.map((s) => s.text).join(" "); loadScriptFonts(all);
+  const sc = scriptOf(all); if (!sc) return;
+  [state.style, ...Object.values(state.spkStyle)].forEach((st) => { st.font = sc.font; });
+  bumpDyn(); syncControls();
+  $("fontMsg").textContent = `Pre ${sc.name} titulky je nastavené písmo ${sc.font}.`;
 }
 
 // ---------- kreslenie snímky (rovnaké pre náhľady aj export) ----------
@@ -1535,7 +1559,7 @@ function renderBrand() {
   [...sharedFonts, ...customFonts, ...FONTS].forEach((name) => {
     const own = customFonts.has(name), shared = sharedFonts.has(name); ensureFont(name);
     const c = document.createElement("div"); c.className = "fcard" + (name === cur ? " on" : "");
-    const smp = document.createElement("div"); smp.className = "fsample"; smp.textContent = text; smp.style.fontFamily = `"${name}", sans-serif`; smp.style.fontWeight = name === "Bebas Neue" ? 400 : 700;
+    const smp = document.createElement("div"); smp.className = "fsample"; smp.textContent = text; smp.style.fontFamily = `"${name}", ${SCRIPT_FALLBACK}`; smp.style.fontWeight = name === "Bebas Neue" ? 400 : 700;
     const meta = document.createElement("div"); meta.className = "fmeta";
     const nm = document.createElement("b"); nm.textContent = name; nm.title = name;
     const tag = document.createElement("span"); tag.className = "ftag" + (own ? " own" : shared ? " shared" : ""); tag.textContent = own ? "Vlastný" : shared ? "Spoločný" : "Vstavaný";
@@ -1649,6 +1673,7 @@ async function runTranslate() {
     state.segments.forEach((s, i) => { s.text = out[i] || s.text; s.words = null; }); // časy slov sa prepočítajú podľa nového textu
     bumpDyn(); invalidateResults(); buildSegments(); renderChips(tlDuration(), state.tlPxPerSec);
     trProgress(100, `Preklad hotový: ${TR_NAMES[from]} → ${TR_NAMES[to]}.`);
+    applyScriptFont();
     $("trUndo").hidden = false; $("trFrom").value = to;
   } catch (e) {
     console.error("Preklad:", e); $("trProg").hidden = true; $("trMsg").textContent = "Preklad zlyhal. " + (e && e.message ? e.message : "");
@@ -1897,7 +1922,7 @@ function renderSample(box, st, scale = 1) {
     wrap.append(a, b); box.append(wrap); return;
   }
   const sp = document.createElement("span"); sp.className = "t"; sp.textContent = tr("Ahoj svet");
-  sp.style.cssText = `font-family:"${st.font}",sans-serif;font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:${16 * scale}px;color:${st.color}`;
+  sp.style.cssText = `font-family:"${st.font}",${SCRIPT_FALLBACK};font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:${16 * scale}px;color:${st.color}`;
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
   else if (st.shadow) sp.style.textShadow = "0 1px 4px rgba(0,0,0,.7)";
   else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = tr("Ahoj") + " "; const b2 = document.createElement("span"); b2.textContent = tr("svet"); b2.style.color = st.hl; sp.append(a, b2); } }
@@ -1946,6 +1971,7 @@ function syncControls() {
 async function recordAspect(aspect, onProgress, job) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
   const { W, H } = exportSize(aspect), st = styleFor(aspect), stOf = (sp, seg) => styleFor(aspect, sp, seg), crop = { ...state.crop[aspect] };
+  { const all = state.segments.map((x) => x.text).join(" "); await Promise.all(SCRIPTS.filter((sc) => sc.re.test(all)).flatMap((sc) => [400, 700, 800].map((w) => document.fonts.load(`${w} 40px "${sc.font}"`, all.slice(0, 300)).catch(() => {})))); } // písma pre arabčinu, hindčinu, čínštinu
   await Promise.all([st, ...state.spk.map((x) => stOf(x.id)), ...state.segments.filter((x) => x.styleOv).map((x) => stOf(x.speaker || 1, x))].flatMap((x) => [400, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`).catch(() => {}))));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
@@ -2279,7 +2305,7 @@ function drawChunk(ctx, c, t, W, H, st) {
     for (let j = 0; j < cnt; j++, k++) {
       const o = c.words[k], text = st.caps ? o.w.toUpperCase() : o.w.toLowerCase();
       const px = base * (li === 0 ? 1 : 0.82);
-      const font = `${st.bold ? 800 : 600} ${px}px "${st.font}", sans-serif`; // jeden druh písma pre všetky slová
+      const font = `${st.bold ? 800 : 600} ${px}px "${st.font}", ${SCRIPT_FALLBACK}`; // jeden druh písma pre všetky slová
       ctx.font = font;
       arr.push({ o, k, font, px, text, w: ctx.measureText(text).width });
     }
@@ -2344,7 +2370,7 @@ const lumOf = (hex) => { const [r, g, b] = rgbOf(hex).split(",").map(Number); re
 function drawCaption(ctx, seg, t, W, H, st) {
   const anim = st.anim || "none";
   const px = Math.min(W, H) * st.size / 100, lh = px * (st.lineH ?? 1.25), padX = st.bgOpacity > 0 ? px * .3 : 0;
-  ctx.font = `${st.italic ? "italic " : ""}${st.weight ?? (st.bold ? 700 : 400)} ${px}px "${st.font}", sans-serif`;
+  ctx.font = `${st.italic ? "italic " : ""}${st.weight ?? (st.bold ? 700 : 400)} ${px}px "${st.font}", ${SCRIPT_FALLBACK}`;
   ctx.textBaseline = "middle"; ctx.lineJoin = "round";
   const words = wordsFor(seg); let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
   const lines = wrapWords(ctx, words, W * 0.84 - 2 * padX), total = lines.length * lh, sp = ctx.measureText(" ").width;
