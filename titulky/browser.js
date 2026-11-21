@@ -611,7 +611,7 @@ function drawWave(dur, px) {
   const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
   const peaks = state.waveform;
   if (peaks && peaks.length) {
-    ctx.fillStyle = "rgba(80,190,120,.7)";
+    ctx.fillStyle = "rgba(47,211,230,.65)";
     const n = peaks.length;
     for (let x = 0; x < w; x++) { const v = peaks[Math.floor(x / w * n)] || 0, bh = Math.max(1, v * h); ctx.fillRect(x, (h - bh) / 2, 1, bh); }
   } else { ctx.fillStyle = "rgba(255,255,255,.08)"; ctx.fillRect(0, h / 2 - 1, w, 2); }
@@ -1046,7 +1046,7 @@ function drawCtRuler(total, px) { // pravítko s časovým kódom ako v Resolve
 function drawStrip(cv, c, w) {
   const dpr = window.devicePixelRatio || 1, h = 50;
   cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.round(h * dpr);
-  const g = cv.getContext("2d"); g.fillStyle = "#2a4a6e"; g.fillRect(0, 0, cv.width, cv.height);
+  const g = cv.getContext("2d"); g.fillStyle = "#22123f"; g.fillRect(0, 0, cv.width, cv.height);
   const T = state.thumbs; if (!T) return;
   const tw = h * dpr * T.tw / T.th;
   for (let x = 0; x < cv.width; x += tw) {
@@ -1059,7 +1059,7 @@ function drawClipAudio(cv, c, w) { // vlna zvuku klipu (v jeho rýchlosti)
   cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.round(h * dpr);
   const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
   const peaks = state.waveform, dur = tlDuration(); if (!peaks || !peaks.length) return;
-  g.fillStyle = "rgba(200,245,215,.85)";
+  g.fillStyle = "rgba(140,240,255,.85)";
   for (let x = 0; x < w; x++) {
     const t = c.start + (x / state.ctPx) * c.speed, v = peaks[Math.floor(t / dur * peaks.length)] || 0, bh = Math.max(1, v * h * 0.95);
     g.fillRect(x, (h - bh) / 2, 1, bh);
@@ -1596,7 +1596,7 @@ function renderLibrary() {
 }
 function libBackdrop(ctx, W, H, t) { // pohyblivé farebné pozadie namiesto videa
   const g = ctx.createLinearGradient(0, 0, W, H), a = (t / LIB_LOOP) * Math.PI * 2;
-  g.addColorStop(0, `hsl(${235 + 20 * Math.sin(a)},45%,22%)`); g.addColorStop(1, `hsl(${200 + 25 * Math.cos(a)},50%,14%)`);
+  g.addColorStop(0, `hsl(${285 + 18 * Math.sin(a)},45%,18%)`); g.addColorStop(1, `hsl(${330 + 15 * Math.cos(a)},55%,12%)`); // súmrak ako vo Vice City
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = "rgba(255,255,255,.05)"; ctx.beginPath(); ctx.arc(W * (0.5 + 0.2 * Math.sin(a)), H * 0.38, W * 0.28, 0, Math.PI * 2); ctx.fill();
 }
