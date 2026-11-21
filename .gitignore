@@ -1,2 +1,4 @@
-vlaky/data/*.json
 __pycache__/
+titulky/php/config.php
+titulky/php/data/
+vlaky/data/*.json
