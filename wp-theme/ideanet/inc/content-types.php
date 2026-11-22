@@ -45,6 +45,20 @@ function ideanet_post_types() {
 			),
 		),
 
+		'ideanet_web' => array(
+			'labels'   => array( 'Ukážka webu', 'Webdizajn — ukážky' ),
+			'menu'     => 'dashicons-desktop',
+			'supports' => array( 'title', 'excerpt', 'thumbnail', 'page-attributes' ),
+			'help'     => 'Zvislé ukážky hotových webov na úvodnej stránke. Video je 9:16 — prejdenie webu na mobile. Náhľadový obrázok je prvý obrázok videa. Kým tu nič nie je, sekcia Webdizajn sa nezobrazí.',
+			'fields'   => array(
+				'poster' => array( 'Prvý obrázok videa', 'media', 'Použije sa len vtedy, keď položka nemá náhľadový obrázok. Zvislý, 9:16.', 'image' ),
+				'cat'    => array( 'Kategória', 'text', 'Štítok vľavo hore na karte — napríklad Gastro.' ),
+				'video'  => array( 'Video (MP4)', 'media', 'Zvislé 9:16, bez zvuku. Najlepšie krátke prejdenie webu zhora nadol.', 'video' ),
+				'webm'   => array( 'Video (WebM) — nepovinné', 'media', 'Druhý formát pre staršie prehliadače.', 'video' ),
+				'url'    => array( 'Odkaz na živý web', 'text', 'Bez neho sa tlačidlo pod ukážkou nezobrazí.' ),
+			),
+		),
+
 		'ideanet_redizajn' => array(
 			'labels'   => array( 'Ukážka klienta', 'Redizajn — ukážky klientov' ),
 			'menu'     => 'dashicons-admin-site-alt3',

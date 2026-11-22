@@ -257,6 +257,7 @@ function ideanet_customizer_sections_fields() {
 	$sections = array(
 		'portfolio'  => __( 'Portfólio', 'ideanet' ),
 		'vizualy'    => __( 'Vizuály', 'ideanet' ),
+		'webdizajn'  => __( 'Webdizajn', 'ideanet' ),
 		'sluzby'     => __( 'Služby', 'ideanet' ),
 		'prekoho'    => __( 'Pre koho', 'ideanet' ),
 		'proces'     => __( 'Proces', 'ideanet' ),
@@ -267,6 +268,12 @@ function ideanet_customizer_sections_fields() {
 	);
 
 	$fields = array();
+
+	$extra = array(
+		'webdizajn' => array(
+			'webdizajn_cta' => array( __( 'Webdizajn — tlačidlo pod ukážkou', 'ideanet' ), 'text', __( 'Zobrazí sa pri ukážkach, ktoré majú vyplnený odkaz na živý web.', 'ideanet' ) ),
+		),
+	);
 
 	foreach ( $sections as $slug => $name ) {
 		$fields[ 'show_' . $slug ]    = array(
@@ -289,6 +296,10 @@ function ideanet_customizer_sections_fields() {
 			sprintf( __( '%s — veta vpravo', 'ideanet' ), $name ),
 			'area',
 		);
+
+		if ( isset( $extra[ $slug ] ) ) {
+			$fields += $extra[ $slug ];
+		}
 	}
 
 	return $fields;
@@ -495,7 +506,7 @@ add_action( 'customize_preview_init', 'ideanet_customize_preview_js' );
  * @return array<string,string[]> Výber v stránke => zoznam nastavení.
  */
 function ideanet_edit_map() {
-	$sekcie = array( 'portfolio', 'vizualy', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'podmienky' );
+	$sekcie = array( 'portfolio', 'vizualy', 'webdizajn', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'podmienky' );
 
 	$map = array(
 		'.nav .brand'       => array( 'brand_name', 'brand_co', 'brand_co_bold', 'brand_photo' ),

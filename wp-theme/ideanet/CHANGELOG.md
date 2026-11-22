@@ -8,6 +8,18 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.17.0
+
+- Nová sekcia **Webdizajn** na úvodnej stránke, hneď pod vizuálmi.
+  Zvislé ukážky 9:16: klik spustí video prejdenia webu, pod ním je
+  tlačidlo na živý náhľad. Ukážky sa pridávajú v IDEANET → Webdizajn —
+  ukážky; kým tam nič nie je, sekcia sa nezobrazí.
+- Dve ukážkové videá sú v téme a doplnia sa aj na weboch, ktoré tému
+  mali zapnutú skôr. Odkaz na živý web v nich mieri na vašu domovskú
+  stránku — nahraďte ho adresou klienta.
+- Nadpis, vetu aj text tlačidla nájdete v Prispôsobiť → IDEANET →
+  Nadpisy sekcií; sekciu sa dá tam aj vypnúť.
+
 ## 1.16.0
 
 - Z ponuky redizajnu vypadol limit na počet podstránok. Veta v „Čo

@@ -166,6 +166,7 @@ function ideanet_seed() {
 	}
 
 	ideanet_seed_baliky();
+	ideanet_seed_weby( $assets );
 	ideanet_seed_redizajn( $assets );
 	ideanet_seed_menus();
 }
@@ -298,6 +299,59 @@ function ideanet_seed_baliky() {
 		$i++
 	);
 }
+
+/**
+ * Zvislé ukážky webov do sekcie Webdizajn.
+ *
+ * @param string $assets Adresa priečinka s ukážkovými súbormi.
+ */
+function ideanet_seed_weby( $assets ) {
+	if ( get_posts( array( 'post_type' => 'ideanet_web', 'post_status' => 'any', 'posts_per_page' => 1 ) ) ) {
+		return;
+	}
+
+	$weby = array(
+		array( 'Kaviareň', 'Gastro', 'Jednostránkový web s menu, otváracími hodinami a rezerváciou.' ),
+		array( 'Fitness štúdio', 'Fitness', 'Rozvrh tréningov, profily trénerov a členstvá online.' ),
+	);
+
+	foreach ( $weby as $i => $web ) {
+		$n = $i + 1;
+		ideanet_seed_post(
+			'ideanet_web',
+			$web[0],
+			'',
+			array(
+				'poster' => $assets . '/webs/web-ukazka-' . $n . '.jpg',
+				'cat'    => $web[1],
+				'video'  => $assets . '/webs/web-ukazka-' . $n . '.mp4',
+				'webm'   => $assets . '/webs/web-ukazka-' . $n . '.webm',
+				/* Zástupná adresa — nahraďte ju webom klienta. */
+				'url'    => home_url( '/' ),
+			),
+			$i,
+			$web[2]
+		);
+	}
+}
+
+/**
+ * Jednorazové doplnenie sekcie Webdizajn na už bežiacom webe.
+ *
+ * Ukážkový obsah sa plní len pri prvej aktivácii témy, takže web, ktorý
+ * tému mal zapnutú skôr, by sekciu nikdy nedostal.
+ */
+function ideanet_weby_setup() {
+	if ( get_option( 'ideanet_weby_setup' ) ) {
+		return;
+	}
+
+	ideanet_register_post_types();
+	ideanet_seed_weby( get_theme_file_uri( 'assets/media' ) );
+
+	update_option( 'ideanet_weby_setup', 1 );
+}
+add_action( 'admin_init', 'ideanet_weby_setup' );
 
 /**
  * Podstránka s ponukou redizajnu webov a dve ukážky pred/po.

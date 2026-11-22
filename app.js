@@ -863,3 +863,51 @@
 
   $('#year').textContent = new Date().getFullYear();
 })();
+
+/* ═══════════════════════════════════════════════
+   WEBDIZAJN — zvislé ukážky webov
+   Samostatný blok: keby vyššie niečo spadlo, ukážky
+   sa aj tak dajú prehrať.
+   ═══════════════════════════════════════════════ */
+(() => {
+  'use strict';
+
+  const karty = [...document.querySelectorAll('.web')];
+  if (!karty.length) return;
+
+  const zastav = (okrem) => karty.forEach(k => {
+    if (k === okrem) return;
+    const v = k.querySelector('video');
+    if (v && !v.paused) v.pause();
+  });
+
+  karty.forEach(karta => {
+    const media = karta.querySelector('.web__media');
+    const video = karta.querySelector('video');
+    if (!media || !video) return;
+
+    video.addEventListener('play',  () => karta.classList.add('is-playing'));
+    video.addEventListener('pause', () => karta.classList.remove('is-playing'));
+
+    media.addEventListener('click', () => {
+      if (!video.paused) { video.pause(); return; }
+      zastav(karta);
+      const p = video.play();
+      /* Keď prehliadok prehrávanie odmietne, karta nesmie zostať
+         tváriť sa, že beží. */
+      if (p && p.catch) p.catch(() => karta.classList.remove('is-playing'));
+    });
+  });
+
+  /* Čo odíde z obrazovky, nemá prečo ďalej bežať. */
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((zaznamy) => {
+      zaznamy.forEach(z => {
+        if (z.isIntersecting) return;
+        const v = z.target.querySelector('video');
+        if (v && !v.paused) v.pause();
+      });
+    }, { threshold: .2 });
+    karty.forEach(k => io.observe(k));
+  }
+})();

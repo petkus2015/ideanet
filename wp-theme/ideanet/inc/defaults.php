@@ -56,6 +56,11 @@ function ideanet_defaults() {
 		'vizualy_title'   => 'Vizuály a identita',
 		'vizualy_note'    => 'Logo, farby, písma a šablóny pre siete. Aby profil vyzeral ako jedna značka, nie ako zbierka príspevkov od rôznych ľudí.',
 
+		'webdizajn_eyebrow' => 'Weby',
+		'webdizajn_title'   => 'Webdizajn',
+		'webdizajn_note'    => 'Prejdite si web tak, ako ho uvidí zákazník na mobile. Klik spustí ukážku, tlačidlom pod ňou otvoríte web naživo.',
+		'webdizajn_cta'     => 'Živý náhľad',
+
 		'sluzby_eyebrow' => 'Služby',
 		'sluzby_title'   => 'Tri spôsoby spolupráce',
 		'sluzby_note'    => 'Vyberte si, čo sedí na vašu situáciu. Každá cesta má vlastný cenník — kliknutím sa dostanete rovno k nemu.',

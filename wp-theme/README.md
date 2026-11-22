@@ -96,6 +96,29 @@ prípadne cez Nastavenia → Výpis) je popis pod ním.
 
 Keď video nevyplníte, karta zostane na plagáte a nespadne.
 
+### Webdizajn — ukážky webov
+
+Sekcia **Webdizajn** na úvodnej stránke, hneď pod vizuálmi. Každá ukážka
+je zvislé video 9:16 — prejdenie webu tak, ako ho vidí zákazník na
+mobile. Klik na kartu video spustí, druhý klik ho zastaví a otvorenie
+inej ukážky tú predošlú zastaví samo.
+
+Pridávate ich v IDEANET → **Webdizajn — ukážky**:
+
+- **Nadpis** je názov klienta, **Výpis** veta pod ním.
+- **Náhľadový obrázok** je prvý obrázok videa (zvislý 9:16); ak ho
+  nemáte, dá sa použiť pole *Prvý obrázok videa*.
+- **Video (MP4)**, prípadne aj *WebM*. Bez zvuku — prehráva sa stlmené.
+- **Odkaz na živý web**: keď ho vyplníte, pod ukážkou pribudne tlačidlo,
+  ktoré web otvorí v novom okne. Bez odkazu tlačidlo nie je.
+- Text toho tlačidla sa mení v Prispôsobiť → IDEANET → *Nadpisy sekcií*
+  → **Webdizajn — tlačidlo pod ukážkou**.
+
+Video si viete pripraviť tak, že si web otvoríte v prehliadači v úzkom
+okne a nahráte, ako ním prechádzate. Odporúčaná veľkosť je 1080 × 1920,
+dĺžka do 15 sekúnd; kým tam nie je ani jedna ukážka, sekcia sa
+nezobrazí vôbec.
+
 ### Zmena cien
 
 Ceny nie sú na jednom mieste náhodou — každý balík je samostatná položka
