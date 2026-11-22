@@ -30,6 +30,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
+html { background: var(--bg); transition: background-color 1.1s var(--ease); }
 body {
   margin: 0; font-family: var(--sans); color: var(--ink); background: var(--cream);
   font-size: var(--fs-m); line-height: 1.55; -webkit-font-smoothing: antialiased;
@@ -50,7 +51,8 @@ h2 em { font-style: italic; color: var(--ink-2); }
 .hdr { position: fixed; inset: 0 0 auto; z-index: 40; background: var(--bg); transition: background-color 1.1s var(--ease), box-shadow .3s, transform .5s var(--ease-out); }
 .hdr.hide { transform: translateY(-100%); }
 .hdr.scrolled { box-shadow: 0 1px 0 var(--line); }
-.hdr-in { display: flex; align-items: center; gap: 18px; height: var(--hdr-h); padding: 0 var(--pad); border-bottom: 1px solid var(--line); }
+.hdr { padding-top: env(safe-area-inset-top, 0px); }
+.hdr-in { display: flex; align-items: center; gap: 18px; height: var(--hdr-h); padding: 0 max(var(--pad), env(safe-area-inset-right, 0px)) 0 max(var(--pad), env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); }
 .logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: .14em; font-size: 15px; text-decoration: none; }
 .logo svg { width: 26px; height: 26px; }
 .logo sup { font-size: 8px; font-weight: 500; }
@@ -82,7 +84,7 @@ h2 em { font-style: italic; color: var(--ink-2); }
 @property --sy { syntax: '<number>'; inherits: true; initial-value: 0; }
 @property --drag { syntax: '<number>'; inherits: true; initial-value: 0; }
 
-.hero { --hero-bg: #9bc983; position: relative; isolation: isolate; background: var(--hero-bg); padding-top: var(--hdr-h); overflow: hidden; }
+.hero { --hero-bg: #9bc983; position: relative; isolation: isolate; background: var(--hero-bg); padding-top: calc(var(--hdr-h) + env(safe-area-inset-top, 0px)); overflow: hidden; }
 .flood { position: absolute; inset: 0; z-index: 0; clip-path: circle(0 at 50% 50%); pointer-events: none; }
 .hero-grid {
   position: relative; z-index: 1;

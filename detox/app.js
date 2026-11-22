@@ -92,7 +92,7 @@ function titleHTML(p) {
 
 function setContent(p, i) {
   root.style.setProperty('--bg', p.bg);
-  $('meta[name=theme-color]').content = p.bg;
+  document.querySelectorAll('meta[name=theme-color]').forEach((m) => (m.content = p.bg));
   const t = $('#hTitle');
   t.innerHTML = titleHTML(p);
   t.setAttribute('aria-label', `${p.name} detox`);
@@ -697,11 +697,21 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sp.hidd
     ind.style.translate = a.offsetLeft + 'px 0';
   };
   const map = { domov: 'domov', 'o-nas': 'o-nas', detox: 'detox', obchod: 'obchod', faq: 'obchod', kontakt: 'obchod' };
-  const io = new IntersectionObserver((list) => list.forEach((e) => e.isIntersecting && set(map[e.target.id])), { rootMargin: '-45% 0px -50% 0px' });
-  Object.keys(map).forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
-  links.forEach((l) => l.addEventListener('click', () => set(l.dataset.sec)));
-  addEventListener('resize', () => { const a = cur; cur = null; if (a) set(a.dataset.sec); });
-  requestAnimationFrame(() => set('domov'));
+  // Aktívna je posledná sekcia, ktorej začiatok už prešiel 40 % výšky obrazovky.
+  const secs = Object.keys(map).map((id) => document.getElementById(id)).filter(Boolean);
+  let queued = false;
+  const update = () => {
+    queued = false;
+    if (!bar.getClientRects().length) return;
+    let id = 'domov';
+    for (const el of secs) if (el.getBoundingClientRect().top <= innerHeight * .4) id = map[el.id];
+    set(id);
+  };
+  const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', schedule, { passive: true });
+  addEventListener('resize', () => { cur = null; schedule(); });
+  document.fonts?.ready.then(() => { cur = null; schedule(); });
+  schedule();
 })();
 
 /* ===== Hlavička ===== */
@@ -711,7 +721,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sp.hidd
     const y = scrollY, h = $('#hdr');
     h.classList.toggle('scrolled', y > 40);
     if (Math.abs(y - last) > 6) {
-      h.classList.toggle('hide', y > last && y > 300 && $('#searchPanel').hidden && !$('#mainNav').classList.contains('open'));
+      h.classList.toggle('hide', innerWidth > 860 && y > last && y > 300 && $('#searchPanel').hidden && !$('#mainNav').classList.contains('open'));
       last = y;
     }
   }, { passive: true });
