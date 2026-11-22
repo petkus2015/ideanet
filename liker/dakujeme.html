@@ -60,10 +60,18 @@
 
   fetch('api/order-status?order=' + encodeURIComponent(order) + (session ? '&session_id=' + encodeURIComponent(session) : ''))
     .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-    .then(function (o) {
+    .then(render)
+    .catch(function () {
+      var last = null;
+      try { last = JSON.parse(localStorage.getItem('zz-last-order')); } catch (e) {}
+      if (last && last.id === order) return render(last);
+      $('msg').textContent = 'Objednávku ' + order + ' sme zaznamenali. Potvrdenie vám príde e-mailom.';
+    });
+
+  function render(o) {
       var name = o.firstName ? ', ' + o.firstName : '';
       $('box').hidden = false;
-      $('box').textContent = 'Číslo objednávky: ' + o.id + ' · ' + money.format(o.total / 100);
+      $('box').textContent = 'Číslo objednávky: ' + (o.id || order) + ' · ' + money.format(o.total / 100);
       if (o.payment === 'cod') {
         clearCart();
         $('eyebrow').textContent = 'Objednávka na dobierku prijatá';
@@ -79,10 +87,7 @@
         $('title').textContent = 'Moment…';
         $('msg').textContent = 'Platbu ešte overujeme. Ak ste ju dokončili, potvrdenie vám príde e-mailom. Stránku môžete o chvíľu obnoviť.';
       }
-    })
-    .catch(function () {
-      $('msg').textContent = 'Objednávku ' + order + ' sme zaznamenali. Potvrdenie vám príde e-mailom.';
-    });
+  }
 })();
 </script>
 </body>

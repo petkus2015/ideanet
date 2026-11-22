@@ -433,6 +433,14 @@
         country: fd.get('country'), note: fd.get('note')
       }
     };
+    // náhľad bez servera: objednávka sa len nasimuluje
+    if (window.LIKER_DEMO) {
+      const d = new Date();
+      const id = 'ZZ-' + d.toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(16).slice(2, 8).toUpperCase().padEnd(6, '0');
+      store.set('zz-last-order', { id, payment: payload.payment, status: payload.payment === 'cod' ? 'new_cod' : 'demo', total: totals(payload.payment).total, firstName: String(payload.customer.name).trim().split(' ')[0] });
+      window.location.href = `dakujeme.html?order=${id}&method=${payload.payment}&demo=1`;
+      return;
+    }
     const btn = $('#submit-btn');
     const label = btn.innerHTML;
     btn.disabled = true;
