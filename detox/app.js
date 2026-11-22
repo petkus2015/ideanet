@@ -617,9 +617,14 @@ function showDone(o, via) {
     <p>Číslo objednávky <b>${o.id}</b> · ${esc(o.shipping)}</p>
     ${mailNote}
     ${bank}
-    <button class="btn-dark" type="button" onclick="this.closest('dialog').close()">Späť do obchodu</button>`;
+    <button class="btn-dark" type="button" data-close-dialog>Späť do obchodu</button>`;
   $('#coDone').hidden = false;
 }
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-close-dialog]');
+  if (b) b.closest('dialog').close();
+});
 
 /* ===== Hľadanie ===== */
 const sp = $('#searchPanel'), si = $('#searchInput');
