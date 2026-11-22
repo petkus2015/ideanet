@@ -336,6 +336,26 @@ function splitChunk(text, start, end) {
   return groups.map((g) => { const d = (end - start) * len(g) / total; const s = { start: t, end: t + d, text: g.join(" ") }; t += d; return s; });
 }
 let asr = null, asrId = null, tf = null;
+// Vymazanie všetkého, čo si aplikácia uložila v prehliadači (modely, vlastné písma, nastavenia).
+// Jazyk rozhrania a prihlásenie ostávajú. Stránka sa potom obnoví, aby sa uvoľnili otvorené databázy.
+async function showStorageUse() {
+  try {
+    const e = await navigator.storage.estimate(), mb = (e.usage || 0) / 1048576;
+    $("clearSize").textContent = mb >= 1 ? `Zaberá ${mb >= 1024 ? (mb / 1024).toFixed(1) + " GB" : Math.round(mb) + " MB"}` : "Nič nie je uložené";
+  } catch { /* prehliadač veľkosť neukáže */ }
+}
+async function clearAppData() {
+  if (!confirm(tr("Vymazať z prehliadača uložené modely, vlastné písma a nastavenia Subgen? Rozpracované video sa zavrie. Modely sa pri ďalšom použití stiahnu znova."))) return;
+  $("clearData").disabled = true; $("clearSize").textContent = "Mažem…";
+  try { for (const k of Object.keys(localStorage)) if (/^titulky[.-]/.test(k) && k !== "titulky-lang") localStorage.removeItem(k); } catch {}
+  try { if (window.caches) for (const k of await caches.keys()) await caches.delete(k); } catch {}
+  const del = (name) => new Promise((r) => { try { const q = indexedDB.deleteDatabase(name); q.onsuccess = q.onerror = q.onblocked = () => r(); } catch { r(); } });
+  try {
+    const names = indexedDB.databases ? (await indexedDB.databases()).map((d) => d.name).filter(Boolean) : ["titulky-model-cache", "titulky-fonts"];
+    await Promise.race([Promise.all(names.map(del)), new Promise((r) => setTimeout(r, 3000))]);
+  } catch {}
+  location.reload();
+}
 // Model sa ukladá do vlastnej trvalej pamäte (IndexedDB), nie len do vyrovnávacej pamäte prehliadača,
 // aby sa pri ďalšom nahratí videa (aj po obnovení stránky) nesťahoval znova.
 const MODEL_KEY = "titulky.model";
@@ -2262,7 +2282,8 @@ function setup() {
   };
   wide.addEventListener("change", placeText); placeText();
   const closeSet = () => { $("setMenu").hidden = true; $("setBtn").setAttribute("aria-expanded", "false"); };
-  $("setBtn").onclick = (e) => { e.stopPropagation(); const open = $("setMenu").hidden; $("setMenu").hidden = !open; $("setBtn").setAttribute("aria-expanded", String(open)); };
+  $("setBtn").onclick = (e) => { e.stopPropagation(); const open = $("setMenu").hidden; $("setMenu").hidden = !open; $("setBtn").setAttribute("aria-expanded", String(open)); if (open) showStorageUse(); };
+  $("clearData").onclick = clearAppData;
   document.addEventListener("pointerdown", (e) => { if (!$("setMenu").hidden && !$("setMenu").contains(e.target) && !$("setBtn").contains(e.target)) closeSet(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("setMenu").hidden) { closeSet(); $("setBtn").focus(); } });
   document.querySelectorAll(".setmenu .nav").forEach((a) => a.addEventListener("click", closeSet));
