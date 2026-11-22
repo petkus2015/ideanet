@@ -423,6 +423,7 @@ async function warmUpModel() {
 // Vyberie sa vždy najpresnejší model, ktorý prehliadač zvládne: large-v3-turbo na grafickej karte (WebGPU),
 // inak small. Ak zlyhá najpresnejší, skúsi sa ďalší.
 // Mobil (najmä iPhone) má na kartu prehliadača málo pamäte: väčší model ho zhodí a stránka sa obnoví.
+const PROXY_OK = !/[?&]noproxy\b/.test(location.search);
 const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
 async function bestModels() {
   if (IS_MOBILE) return [{ id: "Xenova/whisper-base", label: "base", opts: {}, light: true }];
@@ -493,7 +494,7 @@ async function loadModel(spec, quiet) {
   const progress = (p) => { // reálne percentá len pri skutočnom sťahovaní; uložený model sa načíta bez neho (žiadne p.total)
     if (p.status !== "progress" || !p.total) return;
     files[p.file] = { loaded: p.loaded, total: p.total };
-    const big = Object.values(files).filter((f) => f.total > 1048576), all = big.length ? big : Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
+    const big = Object.entries(files).filter(([n]) => /\.onnx/.test(n)).map(([, f]) => f), all = big.length ? big : [{ loaded: 0, total: 1 }], loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
     if (!quiet) setBusy("Sťahujem model…", `${spec.label}: ${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB (len pri prvom použití)`, phasePct("model", loaded / total));
     if (spec.onProgress) spec.onProgress(loaded, total);
   };
@@ -520,7 +521,11 @@ async function loadModel(spec, quiet) {
     if (a.retry && !(lastErr && /zaseklo|abort/i.test(String(lastErr.message || lastErr)))) continue;
     try {
       tf.env.allowLocalModels = !!a.local; tf.env.allowRemoteModels = !a.local; if (a.local) tf.env.localModelPath = LOCAL_BASE;
-      try { tf.env.backends.onnx.wasm.numThreads = 1; tf.env.backends.onnx.wasm.proxy = false; } catch {}
+      try { // výpočet beží vo vlastnom vlákne (stránka nezamrzne a percentá idú), na počítači s izoláciou stránky na viacerých jadrách
+        const w = tf.env.backends.onnx.wasm;
+        w.numThreads = self.crossOriginIsolated && !IS_MOBILE ? Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1)) : 1;
+        w.proxy = PROXY_OK;
+      } catch {}
       tf.env.useCustomCache = a.cache === "idb"; if (a.cache === "idb") tf.env.customCache = idbCache;
       tf.env.useBrowserCache = a.cache === "browser"; tf.env.remoteHost = a.host;
       for (const k of Object.keys(files)) delete files[k];

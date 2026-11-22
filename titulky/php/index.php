@@ -336,6 +336,10 @@ if (!is_file($file)) {
 }
 
 header('Content-Type: text/html; charset=utf-8');
+// Izolácia stránky: prehliadač potom dovolí rozpoznávanie reči na viacerých jadrách procesora (rýchlejšie).
+// "credentialless" nechá fungovať písma Google aj knižnicu z CDN; Safari hlavičku ignoruje a beží na jednom jadre.
+header('Cross-Origin-Opener-Policy: same-origin');
+header('Cross-Origin-Embedder-Policy: credentialless');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-cache');
 echo file_get_contents($file);
