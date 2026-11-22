@@ -1,2 +1,4 @@
 vlaky/data/*.json
 __pycache__/
+liker/orders/
+liker/.env

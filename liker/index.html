@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zlatý Žĺtok — vianočný vaječný likér</title>
+<meta name="description" content="Remeselné vaječné likéry miešané ručne v malých várkach. Vianočný vaječný likér s vanilkou, škoricou a rumom. Platba kartou alebo na dobierku.">
+<meta name="theme-color" content="#F4EDE0">
+<meta property="og:title" content="Zlatý Žĺtok — vianočný vaječný likér">
+<meta property="og:description" content="Vanilka, škorica, rum a deväť čerstvých žĺtkov v každej fľaši.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23B5172F'/><ellipse cx='16' cy='17' rx='8' ry='10' fill='%23F2C14E'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#objednavka">Preskočiť na objednávku</a>
+
+<!-- Overenie veku -->
+<div class="agegate" id="agegate" role="dialog" aria-modal="true" aria-labelledby="agegate-title" hidden>
+  <div class="agegate__card">
+    <div class="agegate__logo" aria-hidden="true">ZŽ</div>
+    <h2 id="agegate-title">Máte viac ako 18 rokov?</h2>
+    <p>Predávame alkohol. Stránka je určená len plnoletým návštevníkom.</p>
+    <div class="agegate__actions">
+      <button class="btn btn--red" id="age-yes" type="button">Áno, mám 18+</button>
+      <a class="btn btn--ghost" href="https://www.google.com/">Nie</a>
+    </div>
+  </div>
+</div>
+
+<header class="topbar" id="top">
+  <a class="logo" href="#top" aria-label="Zlatý Žĺtok — na začiatok">
+    <span class="logo__mark" aria-hidden="true"></span>
+    <span class="logo__text">Zlatý Žĺtok<small>vaječné likéry</small></span>
+  </a>
+  <nav class="nav" aria-label="Hlavná navigácia">
+    <a href="#story">Vianočný</a>
+    <a href="#likery">Likéry</a>
+    <a href="#servirovanie">Ako piť</a>
+    <a href="#objednavka">Objednávka</a>
+  </nav>
+  <a class="cartbtn" href="#objednavka" aria-label="Košík">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>
+    <span class="cartbtn__count" data-cart-count>0</span>
+  </a>
+</header>
+
+<aside class="rail" aria-hidden="true">
+  <span>Edícia Vianoce 2026</span>
+</aside>
+
+<main>
+  <!-- ===== Príbeh: fľaša pripnutá v strede, kapitoly sa menia pri skrolovaní ===== -->
+  <section class="story" id="story" aria-label="Vianočný vaječný likér">
+    <div class="stage" id="stage">
+      <div class="megas" aria-hidden="true">
+        <div class="mega" data-ch="0">Vianočný</div>
+        <div class="mega mega--mid" data-ch="1">Zamatový</div>
+        <div class="mega mega--ghost" data-ch="2">Suroviny</div>
+        <div class="mega" data-ch="3">Na zdravie</div>
+      </div>
+
+      <div class="splats" id="splats"></div>
+      <div class="glass" id="glass"></div>
+      <div class="bottle-wrap" id="hero-bottle"><div class="bottle-float"></div></div>
+
+      <!-- Kapitola 0 -->
+      <div class="chap" data-ch="0">
+        <div class="panel panel--left">
+          <p class="eyebrow">Limitovaná edícia · Vianoce 2026</p>
+          <h1 class="title">Vianočný<br>vaječný likér</h1>
+          <p class="lead m-hide">Deväť čerstvých žĺtkov, bourbonská vanilka, cejlónska škorica a&nbsp;kvapka tmavého rumu. Miešame ho ručne v&nbsp;malých várkach — tak ako stará mama, len s&nbsp;presnejšou váhou.</p>
+          <div class="btns">
+            <button class="btn btn--red" type="button" data-buy="vianocny">Objednať · <span data-price="vianocny">16,90 €</span></button>
+            <a class="btn btn--ghost m-hide" href="#" data-goto="1">Ako vzniká</a>
+          </div>
+        </div>
+        <dl class="panel panel--right stats">
+          <div><dt>Alkohol</dt><dd><b>17<small>%</small></b><span>Hrejivý, nie pálivý.</span></dd></div>
+          <div><dt>Žĺtky</dt><dd><b>9</b><span>čerstvých v&nbsp;každej fľaši</span></dd></div>
+          <div><dt>Objem</dt><dd><b>0,5<small>l</small></b><span>6 mesiacov v&nbsp;chladničke</span></dd></div>
+        </dl>
+      </div>
+
+      <!-- Kapitola 1 -->
+      <div class="chap" data-ch="1">
+        <div class="panel panel--left batch m-hide">
+          <div class="batch__whisk" aria-hidden="true">
+            <svg viewBox="0 0 120 120"><g class="whisk"><path d="M60 8v42" /><path d="M60 50c-18 0-26 22-26 38s10 24 26 24 26-8 26-24-8-38-26-38z"/><path d="M60 50c-8 0-12 22-12 38s4 24 12 24 12-8 12-24-4-38-12-38z"/><path d="M60 50v62"/></g></svg>
+          </div>
+          <div>
+            <p class="eyebrow">Ručná výroba</p>
+            <p class="batch__text">Každá várka má len <b>240 fliaš</b>. Miešame ju 40 minút pri teplote, pri ktorej žĺtky zhustnú, ale nikdy sa nezrazia.</p>
+          </div>
+        </div>
+        <div class="panel panel--right">
+          <p class="eyebrow">Chuť</p>
+          <p class="lead">Hustý ako krém, hladký ako zamat. Prvá príde vanilka, potom zahreje škorica a&nbsp;rum to celé uzavrie dlhým, karamelovým dozvukom.</p>
+          <p class="note">Podávajte vychladený na 6–8&nbsp;°C. Pred otvorením pretrepte.</p>
+        </div>
+      </div>
+
+      <!-- Kapitola 2 -->
+      <div class="chap" data-ch="2">
+        <div class="panel panel--top">
+          <p class="eyebrow">Zloženie</p>
+          <h2 class="title title--sm">Štyri suroviny.<br>Žiadne skratky.</h2>
+          <p class="note m-hide">Bez konzervantov, umelých aróm a farbív.</p>
+        </div>
+      </div>
+
+      <!-- Kapitola 3 -->
+      <div class="chap" data-ch="3">
+        <div class="panel panel--right buy">
+          <p class="eyebrow">Vianočný vaječný likér · 0,5 l</p>
+          <p class="buy__price" data-price="vianocny">16,90 €</p>
+          <div class="buy__row">
+            <div class="qty" data-qty-local>
+              <button type="button" data-step="-1" aria-label="Menej">−</button>
+              <output>1</output>
+              <button type="button" data-step="1" aria-label="Viac">+</button>
+            </div>
+            <button class="btn btn--red" type="button" data-add-local="vianocny">Do košíka</button>
+          </div>
+          <p class="note">Doručenie 2–3 pracovné dni · kartou alebo na dobierku</p>
+        </div>
+      </div>
+
+      <ol class="chapnav" aria-label="Kapitoly">
+        <li><a href="#" data-goto="0">Vianočný</a></li>
+        <li><a href="#" data-goto="1">Chuť</a></li>
+        <li><a href="#" data-goto="2">Zloženie</a></li>
+        <li><a href="#" data-goto="3">Objednať</a></li>
+      </ol>
+      <div class="scrollhint" aria-hidden="true"><span></span>Skrolujte</div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>Vanilka</span><i>✶</i><span>Škorica</span><i>✶</i><span>Tmavý rum</span><i>✶</i><span>Čerstvé žĺtky</span><i>✶</i><span>Muškátový oriešok</span><i>✶</i>
+      <span>Vanilka</span><i>✶</i><span>Škorica</span><i>✶</i><span>Tmavý rum</span><i>✶</i><span>Čerstvé žĺtky</span><i>✶</i><span>Muškátový oriešok</span><i>✶</i>
+    </div>
+  </div>
+
+  <!-- ===== Rad likérov ===== -->
+  <section class="lineup" id="likery">
+    <div class="section-head reveal">
+      <p class="eyebrow">Celý rok na poličke</p>
+      <h2 class="big">Naše likéry</h2>
+      <p class="lead">Vianočný je hviezda sezóny. Ostatné tri s&nbsp;vami vydržia od januára do decembra.</p>
+    </div>
+    <div class="shelf" id="shelf"></div>
+  </section>
+
+  <!-- ===== Vianočný pás so snehom ===== -->
+  <section class="xmas" aria-labelledby="xmas-title">
+    <canvas class="snow" id="snow" aria-hidden="true"></canvas>
+    <div class="xmas__inner reveal">
+      <p class="eyebrow eyebrow--gold">Darček, ktorý sa vypije</p>
+      <h2 class="big big--light" id="xmas-title">Do Štedrého dňa</h2>
+      <div class="countdown" id="countdown" aria-live="off">
+        <div><b data-cd="d">00</b><span>dní</span></div>
+        <div><b data-cd="h">00</b><span>hodín</span></div>
+        <div><b data-cd="m">00</b><span>minút</span></div>
+        <div><b data-cd="s">00</b><span>sekúnd</span></div>
+      </div>
+      <p class="xmas__note">Objednávky do <b>18. decembra</b> doručíme ešte pred Vianocami.</p>
+      <button class="btn btn--gold" type="button" data-buy="vianocny">Chcem Vianočný likér</button>
+    </div>
+  </section>
+
+  <!-- ===== Servírovanie ===== -->
+  <section class="serve" id="servirovanie">
+    <div class="section-head reveal">
+      <p class="eyebrow">Ako ho piť</p>
+      <h2 class="big">Tri spôsoby</h2>
+    </div>
+    <div class="serve__grid">
+      <article class="serve__card reveal">
+        <span class="serve__n">01</span>
+        <h3>Vychladený, sólo</h3>
+        <p>Malý pohárik, 6–8 °C, k&nbsp;vanilkovým rožkom. Najlepšie vynikne vanilka.</p>
+      </article>
+      <article class="serve__card reveal">
+        <span class="serve__n">02</span>
+        <h3>Do kávy</h3>
+        <p>Namiesto smotany 2 cl do espressa alebo flat white. Ranný rituál cez sviatky.</p>
+      </article>
+      <article class="serve__card reveal">
+        <span class="serve__n">03</span>
+        <h3>Na zmrzlinu</h3>
+        <p>Polejte vanilkovú zmrzlinu a&nbsp;posypte škoricou. Dezert za 30 sekúnd.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== Objednávka ===== -->
+  <section class="order" id="objednavka" aria-labelledby="order-title">
+    <div class="section-head reveal">
+      <p class="eyebrow">Objednávka</p>
+      <h2 class="big" id="order-title">Do košíka</h2>
+    </div>
+
+    <div class="order__grid">
+      <form class="checkout" id="checkout" novalidate>
+        <fieldset>
+          <legend>1 · Kontakt</legend>
+          <div class="field-row">
+            <label class="field"><span>Meno a priezvisko</span><input name="name" autocomplete="name" required maxlength="120"></label>
+          </div>
+          <div class="field-row field-row--2">
+            <label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="email" required maxlength="160"></label>
+            <label class="field"><span>Telefón</span><input name="phone" type="tel" autocomplete="tel" required maxlength="40" placeholder="+421 9xx xxx xxx"></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>2 · Doručenie</legend>
+          <div class="field-row">
+            <label class="field"><span>Ulica a číslo</span><input name="street" autocomplete="street-address" required maxlength="160"></label>
+          </div>
+          <div class="field-row field-row--3">
+            <label class="field"><span>Mesto</span><input name="city" autocomplete="address-level2" required maxlength="80"></label>
+            <label class="field"><span>PSČ</span><input name="zip" autocomplete="postal-code" required maxlength="10" inputmode="numeric"></label>
+            <label class="field"><span>Krajina</span>
+              <select name="country" autocomplete="country"><option value="SK">Slovensko</option><option value="CZ">Česko</option></select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>Poznámka (nepovinné)</span><textarea name="note" rows="2" maxlength="500" placeholder="Napr. zazvoňte dvakrát, je to darček…"></textarea></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>3 · Platba</legend>
+          <div class="pay">
+            <label class="pay__opt">
+              <input type="radio" name="payment" value="card" checked>
+              <span class="pay__box">
+                <span class="pay__title">Kartou online</span>
+                <span class="pay__sub">Bezpečne cez Stripe · Visa, Mastercard, Apple Pay, Google Pay</span>
+              </span>
+              <span class="pay__tag">0 €</span>
+            </label>
+            <label class="pay__opt">
+              <input type="radio" name="payment" value="cod">
+              <span class="pay__box">
+                <span class="pay__title">Na dobierku</span>
+                <span class="pay__sub">Zaplatíte kuriérovi v hotovosti alebo kartou</span>
+              </span>
+              <span class="pay__tag" data-cod-fee>+1,50 €</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <label class="check">
+          <input type="checkbox" name="adult" required>
+          <span>Potvrdzujem, že mám viac ako 18 rokov. Kuriér môže pri doručení overiť vek.</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="terms" required>
+          <span>Súhlasím s&nbsp;<a href="#obchodne-podmienky">obchodnými podmienkami</a> a&nbsp;spracovaním osobných údajov na vybavenie objednávky.</span>
+        </label>
+
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+        <button class="btn btn--red btn--xl" type="submit" id="submit-btn">
+          <span data-submit-label>Zaplatiť kartou</span> · <span data-total>0,00 €</span>
+        </button>
+        <p class="secure"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> Platbu kartou spracuje Stripe. Údaje o karte k nám nikdy neprídu.</p>
+      </form>
+
+      <aside class="summary" aria-label="Súhrn objednávky">
+        <h3>Váš košík</h3>
+        <ul class="summary__items" id="summary-items"></ul>
+        <div class="summary__empty" id="summary-empty">
+          <p>Košík je zatiaľ prázdny.</p>
+          <button class="btn btn--red" type="button" data-buy="vianocny">Pridať Vianočný likér</button>
+        </div>
+        <dl class="summary__totals">
+          <div><dt>Medzisúčet</dt><dd data-subtotal>0,00 €</dd></div>
+          <div><dt>Doprava</dt><dd data-shipping>4,90 €</dd></div>
+          <div data-cod-row hidden><dt>Dobierka</dt><dd data-cod>1,50 €</dd></div>
+          <div class="summary__total"><dt>Spolu s DPH</dt><dd data-total>0,00 €</dd></div>
+        </dl>
+        <p class="summary__free" data-free-hint></p>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" id="obchodne-podmienky">
+  <div class="footer__brand">
+    <span class="logo__mark" aria-hidden="true"></span>
+    <p><b>Zlatý Žĺtok</b><br>Remeselné vaječné likéry</p>
+  </div>
+  <div class="footer__cols">
+    <div>
+      <h4>Kontakt</h4>
+      <p>objednavky@zlatyzltok.sk<br>+421 900 000 000</p>
+    </div>
+    <div>
+      <h4>Doprava a platba</h4>
+      <p>Kuriér 4,90 €, nad 50 € zadarmo.<br>Kartou online (Stripe) alebo na dobierku +1,50 €.</p>
+    </div>
+    <div>
+      <h4>Obchodné podmienky</h4>
+      <p>Prevádzkovateľ, IČO a&nbsp;reklamačný poriadok doplňte pred spustením.</p>
+    </div>
+  </div>
+  <p class="footer__legal">Alkohol predávame len osobám starším ako 18 rokov. Pite zodpovedne. © <span id="year">2026</span> Zlatý Žĺtok</p>
+</footer>
+
+<a class="cartbar" id="cartbar" href="#objednavka" hidden>
+  <span><b data-cart-count>0</b> ks v košíku</span>
+  <span class="cartbar__go"><span data-total>0,00 €</span> →</span>
+</a>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="art.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>
