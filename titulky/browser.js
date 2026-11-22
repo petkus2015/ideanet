@@ -644,19 +644,17 @@ function playableBanner() {
   const bad = state.playable === false;
   $("noplay").hidden = !bad;
   $("exportAll").disabled = bad; $("exportCur").disabled = bad;
-  if (state.out) state.out.dl.disabled = bad;
 }
 function saveUrl(url, name) {
   const a = document.createElement("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove();
 }
+const saveVideo = (k) => { const r = state.results[k]; if (r) saveUrl(r.url, `subgen-${k.replace(":", "x")}.${r.ext}`); };
 function saveText(text, name, type) {
   const u = URL.createObjectURL(new Blob([text], { type })); saveUrl(u, name); setTimeout(() => URL.revokeObjectURL(u), 4000);
 }
 function reflectResult() { // premietne uložený výsledok (ak už bol tento formát vyexportovaný) do viditeľnej karty
   if (!state.out) return;
   const r = state.results[state.out.k];
-  state.out.dl.classList.toggle("ready", !!r);
-  state.out.dl.title = r ? "Stiahnuť hotové video" : "Exportovať a stiahnuť";
   state.out.prog.hidden = true;
 }
 function invalidateResults() { // zmena štýlu/orezu/textu spraví doterajšie exporty neplatnými
@@ -672,13 +670,10 @@ function buildOut() {
   const el = document.createElement("div"); el.className = "out"; el.dataset.a = k;
   el.innerHTML = `<div class="out-head"><span>${a.name} (${k})</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${a.icon}</svg></div>
     <div class="pv"><canvas aria-label="Náhľad ${k}"></canvas></div><div class="out-time">0:00 / 0:00</div>
-    <div class="out-btns"><button class="play">▶ Prehrať</button><button class="dl" title="Exportovať a stiahnuť" aria-label="Exportovať a stiahnuť ${k}">${ICON_DL}</button></div>
     <div class="out-prog" hidden><div class="bar"><i></i></div><span></span></div>`;
   box.append(el);
   const o = { k, el, cv: el.querySelector("canvas"), pv: el.querySelector(".pv"), time: el.querySelector(".out-time"),
-    dl: el.querySelector(".dl"), play: el.querySelector(".play"), prog: el.querySelector(".out-prog"), drag: null };
-  o.play.onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
-  o.dl.onclick = () => { const r = state.results[k]; if (r) saveUrl(r.url, `titulky-${k.replace(":", "x")}.${r.ext}`); else exportAspects([k]); };
+    prog: el.querySelector(".out-prog"), drag: null };
   // titulky sa presúvajú ťahaním priamo v náhľade
   const SNAP = 10; // magnet: do 10 px od stredu sa titulok prichytí na stred (vodorovne aj zvisle), Alt magnet vypne
   const move = (e) => {
@@ -1530,7 +1525,6 @@ function loop() {
         ctx.fillText(tr("Vystrihnuté"), w / 2, h / 2); ctx.textAlign = "left";
       }
       o.time.textContent = label;
-      o.play.textContent = video.paused ? "▶ Prehrať" : "■ Stop";
     }
     $("tlPlay").textContent = video.paused ? "▶" : "❚❚";
     syncTimelinePlayhead();
@@ -2170,6 +2164,7 @@ async function exportAspects(list) {
   try {
     for (let idx = 0; idx < list.length; idx++) {
       const k = list[idx]; if (job !== state.job) break;
+      if (state.results[k] && !DEMO) { saveVideo(k); continue; } // už vyexportované a nezmenené: len sa znova stiahne
       const live = state.out && state.out.k === k ? state.out : null;
       const bar = live ? live.prog.querySelector("i") : null, label = live ? live.prog.querySelector("span") : null;
       if (live) { live.prog.hidden = false; bar.style.width = "0%"; label.textContent = "Pripravujem…"; }
@@ -2190,9 +2185,9 @@ async function exportAspects(list) {
           if (DEMO) { // v ukážke sa sťahovanie nedá, výsledok sa prehrá priamo v karte
             const v = document.createElement("video"); v.className = "out-result"; v.controls = true; v.playsInline = true; v.src = r.url; live.el.insertBefore(v, live.prog);
           }
-          label.textContent = "Hotovo, stiahni tlačidlom ⬇"; bar.style.width = "100%";
-          live.dl.classList.add("ready"); live.dl.title = "Stiahnuť hotové video";
+          label.textContent = DEMO ? "Hotovo" : "Hotovo, video sa stiahlo."; bar.style.width = "100%";
         }
+        if (!DEMO) saveVideo(k); // stiahne sa iba po exporte (export je len pre prihlásených s predplatným)
       } catch (e) { if (job === state.job) { $("export-error").textContent = e.message || "Export zlyhal."; $("export-error").hidden = false; } if (live) live.prog.hidden = true; }
     }
   } finally {
@@ -2251,7 +2246,7 @@ function setup() {
   $("dl-vtt").onclick = () => saveText(toVtt(cutSegments()), "titulky.vtt", "text/vtt");
   $("newproject").onclick = reset;
   document.querySelectorAll("#steps .step").forEach((b) => b.onclick = () => setTab(b.dataset.tab));
-  $("exportCur").onclick = () => { const r = state.results[state.aspect]; if (r) saveUrl(r.url, `titulky-${state.aspect.replace(":", "x")}.${r.ext}`); else exportAspects([state.aspect]); };
+  $("exportCur").onclick = () => exportAspects([state.aspect]);
   $("zoom").oninput = (e) => { const q = state.crop[state.aspect]; if (!q) return; q.zoom = +e.target.value; markActive(); invalidateResults(); };
   $("cropReset").onclick = () => { state.crop[state.aspect] = { zoom: 1, cx: 0.5, cy: 0.5 }; markActive(); invalidateResults(); };
   $("fontUp").onclick = () => { if (fontServer.on) setPage("brand"); else $("fontFile").click(); };
