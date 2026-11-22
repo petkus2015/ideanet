@@ -78,3 +78,13 @@ Na statickom hostingu bez servera (napr. GitHub Pages) sa stránka zobrazí, no 
   Kapitoly a kľúčové snímky fľaše/pohára sú v `app.js` (`CH`, `BOTTLE_KEYS`, `GLASS_KEYS`, `SPLATS`).
 - Rešpektuje `prefers-reduced-motion`.
 - Na mobile sa fľaša zmenší, texty idú pod ňu, rad likérov sa posúva prstom.
+
+## Ukážka pre klienta v jednom súbore
+
+```bash
+python3 build-ukazka.py   # vytvorí zlaty-zltok-ukazka.html
+```
+
+Celý web (CSS, JS, produkty) v jednom HTML súbore. Otvorí sa dvojklikom bez servera,
+košík funguje a objednávka sa len nasimuluje (zobrazí poďakovanie s označením „Ukážka“).
+Písma sa načítajú z Google Fonts, takže offline sa použije náhradné písmo.

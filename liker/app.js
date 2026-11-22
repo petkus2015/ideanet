@@ -438,6 +438,7 @@
       const d = new Date();
       const id = 'ZZ-' + d.toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(16).slice(2, 8).toUpperCase().padEnd(6, '0');
       store.set('zz-last-order', { id, payment: payload.payment, status: payload.payment === 'cod' ? 'new_cod' : 'demo', total: totals(payload.payment).total, firstName: String(payload.customer.name).trim().split(' ')[0] });
+      if (window.LIKER_STANDALONE) { showThanks(id, payload); return; }
       window.location.href = `dakujeme.html?order=${id}&method=${payload.payment}&demo=1`;
       return;
     }
@@ -464,6 +465,37 @@
       renderCart();
     }
   });
+
+  /* poďakovanie priamo na stránke (samostatná ukážka v jednom súbore) */
+  function showThanks(id, payload) {
+    const t = totals(payload.payment);
+    const name = String(payload.customer.name).trim().split(' ')[0];
+    const cod = payload.payment === 'cod';
+    const wrap = document.createElement('div');
+    wrap.className = 'agegate';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.innerHTML = `
+      <div class="agegate__card">
+        <div class="thanks__bottle" style="height:200px;animation:none">${Art.bottle(PRODUCTS.vianocny)}</div>
+        <span class="demo-flag">Ukážka — objednávka sa neodoslala</span>
+        <p class="eyebrow">${cod ? 'Objednávka na dobierku prijatá' : 'Platba prijatá'}</p>
+        <h2>Ďakujeme${name ? ', ' + name.replace(/[<>&"]/g, '') : ''}!</h2>
+        <p>${cod ? 'Fľaše zabalíme a odošleme do 2 pracovných dní. Sumu zaplatíte kuriérovi pri prevzatí.' : 'Na ostrom webe by tu zákazník zaplatil kartou cez Stripe.'}</p>
+        <p class="thanks__box">Číslo objednávky: ${id} · ${fmt(t.total)}</p>
+        <div class="agegate__actions"><button class="btn btn--red" type="button">Späť na web</button></div>
+      </div>`;
+    document.body.appendChild(wrap);
+    document.body.style.overflow = 'hidden';
+    cart = {}; store.set('zz-cart', cart); renderCart();
+    form.reset(); renderCart();
+    $('button', wrap).focus();
+    $('button', wrap).addEventListener('click', () => {
+      wrap.remove();
+      document.body.style.overflow = '';
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    });
+  }
 
   /* ---------------- sneh ---------------- */
   function snow() {
@@ -531,6 +563,7 @@
 
   /* ---------------- štart ---------------- */
   async function loadCatalog() {
+    if (window.LIKER_CATALOG) return window.LIKER_CATALOG;
     const res = await fetch('data/products.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error('Katalóg sa nenačítal');
     return res.json();

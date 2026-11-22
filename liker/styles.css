@@ -549,7 +549,7 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
 /* overenie veku */
 .agegate { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 20px; background: rgba(29, 23, 19, .72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .agegate[hidden] { display: none; }
-.agegate__card { max-width: 420px; padding: 34px 28px; text-align: center; background: var(--paper); border: 1.5px solid var(--ink); box-shadow: 10px 10px 0 var(--red); animation: pop .6s var(--ease-back); }
+.agegate__card { max-height: 100%; overflow-y: auto; max-width: 420px; padding: 34px 28px; text-align: center; background: var(--paper); border: 1.5px solid var(--ink); box-shadow: 10px 10px 0 var(--red); animation: pop .6s var(--ease-back); }
 @keyframes pop { from { transform: scale(.85); opacity: 0; } }
 .agegate__logo { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; background: var(--red); color: var(--paper); font-family: var(--display); font-size: 1.5rem; }
 .agegate h2 { margin: 0 0 8px; font-family: var(--display); font-weight: 400; font-size: 2rem; text-transform: uppercase; line-height: 1; }
