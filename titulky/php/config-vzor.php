@@ -6,10 +6,10 @@ return [
     'stripe_secret_key' => '',            // napr. rk_live_... alebo sk_live_...
     // Stripe → Payment Links → produkt Subgen 4,90 € ročne (už vyplnené)
     'payment_link' => 'https://buy.stripe.com/28E9AU0xs0BIerSgJzbZe01',
-    // Voliteľné: Stripe → Developers → Webhooks → endpoint https://TVOJWEB/?auth=webhook
+    // Voliteľné: Stripe → Developers → Webhooks → endpoint https://subgen.ideanet.sk/?auth=webhook
     // udalosti invoice.paid a customer.subscription.deleted; sem vlož "Signing secret" (whsec_...)
     'stripe_webhook_secret' => '',
     'price_label' => '4,90 € ročne',
-    'mail_from' => '',                    // odosielateľ e-mailov na obnovu hesla, napr. no-reply@tvojweb.sk
+    'mail_from' => '',                    // odosielateľ e-mailov na obnovu hesla, napr. no-reply@ideanet.sk (prázdne = no-reply@subgen.ideanet.sk)
     'site_name' => 'Subgen',
 ];
