@@ -2706,5 +2706,5 @@ const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} -
 const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${cueText(s.text)}\n`).join("\n");
 
 
-if (MOCK) window.__test = { stallGuardFetch, captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels, segmentFeatures, detectSpeakers, uploadFont, customFonts };
+if (MOCK) window.__test = { drawCaption, drawChunk, buildChunks, PRESETS, ANIMS, stallGuardFetch, captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels, segmentFeatures, detectSpeakers, uploadFont, customFonts };
 setup();
