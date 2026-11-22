@@ -56,15 +56,15 @@ const art = a => scene(a.scene, a.id) + (!PHOTOS[a.id] && !USE_FILES ? '' : `<im
 const credit = id => CREDITS[id] ? `<p class="credit">Foto: ${esc(CREDITS[id].author)} · ${esc(CREDITS[id].license)} · Wikimedia Commons</p>` : '';
 
 /* ---------- Ilustrácie (SVG, bez externých obrázkov) ---------- */
-const PAL = {
-  cliffs: ['#6fb8ec', '#e9f1ff', '#e09a4a', '#c97a32', '#2ba3c4'],
-  bay: ['#8fd4ff', '#fff5e0', '#5db3a8', '#e8dcc2', '#18b6c9'],
-  dark: ['#e6a469', '#554c7a', '#2d2d3a', '#16161e', '#1f3a58'],
-  alps: ['#7aa7ff', '#ffd9b2', '#5f7aa8', '#3b4c73', '#1c2b45'],
-  desert: ['#f2a65a', '#ffe0a8', '#d9823d', '#b9612a', '#8c4420'],
-  ruins: ['#e8b08a', '#ffe6cf', '#c9724a', '#a24f33', '#6e3322'],
-  forest: ['#3f7d5a', '#bfe3a2', '#2b6a44', '#174d30', '#0e3320'],
-  city: ['#ff9aa8', '#ffe2c4', '#7a5c9e', '#4a3770', '#2a1f4a']
+const PAL = {   // ilustrácie v odtieňoch palety Luna: #A7EBF2 #54ACBF #26658C #023859 #011C40
+  cliffs: ['#54ACBF', '#E3F8FB', '#26658C', '#1B5478', '#023859'],
+  bay: ['#A7EBF2', '#F2FDFE', '#54ACBF', '#A7EBF2', '#26658C'],
+  dark: ['#26658C', '#54ACBF', '#023859', '#011C40', '#023859'],
+  alps: ['#54ACBF', '#A7EBF2', '#26658C', '#023859', '#011C40'],
+  desert: ['#A7EBF2', '#E3F8FB', '#54ACBF', '#26658C', '#023859'],
+  ruins: ['#26658C', '#A7EBF2', '#54ACBF', '#023859', '#011C40'],
+  forest: ['#023859', '#54ACBF', '#26658C', '#023859', '#011C40'],
+  city: ['#023859', '#A7EBF2', '#26658C', '#011C40', '#023859']
 };
 function scene(type, id = '') {
   const p = PAL[type] || PAL.alps, u = 'g' + id + type, h = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
