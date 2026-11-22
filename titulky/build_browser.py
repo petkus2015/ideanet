@@ -50,6 +50,6 @@ if len(sys.argv) > 1:  # ukážka: vzorové titulky, výsledok sa prehrá v kart
     body = re.search(r"<body>(.*)</body>", demo, re.S).group(1)
     gutters = ("<style>.app{padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}"
                "@media(max-width:820px){.content{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}</style>")
-    frag = f'<title>Titulky</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{head_links}\n{style}\n{gutters}\n{body}\n'
+    frag = f'<title>Subgen</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{head_links}\n{style}\n{gutters}\n{body}\n'
     Path(sys.argv[1]).write_text(frag, encoding="utf-8")
     print("demo", sys.argv[1])

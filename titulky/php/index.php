@@ -1,5 +1,5 @@
 <?php
-// Titulky: hostovanie aplikácie na PHP webhostingu (nahranie cez FTP).
+// Subgen: hostovanie aplikácie na PHP webhostingu (nahranie cez FTP).
 // Rozpoznanie reči a export videa bežia v prehliadači návštevníka, server iba zobrazí stránku.
 // Diagnostika: otvor adresu s ?diag=1 (napr. https://tvojweb.sk/titulky/?diag=1)
 

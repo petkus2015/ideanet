@@ -54,12 +54,12 @@ Spoločné fonty (Značka):
   1. Stripe -> Products: produkt "Subgen" za 4,90 € ročne (Recurring, Yearly).
   2. Stripe -> Payment Links -> nový odkaz na tento produkt. V časti "After payment" zvoľ
      "Don't show confirmation page" a presmerovanie na:
-        https://titulkovac.ideanet.sk/?platba={CHECKOUT_SESSION_ID}
+        https://subgen.ideanet.sk/?platba={CHECKOUT_SESSION_ID}
   3. Stripe -> Developers -> API keys -> "Create restricted key": práva Read pre Checkout Sessions
      a Subscriptions (stačí to, nič iné). Skopíruj kľúč rk_live_...
   4. Súbor config-vzor.php premenuj na config.php, vlož doň kľúč a odkaz z kroku 2, nahraj cez FTP.
      config.php pri ďalších aktualizáciách NEPREPISUJ (v ZIP-e nie je).
-  5. Odporúčané: Stripe -> Developers -> Webhooks -> endpoint https://titulkovac.ideanet.sk/?auth=webhook
+  5. Odporúčané: Stripe -> Developers -> Webhooks -> endpoint https://subgen.ideanet.sk/?auth=webhook
      s udalosťami invoice.paid a customer.subscription.deleted. "Signing secret" (whsec_...) daj do config.php.
      Vďaka tomu sa ročné obnovenie a zrušenie predplatného prejaví v účte samo.
   6. Over cez ?diag=1: má ukázať "config.php: ok, Stripe kľúč: nastavený, platobný odkaz: nastavený".
