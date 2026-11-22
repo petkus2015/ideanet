@@ -157,5 +157,14 @@
     return `<svg viewBox="-180 -180 360 360" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g fill="${color}"><path d="${d} Z"/>${drops}${opts.drip === false ? '' : drip}</g></svg>`;
   }
 
-  window.ZZArt = { bottle, glass, splat, rng };
+  /** Produkt: fotka, ak je v katalógu, inak nakreslená fľaša */
+  function product(p, opts = {}) {
+    if (p.image) {
+      return `<img class="photo" src="${esc(p.image)}" alt="${esc(p.name)}" decoding="async" ${opts.eager ? 'fetchpriority="high"' : 'loading="lazy"'} style="aspect-ratio:${p.imageRatio || 0.33}">`;
+    }
+    return bottle(p, opts);
+  }
+  const ratio = (p) => (p.image ? (p.imageRatio || 0.33) : 1 / 3);
+
+  window.ZZArt = { bottle, glass, splat, rng, product, ratio };
 })();

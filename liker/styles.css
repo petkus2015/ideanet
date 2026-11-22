@@ -215,13 +215,14 @@ button { cursor: pointer; }
 .bottle-wrap {
   position: absolute; z-index: 3;
   left: 50%; bottom: 3vh;
-  height: min(84vh, 860px); aspect-ratio: 200 / 600;
-  margin-left: calc(min(84vh, 860px) * -1 / 6);
+  height: min(86vh, 880px); aspect-ratio: var(--ar, .3333);
+  margin-left: calc(min(86vh, 880px) * var(--ar, .3333) * -.5);
   will-change: transform;
   pointer-events: none;
 }
 .bottle-float { width: 100%; height: 100%; }
-.bottle-float svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(24px 26px 22px rgba(70, 30, 10, .26)); }
+.bottle-float svg, .bottle-float img { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(24px 26px 22px rgba(70, 30, 10, .26)); }
+.photo { display: block; height: 100%; width: auto; max-width: none; object-fit: contain; user-select: none; -webkit-user-drag: none; }
 body:not(.is-loaded) .bottle-float { visibility: hidden; }
 .is-loaded .bottle-float { animation: drop 1.3s var(--ease-back) both, sway 7s 1.4s ease-in-out infinite; }
 @keyframes drop { from { transform: translateY(-115vh) rotate(-14deg); } }
@@ -317,7 +318,7 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
   .mega { top: calc(var(--header) + 2svh); }
   .mega--mid { top: calc(var(--header) + 2svh); }
   .mega--ghost { bottom: auto; top: calc(var(--header) + 2svh); }
-  .bottle-wrap { height: 50svh; bottom: 32svh; margin-left: calc(50svh * -1 / 6); }
+  .bottle-wrap { height: 52svh; bottom: 31svh; margin-left: calc(52svh * var(--ar, .3333) * -.5); }
   .glass { height: 22svh; bottom: 32svh; }
   .panel--left, .panel--right, .panel--top {
     left: 16px; right: 16px; width: auto; top: auto;
@@ -342,7 +343,7 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
   .btns .btn { flex: 1; }
 }
 @media (max-width: 760px) and (max-height: 640px) {
-  .bottle-wrap { height: 44svh; margin-left: calc(44svh * -1 / 6); bottom: 34svh; }
+  .bottle-wrap { height: 44svh; margin-left: calc(44svh * var(--ar, .3333) * -.5); bottom: 34svh; }
   .lead { display: none; }
 }
 
@@ -379,8 +380,8 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
 .card__splat { position: absolute; left: 50%; top: 50%; width: 92%; translate: -50% -50%; transform: scale(.82) rotate(0deg); transition: transform .8s var(--ease-back); }
 .card__splat svg { width: 100%; height: auto; overflow: visible; }
 .card:hover .card__splat { transform: scale(1) rotate(20deg); }
-.card__bottle { position: absolute; left: 50%; bottom: -6%; height: 96%; aspect-ratio: 200 / 600; translate: -50% 0; transition: transform .7s var(--ease-back); }
-.card__bottle svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(14px 16px 12px rgba(60, 25, 8, .28)); }
+.card__bottle { position: absolute; left: 50%; bottom: -6%; height: 96%; aspect-ratio: var(--ar, .3333); translate: -50% 0; transition: transform .7s var(--ease-back); }
+.card__bottle svg, .card__bottle img { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(14px 16px 12px rgba(60, 25, 8, .28)); }
 .card:hover .card__bottle { transform: translateY(-7%) rotate(-5deg); }
 .card__badge { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .card__badge--hot { background: var(--red); }
@@ -487,7 +488,7 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
 .summary__item { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); animation: itemIn .45s var(--ease-out); }
 @keyframes itemIn { from { opacity: 0; transform: translateX(-12px); } }
 .summary__thumb { height: 74px; }
-.summary__thumb svg { height: 100%; width: auto; margin: 0 auto; overflow: visible; }
+.summary__thumb svg, .summary__thumb img { height: 100%; width: auto; margin: 0 auto; overflow: visible; }
 .summary__name small { white-space: nowrap; font-weight: 500; color: var(--ink-soft); }
 .summary__name { margin: 0 0 6px; font-weight: 700; font-size: .92rem; line-height: 1.25; }
 .summary__ctrl { display: flex; align-items: center; gap: 8px; }
@@ -544,7 +545,7 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
 
 /* lietajúca fľaša do košíka */
 .flyer { position: fixed; z-index: 80; width: 40px; height: 120px; pointer-events: none; }
-.flyer svg { width: 100%; height: 100%; }
+.flyer svg, .flyer img { width: auto; height: 100%; margin: 0 auto; }
 
 /* overenie veku */
 .agegate { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 20px; background: rgba(29, 23, 19, .72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
@@ -560,7 +561,7 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
 .thanks { min-height: 100svh; display: grid; place-items: center; padding: calc(var(--header) + 24px) var(--gutter) 48px; text-align: center; }
 .thanks__card { max-width: 620px; }
 .thanks__bottle { height: 280px; width: fit-content; margin: 0 auto 18px; animation: drop 1.2s var(--ease-back) both; }
-.thanks__bottle svg { height: 100%; width: auto; overflow: visible; filter: drop-shadow(16px 18px 14px rgba(60, 25, 8, .26)); }
+.thanks__bottle svg, .thanks__bottle img { height: 100%; width: auto; overflow: visible; filter: drop-shadow(16px 18px 14px rgba(60, 25, 8, .26)); }
 .thanks .big { font-size: clamp(3rem, 12vw, 7rem); margin-bottom: 16px; }
 .thanks__box { display: inline-block; margin: 8px 0 24px; padding: 14px 20px; border: 1.5px solid var(--ink); background: var(--paper-2); font-weight: 600; }
 .demo-flag { display: inline-block; margin-bottom: 14px; padding: 4px 10px; border-radius: 999px; background: var(--gold); font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }

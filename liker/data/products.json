@@ -5,20 +5,34 @@
     "price": 490,
     "freeFrom": 5000,
     "codFee": 150,
-    "countries": { "SK": "Slovensko", "CZ": "Česko" }
+    "countries": {
+      "SK": "Slovensko",
+      "CZ": "Česko"
+    }
   },
   "products": [
     {
       "id": "vianocny",
-      "name": "Vianočný vaječný likér",
+      "name": "Vianočný domáci vaječňák – vanilka",
       "short": "Vianočný",
       "volume": "0,5 l",
-      "abv": 17,
+      "abv": 11,
       "price": 1690,
       "badge": "Limitovaná edícia",
-      "desc": "Bourbonská vanilka, cejlónska škorica, štipka muškátového orieška a tmavý rum.",
+      "desc": "Domáci vaječňák s vanilkou vo vianočnej edícii. Ručne vyrábaný z najkvalitnejších surovín.",
       "icon": "snow",
-      "colors": { "label": "#B5172F", "ink": "#FFF3E2", "accent": "#E6B85C", "cap": "#7E0E1F", "liquid": ["#E2AE3E", "#F8DE93"] }
+      "colors": {
+        "label": "#B5172F",
+        "ink": "#FFF3E2",
+        "accent": "#E6B85C",
+        "cap": "#7E0E1F",
+        "liquid": [
+          "#E2AE3E",
+          "#F8DE93"
+        ]
+      },
+      "image": "img/vianocny.webp",
+      "imageRatio": 0.2045
     },
     {
       "id": "klasicky",
@@ -30,7 +44,16 @@
       "badge": "Celý rok",
       "desc": "Žĺtky, vanilka a rum. Recept, ktorý netreba vylepšovať.",
       "icon": "egg",
-      "colors": { "label": "#F1E1BF", "ink": "#3A2414", "accent": "#B5172F", "cap": "#3A2414", "liquid": ["#E8B84A", "#FBE3A0"] }
+      "colors": {
+        "label": "#F1E1BF",
+        "ink": "#3A2414",
+        "accent": "#B5172F",
+        "cap": "#3A2414",
+        "liquid": [
+          "#E8B84A",
+          "#FBE3A0"
+        ]
+      }
     },
     {
       "id": "cokoladovy",
@@ -42,7 +65,16 @@
       "badge": "Celý rok",
       "desc": "Belgické kakao 70 % s vanilkovým základom. Dezert vo fľaši.",
       "icon": "bean",
-      "colors": { "label": "#3B2419", "ink": "#F6E7D2", "accent": "#D9A441", "cap": "#23140D", "liquid": ["#7A4A2A", "#B07A4F"] }
+      "colors": {
+        "label": "#3B2419",
+        "ink": "#F6E7D2",
+        "accent": "#D9A441",
+        "cap": "#23140D",
+        "liquid": [
+          "#7A4A2A",
+          "#B07A4F"
+        ]
+      }
     },
     {
       "id": "slany-karamel",
@@ -54,7 +86,16 @@
       "badge": "Novinka",
       "desc": "Karamel varený u nás s vločkami morskej soli. Sladký, ale nie presladený.",
       "icon": "drop",
-      "colors": { "label": "#1F4D3A", "ink": "#F4EDE0", "accent": "#E2B565", "cap": "#12301F", "liquid": ["#C98A3A", "#EBC27B"] }
+      "colors": {
+        "label": "#1F4D3A",
+        "ink": "#F4EDE0",
+        "accent": "#E2B565",
+        "cap": "#12301F",
+        "liquid": [
+          "#C98A3A",
+          "#EBC27B"
+        ]
+      }
     }
   ]
 }
