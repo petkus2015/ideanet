@@ -201,3 +201,12 @@ nahraďte vlastnými. Platba kartou online potrebuje serverovú časť (napr. St
 Checkout alebo WooCommerce); stránka teraz ponúka prevod, dobierku a platbu pri odbere.
 
 Košík a údaje zákazníka sa pamätajú v prehliadači (`localStorage`).
+
+**Pohyb a fluidný dizajn.** Veľkosti písma, medzery, rádiusy aj hlavný vizuál sa plynulo
+škálujú podľa šírky okna (`clamp()` tokeny v `:root` v `detox/styles.css`). Prechod medzi
+šťavami: farba sa rozleje z miesta kliknutia, nadpis sa vymení po písmenách, ovál sa odkryje
+kruhovou maskou, fľaša prilieta s pružinou a kúsky ovocia vyletia zo stredu. Ďalej: paralaxa
+za kurzorom a pri skrolovaní, ťahanie fľaše prstom/myšou, automatické prepínanie každých 7 s
+(krúžok okolo šípky, tlačidlo pauzy; zastaví sa mimo obrazovky, pri otvorenom košíku či
+ovládaní klávesnicou), let fľaštičky do košíka, odhaľovanie sekcií pri skrolovaní a 3D náklon
+kariet. Pri nastavení „obmedziť pohyb“ v systéme sa animácie aj automatické prepínanie vypnú.

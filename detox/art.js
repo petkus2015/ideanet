@@ -90,6 +90,41 @@
       const u = 'f' + (n++);
       return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${KINDS[kind](u, rng(seed))}</svg>`;
     },
+    piece(kind, v) {
+      const u = 'p' + (n++);
+      const leaf = (c1, c2) => `<defs><linearGradient id="${u}lf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>
+        <path d="M32 4C52 16 56 42 32 60 8 42 12 16 32 4Z" fill="url(#${u}lf)"/><path d="M32 10V56M32 24l-9-6M32 34l10-7M32 44l-10-6" stroke="#fff" stroke-opacity=".45" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+      const slice = (rind, pith, flesh, segs) => {
+        let g = `<circle cx="32" cy="32" r="29" fill="${rind}"/><circle cx="32" cy="32" r="25.5" fill="${pith}"/>`;
+        for (let k = 0; k < segs; k++) {
+          const t = k / segs * Math.PI * 2, t2 = (k + 1) / segs * Math.PI * 2, q = 23;
+          g += `<path d="M32 32L${32 + Math.cos(t) * q} ${32 + Math.sin(t) * q}A${q} ${q} 0 0 1 ${32 + Math.cos(t2) * q} ${32 + Math.sin(t2) * q}Z" fill="${flesh}" stroke="${pith}" stroke-width="2"/>`;
+        }
+        return g + `<circle cx="32" cy="32" r="3" fill="${pith}"/>`;
+      };
+      const ball = (c1, c2, c3) => `<defs><radialGradient id="${u}b" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="${c1}"/><stop offset=".55" stop-color="${c2}"/><stop offset="1" stop-color="${c3}"/></radialGradient></defs>`;
+      const berry = () => {
+        let g = ball('#ff9aac', '#d8234c', '#7d0a25');
+        for (let k = 0; k < 10; k++) { const t = k / 10 * Math.PI * 2; g += `<circle cx="${32 + Math.cos(t) * 17}" cy="${34 + Math.sin(t) * 19}" r="7.5" fill="url(#${u}b)"/>`; }
+        for (let k = 0; k < 5; k++) { const t = k / 5 * Math.PI * 2 + .4; g += `<circle cx="${32 + Math.cos(t) * 8}" cy="${34 + Math.sin(t) * 9}" r="7.5" fill="url(#${u}b)"/>`; }
+        return g + `<circle cx="32" cy="34" r="7.5" fill="url(#${u}b)"/><path d="M24 13l8 5 8-5-4 7h-8z" fill="#3f8a27"/>`;
+      };
+      const floret = () => {
+        let g = '<path d="M28 60V36h8v24z" fill="#8fc46a"/>';
+        [[22, 24, 12], [40, 22, 13], [31, 14, 12], [30, 30, 12], [16, 34, 8], [46, 34, 8]].forEach(([x, y, r]) => {
+          g += `<circle cx="${x}" cy="${y}" r="${r}" fill="#3f8a27"/><circle cx="${x - r * .3}" cy="${y - r * .3}" r="${r * .45}" fill="#8fd060" opacity=".6"/>`;
+        });
+        return g;
+      };
+      const fruit = (c1, c2, c3, rx, ry) => ball(c1, c2, c3) + `<ellipse cx="32" cy="34" rx="${rx}" ry="${ry}" fill="url(#${u}b)"/><path d="M33 10c8-6 16-4 18 0-6 4-12 4-18 0Z" fill="#4a9a2c"/>`;
+      const SET = {
+        greens: [() => leaf('#7cc44e', '#2e6b1f'), floret, () => slice('#2f6b22', '#e4f4c8', '#bfe39a', 8)],
+        raspberry: [berry, () => leaf('#8fd060', '#3f8a27'), () => slice('#5e0a1c', '#e0718e', '#a3153f', 1)],
+        orange: [() => slice('#ef8510', '#fff1d6', '#ffa733', 10), () => fruit('#ffc56b', '#f58a12', '#b45305', 26, 26), () => slice('#e8780c', '#ffb057', '#f39222', 1)],
+        lemon: [() => slice('#e9c214', '#fff6c4', '#f7e26b', 9), () => fruit('#fff7a8', '#f6d42a', '#c99307', 28, 21), () => leaf('#8fd060', '#3f8a27')],
+      };
+      return `<svg viewBox="0 0 64 64" aria-hidden="true">${SET[kind][v % 3]()}</svg>`;
+    },
     bottle(p) {
       const u = 'b' + (n++);
       const ink = p.ink || '#fff';

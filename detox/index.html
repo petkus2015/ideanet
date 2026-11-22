@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <script>document.documentElement.classList.add('js')</script>
   <header class="hdr" id="hdr">
     <div class="hdr-in">
       <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="mainNav">
@@ -46,22 +47,24 @@
   <main>
     <!-- HERO SLIDER -->
     <section class="hero" id="domov" aria-roledescription="carousel" aria-label="Naše šťavy">
+      <div class="flood" id="flood" aria-hidden="true"></div>
       <div class="hero-grid">
         <div class="h-top">
-          <p class="eyebrow swap" style="--d:0ms">Bio · lisované za studena</p>
-          <h1 class="h-title swap" id="hTitle" style="--d:60ms"></h1>
-          <p class="h-price swap" id="hPrice" style="--d:120ms"></p>
+          <p class="eyebrow fx">Bio · lisované za studena</p>
+          <h1 class="h-title" id="hTitle"></h1>
+          <p class="h-price fx" id="hPrice"></p>
         </div>
 
         <div class="h-visual" id="hVisual">
           <div class="oval" id="hOval"></div>
           <div class="bottle-wrap" id="hBottle"></div>
+          <div class="parts" id="hParts" aria-hidden="true"></div>
         </div>
 
         <div class="h-copy">
-          <p class="h-lead swap" id="hLead" style="--d:160ms"></p>
-          <p class="h-desc swap" id="hDesc" style="--d:200ms"></p>
-          <div class="h-actions swap" style="--d:240ms">
+          <p class="h-lead fx" id="hLead"></p>
+          <p class="h-desc fx" id="hDesc"></p>
+          <div class="h-actions fx">
             <div class="qty" aria-label="Množstvo">
               <button type="button" id="hMinus" aria-label="Menej">−</button>
               <output id="hQty">1</output>
@@ -73,10 +76,13 @@
         </div>
 
         <div class="h-side">
-          <p class="counter" aria-live="polite"><span id="hIdx">1</span> / <span id="hTotal">4</span></p>
+          <div class="side-top">
+            <p class="counter" aria-live="polite"><span class="roll"><span id="hIdx">1</span></span> / <span id="hTotal">4</span></p>
+            <button class="auto-btn" id="autoBtn" aria-pressed="true" aria-label="Pozastaviť automatické prepínanie" title="Pozastaviť / spustiť"><svg viewBox="0 0 24 24"><path class="i-pause" d="M9 6v12M15 6v12"/><path class="i-play" d="M8 5.5v13l11-6.5z"/></svg></button>
+          </div>
           <div class="arrows">
             <button class="arrow" id="prevBtn" aria-label="Predchádzajúca šťava"><svg viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button>
-            <button class="arrow arrow-dark" id="nextBtn" aria-label="Ďalšia šťava"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+            <button class="arrow arrow-dark" id="nextBtn" aria-label="Ďalšia šťava"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg><svg class="ring" viewBox="0 0 52 52" aria-hidden="true"><circle id="ring" cx="26" cy="26" r="25" pathLength="100"/></svg></button>
           </div>
         </div>
       </div>
@@ -87,12 +93,12 @@
       <div class="wrap about-grid">
         <div>
           <p class="eyebrow">O nás</p>
-          <h2>Lisujeme ráno, <em>doručíme ešte v ten istý týždeň.</em></h2>
+          <h2 data-reveal="clip">Lisujeme ráno, <em>doručíme ešte v ten istý týždeň.</em></h2>
         </div>
-        <div class="about-text">
+        <div class="about-text" data-reveal>
           <p>Sme malá lisovňa. Ovocie a zeleninu berieme od slovenských pestovateľov, kde sa dá, a v bio kvalite. Šťavy lisujeme hydraulickým lisom za studena — bez ohrevu, bez pridaného cukru a bez konzervantov.</p>
           <p>Preto majú krátku trvanlivosť: vydržia 5 dní v chladničke. Lisujeme v deň odoslania.</p>
-          <dl class="stats">
+          <dl class="stats" data-reveal-group>
             <div><dt>0 g</dt><dd>pridaného cukru</dd></div>
             <div><dt>1,2 kg</dt><dd>surovín na fľašu</dd></div>
             <div><dt>5 dní</dt><dd>čerstvosť v chlade</dd></div>
@@ -105,9 +111,9 @@
     <section class="sec program" id="detox">
       <div class="wrap">
         <p class="eyebrow">Detox program</p>
-        <h2>Štyri dni, <em>štyri farby.</em></h2>
-        <p class="sec-lead">Každá fľaša má svoje číslo. Pite jednu až tri denne popri ľahkej strave — alebo si vyberte len tú, ktorá vám chutí najviac.</p>
-        <ol class="days" id="days"></ol>
+        <h2 data-reveal="clip">Štyri dni, <em>štyri farby.</em></h2>
+        <p class="sec-lead" data-reveal>Každá fľaša má svoje číslo. Pite jednu až tri denne popri ľahkej strave — alebo si vyberte len tú, ktorá vám chutí najviac.</p>
+        <ol class="days" id="days" data-reveal-group></ol>
       </div>
     </section>
 
@@ -117,13 +123,13 @@
         <div class="shop-head">
           <div>
             <p class="eyebrow">Obchod</p>
-            <h2>Vyberte si <em>svoju fľašu.</em></h2>
+            <h2 data-reveal="clip">Vyberte si <em>svoju fľašu.</em></h2>
           </div>
-          <p class="ship-note" id="shipNote"></p>
+          <p class="ship-note" id="shipNote" data-reveal></p>
         </div>
-        <div class="products" id="products"></div>
-        <h3 class="bundles-title">Zvýhodnené balíky</h3>
-        <div class="bundles" id="bundles"></div>
+        <div class="products" id="products" data-reveal-group></div>
+        <h3 class="bundles-title" data-reveal>Zvýhodnené balíky</h3>
+        <div class="bundles" id="bundles" data-reveal-group></div>
       </div>
     </section>
 
@@ -132,9 +138,9 @@
       <div class="wrap faq-grid">
         <div>
           <p class="eyebrow">Časté otázky</p>
-          <h2>Doprava <em>a objednávky</em></h2>
+          <h2 data-reveal="clip">Doprava <em>a objednávky</em></h2>
         </div>
-        <div class="faq-list">
+        <div class="faq-list" data-reveal-group>
           <details><summary>Kedy mi príde objednávka?</summary><p>Objednávky prijaté do 12:00 lisujeme a odosielame v pondelok až štvrtok nasledujúci pracovný deň. Kuriér doručuje do 1–2 dní, šťavy putujú v chladiacom boxe.</p></details>
           <details><summary>Ako dlho šťavy vydržia?</summary><p>5 dní od lisovania v chladničke (do 5 °C). Dátum spotreby je na viečku.</p></details>
           <details><summary>Ako môžem zaplatiť?</summary><p>Bankovým prevodom (údaje dostanete po objednaní), na dobierku alebo pri osobnom odbere.</p></details>

@@ -69,78 +69,263 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* bez úložiska */ } },
 };
 
-/* ===== Slider ===== */
+/* ===== Slider a pohyb ===== */
 let idx = 0, busy = false, heroQty = 1;
 const root = document.documentElement;
+const hero = $('.hero'), vis = $('#hVisual');
+const E_OUT = 'cubic-bezier(.16,1,.3,1)', E_IN = 'cubic-bezier(.7,0,.84,0)', E_IO = 'cubic-bezier(.76,0,.24,1)', SPRING = 'cubic-bezier(.34,1.45,.64,1)';
+const AUTOPLAY_MS = 7000;
 
-function renderHero(i, first) {
-  const p = PRODUCTS[i];
+/* Spustí animáciu (Web Animations API); pri obmedzenom pohybe nič nerobí. */
+function play(el, kf, o) {
+  if (reduced || !el) return null;
+  el.getAnimations().forEach((a) => a.cancel());
+  return el.animate(kf, { fill: 'both', ...o });
+}
+
+/* Rozmiestnenie ovocných kúskov okolo fľaše: [left %, top %, šírka %, hĺbka paralaxy, vpredu] */
+const PIECES = [[-9, 13, 19, 34, 0], [86, 5, 15, 22, 0], [-15, 57, 14, 52, 1], [90, 45, 21, 42, 1], [5, 84, 12, 28, 1], [76, 82, 15, 60, 1]];
+
+function titleHTML(p) {
+  return [p.name, 'Detox'].map((w) => `<span class="ln"><span class="ln-in">${[...w].map((c) => `<span class="ch">${c}</span>`).join('')}</span></span>`).join('');
+}
+
+function setContent(p, i) {
   root.style.setProperty('--bg', p.bg);
   $('meta[name=theme-color]').content = p.bg;
-  $('#hTitle').innerHTML = `<span>${p.name}</span> <span>detox</span>`;
+  const t = $('#hTitle');
+  t.innerHTML = titleHTML(p);
+  t.setAttribute('aria-label', `${p.name} detox`);
+  t.querySelectorAll('.ln').forEach((l) => l.setAttribute('aria-hidden', 'true'));
   $('#hPrice').textContent = fmt(p.price) + ' · 300 ml';
   $('#hLead').textContent = p.lead;
   $('#hDesc').textContent = p.desc;
   $('#hIdx').textContent = i + 1;
   heroQty = 1; $('#hQty').textContent = 1;
+}
 
-  const oval = $('#hOval'), bw = $('#hBottle');
+function makeLayer(p) {
   const layer = document.createElement('div');
   layer.className = 'oval-layer';
   layer.innerHTML = ART.fruit(p.fruit, p.seed);
-  const bottle = document.createElement('div');
-  bottle.className = 'bottle';
-  bottle.innerHTML = ART.bottle(p);
-  bottle.setAttribute('role', 'img');
-  bottle.setAttribute('aria-label', `Fľaša ${p.name} detox, ${p.ingredients.join(', ')}`);
-
-  if (first) { layer.classList.add('in'); bottle.classList.add('in'); oval.append(layer); bw.append(bottle); return; }
-  const oldL = [...oval.children], oldB = [...bw.children];
-  oldB.forEach((b) => b.classList.add('out'));
-  oval.append(layer); bw.append(bottle);
-  requestAnimationFrame(() => requestAnimationFrame(() => { layer.classList.add('in'); bottle.classList.add('in'); }));
-  setTimeout(() => { oldL.forEach((n) => n.remove()); oldB.forEach((n) => n.remove()); }, reduced ? 0 : 900);
+  return layer;
+}
+function makeBottle(p) {
+  const b = document.createElement('div');
+  b.className = 'bottle';
+  b.setAttribute('role', 'img');
+  b.setAttribute('aria-label', `Fľaša ${p.name} detox, ${p.ingredients.join(', ')}`);
+  b.innerHTML = `<div class="bob">${ART.bottle(p)}</div>`;
+  return b;
+}
+function makePieces(p) {
+  return PIECES.map(([l, t, w, z, front], k) => {
+    const el = document.createElement('div');
+    el.className = 'pc' + (front ? ' front' : '');
+    el.style.cssText = `left:${l}%;top:${t}%;width:${w}%;--z:${z};--dur:${5 + (k % 3) * 1.4}s;--del:${-k * .9}s`;
+    el.innerHTML = `<div class="pc-in">${ART.piece(p.fruit, k)}</div>`;
+    return el;
+  });
 }
 
-function go(dir) {
+/* --- vstupy a výstupy jednotlivých vrstiev --- */
+function textOut(dir) {
+  $('#hTitle').querySelectorAll('.ch').forEach((c, k) =>
+    play(c, [{ transform: 'none' }, { transform: `translateY(${-dir * 135}%) rotate(${-dir * 6}deg)` }], { duration: 480, delay: k * 16, easing: E_IN }));
+  document.querySelectorAll('.hero .fx').forEach((el, k) =>
+    play(el, [{ opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: `translateY(${-dir * 16}px)`, filter: 'blur(6px)' }], { duration: 380, delay: k * 35, easing: E_IN }));
+  const n = $('#hIdx');
+  play(n, [{ transform: 'none' }, { transform: `translateY(${-dir * 110}%)` }], { duration: 350, easing: E_IN });
+}
+function textIn(dir, delay = 0) {
+  $('#hTitle').querySelectorAll('.ch').forEach((c, k) =>
+    play(c, [{ transform: `translateY(${dir * 135}%) rotate(${dir * 8}deg)` }, { transform: 'none' }], { duration: 950, delay: delay + k * 24, easing: E_OUT }));
+  document.querySelectorAll('.hero .fx').forEach((el, k) =>
+    play(el, [{ opacity: 0, transform: `translateY(${dir * 22}px)`, filter: 'blur(6px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 850, delay: delay + 120 + k * 70, easing: E_OUT }));
+  play($('#hIdx'), [{ transform: `translateY(${dir * 110}%)` }, { transform: 'none' }], { duration: 700, delay: delay + 100, easing: E_OUT });
+}
+
+function visualIn(p, dir, first) {
+  const oval = $('#hOval'), bw = $('#hBottle'), parts = $('#hParts');
+  const oldL = [...oval.children], oldB = [...bw.children], oldP = [...parts.children];
+  const layer = makeLayer(p), bottle = makeBottle(p), pcs = makePieces(p);
+  oval.append(layer); bw.append(bottle); parts.append(...pcs);
+  if (reduced) { [...oldL, ...oldB, ...oldP].forEach((n) => n.remove()); return; }
+
+  const at = first ? '50% 100%' : dir > 0 ? '100% 55%' : '0% 55%';
+  const d0 = first ? 150 : 0;
+  play(layer, [{ clipPath: `circle(0% at ${at})` }, { clipPath: `circle(150% at ${at})` }], { duration: first ? 1500 : 1150, delay: d0, easing: E_IO });
+  play(layer.firstElementChild, [{ transform: 'scale(1.35) rotate(' + dir * 4 + 'deg)' }, { transform: 'none' }], { duration: 1700, delay: d0, easing: E_OUT });
+  oldL.forEach((l) => play(l, [{ transform: 'none', filter: 'brightness(1)' }, { transform: `translateX(${-dir * 8}%) scale(.92)`, filter: 'brightness(.6)' }], { duration: 1150, easing: E_IO }));
+  play(oval, [{ transform: 'scale(1)' }, { transform: first ? 'scale(.9)' : 'scale(.955)', offset: .4 }, { transform: 'scale(1)' }], { duration: first ? 1600 : 1200, easing: E_IO });
+
+  oldB.forEach((b) => play(b, [{ transform: 'none', opacity: 1 }, { transform: `translate(${-dir * 70}%, 6%) rotate(${-dir * 18}deg) scale(.9)`, opacity: 0 }], { duration: 560, easing: E_IN }));
+  play(bottle, first
+    ? [{ transform: 'translateY(-55%) rotate(-6deg)', opacity: 0 }, { opacity: 1, offset: .3 }, { transform: 'none', opacity: 1 }]
+    : [{ transform: `translate(${dir * 85}%, -6%) rotate(${dir * 20}deg)`, opacity: 0 }, { opacity: 1, offset: .35 }, { transform: 'none', opacity: 1 }],
+  { duration: first ? 1400 : 1150, delay: first ? 550 : 300, easing: SPRING });
+
+  oldP.forEach((pc, k) => play(pc, [{ transform: 'none', opacity: 1 }, { transform: `translate(${-dir * 160}%, ${(k % 2 ? 1 : -1) * 60}%) rotate(${-dir * 120}deg) scale(.3)`, opacity: 0 }], { duration: 520, delay: k * 25, easing: E_IN }));
+  pcs.forEach((pc, k) => {
+    const [l, t] = PIECES[k];
+    const vx = (50 - l) * 2.2, vy = (50 - t) * 2.2; // vyletia zo stredu fľaše
+    play(pc, [{ transform: `translate(${vx}%, ${vy}%) scale(0) rotate(${-dir * 160}deg)`, opacity: 0 }, { opacity: 1, offset: .25 }, { transform: 'none', opacity: 1 }],
+      { duration: 1300, delay: (first ? 900 : 480) + k * 70, easing: SPRING });
+  });
+
+  setTimeout(() => { [...oldL, ...oldB, ...oldP].forEach((n) => n.remove()); }, 1250);
+}
+
+/* Farba sa rozleje z miesta, odkiaľ prišiel pokyn (šípka, prst). */
+function flood(color, x, y) {
+  const f = $('#flood'), r = hero.getBoundingClientRect();
+  const fx = x - r.left, fy = y - r.top;
+  const R = Math.hypot(Math.max(fx, r.width - fx), Math.max(fy, r.height - fy));
+  f.style.background = color;
+  if (reduced) { hero.style.setProperty('--hero-bg', color); return; }
+  const a = play(f, [{ clipPath: `circle(0px at ${fx}px ${fy}px)` }, { clipPath: `circle(${R}px at ${fx}px ${fy}px)` }], { duration: 1150, easing: E_IO });
+  a.onfinish = () => { hero.style.setProperty('--hero-bg', color); a.cancel(); };
+}
+
+function originOf(dir, src) {
+  if (src && 'clientX' in src) return [src.clientX, src.clientY];
+  const el = src instanceof Element ? src : vis;
+  const r = el.getBoundingClientRect();
+  return src instanceof Element ? [r.left + r.width / 2, r.top + r.height / 2] : [dir > 0 ? r.right : r.left, r.top + r.height * .55];
+}
+
+function go(dir, src, target) {
   if (busy) return;
-  const next = (idx + dir + PRODUCTS.length) % PRODUCTS.length;
-  if (reduced) { idx = next; renderHero(idx); return; }
+  const next = target ?? (idx + dir + PRODUCTS.length) % PRODUCTS.length;
+  if (next === idx) return;
+  const p = PRODUCTS[next];
+  restartAuto();
+  if (reduced) { idx = next; setContent(p, idx); hero.style.setProperty('--hero-bg', p.bg); visualIn(p, dir); return; }
   busy = true;
-  document.querySelectorAll('.swap').forEach((el) => el.classList.add('out'));
-  $('#hBottle').querySelectorAll('.bottle').forEach((b) => b.classList.add('out'));
+  const [x, y] = originOf(dir, src);
+  flood(p.bg, x, y);
+  textOut(dir);
+  visualIn(p, dir);
   setTimeout(() => {
     idx = next;
-    renderHero(idx);
-    document.querySelectorAll('.swap').forEach((el) => el.classList.remove('out'));
-    setTimeout(() => (busy = false), 450);
-  }, 380);
+    setContent(p, idx);
+    textIn(dir);
+    setTimeout(() => (busy = false), 650);
+  }, 520);
 }
 
+function intro() {
+  const p = PRODUCTS[0];
+  setContent(p, 0);
+  hero.style.setProperty('--hero-bg', p.bg);
+  visualIn(p, 1, true);
+  textIn(1, 250);
+  play($('#hdr'), [{ transform: 'translateY(-100%)' }, { transform: 'none' }], { duration: 1000, delay: 100, easing: E_OUT })
+    ?.finished.then((a) => a.cancel());
+  document.querySelectorAll('.h-side > *').forEach((el, k) =>
+    play(el, [{ opacity: 0, transform: 'translateY(20px)' }, { opacity: 1, transform: 'none' }], { duration: 900, delay: 700 + k * 120, easing: E_OUT }));
+}
+
+/* --- automatické prepínanie s ukazovateľom okolo šípky --- */
+const ring = $('#ring');
+let autoOn = !reduced, heroVisible = true;
+ring.style.setProperty('--auto', AUTOPLAY_MS + 'ms');
+function restartAuto() {
+  ring.classList.remove('run'); void ring.getBoundingClientRect();
+  if (autoOn) ring.classList.add('run');
+}
+function syncPause() {
+  const paused = !autoOn || !heroVisible || document.hidden || cartOpen || !!document.querySelector('dialog[open]') || !!hero.querySelector(':focus-visible') || dragging;
+  hero.classList.toggle('paused', paused);
+}
+ring.addEventListener('animationend', () => go(1));
+$('#autoBtn').onclick = () => {
+  autoOn = !autoOn;
+  $('#autoBtn').setAttribute('aria-pressed', autoOn);
+  $('#autoBtn').setAttribute('aria-label', autoOn ? 'Pozastaviť automatické prepínanie' : 'Spustiť automatické prepínanie');
+  restartAuto(); syncPause();
+};
+if (!autoOn) { $('#autoBtn').setAttribute('aria-pressed', 'false'); hero.classList.add('no-auto'); }
+new IntersectionObserver(([e]) => { heroVisible = e.intersectionRatio > .4; syncPause(); }, { threshold: [0, .4, 1] }).observe(hero);
+document.addEventListener('visibilitychange', syncPause);
+hero.addEventListener('focusin', syncPause);
+hero.addEventListener('focusout', () => setTimeout(syncPause));
+setInterval(syncPause, 500);
+
 $('#hTotal').textContent = PRODUCTS.length;
-$('#prevBtn').onclick = () => go(-1);
-$('#nextBtn').onclick = () => go(1);
+$('#prevBtn').onclick = (e) => go(-1, e.currentTarget);
+$('#nextBtn').onclick = (e) => go(1, e.currentTarget);
 $('#hMinus').onclick = () => { heroQty = Math.max(1, heroQty - 1); $('#hQty').textContent = heroQty; };
 $('#hPlus').onclick = () => { heroQty = Math.min(30, heroQty + 1); $('#hQty').textContent = heroQty; };
-$('#hAdd').onclick = () => add(PRODUCTS[idx].id, heroQty);
+$('#hAdd').onclick = (e) => add(PRODUCTS[idx].id, heroQty, e.currentTarget);
 
 document.addEventListener('keydown', (e) => {
   if (e.target.closest('input,textarea,dialog[open]') || cartOpen) return;
-  const hero = $('.hero').getBoundingClientRect();
-  if (hero.bottom < 100) return;
+  if (hero.getBoundingClientRect().bottom < 100) return;
   if (e.key === 'ArrowRight') go(1);
   if (e.key === 'ArrowLeft') go(-1);
 });
+
+/* --- ťahanie fľaše prstom / myšou --- */
+let dragging = false;
 (() => {
-  let x0 = null, y0 = 0;
-  const v = $('#hVisual');
-  v.addEventListener('pointerdown', (e) => { x0 = e.clientX; y0 = e.clientY; });
-  v.addEventListener('pointerup', (e) => {
-    if (x0 === null) return;
-    const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+  let x0 = 0, y0 = 0, dx = 0, id = null, axis = null;
+  vis.addEventListener('pointerdown', (e) => {
+    if (busy || e.button > 0) return;
+    id = e.pointerId; x0 = e.clientX; y0 = e.clientY; dx = 0; axis = null;
   });
+  vis.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== id) return;
+    const mx = e.clientX - x0, my = e.clientY - y0;
+    if (!axis && Math.hypot(mx, my) > 8) {
+      axis = Math.abs(mx) > Math.abs(my) ? 'x' : 'y';
+      if (axis === 'x') { dragging = true; vis.setPointerCapture(id); vis.classList.add('dragging'); syncPause(); }
+    }
+    if (axis !== 'x') return;
+    dx = mx;
+    vis.style.setProperty('--drag', (dx / (1 + Math.abs(dx) / 380)).toFixed(1));
+  });
+  const end = (e) => {
+    if (e.pointerId !== id) return;
+    id = null;
+    if (!dragging) return;
+    dragging = false;
+    vis.classList.remove('dragging');
+    vis.style.setProperty('--drag', 0);
+    if (Math.abs(dx) > 70) go(dx < 0 ? 1 : -1, e);
+    syncPause();
+  };
+  vis.addEventListener('pointerup', end);
+  vis.addEventListener('pointercancel', end);
 })();
+
+/* --- paralaxa: kurzor + skrolovanie (jemne dobieha cez lerp) --- */
+(() => {
+  if (reduced) return;
+  const fine = matchMedia('(pointer: fine)').matches;
+  let tx = 0, ty = 0, cx = 0, cy = 0, sy = 0, csy = 0, raf = 0;
+  const tick = () => {
+    cx += (tx - cx) * .07; cy += (ty - cy) * .07; csy += (sy - csy) * .18;
+    hero.style.setProperty('--mx', cx.toFixed(4));
+    hero.style.setProperty('--my', cy.toFixed(4));
+    hero.style.setProperty('--sy', csy.toFixed(4));
+    raf = Math.abs(tx - cx) + Math.abs(ty - cy) + Math.abs(sy - csy) > .001 ? requestAnimationFrame(tick) : 0;
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+  if (fine) addEventListener('pointermove', (e) => { tx = e.clientX / innerWidth * 2 - 1; ty = e.clientY / innerHeight * 2 - 1; kick(); }, { passive: true });
+  addEventListener('scroll', () => { sy = Math.min(1, scrollY / hero.offsetHeight); kick(); }, { passive: true });
+})();
+
+/* --- magnetické šípky --- */
+if (!reduced && matchMedia('(pointer: fine)').matches) {
+  document.querySelectorAll('.arrow, .auto-btn').forEach((b) => {
+    b.addEventListener('pointermove', (e) => {
+      const r = b.getBoundingClientRect();
+      b.style.translate = `${(e.clientX - r.left - r.width / 2) * .35}px ${(e.clientY - r.top - r.height / 2) * .35}px`;
+    });
+    b.addEventListener('pointerleave', () => (b.style.translate = ''));
+  });
+}
 
 /* ===== Program a obchod ===== */
 $('#days').innerHTML = PRODUCTS.map((p, i) => `
@@ -155,7 +340,7 @@ $('#days').addEventListener('click', (e) => {
   const b = e.target.closest('[data-slide]'); if (!b) return;
   const t = +b.dataset.slide;
   scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
-  if (t !== idx) { idx = t; renderHero(idx); }
+  if (t !== idx) setTimeout(() => go(t > idx ? 1 : -1, null, t), reduced ? 0 : 450);
 });
 
 $('#products').innerHTML = PRODUCTS.map((p) => `
@@ -184,7 +369,7 @@ $('#bundles').innerHTML = BUNDLES.map((b) => {
 
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-add]');
-  if (b) add(b.dataset.add, 1);
+  if (b) add(b.dataset.add, 1, b);
 });
 $('#shipNote').textContent = `Doprava zadarmo od ${fmt(CONFIG.freeShippingFrom)} · lisujeme v deň odoslania`;
 $('#ftrCompany').textContent = CONFIG.company;
@@ -199,12 +384,36 @@ let cartOpen = false;
 const subtotal = () => Object.entries(cart).reduce((s, [id, q]) => s + byId(id).price * q, 0);
 const count = () => Object.values(cart).reduce((s, q) => s + q, 0);
 
-function add(id, q) {
+function add(id, q, src) {
   cart[id] = Math.min(99, (cart[id] || 0) + q);
-  saveCart();
   const p = byId(id);
+  const done = () => {
+    saveCart();
+    const c = $('#cartCount'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+    play($('#cartBtn svg'), [{ transform: 'none' }, { transform: 'rotate(-14deg) scale(1.15)' }, { transform: 'rotate(10deg)' }, { transform: 'none' }], { duration: 600, easing: E_OUT });
+  };
   toast(`${p.name}${p.num ? ' detox' : ''} × ${q} — v košíku`);
-  const c = $('#cartCount'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+  if (src && !reduced) flyToCart(src, p.bg || '#ecd97b', p.num ? p : null).then(done); else done();
+}
+
+/* Fľaštička preletí oblúkom z tlačidla do košíka. */
+function flyToCart(src, color, prod) {
+  const a = src.getBoundingClientRect(), b = $('#cartBtn').getBoundingClientRect();
+  const el = document.createElement('div');
+  el.className = 'fly';
+  el.style.background = color;
+  if (prod) el.innerHTML = ART.bottle(prod);
+  document.body.append(el);
+  const x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = b.top + b.height / 2;
+  const cx = (x0 + x1) / 2 + (x1 < x0 ? 80 : -80), cy = Math.min(y0, y1) - 160;
+  const kf = [];
+  for (let i = 0; i <= 20; i++) {
+    const t = i / 20, u = 1 - t;
+    const x = u * u * x0 + 2 * u * t * cx + t * t * x1, y = u * u * y0 + 2 * u * t * cy + t * t * y1;
+    kf.push({ transform: `translate(${x - 22}px, ${y - 22}px) scale(${1 + Math.sin(t * Math.PI) * .35 - t * .6}) rotate(${t * 360}deg)`, opacity: t > .92 ? 0 : 1 });
+  }
+  const an = el.animate(kf, { duration: 850, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'both' });
+  return an.finished.then(() => el.remove());
 }
 function setQty(id, q) { if (q <= 0) delete cart[id]; else cart[id] = Math.min(99, q); saveCart(); }
 function saveCart() { store.set('liso-cart', cart); renderCart(); }
@@ -439,7 +648,49 @@ $('#menuBtn').onclick = () => {
   $('#menuBtn').setAttribute('aria-expanded', open);
 };
 $('#mainNav').addEventListener('click', (e) => { if (e.target.closest('a')) $('#mainNav').classList.remove('open'); });
-addEventListener('scroll', () => $('#hdr').classList.toggle('scrolled', scrollY > 40), { passive: true });
+(() => {
+  let last = 0;
+  addEventListener('scroll', () => {
+    const y = scrollY, h = $('#hdr');
+    h.classList.toggle('scrolled', y > 40);
+    if (Math.abs(y - last) > 6) {
+      h.classList.toggle('hide', y > last && y > 300 && $('#searchPanel').hidden && !$('#mainNav').classList.contains('open'));
+      last = y;
+    }
+  }, { passive: true });
+})();
+
+/* ===== Odhaľovanie pri skrolovaní ===== */
+(() => {
+  document.querySelectorAll('[data-reveal-group]').forEach((g) =>
+    [...g.children].forEach((c, k) => { c.setAttribute('data-reveal', ''); c.style.setProperty('--i', k); }));
+  const els = document.querySelectorAll('[data-reveal]');
+  if (reduced || !('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+  // Orezaný prvok (clip-path) observer nevidí, preto sa pri ňom sleduje rodič.
+  const map = new Map();
+  els.forEach((el) => {
+    const t = el.dataset.reveal === 'clip' ? el.parentElement : el;
+    map.set(t, [...(map.get(t) || []), el]);
+  });
+  const io = new IntersectionObserver((list) => list.forEach((e) => {
+    if (e.isIntersecting) { map.get(e.target).forEach((el) => el.classList.add('in')); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: .12 });
+  map.forEach((_, t) => io.observe(t));
+})();
+
+/* ===== 3D náklon kariet ===== */
+if (!reduced && matchMedia('(pointer: fine)').matches) {
+  document.querySelectorAll('.card, .days li').forEach((c) => {
+    c.addEventListener('pointermove', (e) => {
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 10 + 'deg');
+      c.style.setProperty('--rx', -((e.clientY - r.top) / r.height - .5) * 8 + 'deg');
+      c.style.setProperty('--gx', (e.clientX - r.left) / r.width * 100 + '%');
+      c.style.setProperty('--gy', (e.clientY - r.top) / r.height * 100 + '%');
+    });
+    c.addEventListener('pointerleave', () => { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); });
+  });
+}
 
 /* ===== Právne texty (šablóny — nahraďte vlastnými) ===== */
 const LEGAL = {
@@ -454,5 +705,6 @@ document.addEventListener('click', (e) => {
   $('#legal').showModal();
 });
 
-renderHero(0, true);
 renderCart();
+intro();
+restartAuto();
