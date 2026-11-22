@@ -51,7 +51,8 @@ const byId = id => ARTICLES.find(a => a.id === id);
 const PHOTOS = {};   // voliteľné: id -> data URI (používa náhľad v jednom súbore)
 const CREDITS = {};  // autori fotiek z Wikimedia Commons
 /* Fotka z priečinka img/ s ilustráciou ako záložným stavom (keď súbor chýba). */
-const art = a => scene(a.scene, a.id) + `<img class="art-img" src="${PHOTOS[a.id] || 'img/' + a.id + '.jpg'}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`;
+const USE_FILES = true;  // v náhľade v jednom súbore nastavené na false
+const art = a => scene(a.scene, a.id) + (!PHOTOS[a.id] && !USE_FILES ? '' : `<img class="art-img" src="${PHOTOS[a.id] || 'img/' + a.id + '.jpg'}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`);
 const credit = id => CREDITS[id] ? `<p class="credit">Foto: ${esc(CREDITS[id].author)} · ${esc(CREDITS[id].license)} · Wikimedia Commons</p>` : '';
 
 /* ---------- Ilustrácie (SVG, bez externých obrázkov) ---------- */
@@ -105,7 +106,7 @@ function applyTheme() {
   const mode = store.get(THEME_KEY, 'auto');
   const t = mode === 'auto' ? (isNight() ? 'dark' : 'light') : mode;
   document.documentElement.dataset.theme = t;
-  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'dark' ? '#111413' : '#eef1f0';
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'dark' ? '#011C40' : '#ffffff';
   $('#theme .theme__icon').innerHTML = ICONS[mode];
   $('#themeLabel').textContent = mode === 'auto' ? `Auto · ${t === 'dark' ? 'noc' : 'deň'}` : LABEL[mode];
   $('#theme').setAttribute('aria-label', `Režim: ${LABEL[mode]}. Kliknutím zmeníte.`);
