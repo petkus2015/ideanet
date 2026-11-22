@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IDEANET — Reels &amp; video pre značky</title>
 <meta name="description" content="Videotvorca, grafik a content creator — Bratislava, Žilina, Brno. Mesačné balíky Reels pre firmy, white-label produkcia pre agentúry, same-day video z eventov, vizuály a identita.">
-<meta name="theme-color" content="#05060f">
+<meta name="theme-color" content="#452370" data-top="#452370" data-scrolled="#05060f">
 <meta property="og:title" content="IDEANET — Reels &amp; video pre značky">
 <meta property="og:description" content="Prídem → natočím → zostrihám → máte obsah. Mesačné balíky Reels, white-label pre agentúry, same-day eventy.">
 <meta property="og:type" content="website">
@@ -277,45 +277,98 @@
           tlačidlom pod ňou otvoríte web naživo.
         </p>
       </div>
+    </div>
 
-      <div class="webs">
-        <article class="web reveal">
-          <div class="web__media">
-            <img src="assets/webs/web-ukazka-1.jpg" alt="Ukážka webu — Kaviareň" loading="lazy" decoding="async" width="1080" height="1920">
-            <video preload="none" playsinline muted loop poster="assets/webs/web-ukazka-1.jpg" aria-label="Ukážka webu Kaviareň">
-              <source src="assets/webs/web-ukazka-1.webm" type="video/webm">
-              <source src="assets/webs/web-ukazka-1.mp4" type="video/mp4">
-            </video>
-            <span class="web__cat">Gastro</span>
-            <button class="web__play" type="button" aria-label="Prehrať ukážku webu Kaviareň">
-              <span><svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg></span>
-            </button>
-          </div>
-          <div class="web__body">
-            <h3>Kaviareň</h3>
-            <p>Jednostránkový web s menu, otváracími hodinami a rezerváciou.</p>
-            <a class="btn btn--ghost btn--sm" href="redizajn/" target="_blank" rel="noopener noreferrer">Živý náhľad <span aria-hidden="true">↗</span></a>
-          </div>
-        </article>
-        <article class="web reveal">
-          <div class="web__media">
-            <img src="assets/webs/web-ukazka-2.jpg" alt="Ukážka webu — Fitness štúdio" loading="lazy" decoding="async" width="1080" height="1920">
-            <video preload="none" playsinline muted loop poster="assets/webs/web-ukazka-2.jpg" aria-label="Ukážka webu Fitness štúdio">
-              <source src="assets/webs/web-ukazka-2.webm" type="video/webm">
-              <source src="assets/webs/web-ukazka-2.mp4" type="video/mp4">
-            </video>
-            <span class="web__cat">Fitness</span>
-            <button class="web__play" type="button" aria-label="Prehrať ukážku webu Fitness štúdio">
-              <span><svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg></span>
-            </button>
-          </div>
-          <div class="web__body">
-            <h3>Fitness štúdio</h3>
-            <p>Rozvrh tréningov, profily trénerov a členstvá online.</p>
-            <a class="btn btn--ghost btn--sm" href="redizajn/" target="_blank" rel="noopener noreferrer">Živý náhľad <span aria-hidden="true">↗</span></a>
-          </div>
-        </article>
-      </div>
+    <div class="reels reels--webs" id="webs">
+        <button class="reels__arrow reels__arrow--prev" id="prevWeb" aria-label="Predchádzajúca ukážka webu" aria-controls="webRail">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="rail rail--webs" id="webRail" tabindex="0" role="listbox" aria-label="Ukážky hotových webov">
+          <article class="web" role="option" aria-selected="false">
+            <div class="web__media">
+              <img src="assets/webs/web-ukazka-1.jpg" alt="Ukážka webu — Kaviareň" loading="lazy" decoding="async" width="1080" height="1920">
+              <video preload="none" playsinline muted loop poster="assets/webs/web-ukazka-1.jpg" aria-label="Ukážka webu Kaviareň">
+                <source src="assets/webs/web-ukazka-1.webm" type="video/webm">
+                <source src="assets/webs/web-ukazka-1.mp4" type="video/mp4">
+              </video>
+              <span class="web__cat">Gastro</span>
+              <button class="web__play" type="button" aria-label="Prehrať ukážku webu Kaviareň">
+                <span><svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg></span>
+              </button>
+            </div>
+            <div class="web__body">
+              <h3>Kaviareň</h3>
+              <p>Jednostránkový web s menu, otváracími hodinami a rezerváciou.</p>
+              <a class="btn btn--ghost btn--sm" href="redizajn/" target="_blank" rel="noopener noreferrer">Živý náhľad <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+          <article class="web" role="option" aria-selected="false">
+            <div class="web__media">
+              <img src="assets/webs/web-ukazka-2.jpg" alt="Ukážka webu — Fitness štúdio" loading="lazy" decoding="async" width="1080" height="1920">
+              <video preload="none" playsinline muted loop poster="assets/webs/web-ukazka-2.jpg" aria-label="Ukážka webu Fitness štúdio">
+                <source src="assets/webs/web-ukazka-2.webm" type="video/webm">
+                <source src="assets/webs/web-ukazka-2.mp4" type="video/mp4">
+              </video>
+              <span class="web__cat">Fitness</span>
+              <button class="web__play" type="button" aria-label="Prehrať ukážku webu Fitness štúdio">
+                <span><svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg></span>
+              </button>
+            </div>
+            <div class="web__body">
+              <h3>Fitness štúdio</h3>
+              <p>Rozvrh tréningov, profily trénerov a členstvá online.</p>
+              <a class="btn btn--ghost btn--sm" href="redizajn/" target="_blank" rel="noopener noreferrer">Živý náhľad <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+          <article class="web" role="option" aria-selected="false">
+            <div class="web__media">
+              <img src="assets/webs/web-ukazka-3.jpg" alt="Ukážka webu — Zubná klinika" loading="lazy" decoding="async" width="1080" height="1920">
+              <video preload="none" playsinline muted loop poster="assets/webs/web-ukazka-3.jpg" aria-label="Ukážka webu Zubná klinika">
+                <source src="assets/webs/web-ukazka-3.webm" type="video/webm">
+                <source src="assets/webs/web-ukazka-3.mp4" type="video/mp4">
+              </video>
+              <span class="web__cat">Zdravie</span>
+              <button class="web__play" type="button" aria-label="Prehrať ukážku webu Zubná klinika">
+                <span><svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg></span>
+              </button>
+            </div>
+            <div class="web__body">
+              <h3>Zubná klinika</h3>
+              <p>Ošetrenia, profily lekárov a objednanie termínu online.</p>
+              <a class="btn btn--ghost btn--sm" href="redizajn/" target="_blank" rel="noopener noreferrer">Živý náhľad <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+          <article class="web" role="option" aria-selected="false">
+            <div class="web__media">
+              <img src="assets/webs/web-ukazka-4.jpg" alt="Ukážka webu — Stavebná firma" loading="lazy" decoding="async" width="1080" height="1920">
+              <video preload="none" playsinline muted loop poster="assets/webs/web-ukazka-4.jpg" aria-label="Ukážka webu Stavebná firma">
+                <source src="assets/webs/web-ukazka-4.webm" type="video/webm">
+                <source src="assets/webs/web-ukazka-4.mp4" type="video/mp4">
+              </video>
+              <span class="web__cat">Stavby</span>
+              <button class="web__play" type="button" aria-label="Prehrať ukážku webu Stavebná firma">
+                <span><svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg><svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg></span>
+              </button>
+            </div>
+            <div class="web__body">
+              <h3>Stavebná firma</h3>
+              <p>Referencie z realizácií a formulár na cenovú ponuku.</p>
+              <a class="btn btn--ghost btn--sm" href="redizajn/" target="_blank" rel="noopener noreferrer">Živý náhľad <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+        </div>
+
+        <button class="reels__arrow reels__arrow--next" id="nextWeb" aria-label="Ďalšia ukážka webu" aria-controls="webRail">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="rail__dots" id="webDots" role="tablist" aria-label="Prejsť na ukážku webu">
+          <button role="tab" data-i="0" aria-label="Ukážka 1: Kaviareň"></button>
+          <button role="tab" data-i="1" aria-label="Ukážka 2: Fitness štúdio"></button>
+          <button role="tab" data-i="2" aria-label="Ukážka 3: Zubná klinika"></button>
+          <button role="tab" data-i="3" aria-label="Ukážka 4: Stavebná firma"></button>
+        </div>
     </div>
   </section>
 

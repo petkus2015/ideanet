@@ -33,6 +33,8 @@ function ideanet_customizer_map() {
 				'brand_co_bold' => array( __( 'Názov firmy — zvýraznená časť', 'ideanet' ), 'text', __( 'Napríklad NET.', 'ideanet' ) ),
 				'nav_cta'       => array( __( 'Tlačidlo v hlavičke', 'ideanet' ), 'text' ),
 				'skip_label'    => array( __( 'Odkaz pre čítačky obrazovky', 'ideanet' ), 'text' ),
+				'theme_color'   => array( __( 'Farba lišty prehliadača hore', 'ideanet' ), 'color', __( 'Na mobile si prehliadač týmto zafarbí pruh nad stránkou. Má ladiť s úvodnou obrazovkou.', 'ideanet' ) ),
+				'theme_color_2' => array( __( 'Farba lišty po odskrolovaní', 'ideanet' ), 'color', __( 'Keď návštevník prejde úvod, lišta stmavne na túto farbu.', 'ideanet' ) ),
 			),
 		),
 
@@ -370,6 +372,13 @@ function ideanet_customize_register( $wp_customize ) {
 				continue;
 			}
 
+			if ( 'color' === $type ) {
+				$wp_customize->add_control(
+					new WP_Customize_Color_Control( $wp_customize, $id, $args )
+				);
+				continue;
+			}
+
 			if ( 'video' === $type ) {
 				$args['mime_type'] = 'video';
 				$wp_customize->add_control(
@@ -430,6 +439,8 @@ function ideanet_sanitizer( $type ) {
 		case 'image':
 		case 'video':
 			return 'esc_url_raw';
+		case 'color':
+			return 'sanitize_hex_color';
 		case 'area':
 			return 'ideanet_sanitize_area';
 		default:

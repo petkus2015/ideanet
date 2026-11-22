@@ -12,6 +12,21 @@ defined( 'ABSPATH' ) || exit;
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<?php
+/* Farba lišty prehliadača na mobile. Hore ladí s úvodnou obrazovkou,
+   po odskrolovaní ju skript prepne na druhú — bez neho zostane tá,
+   ktorá sedí na danú stránku. */
+$ideanet_farba_hore = ideanet_opt( 'theme_color' );
+$ideanet_farba_dole = ideanet_opt( 'theme_color_2' );
+$ideanet_ma_uvod    = is_front_page() || is_page_template( 'page-templates/redizajn.php' );
+printf(
+	'<meta name="theme-color" content="%1$s" data-top="%2$s" data-scrolled="%3$s">' . "\n",
+	esc_attr( $ideanet_ma_uvod ? $ideanet_farba_hore : $ideanet_farba_dole ),
+	esc_attr( $ideanet_ma_uvod ? $ideanet_farba_hore : $ideanet_farba_dole ),
+	esc_attr( $ideanet_farba_dole )
+);
+?>
+<meta name="color-scheme" content="dark">
 <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>

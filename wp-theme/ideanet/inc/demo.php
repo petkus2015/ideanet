@@ -313,6 +313,8 @@ function ideanet_seed_weby( $assets ) {
 	$weby = array(
 		array( 'Kaviareň', 'Gastro', 'Jednostránkový web s menu, otváracími hodinami a rezerváciou.' ),
 		array( 'Fitness štúdio', 'Fitness', 'Rozvrh tréningov, profily trénerov a členstvá online.' ),
+		array( 'Zubná klinika', 'Zdravie', 'Ošetrenia, profily lekárov a objednanie termínu online.' ),
+		array( 'Stavebná firma', 'Stavby', 'Referencie z realizácií a formulár na cenovú ponuku.' ),
 	);
 
 	foreach ( $weby as $i => $web ) {

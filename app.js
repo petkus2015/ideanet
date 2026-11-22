@@ -202,6 +202,12 @@
         mid: c.offsetLeft + c.offsetWidth / 2,
       }));
       if (bar) bar.style.width = (100 / Math.max(1, cards.length)) + '%';
+
+      /* Keď sa pás nemá kam posúvať — pár kariet na širokej obrazovke —,
+         nemá zmysel tváriť sa ako pás: šípky a guličky nič nerobia
+         a stmavovať „neaktívne" karty by bolo len na škodu. */
+      const obal = rail.parentElement;
+      if (obal) obal.classList.toggle('reels--static', maxScroll <= 1);
     }
 
     const targetFor = (i) => {
@@ -437,6 +443,18 @@
       cards: $$('.shot', visRail),
       dots: $$('button', $('#visDots')),
       prev: $('#prevVis'), next: $('#nextVis'),   // bez ukazovateľa priebehu — stačia guličky
+    });
+  }
+
+  /* ── pás s ukážkami webov ──────────────────── */
+  const webRail = $('#webRail');
+  if (webRail) {
+    const webDots = $('#webDots');
+    createRail({
+      rail: webRail,
+      cards: $$('.web', webRail),
+      dots: webDots ? $$('button', webDots) : [],
+      prev: $('#prevWeb'), next: $('#nextWeb'),   // bez ukazovateľa priebehu — stačia guličky
     });
   }
 
@@ -867,13 +885,22 @@
 /* ═══════════════════════════════════════════════
    WEBDIZAJN — zvislé ukážky webov
    Samostatný blok: keby vyššie niečo spadlo, ukážky
-   sa aj tak dajú prehrať.
+   sa aj tak dajú prehrať. Pás sa dá ťahať, takže sa
+   tu rieši to isté, čo pri portfóliu — ťahanie myšou
+   nesmie spustiť video a prst, ktorý po karte šmykne,
+   tiež nie.
    ═══════════════════════════════════════════════ */
 (() => {
   'use strict';
 
+  const pas   = document.querySelector('#webRail');
   const karty = [...document.querySelectorAll('.web')];
   if (!karty.length) return;
+
+  const TAP_POSUN = 24, TAP_CAS = 600;
+  let tapX = 0, tapY = 0, tapOd = 0, tapVybavene = 0;
+
+  const tahalo = () => !!pas && pas.dataset.moved === '1';
 
   const zastav = (okrem) => karty.forEach(k => {
     if (k === okrem) return;
@@ -881,23 +908,65 @@
     if (v && !v.paused) v.pause();
   });
 
-  karty.forEach(karta => {
-    const media = karta.querySelector('.web__media');
+  function prepni(karta) {
     const video = karta.querySelector('video');
-    if (!media || !video) return;
+    if (!video) return;
 
+    if (!video.paused) { video.pause(); return; }
+
+    zastav(karta);
+    const p = video.play();
+    /* Keď prehliadač prehrávanie odmietne, karta sa nesmie tváriť,
+       že beží. */
+    if (p && p.catch) p.catch(() => karta.classList.remove('is-playing'));
+  }
+
+  karty.forEach(karta => {
+    const video = karta.querySelector('video');
+    if (!video) return;
     video.addEventListener('play',  () => karta.classList.add('is-playing'));
     video.addEventListener('pause', () => karta.classList.remove('is-playing'));
-
-    media.addEventListener('click', () => {
-      if (!video.paused) { video.pause(); return; }
-      zastav(karta);
-      const p = video.play();
-      /* Keď prehliadok prehrávanie odmietne, karta nesmie zostať
-         tváriť sa, že beží. */
-      if (p && p.catch) p.catch(() => karta.classList.remove('is-playing'));
-    });
   });
+
+  const kartaZ = (ciel) => ciel && ciel.closest ? ciel.closest('.web') : null;
+
+  document.addEventListener('click', (e) => {
+    const media = e.target.closest ? e.target.closest('.web__media') : null;
+    if (!media) return;
+    if (tahalo()) return;                                  // klik po ťahaní myšou
+    if (performance.now() - tapVybavene < 700) return;     // dotyk to už vybavil
+    const karta = kartaZ(media);
+    if (karta) prepni(karta);
+  });
+
+  if (pas) {
+    /* Prst, ktorý po karte šmykne, posúva pás — nesmie spustiť video.
+       A naopak: krátke klepnutie s malým posunom klik vôbec nevyvolá,
+       tak ho vyvoláme sami. */
+    pas.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      tapX = t.clientX; tapY = t.clientY; tapOd = performance.now();
+    }, { passive: true });
+
+    pas.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0];
+      if (!t) return;
+      const media = t.target && t.target.closest ? t.target.closest('.web__media') : null;
+      if (!media) return;
+      if (Math.hypot(t.clientX - tapX, t.clientY - tapY) > TAP_POSUN) return;
+      if (performance.now() - tapOd > TAP_CAS) return;
+      tapVybavene = performance.now();
+      const karta = kartaZ(media);
+      if (karta) prepni(karta);
+    }, { passive: true });
+
+    /* Odkaz na živý web nesmie odísť po ťahaní pásu. */
+    pas.addEventListener('click', (e) => {
+      if (!tahalo()) return;
+      const odkaz = e.target.closest ? e.target.closest('a') : null;
+      if (odkaz) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+  }
 
   /* Čo odíde z obrazovky, nemá prečo ďalej bežať. */
   if ('IntersectionObserver' in window) {
@@ -910,4 +979,43 @@
     }, { threshold: .2 });
     karty.forEach(k => io.observe(k));
   }
+})();
+
+
+/* ═══════════════════════════════════════════════
+   FARBA LIŠTY PREHLIADAČA
+   Na mobile prehliadač zafarbí stavový riadok podľa meta theme-color.
+   Hore ladí s farebným úvodom, po odskrolovaní s tmavým pozadím —
+   čierny pruh nad stránkou tak zmizne a pôsobí to ako aplikácia.
+   ═══════════════════════════════════════════════ */
+(() => {
+  'use strict';
+
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+
+  const HORE = meta.dataset.top || meta.getAttribute('content');
+  const DOLE = meta.dataset.scrolled || HORE;
+  if (HORE === DOLE) return;
+
+  const uvod = document.querySelector('.hero, .offer');
+  let teraz = meta.getAttribute('content');
+
+  const nastav = (farba) => {
+    if (farba === teraz) return;
+    teraz = farba;
+    meta.setAttribute('content', farba);
+  };
+
+  /* Stránka bez farebného úvodu (404, výpis príspevkov) má tmavú lištu. */
+  if (!uvod) { nastav(DOLE); return; }
+
+  /* Prepína sa tam, kde sa farebná žiara pod úvodom stráca. */
+  let prah = 0;
+  const zmeraj = () => { prah = uvod.offsetTop + uvod.offsetHeight * 0.55; };
+  const prepni = () => nastav(scrollY < prah ? HORE : DOLE);
+
+  zmeraj(); prepni();
+  addEventListener('scroll', prepni, { passive: true });
+  addEventListener('resize', () => { zmeraj(); prepni(); }, { passive: true });
 })();

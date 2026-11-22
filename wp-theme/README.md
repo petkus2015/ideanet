@@ -98,10 +98,13 @@ Keď video nevyplníte, karta zostane na plagáte a nespadne.
 
 ### Webdizajn — ukážky webov
 
-Sekcia **Webdizajn** na úvodnej stránke, hneď pod vizuálmi. Každá ukážka
-je zvislé video 9:16 — prejdenie webu tak, ako ho vidí zákazník na
-mobile. Klik na kartu video spustí, druhý klik ho zastaví a otvorenie
-inej ukážky tú predošlú zastaví samo.
+Sekcia **Webdizajn** na úvodnej stránke, hneď pod vizuálmi. Je to
+listovací pás ako pri videách a vizuáloch — šípky, guličky, ťahanie
+myšou aj prstom. Každá ukážka je zvislé video 9:16, teda prejdenie webu
+tak, ako ho vidí zákazník na mobile. Klik na kartu video spustí, druhý
+klik ho zastaví a otvorenie inej ukážky tú predošlú zastaví samo.
+Keď sú ukážky len dve a obrazovka je široká, nie je čo listovať —
+ovládanie sa vtedy skryje samo a karty sa vycentrujú.
 
 Pridávate ich v IDEANET → **Webdizajn — ukážky**:
 
@@ -118,6 +121,23 @@ Video si viete pripraviť tak, že si web otvoríte v prehliadači v úzkom
 okne a nahráte, ako ním prechádzate. Odporúčaná veľkosť je 1080 × 1920,
 dĺžka do 15 sekúnd; kým tam nie je ani jedna ukážka, sekcia sa
 nezobrazí vôbec.
+
+### Farba lišty prehliadača na mobile
+
+Prehliadače na mobile si zafarbia pruh nad stránkou podľa webu. Bez
+nastavenia je čierny a web pôsobí ako stránka v prehliadači; keď farba
+sedí, pôsobí ako aplikácia.
+
+Nastavuje sa v Prispôsobiť → IDEANET → **1 · Značka a hlavička**:
+
+- **Farba lišty prehliadača hore** — platí na úvodnej obrazovke, má
+  ladiť s farebným pozadím úvodu.
+- **Farba lišty po odskrolovaní** — keď návštevník prejde úvod, lišta
+  stmavne na túto farbu, aby ladila so zvyškom webu.
+
+Prepína to skript; bez neho zostane tá farba, ktorá sedí na danú
+stránku. Podstránky bez farebného úvodu (404, výpis príspevkov) majú
+rovno tú tmavú.
 
 ### Zmena cien
 

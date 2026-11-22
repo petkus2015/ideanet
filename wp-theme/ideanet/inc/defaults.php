@@ -26,6 +26,11 @@ function ideanet_defaults() {
 
 		/* ── značka ────────────────────────────── */
 		'brand_name'      => 'Peter Miškus',
+
+		/* Farba, ktorou si prehliadač na mobile zafarbí lištu nad stránkou.
+		   Hore ladí s úvodom, po odskrolovaní stmavne na druhú hodnotu. */
+		'theme_color'     => '#452370',
+		'theme_color_2'   => '#05060f',
 		'brand_co'        => 'IDEA',
 		'brand_co_bold'   => 'NET',
 

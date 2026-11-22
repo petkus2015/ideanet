@@ -8,6 +8,22 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.18.0
+
+- Ukážky webov sú listovací pás, nie mriežka — šípky, guličky, ťahanie
+  myšou aj prstom, rovnako ako pri videách a vizuáloch. Ťahanie pásu
+  už nespustí video ani neotvorí odkaz na web klienta.
+- Pri pár kartách na širokej obrazovke, kde nie je čo listovať, sa
+  ovládanie skryje a karty sa vycentrujú. Platí pre všetky tri pásy.
+- Ukážkové weby sú štyri (kaviareň, fitness, klinika, stavebná firma),
+  aby bolo na páse čo listovať.
+- Na mobile sa zafarbí lišta prehliadača podľa webu — hore podľa úvodu,
+  po odskrolovaní tmavo. Obe farby sa dajú zmeniť v Prispôsobiť →
+  1 · Značka a hlavička. Doteraz tam bol čierny pruh.
+- Z CSS vypadol duplicitný blok so štýlmi vizuálov. Bol tam dvakrát
+  znak po znaku rovnaký, takže úprava jednej kópie by sa tichým
+  prepísaním stratila.
+
 ## 1.17.0
 
 - Nová sekcia **Webdizajn** na úvodnej stránke, hneď pod vizuálmi.

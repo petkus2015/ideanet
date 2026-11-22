@@ -20,10 +20,16 @@ $cta = ideanet_opt( 'webdizajn_cta' );
 <section class="section" id="webdizajn">
 	<div class="wrap">
 		<?php ideanet_section_head( 'webdizajn' ); ?>
+	</div>
 
-		<div class="webs">
+	<div class="reels reels--webs" id="webs">
+		<button class="reels__arrow reels__arrow--prev" id="prevWeb" aria-label="<?php esc_attr_e( 'Predchádzajúca ukážka webu', 'ideanet' ); ?>" aria-controls="webRail">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		</button>
+
+		<div class="rail rail--webs" id="webRail" tabindex="0" role="listbox" aria-label="<?php esc_attr_e( 'Ukážky hotových webov', 'ideanet' ); ?>">
 			<?php
-			foreach ( $weby as $web ) :
+			foreach ( $weby as $i => $web ) :
 				$nazov  = get_the_title( $web );
 				$poster = ideanet_image( $web, 'large', 'poster' );
 				$mp4    = ideanet_media_url( ideanet_meta( $web->ID, 'video' ) );
@@ -32,7 +38,7 @@ $cta = ideanet_opt( 'webdizajn_cta' );
 				$kat    = ideanet_meta( $web->ID, 'cat' );
 				$veta   = get_the_excerpt( $web );
 				?>
-				<article class="web reveal">
+				<article class="web" data-i="<?php echo (int) $i; ?>" role="option" aria-selected="false">
 					<div class="web__media">
 						<?php if ( $poster ) : ?>
 							<img src="<?php echo esc_url( $poster ); ?>"
@@ -90,6 +96,20 @@ $cta = ideanet_opt( 'webdizajn_cta' );
 						<?php endif; ?>
 					</div>
 				</article>
+			<?php endforeach; ?>
+		</div>
+
+		<button class="reels__arrow reels__arrow--next" id="nextWeb" aria-label="<?php esc_attr_e( 'Ďalšia ukážka webu', 'ideanet' ); ?>" aria-controls="webRail">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		</button>
+
+		<div class="rail__dots" id="webDots" role="tablist" aria-label="<?php esc_attr_e( 'Prejsť na ukážku webu', 'ideanet' ); ?>">
+			<?php foreach ( $weby as $i => $web ) : ?>
+				<button role="tab" data-i="<?php echo (int) $i; ?>"
+					aria-label="<?php
+						/* translators: 1: poradie, 2: názov webu. */
+						echo esc_attr( sprintf( __( 'Ukážka %1$d: %2$s', 'ideanet' ), $i + 1, get_the_title( $web ) ) );
+						?>"></button>
 			<?php endforeach; ?>
 		</div>
 	</div>
