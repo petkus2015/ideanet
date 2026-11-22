@@ -336,25 +336,19 @@ function splitChunk(text, start, end) {
   return groups.map((g) => { const d = (end - start) * len(g) / total; const s = { start: t, end: t + d, text: g.join(" ") }; t += d; return s; });
 }
 let asr = null, asrId = null, tf = null;
-// Vymazanie všetkého, čo si aplikácia uložila v prehliadači (modely, vlastné písma, nastavenia).
-// Jazyk rozhrania a prihlásenie ostávajú. Stránka sa potom obnoví, aby sa uvoľnili otvorené databázy.
-async function showStorageUse() {
-  try {
-    const e = await navigator.storage.estimate(), mb = (e.usage || 0) / 1048576;
-    $("clearSize").textContent = mb >= 1 ? `Zaberá ${mb >= 1024 ? (mb / 1024).toFixed(1) + " GB" : Math.round(mb) + " MB"}` : "Nič nie je uložené";
-  } catch { /* prehliadač veľkosť neukáže */ }
+// Vymazanie dočasných súborov projektu: nahraté video, zvuk, hotové exporty a podklady prekladu.
+// Stiahnuté jazykové modely, vlastné písma, farby značky a nastavenia ostávajú.
+const projectBytes = () => (state.file ? state.file.size : 0) + (state.audio ? state.audio.byteLength : 0) + Object.values(state.results).reduce((a, r) => a + (r.size || 0), 0);
+function showStorageUse() {
+  const mb = projectBytes() / 1048576;
+  $("clearSize").textContent = mb >= 1 ? `Projekt zaberá ${mb >= 1024 ? (mb / 1024).toFixed(1) + " GB" : Math.round(mb) + " MB"}` : "Žiadne dočasné súbory";
 }
 async function clearAppData() {
-  if (!confirm(tr("Vymazať z prehliadača uložené modely, vlastné písma a nastavenia Subgen? Rozpracované video sa zavrie. Modely sa pri ďalšom použití stiahnu znova."))) return;
-  $("clearData").disabled = true; $("clearSize").textContent = "Mažem…";
-  try { for (const k of Object.keys(localStorage)) if (/^titulky[.-]/.test(k) && k !== "titulky-lang") localStorage.removeItem(k); } catch {}
-  try { if (window.caches) for (const k of await caches.keys()) await caches.delete(k); } catch {}
-  const del = (name) => new Promise((r) => { try { const q = indexedDB.deleteDatabase(name); q.onsuccess = q.onerror = q.onblocked = () => r(); } catch { r(); } });
-  try {
-    const names = indexedDB.databases ? (await indexedDB.databases()).map((d) => d.name).filter(Boolean) : ["titulky-model-cache", "titulky-fonts"];
-    await Promise.race([Promise.all(names.map(del)), new Promise((r) => setTimeout(r, 3000))]);
-  } catch {}
-  location.reload();
+  if (state.file && !confirm(tr("Vymazať dočasné súbory projektu (video, zvuk, exporty, podklady prekladu)? Rozpracovaný projekt sa zavrie. Jazykové modely a písma ostanú."))) return;
+  trOriginal = null; $("trUndo").hidden = true; $("trProg").hidden = true; $("trMsg").textContent = "";
+  reset(); state.file = null;
+  try { if (window.caches) for (const k of await caches.keys()) if (!/transformers/i.test(k)) await caches.delete(k); } catch {}
+  showStorageUse(); $("clearSize").textContent = "Dočasné súbory sú vymazané";
 }
 // Model sa ukladá do vlastnej trvalej pamäte (IndexedDB), nie len do vyrovnávacej pamäte prehliadača,
 // aby sa pri ďalšom nahratí videa (aj po obnovení stránky) nesťahoval znova.
@@ -458,6 +452,33 @@ async function explainFailure(mod, id, lastErr, reach) {
       : "Skús obnoviť stránku.";
   return new Error(`Model sa nepodarilo načítať. ${hint} Technická chyba: ${detail} (${diag})`);
 }
+// Sťahovanie modelu sa môže zaseknúť (slabé spojenie, prerušený prenos zo servera). Ak 40 s nepríde ani bajt,
+// prenos sa preruší a skúsi sa znova, prípadne z ďalšieho zdroja, namiesto nekonečného čakania.
+const STALL_MS = 40000;
+function stallGuardFetch(orig, onStall) {
+  return async (input, init = {}) => {
+    const url = typeof input === "string" ? input : input.url;
+    if (!/\.(onnx|json|txt|model)(\?|$)|onnx_data/.test(url)) return orig(input, init);
+    const ac = new AbortController(); let timer = setTimeout(() => ac.abort(), STALL_MS);
+    if (init.signal) init.signal.addEventListener("abort", () => ac.abort());
+    let res;
+    try { res = await orig(input, { ...init, signal: ac.signal }); } catch (e) { clearTimeout(timer); if (ac.signal.aborted) onStall(); throw e; }
+    clearTimeout(timer);
+    if (!res.body) return res;
+    const reader = res.body.getReader();
+    const body = new ReadableStream({
+      async pull(c) {
+        timer = setTimeout(() => { onStall(); ac.abort(); reader.cancel().catch(() => {}); c.error(new Error("Sťahovanie modelu sa zaseklo.")); }, STALL_MS);
+        try { const { done, value } = await reader.read(); clearTimeout(timer); if (done) c.close(); else c.enqueue(value); }
+        catch (e) { clearTimeout(timer); try { c.error(e); } catch {} }
+      },
+      cancel(r) { clearTimeout(timer); reader.cancel(r).catch(() => {}); },
+    });
+    const out = new Response(body, { status: res.status, statusText: res.statusText, headers: res.headers });
+    try { Object.defineProperty(out, "url", { value: res.url }); } catch {}
+    return out;
+  };
+}
 async function loadModel(spec, quiet) {
   if (!quiet) setBusy("Načítavam model…", "", phasePct("model", 0));
   try { await navigator.storage?.persist?.(); } catch {} // aby prehliadač model nevymazal
@@ -469,23 +490,31 @@ async function loadModel(spec, quiet) {
   const progress = (p) => { // reálne percentá len pri skutočnom sťahovaní; uložený model sa načíta bez neho (žiadne p.total)
     if (p.status !== "progress" || !p.total) return;
     files[p.file] = { loaded: p.loaded, total: p.total };
-    const all = Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
+    const big = Object.values(files).filter((f) => f.total > 1048576), all = big.length ? big : Object.values(files), loaded = all.reduce((a, f) => a + f.loaded, 0), total = all.reduce((a, f) => a + f.total, 0);
     if (!quiet) setBusy("Sťahujem model…", `${spec.label}: ${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB (len pri prvom použití)`, phasePct("model", loaded / total));
     if (spec.onProgress) spec.onProgress(loaded, total);
   };
-  let reach = null;
-  try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
   let idbOk = false; try { await openModelDb(); idbOk = true; } catch {}
   const local = await hasLocal(spec.id);
-  const attempts = [
-    ...(local ? [{ label: "vlastný server", cache: idbOk ? "idb" : "none", host: "https://huggingface.co/", local: true }] : []), // trvalá pamäť modelu, pamäť prehliadača, bez pamäte, cez zrkadlo
+  let reach = null;
+  if (!local) try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
+  // Ak je model na vlastnom serveri (priečinok models/), sťahuje sa iba odtiaľ, nikdy z huggingface.co.
+  const attempts = local ? [
+    { label: "vlastný server", cache: idbOk ? "idb" : "none", host: "https://huggingface.co/", local: true },
+    ...(idbOk ? [{ label: "vlastný server bez pamäte", cache: "none", host: "https://huggingface.co/", local: true }] : []),
+  ] : [ // trvalá pamäť modelu, pamäť prehliadača, bez pamäte, cez zrkadlo
     ...(idbOk ? [{ label: "uložený model", cache: "idb", host: "https://huggingface.co/" }] : []),
     { label: "pamäť prehliadača", cache: "browser", host: "https://huggingface.co/" },
     { label: "bez pamäte", cache: "none", host: "https://huggingface.co/" },
     { label: "cez zrkadlo", cache: "none", host: "https://hf-mirror.com/" },
   ];
   let lastErr = null;
-  for (const a of attempts) {
+  const origFetch = window.fetch, onStall = () => { if (!quiet) setBusy("Sťahujem model…", "Sťahovanie sa zaseklo, skúšam znova…"); };
+  window.fetch = stallGuardFetch(origFetch, onStall);
+  // Zdroj, z ktorého sa sťahovanie zaseklo, sa skúsi ešte raz (už stiahnuté súbory sú uložené), potom ďalší zdroj.
+  try {
+  for (const a of attempts.flatMap((x) => [x, { ...x, retry: true }])) {
+    if (a.retry && !(lastErr && /zaseklo|abort/i.test(String(lastErr.message || lastErr)))) continue;
     try {
       tf.env.allowLocalModels = !!a.local; tf.env.allowRemoteModels = !a.local; if (a.local) tf.env.localModelPath = LOCAL_BASE;
       try { tf.env.backends.onnx.wasm.numThreads = 1; tf.env.backends.onnx.wasm.proxy = false; } catch {}
@@ -495,6 +524,8 @@ async function loadModel(spec, quiet) {
       return await tf.pipeline(spec.task || "automatic-speech-recognition", spec.id, { ...spec.opts, progress_callback: progress });
     } catch (e) { lastErr = e; console.error("Model:", spec.label, a.label, e); }
   }
+  } finally { window.fetch = origFetch; }
+  if (local) throw new Error("Model sa nepodarilo stiahnuť z tohto servera (priečinok models/). Skontroluj, či sú na FTP nahraté všetky súbory modelu aj podpriečinok onnx/, a skús stránku obnoviť. Technická chyba: " + String(lastErr && lastErr.message || lastErr).slice(0, 150));
   throw await explainFailure(tf, spec.id, lastErr, reach);
 }
 // Transformers.js nedáva priebeh po častiach počas samotného rozpoznávania (len pri sťahovaní modelu),
@@ -1698,6 +1729,32 @@ function setPage(p) {
   scrollTo(0, 0);
 }
 // Značka: len fonty. Každý font má živú ukážku textu, vlastné sa dajú pridať a odobrať.
+// Farby značky: uložené len v tomto prehliadači, ponúkajú sa pri farbách v nastaveniach titulkov.
+const BC_KEY = "titulky-brandColors";
+let brandColors = []; try { brandColors = JSON.parse(localStorage.getItem(BC_KEY) || "[]").filter((c) => /^#[0-9a-f]{6}$/i.test(c)).slice(0, 12); } catch {}
+const saveBrandColors = () => { try { localStorage.setItem(BC_KEY, JSON.stringify(brandColors)); } catch {} renderBrandColors(); renderSwatches(); };
+function renderBrandColors() {
+  const box = $("brandColors"), add = box.querySelector(".bc-add");
+  box.querySelectorAll(".bc").forEach((x) => x.remove());
+  brandColors.forEach((c) => {
+    const b = document.createElement("div"); b.className = "bc"; b.style.background = c; b.title = c;
+    const x = document.createElement("button"); x.type = "button"; x.className = "bc-x"; x.textContent = "×"; x.setAttribute("aria-label", "Odobrať farbu " + c);
+    x.onclick = () => { brandColors = brandColors.filter((y) => y !== c); saveBrandColors(); };
+    b.append(x); box.insertBefore(b, add);
+  });
+}
+function renderSwatches() { // rýchly výber farby značky pri farbe textu, podkladu a zvýraznenia
+  ["color", "bg", "hl"].forEach((id) => {
+    const inp = $(id); let sw = document.querySelector(".swatches[data-for='" + id + "']");
+    if (!sw) { sw = document.createElement("div"); sw.className = "swatches"; sw.dataset.for = id; (inp.closest(".inline") || inp).after(sw); }
+    sw.textContent = ""; sw.hidden = !brandColors.length;
+    brandColors.forEach((c) => {
+      const b = document.createElement("button"); b.type = "button"; b.style.background = c; b.title = "Farba značky " + c; b.setAttribute("aria-label", "Farba značky " + c);
+      b.onclick = () => { inp.value = c; inp.dispatchEvent(new Event("input", { bubbles: true })); };
+      sw.append(b);
+    });
+  });
+}
 function renderBrand() {
   const grid = $("fontGrid"); grid.textContent = "";
   const text = $("fontSampleText").value.trim() || tr("Ahoj, toto sú moje titulky"), cur = activeStyle().font;
@@ -1925,7 +1982,8 @@ function setupAuth() {
     try {
       if (v === "login") {
         if (!okEmail(d.email)) return authMsg("Zadaj platný e-mail.");
-        const j = await authApi("login", { email: d.email, password: d.password });
+        let j = await authApi("login", { email: d.email, password: d.password });
+        if (j.code === "devices" && confirm(tr(j.error) + "\n\n" + tr("Odhlásiť ostatné zariadenia a prihlásiť sa tu?"))) j = await authApi("login", { email: d.email, password: d.password, force: true });
         if (j.error) return authMsg(j.error);
         auth.user = j.user; renderAcct();
         if (!j.user.active) { $("renewTxt").textContent = "Predplatné vypršalo " + new Date(j.user.until * 1000).toLocaleDateString(LOCALE) + ". Obnov ho a exportuj ďalej."; showAuthView("renew"); return; }
@@ -1994,8 +2052,8 @@ function registerSharedFont(f) {
   const face = new FontFace(f.name, `url("${f.url}")`, { weight: "100 900", style: "normal" }); // načíta sa až pri použití
   document.fonts.add(face); sharedFonts.add(f.name); fontFaces.set(f.name, face); addFontOption(f.name);
 }
-async function loadSharedFonts() {
-  if (DEMO || !/^https?:$/.test(location.protocol)) { updateBrandUpload(); return; }
+async function loadSharedFonts() { // nahraté písma sú len v prehliadači používateľa, so servera sa nič nenačítava
+  if (true) { updateBrandUpload(); return; }
   try {
     const r = await fetch("?fonts=list", { cache: "no-store" });
     const j = r.ok ? await r.json() : null;
@@ -2011,7 +2069,7 @@ const limitMsg = () => `Z tvojej IP adresy už bol tento týždeň nahraný font
 function updateBrandUpload() {
   const srv = fontServer.on, limited = srv && fontServer.next * 1000 > Date.now();
   $("brandSub").textContent = srv ? "Spoločné fonty pre titulky. Nahraný font uvidia a môžu použiť všetci používatelia. Z jednej IP adresy sa dá nahrať jeden font za týždeň."
-    : "Fonty pre titulky. Nahraté fonty ostanú len v tomto prehliadači a nájdeš ich aj vo výbere fontu pri štýle titulkov.";
+    : "Farby a písma tvojej značky. Ostanú len v tomto prehliadači a ponúknu sa v nastaveniach titulkov.";
   $("fontRules").textContent = srv ? `Len súbory fontov TTF, OTF, WOFF alebo WOFF2, najviac ${Math.round(fontServer.maxBytes / 1048576)} MB · 1 font za týždeň` : "TTF, OTF, WOFF alebo WOFF2, najviac 15 MB";
   $("fontRightsRow").hidden = !srv || limited;
   $("fontDrop").classList.toggle("off", limited);
@@ -2039,18 +2097,19 @@ async function uploadShared(file, msg) {
 async function uploadFont(file, fromBrand = false) {
   const msg = (t) => { $(fromBrand ? "brandMsg" : "fontMsg").textContent = t; };
   msg("");
-  if (fontServer.on) {
-    if (!/\.(ttf|otf|woff2?)$/i.test(file.name)) { msg(`„${file.name}“ nie je font. Prijímame len súbory TTF, OTF, WOFF a WOFF2.`); return; }
-    return uploadShared(file, (t) => { $("brandMsg").textContent = t; });
-  }
   if (!/\.(ttf|otf|woff2?)$/i.test(file.name)) { msg(`„${file.name}“ nie je font. Použi súbor TTF, OTF, WOFF alebo WOFF2.`); return; }
   if (file.size > 15 * 1048576) { msg("Font je príliš veľký (najviac 15 MB)."); return; }
-  const name = "Vlastný " + file.name.replace(/\.[^.]+$/, "").replace(/[^\p{L}\p{N} _-]/gu, " ").trim().slice(0, 40);
+  const clean = (v) => String(v || "").replace(/[^\p{L}\p{N} _-]/gu, " ").replace(/\s+/g, " ").trim().slice(0, 40);
+  const base = clean(file.name.replace(/\.[^.]+$/, "")) || "Moje písmo";
+  let name = fromBrand ? clean($("fontName").value) || base : prompt(tr("Ako sa má písmo volať?"), base);
+  if (name === null) return; // zrušené
+  name = clean(name) || base;
+  if (FONTS.includes(name)) name += " (vlastné)";
   try {
     const buf = await file.arrayBuffer();
     await registerFont(name, buf.slice(0));
     try { const db = await fontsDb(); db.transaction("fonts", "readwrite").objectStore("fonts").put({ name, buf }, name); } catch {}
-    if (fromBrand) { msg(`Font „${name}“ je pridaný.`); renderBrand(); return; }
+    if (fromBrand) { $("fontName").value = ""; msg(`Font „${name}“ je pridaný.`); renderBrand(); return; }
     const st = activeStyle(); st.font = name; st.preset = null; syncControls();
     msg(`Font „${name}“ je pridaný a vybraný.`);
   } catch { msg("Tento súbor sa nepodarilo načítať ako font."); }
@@ -2171,13 +2230,19 @@ async function recordAspect(aspect, onProgress, job) {
   await finished; ac.close();
   const ext = rec.mimeType.includes("mp4") ? "mp4" : "webm";
   if (job !== state.job || state.exportCancel) return null;
-  return { url: URL.createObjectURL(new Blob(chunks, { type: rec.mimeType || "video/webm" })), ext };
+  const blob = new Blob(chunks, { type: rec.mimeType || "video/webm" });
+  return { url: URL.createObjectURL(blob), ext, size: blob.size };
 }
 // Len jeden formát je vidno naraz, ale "Exportovať všetko" spracuje aj tie ostatné na pozadí (recordAspect
 // si vyrába vlastné video/plátno, nepotrebuje viditeľnú kartu); výsledok sa uloží do state.results a ukáže
 // sa hneď, ako na daný formát prepneš ikonkou.
 async function exportAspects(list) {
   if (state.busyExport || state.playable === false) return;
+  if (auth.on && auth.user) { // overí, či prihlásenie na tomto zariadení ešte platí (účet môže byť naraz najviac na 3 zariadeniach)
+    const j = await authApi("me").catch(() => null);
+    if (j && "user" in j && !j.user) { auth.user = null; renderAcct(); openAuth("login", () => exportAspects(list)); authMsg("Na tomto zariadení si bol odhlásený, lebo sa účet prihlásil na inom zariadení. Prihlás sa znova."); return; }
+    if (j && j.user) auth.user = j.user;
+  }
   if (!requireAccount(() => exportAspects(list))) return; // export len s predplatným
   const job = state.job, multi = list.length > 1;
   state.busyExport = true; state.exportCancel = false; $("exportAll").disabled = true; $("exportCur").disabled = true; $("export-error").hidden = true; $("exportStop").hidden = false; $("exportStatus").textContent = "";
@@ -2298,6 +2363,8 @@ function setup() {
   ["dragleave", "drop"].forEach((ev) => $("fontDrop").addEventListener(ev, () => $("fontDrop").classList.remove("over")));
   $("fontDrop").addEventListener("drop", async (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) await uploadFont(f, true); });
   $("fontSampleText").addEventListener("input", renderBrand);
+  $("brandColorPick").addEventListener("change", (e) => { const c = e.target.value.toLowerCase(); if (!brandColors.includes(c)) { brandColors = [...brandColors, c].slice(-12); saveBrandColors(); } });
+  renderBrandColors(); renderSwatches();
   $("fontFile").onchange = (e) => { if (e.target.files[0]) uploadFont(e.target.files[0]); e.target.value = ""; };
   loadSavedFonts(); loadSharedFonts(); setupAuth(); setupTranslate();
   $("fontSampleText").value = tr($("fontSampleText").value);
@@ -2603,5 +2670,5 @@ const toSrt = (segs) => segs.map((s, i) => `${i + 1}\n${srtTime(s.start, ",")} -
 const toVtt = (segs) => "WEBVTT\n\n" + segs.map((s) => `${srtTime(s.start, ".")} --> ${srtTime(s.end, ".")}\n${cueText(s.text)}\n`).join("\n");
 
 
-if (MOCK) window.__test = { captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels, segmentFeatures, detectSpeakers, uploadFont, customFonts };
+if (MOCK) window.__test = { stallGuardFetch, captureAudio, decodeBuffer, state, dynChunks, bumpDyn, idbCache, ensureModel, showModelState, hasLocal, preferLocal, bestModels, segmentFeatures, detectSpeakers, uploadFont, customFonts };
 setup();

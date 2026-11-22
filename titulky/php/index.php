@@ -104,6 +104,7 @@ if (($_GET['fonts'] ?? '') === 'list') { // zoznam spoločných fontov
 }
 
 if (($_GET['fonts'] ?? '') === 'upload') { // nahranie fontu
+    jsonOut(['error' => 'Nahrávanie písem na server je vypnuté. Vlastné písma ostávajú len v prehliadači používateľa.'], 410);
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonOut(['error' => 'Použi POST.'], 405);
     if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') !== 'titulky') jsonOut(['error' => 'Neplatná požiadavka.'], 403); // len z tejto stránky
     dataInit($dataDir);
@@ -169,6 +170,24 @@ function untilFrom($sess) { // platnosť: koniec obdobia predplatného, pri jedn
     if (is_array($sub) && !empty($sub['items']['data'][0]['current_period_end'])) return (int)$sub['items']['data'][0]['current_period_end'];
     return time() + 365 * 86400;
 }
+// Jeden účet môže byť prihlásený najviac na 3 zariadeniach naraz. Každé prihlásenie je zariadenie s náhodným ID
+// v relácii; zariadenie, ktoré sa 30 dní neozvalo, sa uvoľní samo.
+const MAX_DEVICES = 3;
+function devPrune($u) { return array_filter($u['devices'] ?? [], fn($d) => ($d['seen'] ?? 0) > time() - 30 * 86400); }
+function deviceLogin(&$users, $k, $mode) { // $mode: 'ask' = pri plnom počte odmietne, 'oldest' = uvoľní najstaršie, 'all' = odhlási ostatné
+    $devs = devPrune($users[$k]);
+    if ($mode === 'all') $devs = [];
+    if (count($devs) >= MAX_DEVICES) {
+        if ($mode === 'ask') return false;
+        uasort($devs, fn($a, $b) => $a['seen'] <=> $b['seen']);
+        while (count($devs) >= MAX_DEVICES) array_shift($devs);
+    }
+    $id = bin2hex(random_bytes(12));
+    $devs[$id] = ['seen' => time(), 'ua' => mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 120)];
+    $users[$k]['devices'] = $devs;
+    session_regenerate_id(true); $_SESSION['email'] = $users[$k]['email']; $_SESSION['dev'] = $id;
+    return true;
+}
 function needPost() {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonOut(['error' => 'Použi POST.'], 405);
     if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') !== 'titulky') jsonOut(['error' => 'Neplatná požiadavka.'], 403);
@@ -211,10 +230,26 @@ if (isset($_GET['auth'])) {
     authStart();
     if ($act === 'me') {
         $u = null;
-        if (!empty($_SESSION['email'])) { $users = readJson($dataDir . '/users.php'); $u = $users[userKey($_SESSION['email'])] ?? null; }
+        if (!empty($_SESSION['email'])) {
+            $users = readJson($dataDir . '/users.php'); $k = userKey($_SESSION['email']); $u = $users[$k] ?? null; $dev = (string)($_SESSION['dev'] ?? '');
+            if (!$u || !isset($u['devices'][$dev])) { $u = null; $_SESSION = []; } // odhlásené z iného zariadenia
+            elseif (($u['devices'][$dev]['seen'] ?? 0) < time() - 600) { // posledná aktivita, najviac raz za 10 minút
+                dataInit($dataDir); $lock = fopen($dataDir . '/.lock', 'c'); flock($lock, LOCK_EX);
+                $users = readJson($dataDir . '/users.php');
+                if (isset($users[$k]['devices'][$dev])) { $users[$k]['devices'][$dev]['seen'] = time(); writeJson($dataDir . '/users.php', $users); }
+            }
+        }
         jsonOut(['user' => userPublic($u), 'ready' => $ready, 'payLink' => $ready ? $cfg['payment_link'] : '', 'price' => $cfg['price_label']]);
     }
-    if ($act === 'logout') { needPost(); $_SESSION = []; session_destroy(); jsonOut(['ok' => true]); }
+    if ($act === 'logout') {
+        needPost();
+        if (!empty($_SESSION['email']) && !empty($_SESSION['dev'])) { // uvoľní miesto pre ďalšie zariadenie
+            dataInit($dataDir); $lock = fopen($dataDir . '/.lock', 'c'); flock($lock, LOCK_EX);
+            $users = readJson($dataDir . '/users.php'); $k = userKey($_SESSION['email']);
+            if (isset($users[$k]['devices'][$_SESSION['dev']])) { unset($users[$k]['devices'][$_SESSION['dev']]); writeJson($dataDir . '/users.php', $users); }
+        }
+        $_SESSION = []; session_destroy(); jsonOut(['ok' => true]);
+    }
 
     $b = needPost();
     dataInit($dataDir);
@@ -225,8 +260,11 @@ if (isset($_GET['auth'])) {
         if (tooMany($dataDir, 'login', 10, 900)) jsonOut(['error' => 'Príliš veľa pokusov. Skús to o 15 minút.'], 429);
         $u = $users[userKey($b['email'] ?? '')] ?? null;
         if (!$u || empty($u['hash']) || !password_verify((string)($b['password'] ?? ''), $u['hash'])) jsonOut(['error' => 'Nesprávny e-mail alebo heslo.'], 401);
-        session_regenerate_id(true); $_SESSION['email'] = $u['email'];
-        jsonOut(['ok' => true, 'user' => userPublic($u)]);
+        $k = userKey($u['email']);
+        if (!deviceLogin($users, $k, !empty($b['force']) ? 'all' : 'ask'))
+            jsonOut(['error' => 'Tento účet je už prihlásený na ' . MAX_DEVICES . ' zariadeniach. Najviac ' . MAX_DEVICES . ' zariadenia naraz.', 'code' => 'devices'], 409);
+        writeJson($dataDir . '/users.php', $users);
+        jsonOut(['ok' => true, 'user' => userPublic($users[$k])]);
     }
     if ($act === 'claim') { // návrat zo Stripe: overenie platby podľa ID platobnej relácie
         if (!$ready) jsonOut(['error' => 'Platby ešte nie sú na serveri nastavené.'], 503);
@@ -245,7 +283,7 @@ if (isset($_GET['auth'])) {
         $c = $claims[$sid]; $k = userKey($c['email']);
         if (isset($users[$k]) && !empty($users[$k]['hash'])) { // existujúci účet: predĺženie a prihlásenie
             if (!$c['used']) { $users[$k]['until'] = max((int)$users[$k]['until'], (int)$c['until']); if ($c['customer']) $users[$k]['customer'] = $c['customer']; $claims[$sid]['used'] = true; writeJson($dataDir . '/claims.php', $claims); writeJson($dataDir . '/users.php', $users); }
-            session_regenerate_id(true); $_SESSION['email'] = $users[$k]['email'];
+            deviceLogin($users, $k, 'oldest'); writeJson($dataDir . '/users.php', $users);
             jsonOut(['ok' => true, 'user' => userPublic($users[$k]), 'needsPassword' => false]);
         }
         jsonOut(['ok' => true, 'email' => $c['email'], 'needsPassword' => true]);
@@ -258,8 +296,8 @@ if (isset($_GET['auth'])) {
         $k = userKey($c['email']);
         $users[$k] = ['email' => $c['email'], 'hash' => password_hash($pw, PASSWORD_DEFAULT), 'until' => max((int)($users[$k]['until'] ?? 0), (int)$c['until']), 'customer' => $c['customer'], 'created' => time()];
         $claims[$sid]['used'] = true;
+        deviceLogin($users, $k, 'all');
         writeJson($dataDir . '/users.php', $users); writeJson($dataDir . '/claims.php', $claims);
-        session_regenerate_id(true); $_SESSION['email'] = $c['email'];
         jsonOut(['ok' => true, 'user' => userPublic($users[$k])]);
     }
     if ($act === 'forgot') { // obnova hesla e-mailom (vždy rovnaká odpoveď, aby sa nedalo zisťovať, kto má účet)
@@ -283,8 +321,8 @@ if (isset($_GET['auth'])) {
         if (mb_strlen($pw) < 8) jsonOut(['error' => 'Heslo musí mať aspoň 8 znakov.'], 400);
         $k = userKey($r['email']); if (!isset($users[$k])) jsonOut(['error' => 'Účet neexistuje.'], 400);
         $users[$k]['hash'] = password_hash($pw, PASSWORD_DEFAULT); unset($resets[$h]);
+        deviceLogin($users, $k, 'all'); // nové heslo odhlási všetky ostatné zariadenia
         writeJson($dataDir . '/users.php', $users); writeJson($dataDir . '/resets.php', $resets);
-        session_regenerate_id(true); $_SESSION['email'] = $users[$k]['email'];
         jsonOut(['ok' => true, 'user' => userPublic($users[$k])]);
     }
     jsonOut(['error' => 'Neznáma akcia.'], 404);
