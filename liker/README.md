@@ -74,7 +74,7 @@ Na statickom hostingu bez servera (napr. GitHub Pages) sa stránka zobrazí, no 
 
 ## Animácie
 
-- **Príbeh fľaše** — sekcia `#story` je 5,6× vysoká obrazovka, scéna je `position: sticky`.
+- **Príbeh fľaše** — sekcia `#story` je 4,2× vysoká obrazovka, scéna je `position: sticky`.
   Kapitoly a kľúčové snímky fľaše/pohára sú v `app.js` (`CH`, `BOTTLE_KEYS`, `GLASS_KEYS`, `SPLATS`).
 - Rešpektuje `prefers-reduced-motion`.
 - Na mobile sa fľaša zmenší, texty idú pod ňu, rad likérov sa posúva prstom.

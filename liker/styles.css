@@ -179,7 +179,7 @@ button { cursor: pointer; }
 /* =========================================================
    PRÍBEH — pripnutá scéna
    ========================================================= */
-.story { position: relative; height: 560vh; }
+.story { position: relative; height: 420vh; }
 .stage {
   position: sticky; top: 0;
   height: 100vh; height: 100svh;
@@ -313,7 +313,7 @@ body:not(.is-loaded) .bottle-float { visibility: hidden; }
 
 /* --- scéna na mobile a tablete na výšku --- */
 @media (max-width: 760px), (max-aspect-ratio: 4/5) {
-  .story { height: 520vh; }
+  .story { height: 400vh; }
   .mega { top: calc(var(--header) + 2svh); }
   .mega--mid { top: calc(var(--header) + 2svh); }
   .mega--ghost { bottom: auto; top: calc(var(--header) + 2svh); }
