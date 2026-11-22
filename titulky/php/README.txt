@@ -68,3 +68,11 @@ Spoločné fonty (Značka):
   Pre bežných používateľov to stačí; úplná ochrana by vyžadovala export na serveri.
 
 Nie je súčasťou: predplatné 2 € mesačne, aplikácia je voľne dostupná.
+
+Preklad titulkov na mobile
+  Mobil nezvládne veľký model NLLB, preto sa na ňom prekladá malými modelmi (~120 MB) cez angličtinu
+  (napr. slovenčina -> angličtina -> čeština). Model sa stiahne len pre zvolené jazyky a po preklade sa uvoľní z pamäte.
+  Nahraj na FTP do models/ priečinky:
+    models/subgen/opus-mt-sk-en, models/subgen/opus-mt-en-sk   (slovenčina, prevedené pre Subgen, len zo ZIP-u)
+    models/Xenova/opus-mt-XX-en a opus-mt-en-XX pre cs, es, ar, hi, zh, pl-en, tr-en a opus-mt-en-mul (poľština, turečtina)
+  Na mobile sa používa aj menší model rozpoznávania reči models/Xenova/whisper-base.

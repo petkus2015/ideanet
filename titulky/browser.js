@@ -1850,17 +1850,44 @@ const NLLB = { sk: "slk_Latn", cs: "ces_Latn", en: "eng_Latn", es: "spa_Latn", a
 const TR_NAMES = { sk: "Slovenčina", cs: "Čeština", en: "Angličtina", es: "Španielčina", ar: "Arabčina", tr: "Turečtina", hi: "Hindčina", pl: "Poľština", zh: "Čínština" };
 const TR_MOCK = new URLSearchParams(location.search).has("mock"); // len na skúšanie: preklad bez modelu
 let translator = null, trOriginal = null, trBusy = false;
+// Na mobile je NLLB príliš veľký, preto sa prekladá malými modelmi (~120 MB) cez angličtinu: jazyk → angličtina → jazyk.
+// Modely sa načítajú postupne a po použití sa uvoľnia z pamäte. Modely subgen/* sú prevedené pre Subgen (slovenčina).
+const OPUS_TO_EN = { sk: "subgen/opus-mt-sk-en", cs: "Xenova/opus-mt-cs-en", es: "Xenova/opus-mt-es-en", ar: "Xenova/opus-mt-ar-en", tr: "Xenova/opus-mt-tr-en", hi: "Xenova/opus-mt-hi-en", pl: "Xenova/opus-mt-pl-en", zh: "Xenova/opus-mt-zh-en" };
+const OPUS_FROM_EN = { sk: ["subgen/opus-mt-en-sk", ""], cs: ["Xenova/opus-mt-en-cs", ""], es: ["Xenova/opus-mt-en-es", ""], ar: ["Xenova/opus-mt-en-ar", ">>ara<< "], hi: ["Xenova/opus-mt-en-hi", ""], zh: ["Xenova/opus-mt-en-zh", ">>cmn_Hans<< "], pl: ["Xenova/opus-mt-en-mul", ">>pol<< "], tr: ["Xenova/opus-mt-en-mul", ">>tur<< "] };
+async function opusStep(id, prefix, texts, p0, p1) {
+  trProgress(p0, "Načítavam prekladový model…");
+  const m = await loadModel({ id, label: id.split("/")[1], task: "translation", opts: { dtype: "q8" },
+    onProgress: (l, t) => trProgress(p0 + (p1 - p0) * 0.4 * l / t, `Sťahujem prekladový model… ${Math.round(l / t * 100)} %`) }, true);
+  const out = [];
+  try {
+    for (let i = 0; i < texts.length; i++) { // po jednom: pri dávke s doplnením dĺžky pridávajú tieto modely na koniec bodky a zvyšky
+      const pct = p0 + (p1 - p0) * (0.4 + 0.6 * i / texts.length);
+      trProgress(pct, `Prekladám… ${Math.round(pct)} %`);
+      if (!texts[i]) { out.push(""); continue; }
+      const res = await m(prefix + texts[i], { max_new_tokens: 200, no_repeat_ngram_size: 3 }), r = Array.isArray(res) ? res[0] : res;
+      out.push((r && r.translation_text) || texts[i]);
+    }
+  } finally { try { await m.dispose(); } catch {} }
+  return out;
+}
+async function translateMobile(texts, from, to) {
+  let mid = texts;
+  if (from !== "en") mid = await opusStep(OPUS_TO_EN[from], "", texts, 0, to === "en" ? 100 : 50);
+  if (to === "en") return mid;
+  const [id, prefix] = OPUS_FROM_EN[to];
+  return opusStep(id, prefix, mid, from === "en" ? 0 : 50, 100);
+}
 function trProgress(p, label) { $("trProg").hidden = false; $("trProg").querySelector("i").style.width = Math.round(p) + "%"; $("trProg").querySelector("span").textContent = label; }
 async function runTranslate() {
   if (trBusy || !state.segments.length) return;
   const from = $("trFrom").value, to = $("trTo").value;
   if (from === to) { $("trMsg").textContent = "Vyber iný cieľový jazyk."; return; }
-  if (IS_MOBILE && !TR_MOCK) { $("trMsg").textContent = "Preklad titulkov je zatiaľ dostupný len na počítači. Prekladový model je pre mobil príliš veľký."; return; }
   trBusy = true; $("trGo").disabled = true; $("trMsg").textContent = "";
   const texts = state.segments.map((s) => s.text.replace(/\s*\n\s*/g, " ").trim());
   try {
     let out;
     if (TR_MOCK) { out = texts.map((t) => `[${to}] ${t}`); trProgress(100, "Prekladám… 100 %"); }
+    else if (IS_MOBILE) out = await translateMobile(texts, from, to);
     else {
       if (!translator) {
         trProgress(0, "Načítavam prekladový model…");
@@ -1868,11 +1895,11 @@ async function runTranslate() {
           onProgress: (l, t) => trProgress(l / t * 100, `Sťahujem prekladový model… ${Math.round(l / t * 100)} %`) }, true);
       }
       out = [];
-      for (let i = 0; i < texts.length; i += 6) {
+      for (let i = 0; i < texts.length; i++) { // po jednom, dávka s doplnením dĺžky kazí koniec prekladu
         trProgress(i / texts.length * 100, `Prekladám… ${Math.round(i / texts.length * 100)} %`);
-        const batch = texts.slice(i, i + 6);
-        const res = await translator(batch, { src_lang: NLLB[from], tgt_lang: NLLB[to], max_new_tokens: 256 });
-        (Array.isArray(res) ? res : [res]).forEach((r, k) => out.push((r && r.translation_text) || batch[k]));
+        if (!texts[i]) { out.push(""); continue; }
+        const res = await translator(texts[i], { src_lang: NLLB[from], tgt_lang: NLLB[to], max_new_tokens: 256 }), r = Array.isArray(res) ? res[0] : res;
+        out.push((r && r.translation_text) || texts[i]);
       }
     }
     if (!trOriginal) trOriginal = state.segments.map((s) => ({ text: s.text, words: s.words }));

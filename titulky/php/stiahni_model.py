@@ -29,6 +29,10 @@ MODELS = {
         "repo": "Xenova/nllb-200-distilled-600M",
         "onnx": {"encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"},
     },
+    **{f"mobil-{r}": {  # preklad na mobile: malé modely cez angličtinu (slovenské subgen/* sú v ZIP-e od Subgen)
+        "repo": f"Xenova/opus-mt-{r}",
+        "onnx": {"encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"},
+    } for r in ["cs-en", "en-cs", "es-en", "en-es", "ar-en", "en-ar", "hi-en", "en-hi", "zh-en", "en-zh", "pl-en", "tr-en", "en-mul"]},
     "turbo": {
         "repo": "onnx-community/whisper-large-v3-turbo",
         "onnx": {"encoder_model_fp16.onnx", "decoder_model_merged_q4.onnx"},
@@ -59,7 +63,7 @@ def main():
         from huggingface_hub import HfApi, hf_hub_download
     except ImportError:
         sys.exit("Najprv spusti: pip install huggingface_hub")
-    keys = ["base", "small", "preklad"] + (["turbo"] if "--turbo" in sys.argv or "--all" in sys.argv else [])
+    keys = ["base", "small", "preklad"] + [k for k in MODELS if k.startswith("mobil-")] + (["turbo"] if "--turbo" in sys.argv or "--all" in sys.argv else [])
     api, root = HfApi(), os.path.join(os.getcwd(), "models")
     for key in keys:
         cfg = MODELS[key]
