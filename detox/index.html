@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LISO — lisované detox šťavy</title>
+  <meta name="description" content="Bio šťavy lisované za studena. Štvordňový detox program, rozvoz po Slovensku.">
+  <meta name="theme-color" content="#9bc983">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hdr" id="hdr">
+    <div class="hdr-in">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="mainNav">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
+      </button>
+      <a href="#domov" class="logo" aria-label="LISO — domov">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7 14c3-5 7-6 10-6-1 5-4 9-10 6z" fill="var(--bg)"/></svg>
+        LISO<sup>®</sup>
+      </a>
+      <nav class="nav" id="mainNav" aria-label="Hlavná navigácia">
+        <a href="#domov">Domov</a>
+        <a href="#o-nas">O nás</a>
+        <a href="#detox">Detox</a>
+        <a href="#obchod">Obchod</a>
+      </nav>
+      <div class="hdr-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="Hľadať" aria-expanded="false" aria-controls="searchPanel">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        </button>
+        <button class="icon-btn cart-btn" id="cartBtn" aria-label="Košík">
+          <svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+          <span class="badge" id="cartCount" hidden>0</span>
+        </button>
+      </div>
+    </div>
+    <div class="search-panel" id="searchPanel" hidden>
+      <input type="search" id="searchInput" placeholder="Hľadať šťavu alebo surovinu (napr. zázvor)…" aria-label="Hľadať" autocomplete="off">
+      <ul id="searchResults" class="search-results"></ul>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO SLIDER -->
+    <section class="hero" id="domov" aria-roledescription="carousel" aria-label="Naše šťavy">
+      <div class="hero-grid">
+        <div class="h-top">
+          <p class="eyebrow swap" style="--d:0ms">Bio · lisované za studena</p>
+          <h1 class="h-title swap" id="hTitle" style="--d:60ms"></h1>
+          <p class="h-price swap" id="hPrice" style="--d:120ms"></p>
+        </div>
+
+        <div class="h-visual" id="hVisual">
+          <div class="oval" id="hOval"></div>
+          <div class="bottle-wrap" id="hBottle"></div>
+        </div>
+
+        <div class="h-copy">
+          <p class="h-lead swap" id="hLead" style="--d:160ms"></p>
+          <p class="h-desc swap" id="hDesc" style="--d:200ms"></p>
+          <div class="h-actions swap" style="--d:240ms">
+            <div class="qty" aria-label="Množstvo">
+              <button type="button" id="hMinus" aria-label="Menej">−</button>
+              <output id="hQty">1</output>
+              <button type="button" id="hPlus" aria-label="Viac">+</button>
+            </div>
+            <button class="btn-dark" id="hAdd">Do košíka</button>
+            <a href="#obchod" class="link-arrow">Celá ponuka <span aria-hidden="true">⟶</span></a>
+          </div>
+        </div>
+
+        <div class="h-side">
+          <p class="counter" aria-live="polite"><span id="hIdx">1</span> / <span id="hTotal">4</span></p>
+          <div class="arrows">
+            <button class="arrow" id="prevBtn" aria-label="Predchádzajúca šťava"><svg viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button>
+            <button class="arrow arrow-dark" id="nextBtn" aria-label="Ďalšia šťava"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- O NÁS -->
+    <section class="sec about" id="o-nas">
+      <div class="wrap about-grid">
+        <div>
+          <p class="eyebrow">O nás</p>
+          <h2>Lisujeme ráno, <em>doručíme ešte v ten istý týždeň.</em></h2>
+        </div>
+        <div class="about-text">
+          <p>Sme malá lisovňa. Ovocie a zeleninu berieme od slovenských pestovateľov, kde sa dá, a v bio kvalite. Šťavy lisujeme hydraulickým lisom za studena — bez ohrevu, bez pridaného cukru a bez konzervantov.</p>
+          <p>Preto majú krátku trvanlivosť: vydržia 5 dní v chladničke. Lisujeme v deň odoslania.</p>
+          <dl class="stats">
+            <div><dt>0 g</dt><dd>pridaného cukru</dd></div>
+            <div><dt>1,2 kg</dt><dd>surovín na fľašu</dd></div>
+            <div><dt>5 dní</dt><dd>čerstvosť v chlade</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETOX PROGRAM -->
+    <section class="sec program" id="detox">
+      <div class="wrap">
+        <p class="eyebrow">Detox program</p>
+        <h2>Štyri dni, <em>štyri farby.</em></h2>
+        <p class="sec-lead">Každá fľaša má svoje číslo. Pite jednu až tri denne popri ľahkej strave — alebo si vyberte len tú, ktorá vám chutí najviac.</p>
+        <ol class="days" id="days"></ol>
+      </div>
+    </section>
+
+    <!-- OBCHOD -->
+    <section class="sec shop" id="obchod">
+      <div class="wrap">
+        <div class="shop-head">
+          <div>
+            <p class="eyebrow">Obchod</p>
+            <h2>Vyberte si <em>svoju fľašu.</em></h2>
+          </div>
+          <p class="ship-note" id="shipNote"></p>
+        </div>
+        <div class="products" id="products"></div>
+        <h3 class="bundles-title">Zvýhodnené balíky</h3>
+        <div class="bundles" id="bundles"></div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="sec faq" id="faq">
+      <div class="wrap faq-grid">
+        <div>
+          <p class="eyebrow">Časté otázky</p>
+          <h2>Doprava <em>a objednávky</em></h2>
+        </div>
+        <div class="faq-list">
+          <details><summary>Kedy mi príde objednávka?</summary><p>Objednávky prijaté do 12:00 lisujeme a odosielame v pondelok až štvrtok nasledujúci pracovný deň. Kuriér doručuje do 1–2 dní, šťavy putujú v chladiacom boxe.</p></details>
+          <details><summary>Ako dlho šťavy vydržia?</summary><p>5 dní od lisovania v chladničke (do 5 °C). Dátum spotreby je na viečku.</p></details>
+          <details><summary>Ako môžem zaplatiť?</summary><p>Bankovým prevodom (údaje dostanete po objednaní), na dobierku alebo pri osobnom odbere.</p></details>
+          <details><summary>Je detox vhodný pre každého?</summary><p>Naše šťavy sú potravina, nie liek. Ak ste tehotná, dojčíte alebo sa liečite, poraďte sa pred zmenou jedálnička s lekárom.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ftr">
+    <div class="wrap ftr-grid">
+      <div>
+        <a href="#domov" class="logo">LISO<sup>®</sup></a>
+        <p>Lisované šťavy · Bratislava</p>
+      </div>
+      <div>
+        <p><strong>Prevádzkovateľ</strong><br><span id="ftrCompany"></span></p>
+      </div>
+      <div>
+        <p><a href="#" data-legal="vop">Obchodné podmienky</a><br><a href="#" data-legal="gdpr">Ochrana osobných údajov</a><br><a id="ftrMail" href="#"></a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- KOŠÍK -->
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="cart" aria-label="Košík" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>Košík</h2>
+      <button class="icon-btn" id="cartClose" aria-label="Zavrieť košík"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="free-bar" id="freeBar"><p id="freeText"></p><span><i id="freeFill"></i></span></div>
+    <ul class="cart-items" id="cartItems"></ul>
+    <div class="drawer-foot">
+      <div class="row"><span>Medzisúčet</span><strong id="cartSubtotal">0 €</strong></div>
+      <p class="muted">Dopravu vyberiete v ďalšom kroku.</p>
+      <button class="btn-dark btn-block" id="checkoutBtn">Pokračovať k objednávke</button>
+    </div>
+  </aside>
+
+  <!-- OBJEDNÁVKA -->
+  <dialog class="checkout" id="checkout" aria-labelledby="coTitle">
+    <form id="coForm" novalidate>
+      <div class="co-head">
+        <h2 id="coTitle">Objednávka</h2>
+        <button type="button" class="icon-btn" id="coClose" aria-label="Zavrieť"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="co-body">
+        <div class="co-fields">
+          <fieldset>
+            <legend>Kontakt</legend>
+            <div class="grid2">
+              <label>Meno a priezvisko<input name="name" required autocomplete="name"></label>
+              <label>Telefón<input name="phone" type="tel" required autocomplete="tel" placeholder="+421 …"></label>
+            </div>
+            <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
+          </fieldset>
+          <fieldset>
+            <legend>Doprava</legend>
+            <div class="choices" id="shipChoices"></div>
+          </fieldset>
+          <fieldset id="addrSet">
+            <legend>Adresa doručenia</legend>
+            <label>Ulica a číslo<input name="street" required autocomplete="street-address"></label>
+            <div class="grid2">
+              <label>Mesto<input name="city" required autocomplete="address-level2"></label>
+              <label>PSČ<input name="zip" required autocomplete="postal-code" inputmode="numeric" pattern="\d{3}\s?\d{2}" placeholder="811 01"></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Platba</legend>
+            <div class="choices" id="payChoices"></div>
+          </fieldset>
+          <label>Poznámka<textarea name="note" rows="2" placeholder="Napr. zvoniť na Novákovci"></textarea></label>
+          <label class="check"><input type="checkbox" name="terms" required> <span>Súhlasím s <a href="#" data-legal="vop">obchodnými podmienkami</a> a beriem na vedomie <a href="#" data-legal="gdpr">spracovanie osobných údajov</a>.</span></label>
+        </div>
+        <aside class="co-summary">
+          <h3>Súhrn</h3>
+          <ul id="coItems"></ul>
+          <div class="row"><span>Medzisúčet</span><span id="coSub"></span></div>
+          <div class="row"><span>Doprava</span><span id="coShip"></span></div>
+          <div class="row" id="coFeeRow" hidden><span>Poplatok za dobierku</span><span id="coFee"></span></div>
+          <div class="row total"><span>Spolu s DPH</span><strong id="coTotal"></strong></div>
+          <p class="form-error" id="coError" role="alert" hidden></p>
+          <button class="btn-dark btn-block" type="submit" id="coSubmit">Objednať s povinnosťou platby</button>
+        </aside>
+      </div>
+    </form>
+    <div class="co-done" id="coDone" hidden></div>
+  </dialog>
+
+  <dialog class="legal" id="legal">
+    <div class="co-head"><h2 id="legalTitle"></h2><button class="icon-btn" onclick="this.closest('dialog').close()" aria-label="Zavrieť"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="legal-body" id="legalBody"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="art.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

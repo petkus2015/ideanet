@@ -177,3 +177,27 @@ cez WP-Cron, cestovný poriadok GTFS raz denne. Ukladajú sa do
 python3 scripts/build_wp_plugin.py
 ```
 
+
+---
+
+# E-shop s detox šťavami — `detox/`
+
+Produktová stránka so sliderom (farba pozadia, ovál s ovocím a fľaša sa menia
+podľa šťavy) a s predajom: košík, balíky, výber dopravy a platby, objednávka.
+Ilustrácie ovocia aj fliaš sa kreslia v SVG (`detox/art.js`) — netreba obrázky.
+
+**Pred spustením upravte `CONFIG` na začiatku `detox/app.js`:**
+
+| Kľúč | Čo nastaviť |
+|---|---|
+| `email` | adresa, na ktorú chodia objednávky |
+| `orderEndpoint` | URL, ktorá prijme objednávku ako JSON (napr. Formspree, Make, vlastný server). Kým je prázdne, objednávka sa otvorí v e-mailovom klientovi zákazníka a ten ju musí odoslať. |
+| `company`, `iban` | údaje prevádzkovateľa a účet pre bankový prevod (VS = číslo objednávky) |
+| `shipping`, `payment`, `freeShippingFrom` | spôsoby dopravy a platby, ceny, doprava zadarmo |
+
+Produkty, ceny a balíky sú v poliach `PRODUCTS` a `BUNDLES`. Obchodné podmienky
+a ochrana osobných údajov sú len **šablóny** (`LEGAL` v `app.js`) — pred spustením ich
+nahraďte vlastnými. Platba kartou online potrebuje serverovú časť (napr. Stripe
+Checkout alebo WooCommerce); stránka teraz ponúka prevod, dobierku a platbu pri odbere.
+
+Košík a údaje zákazníka sa pamätajú v prehliadači (`localStorage`).
