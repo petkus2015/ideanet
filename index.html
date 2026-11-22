@@ -14,8 +14,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
+<div class="scroll-progress" aria-hidden="true"></div>
 <a class="skip" href="#portfolio">Preskočiť na portfólio</a>
 
 <div class="bg" aria-hidden="true">
@@ -364,6 +366,12 @@
   </button>
 </div>
 
-<script src="app.js"></script>
+<!-- Motion (motion.dev) — animácie; pevná verzia + kontrola integrity.
+     Ak sa nenačíta, stránka funguje ďalej so záložnými CSS animáciami. -->
+<script src="https://cdn.jsdelivr.net/npm/motion@14.10.1/dist/motion.js"
+        integrity="sha384-lnXs/o2QVHbH7aNA9JGkcMdW38AWVgMHWWrPU/fGgHi+eRj2j0a8va/1nlijpjHX"
+        crossorigin="anonymous" defer></script>
+<script src="app.js" defer></script>
+<script src="motion-fx.js" defer></script>
 </body>
 </html>

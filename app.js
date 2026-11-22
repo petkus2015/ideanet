@@ -315,15 +315,18 @@
   /* ───────────────────────────────────────────
      7) DROBNOSTI
   ─────────────────────────────────────────── */
-  /* reveal pri skrolovaní */
-  const io = new IntersectionObserver((ents) => {
-    ents.forEach(en => {
-      if (!en.isIntersecting) return;
-      en.target.classList.add('is-in');
-      io.unobserve(en.target);
-    });
-  }, { threshold: .12, rootMargin: '0px 0px -8%' });
-  $$('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+  /* reveal pri skrolovaní — záloha, keď sa knižnica Motion nenačíta
+     (inak animácie riadi motion-fx.js) */
+  if (!window.Motion) {
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(en => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('is-in');
+        io.unobserve(en.target);
+      });
+    }, { threshold: .12, rootMargin: '0px 0px -8%' });
+    $$('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+  }
 
   /* počítadlá */
   $$('[data-count]').forEach(el => {

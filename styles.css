@@ -449,8 +449,20 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 body.is-locked{overflow:hidden}
 
 /* ── reveal animácie ─────────────────────── */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.3,1), transform .7s cubic-bezier(.2,.8,.3,1)}
-.reveal.is-in{opacity:1;transform:none}
+/* skryté len keď beží JS (trieda .js v <head>), inak je obsah vždy viditeľný */
+.js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.3,1), transform .7s cubic-bezier(.2,.8,.3,1)}
+.js .reveal.is-in{opacity:1;transform:none}
+/* animácie riadi Motion (motion-fx.js) — CSS prechod by sa s ním bil */
+.has-motion .reveal:not(.is-in){transition:none}
+
+/* indikátor priebehu skrolovania (zobrazí sa len s Motion) */
+.scroll-progress{
+  display:none;position:fixed;inset:0 0 auto;height:3px;z-index:200;pointer-events:none;
+  transform-origin:0 50%;transform:scaleX(0);
+  background:linear-gradient(90deg,var(--magenta),var(--violet));
+  box-shadow:0 0 12px rgba(255,45,148,.6);
+}
+.has-motion .scroll-progress{display:block}
 
 /* ═══ RESPONZÍVNE ═══════════════════════════ */
 @media (max-width:1024px){
@@ -489,5 +501,6 @@ body.is-locked{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
-  .reveal{opacity:1;transform:none}
+  .js .reveal{opacity:1;transform:none}
+  .scroll-progress{display:none!important}
 }
