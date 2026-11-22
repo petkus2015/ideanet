@@ -44,7 +44,7 @@
   var money = new Intl.NumberFormat('sk-SK', { style: 'currency', currency: 'EUR' });
 
   fetch('data/products.json').then(function (r) { return r.json(); }).then(function (c) {
-    $('bottle').innerHTML = ZZArt.product(c.products[0], { eager: true });
+    $('bottle').innerHTML = ZZArt.bottle(c.products[0]);
   }).catch(function () {});
 
   function clearCart() { try { localStorage.removeItem('zz-cart'); } catch (e) {} }

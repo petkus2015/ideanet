@@ -220,7 +220,7 @@
         <div class="card__stage">
           <span class="card__badge ${p.id === 'vianocny' ? 'card__badge--hot' : ''}">${p.badge}</span>
           <div class="card__splat">${Art.splat(100 + i * 13, p.colors.label === '#F1E1BF' ? '#E7CF9F' : p.colors.label, { drip: false })}</div>
-          <div class="card__bottle" style="--ar:${Art.ratio(p)}">${Art.product(p)}</div>
+          <div class="card__bottle">${Art.bottle(p)}</div>
         </div>
         <div class="card__body">
           <p class="card__meta">${p.volume} · ${p.abv} % obj.</p>
@@ -296,7 +296,7 @@
         li.className = 'summary__item';
         li.dataset.id = id;
         li.innerHTML = `
-          <div class="summary__thumb">${Art.product(p)}</div>
+          <div class="summary__thumb">${Art.bottle(p)}</div>
           <div>
             <p class="summary__name">${p.name} <small>${p.volume}</small></p>
             <div class="summary__ctrl">
@@ -337,7 +337,7 @@
     const a = from.getBoundingClientRect(), b = cartBtn.getBoundingClientRect();
     const f = document.createElement('div');
     f.className = 'flyer';
-    f.innerHTML = Art.product(PRODUCTS[id], { plain: true });
+    f.innerHTML = Art.bottle(PRODUCTS[id], { plain: true });
     f.style.left = (a.left + a.width / 2 - 20) + 'px';
     f.style.top = (a.top + a.height / 2 - 60) + 'px';
     document.body.appendChild(f);
@@ -548,8 +548,7 @@
     CATALOG.products.forEach((p) => { PRODUCTS[p.id] = p; });
     cleanCart();
 
-    $('.bottle-float').innerHTML = Art.product(PRODUCTS.vianocny, { eager: true });
-    bottleEl.style.setProperty('--ar', Art.ratio(PRODUCTS.vianocny));
+    $('.bottle-float').innerHTML = Art.bottle(PRODUCTS.vianocny);
     glassEl.innerHTML = Art.glass();
     initStory();
     renderShelf();
