@@ -314,7 +314,7 @@ async function decodeAudio(file) {
     if (aac) { setBusy("Čítam zvuk…", "Rozbaľujem zvuk…", phasePct("audio", 0.85)); return await decodeBuffer(aac); }
   } catch (e) { console.warn("MP4 zvuk", e); }
   // Celé video do pamäte len pri menších súboroch, veľké videá by mobil nezvládol.
-  if (file.size < 400e6) {
+  if (file.size < (IS_MOBILE ? 80e6 : 400e6)) {
     try { setBusy("Čítam zvuk…", `Načítavam video (${mb} MB)…`, phasePct("audio", 0.1)); return await decodeBuffer(await file.arrayBuffer()); } catch { /* skúsi sa záloha */ }
   }
   try { setBusy("Čítam zvuk…", "Prehliadač nevie rozbaliť zvuk priamo, číta ho pri prehrávaní."); return await captureAudio(state.url); }
@@ -415,14 +415,17 @@ async function showModelState() {
 }
 // Ak je model už uložený, načíta sa na pozadí hneď po otvorení stránky, aby nahratie videa nečakalo.
 async function warmUpModel() {
-  if (MOCK) return;
+  if (MOCK || IS_MOBILE) return; // na mobile by model v pamäti spolu so zvukom videa zhodil stránku
   let have = null; try { have = localStorage.getItem(MODEL_KEY); } catch {}
   if (!have) return;
   try { const spec = (await preferLocal(await bestModels())).find((x) => x.id === have); if (spec) await ensureModel(spec, true); } catch { /* načíta sa pri nahratí */ }
 }
 // Vyberie sa vždy najpresnejší model, ktorý prehliadač zvládne: large-v3-turbo na grafickej karte (WebGPU),
 // inak small. Ak zlyhá najpresnejší, skúsi sa ďalší.
+// Mobil (najmä iPhone) má na kartu prehliadača málo pamäte: väčší model ho zhodí a stránka sa obnoví.
+const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
 async function bestModels() {
+  if (IS_MOBILE) return [{ id: "Xenova/whisper-base", label: "base", opts: {}, light: true }];
   const list = [];
   if (navigator.gpu) {
     try {
@@ -494,13 +497,13 @@ async function loadModel(spec, quiet) {
     if (!quiet) setBusy("Sťahujem model…", `${spec.label}: ${Math.round(loaded / 1048576)} z ${Math.round(total / 1048576)} MB (len pri prvom použití)`, phasePct("model", loaded / total));
     if (spec.onProgress) spec.onProgress(loaded, total);
   };
-  let idbOk = false; try { await openModelDb(); idbOk = true; } catch {}
+  let idbOk = false; if (!IS_MOBILE) try { await openModelDb(); idbOk = true; } catch {}
   const local = await hasLocal(spec.id);
   let reach = null;
   if (!local) try { await fetch(`https://huggingface.co/${spec.id}/resolve/main/config.json`, { method: "GET" }); } catch (e) { reach = e; }
   // Ak je model na vlastnom serveri (priečinok models/), sťahuje sa iba odtiaľ, nikdy z huggingface.co.
   const attempts = local ? [
-    { label: "vlastný server", cache: idbOk ? "idb" : "none", host: "https://huggingface.co/", local: true },
+    { label: "vlastný server", cache: idbOk ? "idb" : IS_MOBILE ? "browser" : "none", host: "https://huggingface.co/", local: true },
     ...(idbOk ? [{ label: "vlastný server bez pamäte", cache: "none", host: "https://huggingface.co/", local: true }] : []),
   ] : [ // trvalá pamäť modelu, pamäť prehliadača, bez pamäte, cez zrkadlo
     ...(idbOk ? [{ label: "uložený model", cache: "idb", host: "https://huggingface.co/" }] : []),
@@ -543,9 +546,9 @@ function startAsrProgress(durationSec, spec) {
 async function transcribeWith(model, audio, lang, spec) {
   const stop = startAsrProgress(audio.length / 16000, spec);
   try {
-    const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5 };
+    const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5, ...(spec.light ? { no_repeat_ngram_size: 3, repetition_penalty: 1.15 } : {}) }; // menší model sa ľahšie zacyklí na jednom slove
     if (LANGS[lang]) opts.language = LANGS[lang];
-    try { // časy po slovách (zvýraznenie slov)
+    if (!spec.light) try { // časy po slovách (zvýraznenie slov); na mobile sa odhadnú, šetrí to pamäť
       const wres = await model(audio, { ...opts, return_timestamps: "word" });
       const words = (wres.chunks || []).map((c) => ({ w: c.text.trim(), start: c.timestamp[0] ?? 0, end: c.timestamp[1] ?? state.duration })).filter((o) => o.w);
       if (words.length) return groupWords(words);
@@ -1852,6 +1855,7 @@ async function runTranslate() {
   if (trBusy || !state.segments.length) return;
   const from = $("trFrom").value, to = $("trTo").value;
   if (from === to) { $("trMsg").textContent = "Vyber iný cieľový jazyk."; return; }
+  if (IS_MOBILE && !TR_MOCK) { $("trMsg").textContent = "Preklad titulkov je zatiaľ dostupný len na počítači. Prekladový model je pre mobil príliš veľký."; return; }
   trBusy = true; $("trGo").disabled = true; $("trMsg").textContent = "";
   const texts = state.segments.map((s) => s.text.replace(/\s*\n\s*/g, " ").trim());
   try {

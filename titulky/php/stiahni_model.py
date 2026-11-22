@@ -3,7 +3,7 @@
 
 Spusti na počítači s internetom (nie na hostingu):
     pip install huggingface_hub
-    python3 stiahni_model.py            # rozpoznávanie reči (Whisper small, ~250 MB) + preklad titulkov (NLLB-200, niekoľko stoviek MB)
+    python3 stiahni_model.py            # rozpoznávanie reči (Whisper base pre mobily ~80 MB, small ~250 MB) + preklad titulkov (NLLB-200, niekoľko stoviek MB)
     python3 stiahni_model.py --turbo    # navyše presnejšie rozpoznávanie large-v3-turbo (~1,5 GB, pre prehliadače s WebGPU)
 
 Na Windows namiesto "python3" napíš "py" (napr. py stiahni_model.py).
@@ -17,6 +17,10 @@ import shutil
 import sys
 
 MODELS = {
+    "base": {  # menší model pre mobily (iPhone, Android), ktoré väčší model nezvládnu
+        "repo": "Xenova/whisper-base",
+        "onnx": {"encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"},
+    },
     "small": {
         "repo": "Xenova/whisper-small",
         "onnx": {"encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"},
@@ -55,7 +59,7 @@ def main():
         from huggingface_hub import HfApi, hf_hub_download
     except ImportError:
         sys.exit("Najprv spusti: pip install huggingface_hub")
-    keys = ["small", "preklad"] + (["turbo"] if "--turbo" in sys.argv or "--all" in sys.argv else [])
+    keys = ["base", "small", "preklad"] + (["turbo"] if "--turbo" in sys.argv or "--all" in sys.argv else [])
     api, root = HfApi(), os.path.join(os.getcwd(), "models")
     for key in keys:
         cfg = MODELS[key]
