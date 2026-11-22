@@ -15,9 +15,6 @@
   <script>document.documentElement.classList.add('js')</script>
   <header class="hdr" id="hdr">
     <div class="hdr-in">
-      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="mainNav">
-        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
-      </button>
       <a href="#domov" class="logo" aria-label="LISO — domov">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7 14c3-5 7-6 10-6-1 5-4 9-10 6z" fill="var(--bg)"/></svg>
         LISO<sup>®</sup>
@@ -32,7 +29,7 @@
         <button class="icon-btn" id="searchBtn" aria-label="Hľadať" aria-expanded="false" aria-controls="searchPanel">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
         </button>
-        <button class="icon-btn cart-btn" id="cartBtn" aria-label="Košík">
+        <button class="icon-btn cart-btn" id="cartBtn" aria-label="Košík" data-cart>
           <svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
           <span class="badge" id="cartCount" hidden>0</span>
         </button>
@@ -150,20 +147,51 @@
     </section>
   </main>
 
-  <footer class="ftr">
-    <div class="wrap ftr-grid">
-      <div>
-        <a href="#domov" class="logo">LISO<sup>®</sup></a>
-        <p>Lisované šťavy · Bratislava</p>
+  <footer class="ftr" id="kontakt">
+    <div class="ftr-marquee" aria-hidden="true">
+      <div class="mq-track" id="mqTrack"></div>
+    </div>
+
+    <div class="wrap ftr-main">
+      <div class="ftr-press" data-reveal>
+        <p class="eyebrow">Najbližšie lisovanie</p>
+        <p class="press-day" id="pressDay"></p>
+        <p class="press-left" id="pressLeft"></p>
+        <div class="shelf" id="shelf" aria-hidden="true"></div>
+        <a href="#obchod" class="btn-dark">Vybrať šťavu</a>
       </div>
-      <div>
-        <p><strong>Prevádzkovateľ</strong><br><span id="ftrCompany"></span></p>
-      </div>
-      <div>
-        <p><a href="#" data-legal="vop">Obchodné podmienky</a><br><a href="#" data-legal="gdpr">Ochrana osobných údajov</a><br><a id="ftrMail" href="#"></a></p>
-      </div>
+
+      <section class="facts" aria-labelledby="factsTitle" data-reveal>
+        <h2 id="factsTitle">Údaje o obchode</h2>
+        <p class="facts-sub">na jednu objednávku</p>
+        <dl>
+          <div class="thick"><dt>Prevádzkovateľ</dt><dd id="ftrCompany"></dd></div>
+          <div><dt>E-mail</dt><dd><a id="ftrMail" href="#"></a></dd></div>
+          <div><dt>Osobný odber</dt><dd>Bratislava, po–pi 8:00–16:00</dd></div>
+          <div><dt>Doprava zadarmo</dt><dd id="ftrFree"></dd></div>
+          <div><dt>Skladovanie</dt><dd>do 5 °C, spotrebujte do 5 dní</dd></div>
+          <div><dt>Pridaný cukor</dt><dd>0 g</dd></div>
+        </dl>
+        <p class="facts-links"><a href="#" data-legal="vop">Obchodné podmienky</a><a href="#" data-legal="gdpr">Ochrana osobných údajov</a></p>
+      </section>
+    </div>
+
+    <div class="ftr-word" aria-hidden="true" data-reveal-group><span>L</span><span>I</span><span>S</span><span>O</span></div>
+
+    <div class="wrap ftr-bottom">
+      <span>© <span id="year"></span> LISO · lisované za studena v Bratislave</span>
+      <a href="#domov">Späť hore <span aria-hidden="true">↑</span></a>
     </div>
   </footer>
+
+  <nav class="tabbar" id="tabbar" aria-label="Navigácia">
+    <i class="tab-ind" id="tabInd" aria-hidden="true"></i>
+    <a href="#domov" data-sec="domov"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Domov</span></a>
+    <a href="#o-nas" data-sec="o-nas"><svg viewBox="0 0 24 24"><path d="M12 3c4 4 7 7.5 7 11a7 7 0 0 1-14 0c0-3.5 3-7 7-11z"/></svg><span>O nás</span></a>
+    <a href="#detox" data-sec="detox"><svg viewBox="0 0 24 24"><path d="M10 3h4v3l2 3v11a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3z"/><path d="M8 13h8"/></svg><span>Detox</span></a>
+    <a href="#obchod" data-sec="obchod"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>Obchod</span></a>
+    <button type="button" id="tabCart" data-cart aria-label="Košík"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span>Košík</span><b class="badge tab-badge" hidden>0</b></button>
+  </nav>
 
   <!-- KOŠÍK -->
   <div class="scrim" id="scrim" hidden></div>

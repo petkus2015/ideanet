@@ -373,6 +373,8 @@ document.addEventListener('click', (e) => {
 });
 $('#shipNote').textContent = `Doprava zadarmo od ${fmt(CONFIG.freeShippingFrom)} · lisujeme v deň odoslania`;
 $('#ftrCompany').textContent = CONFIG.company;
+$('#ftrFree').textContent = 'od ' + fmt(CONFIG.freeShippingFrom);
+$('#year').textContent = new Date().getFullYear();
 $('#ftrMail').textContent = CONFIG.email;
 $('#ftrMail').href = 'mailto:' + CONFIG.email;
 
@@ -389,16 +391,20 @@ function add(id, q, src) {
   const p = byId(id);
   const done = () => {
     saveCart();
-    const c = $('#cartCount'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
-    play($('#cartBtn svg'), [{ transform: 'none' }, { transform: 'rotate(-14deg) scale(1.15)' }, { transform: 'rotate(10deg)' }, { transform: 'none' }], { duration: 600, easing: E_OUT });
+    const t = cartTarget(), c = t.querySelector('.badge');
+    if (c) { c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
+    play(t.querySelector('svg'), [{ transform: 'none' }, { transform: 'rotate(-14deg) scale(1.15)' }, { transform: 'rotate(10deg)' }, { transform: 'none' }], { duration: 600, easing: E_OUT });
   };
   toast(`${p.name}${p.num ? ' detox' : ''} × ${q} — v košíku`);
   if (src && !reduced) flyToCart(src, p.bg || '#ecd97b', p.num ? p : null).then(done); else done();
 }
 
+/* Viditeľné tlačidlo košíka: na mobile v spodnej lište, inak v hlavičke. */
+const cartTarget = () => ($('#tabCart').offsetParent ? $('#tabCart') : $('#cartBtn'));
+
 /* Fľaštička preletí oblúkom z tlačidla do košíka. */
 function flyToCart(src, color, prod) {
-  const a = src.getBoundingClientRect(), b = $('#cartBtn').getBoundingClientRect();
+  const a = src.getBoundingClientRect(), b = cartTarget().getBoundingClientRect();
   const el = document.createElement('div');
   el.className = 'fly';
   el.style.background = color;
@@ -420,8 +426,7 @@ function saveCart() { store.set('liso-cart', cart); renderCart(); }
 
 function renderCart() {
   const n = count(), sub = subtotal();
-  const badge = $('#cartCount');
-  badge.hidden = !n; badge.textContent = n;
+  document.querySelectorAll('.badge').forEach((badge) => { badge.hidden = !n; badge.textContent = n; });
   $('#cartBtn').setAttribute('aria-label', `Košík, položiek: ${n}`);
   $('#cartSubtotal').textContent = fmt(sub);
   $('#checkoutBtn').disabled = !n;
@@ -455,9 +460,9 @@ function toggleCart(open) {
   $('#cart').setAttribute('aria-hidden', !open);
   $('#scrim').hidden = !open;
   document.body.classList.toggle('locked', open);
-  if (open) setTimeout(() => $('#cartClose').focus(), 50); else $('#cartBtn').focus({ preventScroll: true });
+  if (open) setTimeout(() => $('#cartClose').focus(), 50); else cartTarget().focus({ preventScroll: true });
 }
-$('#cartBtn').onclick = () => toggleCart(true);
+document.querySelectorAll('[data-cart]').forEach((b) => (b.onclick = () => toggleCart(true)));
 $('#cartClose').onclick = () => toggleCart(false);
 $('#scrim').onclick = () => toggleCart(false);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && cartOpen) toggleCart(false); });
@@ -646,13 +651,60 @@ function search() {
 si.addEventListener('input', search);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sp.hidden) { sp.hidden = true; $('#searchBtn').focus(); } });
 
-/* ===== Menu, hlavička ===== */
-$('#menuBtn').onclick = () => {
-  const open = !$('#mainNav').classList.contains('open');
-  $('#mainNav').classList.toggle('open', open);
-  $('#menuBtn').setAttribute('aria-expanded', open);
-};
-$('#mainNav').addEventListener('click', (e) => { if (e.target.closest('a')) $('#mainNav').classList.remove('open'); });
+/* ===== Pätička: najbližšie lisovanie, pás surovín, polička ===== */
+(() => {
+  // Objednávky po–št do 12:00 lisujeme nasledujúci deň ráno.
+  const DAYS = ['nedeľa', 'pondelok', 'utorok', 'streda', 'štvrtok', 'piatok', 'sobota'];
+  function nextPress(now) {
+    const d = new Date(now);
+    for (let i = 0; i < 8; i++) {
+      const cut = new Date(d.getFullYear(), d.getMonth(), d.getDate() + i, 12);
+      const wd = cut.getDay();
+      if (wd >= 1 && wd <= 4 && cut > now) return { cut, press: new Date(cut.getFullYear(), cut.getMonth(), cut.getDate() + 1, 6) };
+    }
+  }
+  const dayName = (d, now) => {
+    const diff = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5);
+    return diff === 0 ? 'dnes' : diff === 1 ? 'zajtra' : DAYS[d.getDay()];
+  };
+  function update() {
+    const now = new Date(), { cut, press } = nextPress(now);
+    $('#pressDay').innerHTML = `<span>${dayName(press, now)}</span> ${press.getDate()}. ${press.getMonth() + 1}. <small>o 6:00</small>`;
+    const m = Math.max(0, Math.round((cut - now) / 6e4)), h = Math.floor(m / 60);
+    const left = h >= 24 ? `${Math.floor(h / 24)} d ${h % 24} h` : `${h} h ${m % 60} min`;
+    const ACC = ['v nedeľu', 'v pondelok', 'v utorok', 'v stredu', 'vo štvrtok', 'v piatok', 'v sobotu'];
+    const when = { dnes: 'dnes', zajtra: 'zajtra' }[dayName(cut, now)] || ACC[cut.getDay()];
+    $('#pressLeft').innerHTML = `Objednajte ${when} do 12:00, zostáva <b>${left}</b>.`;
+  }
+  update(); setInterval(update, 30000);
+
+  const words = PRODUCTS.flatMap((p) => p.ingredients.slice(0, 3).map((w) => [w, p.bg]));
+  const row = words.map(([w, c]) => `<span><i style="background:${c}"></i>${w}</span>`).join('');
+  $('#mqTrack').innerHTML = row + row;
+  $('#shelf').innerHTML = PRODUCTS.map((p) => `<div class="shelf-b">${ART.bottle(p)}</div>`).join('');
+})();
+
+/* ===== Spodná lišta na mobile ===== */
+(() => {
+  const bar = $('#tabbar'), ind = $('#tabInd');
+  const links = [...bar.querySelectorAll('[data-sec]')];
+  let cur = null;
+  const set = (id) => {
+    const a = links.find((l) => l.dataset.sec === id);
+    if (!a || a === cur) return;
+    cur?.removeAttribute('aria-current'); a.setAttribute('aria-current', 'page'); cur = a;
+    ind.style.width = a.offsetWidth + 'px';
+    ind.style.translate = a.offsetLeft + 'px 0';
+  };
+  const map = { domov: 'domov', 'o-nas': 'o-nas', detox: 'detox', obchod: 'obchod', faq: 'obchod', kontakt: 'obchod' };
+  const io = new IntersectionObserver((list) => list.forEach((e) => e.isIntersecting && set(map[e.target.id])), { rootMargin: '-45% 0px -50% 0px' });
+  Object.keys(map).forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+  links.forEach((l) => l.addEventListener('click', () => set(l.dataset.sec)));
+  addEventListener('resize', () => { const a = cur; cur = null; if (a) set(a.dataset.sec); });
+  requestAnimationFrame(() => set('domov'));
+})();
+
+/* ===== Hlavička ===== */
 (() => {
   let last = 0;
   addEventListener('scroll', () => {
