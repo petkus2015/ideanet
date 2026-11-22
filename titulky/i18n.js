@@ -470,8 +470,8 @@ const trSkip = (el) => !!(el && el.closest && el.closest(I18N_SKIP));
 // Pri každom preloženom texte sa pamätá slovenský originál, aby sa dal jazyk prepnúť aj späť za behu.
 const ORIG = new WeakMap();
 function trTextNode(n) {
-  const v = n.nodeValue; if (!v || !/[A-Za-zÀ-ž]{2}/.test(v) || trSkip(n.parentElement)) return;
-  const rec = ORIG.get(n), src = rec && rec.out === v ? rec.src : v;
+  const v = n.nodeValue, rec = ORIG.get(n); if (!v || (!rec && !/[A-Za-zÀ-ž]{2}/.test(v)) || trSkip(n.parentElement)) return;
+  const src = rec && rec.out === v ? rec.src : v;
   const t = src.trim(), out = src.replace(t, tr(t));
   if (out !== src || rec) ORIG.set(n, { src, out });
   if (out !== v) n.nodeValue = out;

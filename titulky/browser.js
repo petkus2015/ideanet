@@ -4,7 +4,7 @@ const LANGS = { sk: "slovak", cs: "czech", en: "english", es: "spanish", ar: "ar
 /*I18N*/
 const DEMO = false; // true v ukážke na webe: vzorové titulky a výsledok sa prehrá priamo na stránke
 const MOCK = DEMO || new URLSearchParams(location.search).has("mock"); // len na skúšanie bez modelu
-const SAMPLE = ["Ahoj, vitajte pri ukážke aplikácie.", "Nahráte video a titulky sa vytvoria automaticky.", "Vyberiete štýl z ponuky,", "zmeníte farbu textu, font alebo podklad,", "a práve vyslovené slovo sa zvýrazní."].map((x) => tr(x)); // vzorové titulky (ukážka), v jazyku rozhrania
+const SAMPLE_SK = ["Ahoj, vitajte pri ukážke aplikácie.", "Nahráte video a titulky sa vytvoria automaticky.", "Vyberiete štýl z ponuky,", "zmeníte farbu textu, font alebo podklad,", "a práve vyslovené slovo sa zvýrazní."], SAMPLE = SAMPLE_SK.map((x) => tr(x)); // vzorové titulky (ukážka), v jazyku rozhrania
 
 const $ = (id) => document.getElementById(id);
 const OUT = { "9:16": [1080, 1920], "1:1": [1080, 1080], "16:9": [1920, 1080] };
@@ -964,7 +964,7 @@ function renderSpkList() {
     row.setAttribute("role", "option"); row.setAttribute("aria-selected", String(x.id === state.cur)); row.tabIndex = 0; row.dataset.spk = x.id;
     const dot = document.createElement("i"); dot.className = "dot";
     const name = document.createElement("input"); name.className = "spk-name"; name.value = x.name; name.maxLength = 24; name.setAttribute("aria-label", "Meno rečníka"); name.title = "Klikni a prepíš meno";
-    name.oninput = () => { x.name = name.value.trim() || "Rečník " + x.id; renderSelSpk(); buildSegments(); syncControls(); };
+    name.oninput = () => { x.name = name.value.trim() || tr("Rečník") + " " + x.id; renderSelSpk(); buildSegments(); syncControls(); };
     name.onkeydown = (e) => { if (e.key === "Enter") name.blur(); };
     name.onblur = () => { name.value = x.name; };
     const meta = document.createElement("span"); meta.className = "spk-meta"; const c = spkCount(x.id); meta.textContent = c + (c === 1 ? " titulok" : c > 1 && c < 5 ? " titulky" : " titulkov");
@@ -1991,7 +1991,7 @@ async function loadSharedFonts() {
       [state.style, ...Object.values(state.spkStyle)].forEach((st) => ensureFont(st.font));
     }
   } catch { /* stránka bez PHP: fonty ostanú len v prehliadači */ }
-  updateBrandUpload(); if (page === "brand") renderBrand();
+  updateBrandUpload(); renderBrand();
 }
 const limitMsg = () => `Z tvojej IP adresy už bol tento týždeň nahraný font. Ďalší môžeš nahrať ${new Date(fontServer.next * 1000).toLocaleDateString(LOCALE, { day: "numeric", month: "long" })}.`;
 function updateBrandUpload() {
@@ -2052,11 +2052,11 @@ function renderSample(box, st, scale = 1) {
     const b = document.createElement("div"); b.textContent = word("effect"); b.style.cssText = `font:800 ${11 * scale}px "${st.font}",sans-serif;color:${st.color}`;
     wrap.append(a, b); box.append(wrap); return;
   }
-  const sp = document.createElement("span"); sp.className = "t"; sp.textContent = tr("Ahoj svet");
+  const sp = document.createElement("span"); sp.className = "t"; sp.textContent = "Ahoj svet";
   sp.style.cssText = `font-family:"${st.font}",${SCRIPT_FALLBACK};font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:${16 * scale}px;color:${st.color}`;
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
   else if (st.shadow) sp.style.textShadow = "0 1px 4px rgba(0,0,0,.7)";
-  else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = tr("Ahoj") + " "; const b2 = document.createElement("span"); b2.textContent = tr("svet"); b2.style.color = st.hl; sp.append(a, b2); } }
+  else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = "Ahoj "; const b2 = document.createElement("span"); b2.textContent = "svet"; b2.style.color = st.hl; sp.append(a, b2); } }
   box.append(sp);
 }
 // Štýl s vlastnou animáciou (Slow down) ju zapne; pri prechode z neho na iný štýl sa jeho animácia vypne.
@@ -2222,7 +2222,7 @@ function setup() {
   ANIMS.forEach((x) => { // dlaždice animácií s pohyblivou ukážkou
     const b = document.createElement("button"); b.type = "button"; b.className = "atile"; b.dataset.id = x.id; b.setAttribute("role", "radio"); b.setAttribute("aria-label", "Animácia " + x.name);
     const smp = document.createElement("span"); smp.className = "asmp a-" + x.id;
-    const w1 = document.createElement("i"), w2 = document.createElement("i"); w1.textContent = tr("Ahoj"); w2.textContent = tr("svet"); smp.append(w1, w2);
+    const w1 = document.createElement("i"), w2 = document.createElement("i"); w1.textContent = "Ahoj"; w2.textContent = "svet"; smp.append(w1, w2);
     const nm = document.createElement("span"); nm.className = "tname"; nm.textContent = x.name;
     b.append(smp, nm); b.onclick = () => { activeStyle().anim = x.id; syncControls(); if (video.paused && state.out) { const i = segmentAt(video.currentTime); video.currentTime = (i >= 0 ? state.segments[i].start : video.currentTime) + 0.01; video.play().catch(() => {}); } };
     $("anims").append(b);
@@ -2290,8 +2290,18 @@ function setup() {
   $("uiLang").onchange = (e) => setLang(e.target.value);
   document.addEventListener("langchange", () => { // texty kreslené v kóde (plátno, štítky) sa prekreslia v novom jazyku
     $("uiLang").value = LANG; LIB_SEGS = libSegs(); LIB_CHUNKS = null;
+    // Predvolené texty, ktoré už sú v dátach (mená rečníkov, ukážkové titulky, text ukážky písma), sa preložia tiež.
+    const retr = (v, sk) => (v === sk || (DICT[sk] && DICT[sk].includes(v)) ? tr(sk) : v);
+    const spkWords = ["Rečník", ...(DICT["Rečník"] || [])];
+    state.spk.forEach((x) => { const i = x.name.lastIndexOf(" "); if (i > 0 && spkWords.includes(x.name.slice(0, i)) && /^\d+$/.test(x.name.slice(i + 1))) x.name = tr("Rečník") + x.name.slice(i); });
+    SAMPLE_SK.forEach((sk, i) => { SAMPLE[i] = tr(sk); });
+    let segCh = false;
+    state.segments.forEach((g) => { for (const sk of SAMPLE_SK) { const t = retr(g.text, sk); if (t !== g.text) { g.text = t; g.words = estimateWords(t, g.start, g.end); segCh = true; break; } } });
+    $("fontSampleText").value = retr($("fontSampleText").value, "Ahoj, toto sú moje titulky");
+    if (segCh) { bumpDyn(); invalidateResults(); }
+    if (state.out || segCh) { buildSegments(); renderSpkList(); renderSelSpk(); renderChips(tlDuration(), state.tlPxPerSec); }
     if (state.out) { syncControls(); renderCutUi(); }
-    updateBrandUpload(); if (page === "brand") renderBrand(); if (page === "library") renderLibrary();
+    updateBrandUpload(); renderBrand(); if (page === "library") renderLibrary();
   });
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   video.addEventListener("ended", () => { // to isté pri náhľade
