@@ -13,6 +13,7 @@ Výsledok: priečinok models/ s podpriečinkami Xenova/whisper-small, Xenova/nll
 priečinka ako index.php. Stránka potom modely sťahuje z tvojho servera a nie z huggingface.co.
 """
 import os
+import shutil
 import sys
 
 MODELS = {
@@ -69,6 +70,7 @@ def main():
         for f in chosen:
             print("  ", f)
             hf_hub_download(cfg["repo"], f, local_dir=target)
+        shutil.rmtree(os.path.join(target, ".cache"), ignore_errors=True)  # pomocné súbory sťahovania, na server nepatria
         size = sum(os.path.getsize(os.path.join(dp, n)) for dp, _, fs in os.walk(target) for n in fs)
         print(f"   spolu {size / 1048576:.0f} MB")
     print("\nHotovo. Nahraj priečinok 'models' na FTP vedľa index.php.")
