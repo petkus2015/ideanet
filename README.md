@@ -180,11 +180,11 @@ python3 scripts/build_wp_plugin.py
 
 ---
 
-# E-shop s detox šťavami — `detox/`
+# E-shop s detox šťavami: `detox/`
 
 Produktová stránka so sliderom (farba pozadia, ovál s ovocím a fľaša sa menia
 podľa šťavy) a s predajom: košík, balíky, výber dopravy a platby, objednávka.
-Ilustrácie ovocia aj fliaš sa kreslia v SVG (`detox/art.js`) — netreba obrázky.
+Ilustrácie ovocia aj fliaš sa kreslia v SVG (`detox/art.js`), netreba obrázky.
 
 **Pred spustením upravte `CONFIG` na začiatku `detox/app.js`:**
 
@@ -196,7 +196,7 @@ Ilustrácie ovocia aj fliaš sa kreslia v SVG (`detox/art.js`) — netreba obrá
 | `shipping`, `payment`, `freeShippingFrom` | spôsoby dopravy a platby, ceny, doprava zadarmo |
 
 Produkty, ceny a balíky sú v poliach `PRODUCTS` a `BUNDLES`. Obchodné podmienky
-a ochrana osobných údajov sú len **šablóny** (`LEGAL` v `app.js`) — pred spustením ich
+a ochrana osobných údajov sú len **šablóny** (`LEGAL` v `app.js`). Pred spustením ich
 nahraďte vlastnými. Platba kartou online potrebuje serverovú časť (napr. Stripe
 Checkout alebo WooCommerce); stránka teraz ponúka prevod, dobierku a platbu pri odbere.
 

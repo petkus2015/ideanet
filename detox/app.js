@@ -1,6 +1,6 @@
-/* LISO — slider produktov, košík a objednávka. */
+/* LISO: slider produktov, košík a objednávka. */
 
-/* ===== Nastavenia obchodu — upravte pred spustením ===== */
+/* ===== Nastavenia obchodu, upravte pred spustením ===== */
 const CONFIG = {
   email: 'objednavky@vasadomena.sk',      // kam chodia objednávky (mailto záloha)
   orderEndpoint: '',                      // URL, kam sa objednávka pošle ako JSON (napr. Formspree). Prázdne = e-mail.
@@ -9,7 +9,7 @@ const CONFIG = {
   freeShippingFrom: 35,
   shipping: [
     { id: 'kurier', label: 'Kuriér v chladiacom boxe', note: '1–2 pracovné dni', price: 4.9, address: true },
-    { id: 'packeta', label: 'Packeta — výdajné miesto', note: 'v chladiacom boxe, 2 dni', price: 3.5, address: true },
+    { id: 'packeta', label: 'Výdajné miesto Packeta', note: 'v chladiacom boxe, 2 dni', price: 3.5, address: true },
     { id: 'osobne', label: 'Osobný odber', note: 'Bratislava, po–pi 8:00–16:00', price: 0, address: false },
   ],
   payment: [
@@ -52,8 +52,8 @@ const PRODUCTS = [
 ];
 
 const BUNDLES = [
-  { id: 'balik4', name: 'Detox na 4 dni', desc: 'Po 3 fľaše z každého druhu — 12 × 300 ml.', items: { zeleny: 3, cerveny: 3, zlaty: 3, citronovy: 3 }, price: 49 },
-  { id: 'ochutnavka', name: 'Ochutnávka', desc: 'Jedna fľaša z každého druhu — 4 × 300 ml.', items: { zeleny: 1, cerveny: 1, zlaty: 1, citronovy: 1 }, price: 17.9 },
+  { id: 'balik4', name: 'Detox na 4 dni', desc: 'Po 3 fľaše z každého druhu, spolu 12 × 300 ml.', items: { zeleny: 3, cerveny: 3, zlaty: 3, citronovy: 3 }, price: 49 },
+  { id: 'ochutnavka', name: 'Ochutnávka', desc: 'Jedna fľaša z každého druhu, spolu 4 × 300 ml.', items: { zeleny: 1, cerveny: 1, zlaty: 1, citronovy: 1 }, price: 17.9 },
 ];
 
 const ALL = [...PRODUCTS, ...BUNDLES];
@@ -333,7 +333,7 @@ $('#days').innerHTML = PRODUCTS.map((p, i) => `
     <span class="day-num">${p.num}</span>
     <div class="day-bottle">${ART.bottle(p)}</div>
     <h3>${p.day}</h3>
-    <p>${p.name} detox — ${p.ingredients.slice(0, 3).join(', ')}</p>
+    <p>${p.ingredients.slice(0, 3).join(', ')}</p>
     <button class="link-arrow" data-slide="${i}">Pozrieť <span aria-hidden="true">⟶</span></button>
   </li>`).join('');
 $('#days').addEventListener('click', (e) => {
@@ -395,7 +395,7 @@ function add(id, q, src) {
     if (c) { c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
     play(t.querySelector('svg'), [{ transform: 'none' }, { transform: 'rotate(-14deg) scale(1.15)' }, { transform: 'rotate(10deg)' }, { transform: 'none' }], { duration: 600, easing: E_OUT });
   };
-  toast(`${p.name}${p.num ? ' detox' : ''} × ${q} — v košíku`);
+  toast(`${p.name}${p.num ? ' detox' : ''} × ${q} je v košíku`);
   if (src && !reduced) flyToCart(src, p.bg || '#ecd97b', p.num ? p : null).then(done); else done();
 }
 
@@ -595,7 +595,7 @@ form.addEventListener('submit', async (e) => {
 });
 
 function orderText(o) {
-  const L = [`Objednávka č. ${o.id}`, '', ...o.items.map((i) => `${i.qty} × ${i.name} — ${fmt(i.price * i.qty)}`), '',
+  const L = [`Objednávka č. ${o.id}`, '', ...o.items.map((i) => `${i.qty} × ${i.name}: ${fmt(i.price * i.qty)}`), '',
     `Medzisúčet: ${fmt(o.subtotal)}`, `Doprava (${o.shipping}): ${o.shippingPrice ? fmt(o.shippingPrice) : 'zadarmo'}`];
   if (o.fee) L.push(`Poplatok (${o.payment}): ${fmt(o.fee)}`);
   L.push(`SPOLU: ${fmt(o.total)}`, `Platba: ${o.payment}`, '', `Meno: ${o.customer.name}`, `E-mail: ${o.customer.email}`, `Telefón: ${o.customer.phone}`);
@@ -749,10 +749,10 @@ if (!reduced && matchMedia('(pointer: fine)').matches) {
   });
 }
 
-/* ===== Právne texty (šablóny — nahraďte vlastnými) ===== */
+/* ===== Právne texty (šablóny, nahraďte vlastnými) ===== */
 const LEGAL = {
-  vop: ['Obchodné podmienky', `<p><b>Šablóna — nahraďte vlastným textom.</b></p><p>Predávajúci: ${esc(CONFIG.company)}.</p><p>Kúpna zmluva vzniká potvrdením objednávky. Ceny sú uvedené s DPH. Šťavy sú potraviny podliehajúce rýchlej skaze, preto pri nich podľa § 7 ods. 6 písm. d) zákona č. 102/2014 Z. z. nemožno odstúpiť od zmluvy bez udania dôvodu. Reklamácie poškodeného tovaru riešime e-mailom na ${esc(CONFIG.email)} do 24 hodín od prevzatia.</p>`],
-  gdpr: ['Ochrana osobných údajov', `<p><b>Šablóna — nahraďte vlastným textom.</b></p><p>Prevádzkovateľ ${esc(CONFIG.company)} spracúva meno, e-mail, telefón a adresu výlučne na vybavenie objednávky (čl. 6 ods. 1 písm. b GDPR) a vedenie účtovníctva. Údaje odovzdáme len dopravcovi. Svoje práva si môžete uplatniť na ${esc(CONFIG.email)}.</p>`],
+  vop: ['Obchodné podmienky', `<p><b>Šablóna. Nahraďte ju vlastným textom.</b></p><p>Predávajúci: ${esc(CONFIG.company)}.</p><p>Kúpna zmluva vzniká potvrdením objednávky. Ceny sú uvedené s DPH. Šťavy sú potraviny podliehajúce rýchlej skaze, preto pri nich podľa § 7 ods. 6 písm. d) zákona č. 102/2014 Z. z. nemožno odstúpiť od zmluvy bez udania dôvodu. Reklamácie poškodeného tovaru riešime e-mailom na ${esc(CONFIG.email)} do 24 hodín od prevzatia.</p>`],
+  gdpr: ['Ochrana osobných údajov', `<p><b>Šablóna. Nahraďte ju vlastným textom.</b></p><p>Prevádzkovateľ ${esc(CONFIG.company)} spracúva meno, e-mail, telefón a adresu výlučne na vybavenie objednávky (čl. 6 ods. 1 písm. b GDPR) a vedenie účtovníctva. Údaje odovzdáme len dopravcovi. Svoje práva si môžete uplatniť na ${esc(CONFIG.email)}.</p>`],
 };
 document.addEventListener('click', (e) => {
   const a = e.target.closest('[data-legal]'); if (!a) return;
