@@ -1896,7 +1896,9 @@ async function runTranslate() {
     else {
       if (!translator) {
         trProgress(0, "Načítavam prekladový model…");
-        translator = await loadModel({ id: "Xenova/nllb-200-distilled-600M", label: "NLLB-200", task: "translation", opts: { dtype: "q8" },
+        // Presnejší model NLLB-200 1.3B (prevedený pre Subgen), ak je na serveri; inak menší 600M.
+        const nllbId = (await hasLocal("subgen/nllb-200-distilled-1.3B")) ? "subgen/nllb-200-distilled-1.3B" : "Xenova/nllb-200-distilled-600M";
+        translator = await loadModel({ id: nllbId, label: "NLLB-200", task: "translation", opts: { dtype: "q8" },
           onProgress: (l, t) => trProgress(l / t * 100, `Sťahujem prekladový model… ${Math.round(l / t * 100)} %`) }, true);
       }
       out = [];
