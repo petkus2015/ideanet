@@ -65,7 +65,54 @@ const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highli
   segments: [], file: null, url: null, duration: 0, out: null, results: {}, busyExport: false, playable: null, job: 0, pos: {}, audio: null,
   spk: [], spkStyle: {}, cur: 1, tab: "subs", quality: "orig", clips: [], clipSel: 0, trSel: -1, undo: [], redo: [], pc: 0, pvRate: 1, autoStop: null, thumbs: null, exportCancel: false, crop: {}, tool: "captions",
   waveform: null, tlZoomVal: 1, tlPxPerSec: 100, tlDragging: false, collapsedSpk: new Set(), activeSeg: -1, segFilter: "", sel: new Set(), selAnchor: -1 };
-const video = $("video");
+// ---------- viac videí za sebou ----------
+// Concat sa správa ako jeden <video> prvok, ale za sebou prehráva viac súborov (pridané videá na konci).
+// Čas je spoločný: druhé video začína tam, kde končí prvé. Strih, titulky aj export tak pracujú s jedným časom.
+class Concat {
+  constructor(primary) { this.els = [primary]; this.offs = [0]; this.i = 0; this._rate = 1; this._vol = 1; this._ls = {}; this._pending = null; this._wire(primary, 0); }
+  _wire(el, k) {
+    for (const ev of ["seeked", "loadeddata", "loadedmetadata", "error", "play", "pause", "timeupdate", "seeking"]) el.addEventListener(ev, (e) => { if (this.els[this.i] === el) this._emit(ev, e); });
+    el.addEventListener("ended", (e) => { if (this.els[this.i] !== el) return; if (this.i < this.els.length - 1) { this._switch(this.i + 1, 0, true); } else this._emit("ended", e); });
+  }
+  _emit(type, e) { const h = this["on" + type]; if (typeof h === "function") h.call(this, e); (this._ls[type] || []).slice().forEach((o) => { if (o.once) this._ls[type] = this._ls[type].filter((x) => x !== o); o.fn.call(this, e); }); }
+  _switch(j, local, play) {
+    const old = this.els[this.i]; if (j !== this.i) { try { old.pause(); } catch {} }
+    this.i = j; const el = this.els[j]; el.playbackRate = this._rate; el.volume = this._vol; el.currentTime = Math.max(0, local);
+    if (play) el.play().catch(() => {});
+    if (this._pending) { const cb = this._pending; this._pending = null; this.requestVideoFrameCallback(cb); }
+  }
+  add(el) { this.offs.push(this.duration); this.els.push(el); this._wire(el, this.els.length - 1); el.playbackRate = this._rate; }
+  resetExtra() { for (const el of this.els.slice(1)) { try { el.pause(); el.removeAttribute("src"); el.load(); } catch {} } this.els = [this.els[0]]; this.offs = [0]; this.i = 0; }
+  idxAt(t) { let j = 0; for (let k = 1; k < this.els.length; k++) if (t >= this.offs[k] - 1e-3) j = k; return j; }
+  get el() { return this.els[this.i]; }
+  get duration() { const last = this.els.length - 1; return this.offs[last] + (isFinite(this.els[last].duration) ? this.els[last].duration : 0); }
+  get currentTime() { return this.offs[this.i] + this.el.currentTime; }
+  set currentTime(t) { const j = this.idxAt(t); if (j !== this.i) this._switch(j, t - this.offs[j], !this.el.paused); else this.el.currentTime = Math.max(0, t - this.offs[j]); }
+  get paused() { return this.el.paused; } get seeking() { return this.el.seeking; } get readyState() { return this.el.readyState; }
+  get videoWidth() { return this.el.videoWidth; } get videoHeight() { return this.el.videoHeight; }
+  get playbackRate() { return this._rate; } set playbackRate(r) { this._rate = r; this.els.forEach((e) => { e.playbackRate = r; }); }
+  get volume() { return this._vol; } set volume(v) { this._vol = v; this.el.volume = v; }
+  get muted() { return this.els[0].muted; } set muted(m) { this.els.forEach((e) => { e.muted = m; }); }
+  get preload() { return this.els[0].preload; } set preload(v) { this.els[0].preload = v; }
+  get src() { return this.els[0].src; } set src(v) { this.resetExtra(); this.els[0].src = v; }
+  load() { this.els[0].load(); } removeAttribute(a) { this.resetExtra(); this.els[0].removeAttribute(a); }
+  play() { return this.el.play(); } pause() { this.els.forEach((e) => { try { e.pause(); } catch {} }); }
+  addEventListener(type, fn, opts) { (this._ls[type] = this._ls[type] || []).push({ fn, once: !!(opts && opts.once) }); }
+  removeEventListener(type, fn) { this._ls[type] = (this._ls[type] || []).filter((o) => o.fn !== fn); }
+  requestVideoFrameCallback(cb) {
+    this._pending = cb; const el = this.el;
+    const run = (...a) => { if (this._pending !== cb) return; this._pending = null; cb(...a); };
+    if (el.requestVideoFrameCallback) el.requestVideoFrameCallback(run); else requestAnimationFrame(run);
+  }
+}
+// nové prvky <video> pre zoznam zdrojov (export a náhľadové obrázky si robia vlastné, nezávislé od prehrávača)
+async function makeConcat(muted) {
+  const mk = (url) => { const v = document.createElement("video"); v.playsInline = true; v.preload = "auto"; v.muted = !!muted; v.src = url; return v; };
+  const els = state.sources.map((x) => mk(x.url));
+  await Promise.all(els.map((v) => new Promise((res, rej) => { if (v.readyState >= 2) return res(); v.onloadeddata = res; v.onerror = () => rej(new Error("Video sa nepodarilo načítať.")); })));
+  const c = new Concat(els[0]); els.slice(1).forEach((v) => c.add(v)); return c;
+}
+const video = new Concat($("video"));
 // Menu krokov je stále hore. Po nahratí videa sa ním prepína medzi časťami editora:
 // Titulkovanie (text, rečníci, štýl, poloha titulkov), Úprava (formát, výrez a posun videa), Export.
 let curView = "upload";
@@ -581,7 +628,7 @@ async function recognize(file, _unused, lang) {
     setBusy("Načítavam zvuk…", "", phasePct("audio", 1));
     setBusy("Načítavam model…", "", phasePct("model", 1));
     await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
-    const d = state.duration || 12, out = []; let t = 0.3, i = 1;
+    const d = state.recDur || state.duration || 12, out = []; let t = 0.3, i = 1;
     const total = Math.max(1, d - 2);
     while (t + 1.5 < d) {
       setBusy("Rozpoznávam reč…", "Pri dlhšom videu to môže trvať niekoľko minút. Nechaj túto kartu otvorenú.", phasePct("asr", t / total));
@@ -593,7 +640,7 @@ async function recognize(file, _unused, lang) {
   }
   const audio = await decodeAudio(file);
   state.audio = audio;
-  if (!state.duration) state.duration = audio.length / 16000;
+  if (!state.duration && !state.recDur) state.duration = audio.length / 16000;
   setBusy("Načítavam zvuk…", "", phasePct("audio", 1));
   let lastError = null;
   for (const spec of await preferLocal(await bestModels())) {
@@ -616,6 +663,7 @@ async function pickFile(file) {
   const job = ++state.job; // nový projekt alebo ďalšie nahratie zruší výsledky staršej úlohy
   if (state.url) URL.revokeObjectURL(state.url);
   state.file = file; state.url = URL.createObjectURL(file); state.duration = 0; state.playable = null;
+  (state.sources || []).slice(1).forEach((x) => URL.revokeObjectURL(x.url)); state.sources = [{ file, url: state.url }];
   setBusy("Čítam zvuk…");
   state.meta = new Promise((resolve) => {
     video.onloadedmetadata = () => {
@@ -636,6 +684,36 @@ async function pickFile(file) {
     state.bgJob = job; bumpDyn(); initEditor(); asrBanner("run");
   }
   runAsr(file, job);
+}
+// Pridanie ďalšieho videa na koniec: nový klip v strihu a automaticky vygenerované titulky k nemu.
+async function addVideo(file) {
+  if (!file || asrInBg() || state.busyExport || !state.sources) return;
+  if (!file.type.startsWith("video/") && !VIDEO_EXT.test(file.name)) { cutHint("Vyber súbor s videom (MP4, MOV, MKV, WEBM a podobne)."); return; }
+  const url = URL.createObjectURL(file), el = document.createElement("video"); el.playsInline = true; el.preload = "auto"; el.src = url;
+  const ok = await new Promise((res) => { el.onloadedmetadata = () => res(el.videoWidth > 0 && isFinite(el.duration) && el.duration > 0); el.onerror = () => res(false); setTimeout(() => res(false), 15000); });
+  if (!ok) { URL.revokeObjectURL(url); cutHint("Toto video sa nedá pridať: prehliadač nevie prehrať jeho obraz."); return; }
+  const job = state.job, off = video.duration, dur = el.duration;
+  snapshot(); video.add(el); state.sources.push({ file, url, off }); state.duration = video.duration;
+  state.clips.push(newClip(off, off + dur)); state.clipSel = state.clips.length - 1;
+  cutsChanged(); renderTimeline(); makeThumbs(job); cutHint("Video je pridané na koniec. Titulky k nemu sa práve vytvárajú.");
+  state.bgJob = job; asrBanner("run"); appendAsr(file, off, dur, job);
+}
+async function appendAsr(file, off, dur, job) {
+  const prev = state.audio; let segs;
+  state.recDur = dur;
+  try { segs = await recognize(file, null, $("lang").value); }
+  catch (e) {
+    state.recDur = 0; state.audio = prev; if (job !== state.job) return;
+    asrBanner("err", e.message || "Rozpoznanie zlyhalo."); $("asrRetry").onclick = () => { asrBanner("run"); appendAsr(file, off, dur, job); }; return;
+  }
+  state.recDur = 0; const added = state.audio;
+  if (job !== state.job) return;
+  const n0 = Math.round(off * 16000), a = new Float32Array(n0 + (added ? added.length : Math.round(dur * 16000))); // zvuk všetkých videí za sebou (vlna, rečníci)
+  if (prev) a.set(prev.subarray(0, Math.min(prev.length, n0))); if (added) a.set(added, n0); state.audio = a;
+  segs.forEach((g) => { g.start += off; g.end += off; g.speaker = 1; if (g.words) g.words.forEach((w) => { w.start += off; w.end += off; }); });
+  state.segments = state.segments.concat(segs).sort((x, y) => x.start - y.start);
+  state.bgJob = null; computeWaveform(); bumpDyn(); invalidateResults(); buildSegments(); renderTimeline(); renderSpkList(); renderSelSpk();
+  syncControls(); markActive(); applyScriptFont(); asrBanner("off"); playableBanner(); renderCutUi();
 }
 function asrBanner(mode, msg) {
   const b = $("asrBanner"); b.hidden = mode === "off"; b.classList.toggle("err", mode === "err");
@@ -1255,16 +1333,15 @@ function previewTransition(i, play) { // pretočí kúsok pred strih; po zmene p
 async function makeThumbs(job) {
   state.thumbs = null;
   const dur = tlDuration(), n = clamp(Math.ceil(dur / 1.2), 6, 90), step = dur / n;
-  const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = state.url;
-  const ok = await new Promise((res) => { v.onloadeddata = () => res(true); v.onerror = () => res(false); setTimeout(() => res(!!v.videoWidth), 8000); });
+  let v = null; const ok = await Promise.race([makeConcat(true).then((c) => { v = c; return true; }, () => false), new Promise((r) => setTimeout(() => r(false), 8000))]);
   if (!ok || !v.videoWidth || job !== state.job) return;
   const th = 96, tw = Math.round(th * clamp(v.videoWidth / v.videoHeight, 0.45, 1.9));
   state.thumbs = { step, list: new Array(n).fill(null), tw, th };
   for (let k = 0; k < n; k++) {
     if (job !== state.job) return;
-    await new Promise((res) => { const to = setTimeout(res, 2000); v.onseeked = () => { clearTimeout(to); res(); }; v.currentTime = Math.min(dur - 0.05, (k + 0.5) * step); });
+    await new Promise((res) => { const to = setTimeout(res, 2000); v.onseeked = () => { clearTimeout(to); res(); }; v.currentTime = Math.min(dur - 0.05, (k + 0.5) * step); if (!v.seeking) setTimeout(res, 300); });
     const c = document.createElement("canvas"); c.width = tw; c.height = th;
-    try { c.getContext("2d").drawImage(v, 0, 0, tw, th); state.thumbs.list[k] = c; } catch {}
+    try { c.getContext("2d").drawImage(v.el, 0, 0, tw, th); state.thumbs.list[k] = c; } catch {}
     if (k % 8 === 7 || k === n - 1) { if (state.tab === "edit" && !trackBusy) renderClipTrack(); }
   }
   v.removeAttribute("src"); v.load();
@@ -1276,7 +1353,7 @@ const CT_PAD = 14;
 const fmtTC = (s) => { const f = Math.floor(Math.max(0, s) * 25 + 1e-6), p = (n) => String(n).padStart(2, "0"); return `${p(Math.floor(f / 90000))}:${p(Math.floor(f / 1500) % 60)}:${p(Math.floor(f / 25) % 60)}:${p(f % 25)}`; };
 const plural = (n, a, b, c) => n + " " + (n === 1 ? a : n > 1 && n < 5 ? b : c);
 let trackBusy = false;
-function ctPx() { const avail = ($("ctScroll").clientWidth || 600) - CT_PAD * 2; return Math.max(1, avail / Math.max(0.5, outDuration()) * state.tlZoomVal); }
+function ctPx() { const avail = ($("ctScroll").clientWidth || 600) - CT_PAD * 2 - 80; /* miesto pre „+“ na konci */ return Math.max(1, avail / Math.max(0.5, outDuration()) * state.tlZoomVal); }
 function drawCtRuler(total, px) { // pravítko s časovým kódom ako v Resolve
   const cv = $("ctRuler"), dpr = window.devicePixelRatio || 1, w = Math.round(total * px + CT_PAD * 2), h = 34;
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.width = w + "px";
@@ -1314,7 +1391,7 @@ function drawClipAudio(cv, c, w) { // vlna zvuku klipu (v jeho rýchlosti)
 function renderClipTrack() {
   const inner = $("ctInner"); if (!inner || !state.clips || !state.clips.length || !$("ctScroll").clientWidth) return;
   const px = state.ctPx = ctPx(), total = outDuration(), st = outStarts(), n = state.clips.length;
-  inner.style.width = Math.round(total * px + CT_PAD * 2) + "px";
+  inner.style.width = Math.round(total * px + CT_PAD * 2 + 80) + "px";
   drawCtRuler(total, px);
   $("ctVN").textContent = plural(n, "klip", "klipy", "klipov"); $("ctAN").textContent = plural(n, "klip", "klipy", "klipov");
   const box = $("ctClips"), abox = $("ctAClips"); box.textContent = ""; abox.textContent = "";
@@ -1346,6 +1423,11 @@ function renderClipTrack() {
     b.onpointerdown = (e) => e.stopPropagation(); b.onclick = (e) => { e.stopPropagation(); selectTransition(i); };
     box.append(b);
   }
+  // „+“ za posledným klipom: pridá ďalšie video na koniec (titulky sa k nemu vygenerujú samy)
+  const add = document.createElement("button"); add.type = "button"; add.className = "ct-add"; add.textContent = "+";
+  add.title = "Pridať ďalšie video na koniec"; add.setAttribute("aria-label", add.title); add.style.left = (CT_PAD + total * px + 12) + "px";
+  add.disabled = asrInBg() || state.busyExport; add.onpointerdown = (e) => e.stopPropagation(); add.onclick = (e) => { e.stopPropagation(); $("addFile").click(); };
+  box.append(add);
   syncClipPlayhead(true);
 }
 function layoutTrack() { // len prepočíta polohy (pri orezávaní), bez nového vykreslenia stopy
@@ -1517,8 +1599,8 @@ function drawVideoLayer(ctx, vid, W, H, r, fx, look, t) {
     if (fx.type === "spin") { ctx.translate(W / 2, H / 2); ctx.rotate((fx.out ? 1 : -1) * e * Math.PI / 2); ctx.scale(1 + 0.6 * e, 1 + 0.6 * e); ctx.translate(-W / 2, -H / 2); blur = e * m * 0.015; }
   }
   if (CANVAS_FILTER) { const f = [look && look.filter !== "none" ? FILTER_CSS[look.filter] : "", blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : ""].join(" ").trim(); ctx.filter = f || "none"; }
-  ctx.drawImage(vid, r.dx, r.dy, r.iw, r.ih);
-  if (whip) ctx.drawImage(vid, r.dx - Math.sign(whip) * W * 0.6 * 1.0, r.dy, r.iw, r.ih); // kópia, aby za pohybom nebola čierna
+  ctx.drawImage(vid.el || vid, r.dx, r.dy, r.iw, r.ih);
+  if (whip) ctx.drawImage(vid.el || vid, r.dx - Math.sign(whip) * W * 0.6 * 1.0, r.dy, r.iw, r.ih); // kópia, aby za pohybom nebola čierna
   ctx.restore();
   if (look && look.filter !== "none") drawFilterTint(ctx, look.filter);
   if (look && look.fx === "glitch" && (look.lt % 1.3) < 0.28) glitchFx(ctx, look.lt, 1);
@@ -2252,8 +2334,7 @@ async function recordAspect(aspect, onProgress, job) {
   await Promise.all([st, ...state.spk.map((x) => stOf(x.id)), ...state.segments.filter((x) => x.styleOv).map((x) => stOf(x.speaker || 1, x))].flatMap((x) => [400, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`).catch(() => {}))));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
-  const ev = document.createElement("video"); ev.src = state.url; ev.playsInline = true;
-  await new Promise((res, rej) => { ev.onloadeddata = res; ev.onerror = () => rej(new Error("Video sa nepodarilo načítať.")); });
+  const ev = await makeConcat(false);
   let epc = 0;
   if (isEdited()) { ev.currentTime = firstClipStart() + 0.001; await new Promise((res) => { ev.onseeked = res; }); ev.onseeked = null; }
   ev.playbackRate = state.clips[0] ? state.clips[0].speed : 1;
@@ -2262,7 +2343,7 @@ async function recordAspect(aspect, onProgress, job) {
   let gain = null;
   try {
     const dest = ac.createMediaStreamDestination();
-    gain = ac.createGain(); ac.createMediaElementSource(ev).connect(gain); gain.connect(dest);
+    gain = ac.createGain(); ev.els.forEach((el) => ac.createMediaElementSource(el).connect(gain)); gain.connect(dest);
     dest.stream.getAudioTracks().forEach((t) => stream.addTrack(t));
   } catch {}
   const types = ["video/mp4;codecs=avc1,mp4a.40.2", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
@@ -2359,7 +2440,7 @@ async function exportAspects(list) {
 
 // ---------- štart ----------
 function reset() {
-  state.bgJob = null; $("asrBanner").hidden = true;
+  state.bgJob = null; $("asrBanner").hidden = true; (state.sources || []).slice(1).forEach((x) => URL.revokeObjectURL(x.url)); state.sources = null;
   state.job++; state.busyExport = false; $("exportAll").disabled = false; $("export-error").hidden = true; $("exportStatus").textContent = "";
   video.pause(); video.removeAttribute("src"); invalidateResults();
   if (state.url) { URL.revokeObjectURL(state.url); state.url = null; }
@@ -2461,6 +2542,7 @@ function setup() {
     if (state.out) { syncControls(); renderCutUi(); }
     updateBrandUpload(); renderBrand(); if (page === "library") renderLibrary();
   });
+  $("addFile").onchange = (e) => { const f = e.target.files[0]; e.target.value = ""; if (f) addVideo(f); };
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   video.addEventListener("ended", () => { // to isté pri náhľade
     if (!isEdited()) return;

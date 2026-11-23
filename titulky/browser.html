@@ -209,6 +209,9 @@ main{min-width:0}
 .trim.l{left:-10px;border-radius:4px 0 0 4px}.trim.r{right:-10px;border-radius:0 4px 4px 0}
 .clip.sel .trim{display:grid}
 .ct-ins{position:absolute;top:36px;width:3px;height:128px;margin-left:-1.5px;border-radius:2px;background:#7c6cff;box-shadow:0 0 8px #7c6cff;z-index:7;pointer-events:none}
+.ct-add{position:absolute;top:6px;height:56px;width:56px;border-radius:10px;border:2px dashed rgba(160,170,255,.55);background:rgba(124,108,255,.14);color:#fff;font-size:30px;line-height:1;display:grid;place-items:center;cursor:pointer;z-index:6;padding:0}
+.ct-add:hover{background:rgba(124,108,255,.32);border-color:#a99cff}
+.ct-add:disabled{opacity:.4;cursor:default}
 .ctr{position:absolute;top:22px;width:22px;height:22px;margin-left:-11px;border-radius:4px;border:1px solid #0c0c0d;background:#d8d8da;color:#1c1c1e;display:grid;place-items:center;cursor:pointer;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.6);padding:0}
 .ctr svg{width:13px;height:13px}
 .ctr.on{background:#7c6cff}
@@ -791,7 +794,7 @@ input[type=range]{accent-color:#7c6cff}
                 </div>
                 <div class="ct-scroll" id="ctScroll"><div class="ct-inner" id="ctInner">
                   <canvas id="ctRuler"></canvas>
-                  <div class="ct-clips" id="ctClips"></div>
+                  <div class="ct-clips" id="ctClips"></div><input type="file" id="addFile" accept="video/*,.mov,.mkv,.m4v,.webm" hidden>
                   <div class="ct-aclips" id="ctAClips"></div>
                   <div class="ct-playhead" id="ctPlayhead"></div>
                 </div></div>
