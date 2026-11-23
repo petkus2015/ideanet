@@ -12,4 +12,6 @@ return [
     'price_label' => '4,90 € ročne',
     'mail_from' => '',                    // odosielateľ e-mailov na obnovu hesla, napr. no-reply@ideanet.sk (prázdne = no-reply@subgen.ideanet.sk)
     'site_name' => 'Subgen',
+    // E-maily správcov: po prihlásení uvidia v menu Analytiku (návštevy a registrácie v čase)
+    'admin_emails' => [],
 ];

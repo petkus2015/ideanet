@@ -1847,7 +1847,8 @@ function setPage(p) {
   if (p !== "work") video.pause();
   $("content").classList.toggle("alt-page", p !== "work");
   $("content").classList.toggle("ws", p === "work" && curView === "editor");
-  $("page-brand").hidden = p !== "brand"; $("page-library").hidden = p !== "library";
+  $("page-brand").hidden = p !== "brand"; $("page-library").hidden = p !== "library"; $("page-analytics").hidden = p !== "analytics";
+  if (p === "analytics") loadStats();
   document.querySelectorAll(".nav[data-page]").forEach((a) => { const on = a.dataset.page === p; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   if (p === "brand") { updateBrandUpload(); renderBrand(); }
   if (p === "library") { renderLibrary(); requestAnimationFrame(libLoop); }
@@ -2081,6 +2082,42 @@ function renderAcct() {
   $("acctPlan").textContent = u ? (u.active ? "Aktívne do " + new Date(u.until * 1000).toLocaleDateString(LOCALE) : "Predplatné vypršalo") : "4,90 € ročne";
   $("acctAv").textContent = u ? u.email[0].toUpperCase() : "?";
   $("loginBtn").disabled = !auth.on; $("loginLbl").textContent = u ? "Odhlásiť sa" : "Prihlásiť sa";
+  $("navStats").hidden = !(u && u.admin); if (!(u && u.admin) && page === "analytics") setPage("work");
+}
+// ---------- analytika (len pre správcu) ----------
+let statData = null, statDays = 30;
+async function loadStats() {
+  $("statMsg").textContent = "Načítavam…";
+  try { const r = await fetch("?auth=stats", { cache: "no-store" }); const j = await r.json(); if (!r.ok || j.error) throw new Error(j.error || "chyba"); statData = j; $("statMsg").textContent = ""; renderStats(); }
+  catch (e) { $("statMsg").textContent = "Analytiku sa nepodarilo načítať. " + (e.message || ""); }
+}
+function statSeries(n) {
+  const out = [], today = new Date(); const days = (statData && statData.days) || {};
+  for (let i = n - 1; i >= 0; i--) { const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - i)), k = d.toISOString().slice(0, 10); const x = days[k] || {}; out.push({ k, d, v: x.v || 0, u: x.u || 0, r: x.r || 0 }); }
+  return out;
+}
+function drawStatChart(svg, rows, keys) { // stĺpce po dňoch (pri dlhšom období po týždňoch), os s dátumami
+  const W = svg.clientWidth || 800, H = 220, pl = 40, pb = 26, pt = 10, ns = "http://www.w3.org/2000/svg";
+  let data = rows; if (rows.length > 92) { data = []; for (let i = 0; i < rows.length; i += 7) { const g = rows.slice(i, i + 7); data.push({ d: g[0].d, v: g.reduce((a, x) => a + x.v, 0), u: g.reduce((a, x) => a + x.u, 0), r: g.reduce((a, x) => a + x.r, 0) }); } }
+  const max = Math.max(1, ...data.flatMap((x) => keys.map((k) => x[k[0]]))), nice = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 10 : max / Math.pow(10, Math.floor(Math.log10(max))) > 2 ? 5 : 2);
+  const top = max < 20 ? Math.max(4, Math.ceil(max / 4) * 4) : Math.max(nice, 1), bw = (W - pl - 8) / data.length, y = (v) => pt + (H - pt - pb) * (1 - v / top);
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.textContent = "";
+  const el = (tag, a, txt) => { const e = document.createElementNS(ns, tag); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; svg.append(e); return e; };
+  for (let g = 0; g <= 4; g++) { const v = top * g / 4, yy = y(v); el("line", { x1: pl, x2: W - 4, y1: yy, y2: yy, stroke: "rgba(140,150,255,.12)" }); el("text", { x: pl - 6, y: yy + 4, "text-anchor": "end", fill: "#8c93b8", "font-size": 11 }, Math.round(v)); }
+  data.forEach((x, i) => {
+    const inner = bw * 0.78, each = inner / keys.length;
+    keys.forEach(([k, col], j) => { const h = H - pb - y(x[k]); const r = el("rect", { x: pl + i * bw + (bw - inner) / 2 + j * each, y: y(x[k]), width: Math.max(1, each - 1), height: Math.max(0, h), rx: Math.min(3, each / 3), fill: col }); r.append(Object.assign(document.createElementNS(ns, "title"), { textContent: `${x.d.toLocaleDateString(LOCALE)}: ${x[k]}` })); });
+    const every = Math.ceil(data.length / 8); if (i % every === 0) el("text", { x: pl + i * bw + bw / 2, y: H - 8, "text-anchor": "middle", fill: "#8c93b8", "font-size": 11 }, x.d.toLocaleDateString(LOCALE, { day: "numeric", month: "numeric" }));
+  });
+}
+function renderStats() {
+  if (!statData) return;
+  const rows = statSeries(statDays), sum = (k) => rows.reduce((a, x) => a + x[k], 0);
+  const card = (label, val) => `<div class="stat-card"><small>${label}</small><strong>${val.toLocaleString(LOCALE)}</strong></div>`;
+  $("statCards").innerHTML = card("Zobrazenia", sum("v")) + card("Unikátni návštevníci", sum("u")) + card("Registrácie", sum("r")) + card("Aktívne predplatné", statData.active || 0);
+  drawStatChart($("chartVisits"), rows, [["v", "#7c6cff"], ["u", "#19b8e8"]]);
+  drawStatChart($("chartRegs"), rows, [["r", "#ff8a3d"]]);
+  document.querySelectorAll("#statRange button").forEach((b) => b.classList.toggle("on", +b.dataset.d === statDays));
 }
 function authMsg(t, ok) { $("authMsg").textContent = t || ""; $("authMsg").classList.toggle("ok", !!ok); }
 function openAuth(view, then) {
@@ -2542,6 +2579,8 @@ function setup() {
     if (state.out) { syncControls(); renderCutUi(); }
     updateBrandUpload(); renderBrand(); if (page === "library") renderLibrary();
   });
+  document.querySelectorAll("#statRange button").forEach((b) => b.onclick = () => { statDays = +b.dataset.d; renderStats(); });
+  addEventListener("resize", () => { if (page === "analytics") renderStats(); });
   $("addFile").onchange = (e) => { const f = e.target.files[0]; e.target.value = ""; if (f) addVideo(f); };
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   video.addEventListener("ended", () => { // to isté pri náhľade

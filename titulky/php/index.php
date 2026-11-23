@@ -145,7 +145,7 @@ if (($_GET['fonts'] ?? '') === 'upload') { // nahranie fontu
 $cfg = is_file(__DIR__ . '/config.php') ? (include __DIR__ . '/config.php') : [];
 if (!is_array($cfg)) $cfg = [];
 $cfg += ['stripe_secret_key' => '', 'stripe_webhook_secret' => '', 'payment_link' => '', 'price_label' => '4,90 € ročne',
-         'mail_from' => '', 'stripe_api' => 'https://api.stripe.com', 'site_name' => 'Subgen'];
+         'mail_from' => '', 'stripe_api' => 'https://api.stripe.com', 'site_name' => 'Subgen', 'admin_emails' => []];
 
 function authStart() {
     global $https;
@@ -163,7 +163,24 @@ function stripeGet($path) { // čítanie zo Stripe API tajným kľúčom zo serv
     return is_array($j) && !isset($j['error']) ? $j : null;
 }
 function userKey($email) { return mb_strtolower(trim($email)); }
-function userPublic($u) { return $u ? ['email' => $u['email'], 'until' => (int)$u['until'], 'active' => (int)$u['until'] > time()] : null; }
+function isAdmin($u) { global $cfg; return $u && in_array(mb_strtolower($u['email']), array_map('mb_strtolower', (array)$cfg['admin_emails']), true); }
+function userPublic($u) { return $u ? ['email' => $u['email'], 'until' => (int)$u['until'], 'active' => (int)$u['until'] > time(), 'admin' => isAdmin($u)] : null; }
+// ---------- analytika (len pre správcu) ----------
+// Počíta návštevy stránky a registrácie po dňoch, bez cookies a bez externých služieb. Unikátny návštevník je
+// odtlačok IP + prehliadača s denne meneným tajným kľúčom; ukladá sa len počas dňa, potom sa zahodí (súkromie).
+function statBump($dataDir, $field) {
+    if (!@is_dir($dataDir) && !@mkdir($dataDir . '/fonts', 0755, true)) return;
+    $lock = @fopen($dataDir . '/.lock', 'c'); if (!$lock) return; flock($lock, LOCK_EX);
+    $f = $dataDir . '/stats.php'; $st = readJson($f); $d = gmdate('Y-m-d');
+    if (!isset($st['days'][$d])) $st['days'][$d] = ['v' => 0, 'u' => 0, 'r' => 0];
+    if ($field === 'v') {
+        if (($st['today']['d'] ?? '') !== $d) $st['today'] = ['d' => $d, 'h' => [], 'salt' => bin2hex(random_bytes(8))];
+        $h = substr(hash('sha256', $st['today']['salt'] . '|' . ($_SERVER['REMOTE_ADDR'] ?? '') . '|' . ($_SERVER['HTTP_USER_AGENT'] ?? '')), 0, 16);
+        $st['days'][$d]['v']++;
+        if (!isset($st['today']['h'][$h])) { $st['today']['h'][$h] = 1; $st['days'][$d]['u']++; }
+    } else $st['days'][$d][$field] = ($st['days'][$d][$field] ?? 0) + 1;
+    writeJson($f, $st); flock($lock, LOCK_UN);
+}
 function untilFrom($sess) { // platnosť: koniec obdobia predplatného, pri jednorazovej platbe rok od zaplatenia
     $sub = $sess['subscription'] ?? null;
     if (is_array($sub) && !empty($sub['current_period_end'])) return (int)$sub['current_period_end'];
@@ -251,6 +268,13 @@ if (isset($_GET['auth'])) {
         $_SESSION = []; session_destroy(); jsonOut(['ok' => true]);
     }
 
+    if ($act === 'stats') { // analytika: len prihlásený správca (admin_emails v config.php)
+        $users = readJson($dataDir . '/users.php'); $u = !empty($_SESSION['email']) ? ($users[userKey($_SESSION['email'])] ?? null) : null;
+        if (!$u || !isset($u['devices'][(string)($_SESSION['dev'] ?? '')]) || !isAdmin($u)) jsonOut(['error' => 'Len pre správcu.'], 403);
+        $st = readJson($dataDir . '/stats.php'); $days = $st['days'] ?? []; ksort($days);
+        $paid = 0; foreach ($users as $x) if ((int)($x['until'] ?? 0) > time()) $paid++;
+        jsonOut(['days' => $days, 'users' => count($users), 'active' => $paid]);
+    }
     $b = needPost();
     dataInit($dataDir);
     $lock = fopen($dataDir . '/.lock', 'c'); flock($lock, LOCK_EX);
@@ -298,6 +322,7 @@ if (isset($_GET['auth'])) {
         $claims[$sid]['used'] = true;
         deviceLogin($users, $k, 'all');
         writeJson($dataDir . '/users.php', $users); writeJson($dataDir . '/claims.php', $claims);
+        flock($lock, LOCK_UN); statBump($dataDir, 'r'); // nová registrácia do analytiky
         jsonOut(['ok' => true, 'user' => userPublic($users[$k])]);
     }
     if ($act === 'forgot') { // obnova hesla e-mailom (vždy rovnaká odpoveď, aby sa nedalo zisťovať, kto má účet)
@@ -335,6 +360,11 @@ if (!is_file($file)) {
     exit;
 }
 
+$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && !preg_match('/bot|crawl|spider|slurp|preview|monitor|curl|wget|python|headless/i', $ua)
+    && ($_SERVER['HTTP_PURPOSE'] ?? '') !== 'prefetch' && ($_SERVER['HTTP_SEC_PURPOSE'] ?? '') !== 'prefetch') {
+    try { statBump($dataDir, 'v'); } catch (Throwable $e) { /* analytika nesmie zablokovať stránku */ }
+}
 header('Content-Type: text/html; charset=utf-8');
 // Izolácia stránky: prehliadač potom dovolí rozpoznávanie reči na viacerých jadrách procesora (rýchlejšie).
 // "credentialless" nechá fungovať písma Google aj knižnicu z CDN; Safari hlavičku ignoruje a beží na jednom jadre.
