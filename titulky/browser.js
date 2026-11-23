@@ -115,9 +115,15 @@ const segmentAt = (t) => state.segments.findIndex((s) => t >= s.start && t < s.e
 const PHASES = { audio: [0, 12], model: [12, 55], asr: [55, 100] };
 const phasePct = (phase, frac) => { const [a, b] = PHASES[phase]; return a + (b - a) * clamp(frac, 0, 1); };
 let busyPct = 0;
+// Rozpoznávanie na pozadí: video je už v editore, priebeh sa ukazuje v pruhu nad náhľadom.
+const asrInBg = () => state.bgJob && state.bgJob === state.job;
 const setBusy = (title, text = "", pct = null) => {
-  show("busy"); $("busy-title").textContent = title || "Spracúvam…"; $("busy-text").textContent = text;
   if (pct !== null) busyPct = Math.max(busyPct, pct); // percentá nikdy neklesnú, nech to nevyzerá, že sa appka vrátila
+  if (asrInBg()) {
+    $("asrTitle").textContent = title || "Spracúvam…"; if (text) $("asrText").textContent = text;
+    $("asrFill").style.width = Math.round(busyPct) + "%"; $("asrPct").textContent = Math.round(busyPct) + " %"; return;
+  }
+  show("busy"); $("busy-title").textContent = title || "Spracúvam…"; $("busy-text").textContent = text;
   $("busy-fill").style.width = Math.round(busyPct) + "%";
   $("busy-pct").textContent = Math.round(busyPct) + " %";
 };
@@ -281,7 +287,7 @@ async function extractMp4Audio(file, onProgress) {
 // Záloha: ak prehliadač nevie rozbaliť zvuk zo súboru, zvuk sa nahrá pri prehrávaní videa (trvá dĺžku videa).
 // iPhone dovolí prehrať zvuk až po klepnutí, preto sa v prípade potreby ukáže tlačidlo.
 function waitTap() {
-  const b = $("busy-go"); b.hidden = false;
+  const b = asrInBg() ? $("asrGo") : $("busy-go"); b.hidden = false;
   return new Promise((r) => { b.onclick = () => { b.hidden = true; r(); }; });
 }
 async function captureAudio(url) {
@@ -623,13 +629,42 @@ async function pickFile(file) {
     video.onerror = () => { if (job === state.job) state.playable = false; resolve(); };
   });
   video.preload = "auto"; video.src = state.url; video.load();
-  try { state.segments = await recognize(file, null, $("lang").value); }
-  catch (e) { if (job !== state.job) return; return showError(e.message || "Rozpoznanie zlyhalo."); }
+  state.segments = []; state.bgJob = null;
+  await Promise.race([state.meta, new Promise((r) => setTimeout(r, 4000))]);
   if (job !== state.job) return;
+  if (state.playable) { // video sa hneď ukáže v editore, model sa sťahuje a reč sa rozpoznáva na pozadí
+    state.bgJob = job; bumpDyn(); initEditor(); asrBanner("run");
+  }
+  runAsr(file, job);
+}
+function asrBanner(mode, msg) {
+  const b = $("asrBanner"); b.hidden = mode === "off"; b.classList.toggle("err", mode === "err");
+  $("asrSpin").hidden = mode === "err"; $("asrRetry").hidden = mode !== "err"; $("asrGo").hidden = true;
+  $("asrFill").parentElement.hidden = mode === "err"; $("asrPct").hidden = mode === "err";
+  if (mode === "run") { $("asrTitle").textContent = "Načítavam zvuk…"; $("asrText").textContent = "Video si zatiaľ môžeš prezerať a nastaviť formát, orez aj štýl. Titulky sa doplnia samy."; $("asrFill").style.width = "0%"; $("asrPct").textContent = "0 %"; }
+  if (mode === "err") { $("asrTitle").textContent = "Rozpoznanie reči zlyhalo"; $("asrText").textContent = msg || ""; }
+  // export až keď sú titulky hotové
+  const lock = mode !== "off"; $("exportAll").disabled = lock || state.playable === false; $("exportCur").disabled = lock || state.playable === false;
+}
+async function runAsr(file, job) {
+  let segs;
+  try { segs = await recognize(file, null, $("lang").value); }
+  catch (e) {
+    if (job !== state.job) return;
+    if (state.bgJob === job) { asrBanner("err", e.message || "Rozpoznanie zlyhalo."); $("asrRetry").onclick = () => { asrBanner("run"); runAsr(file, job); }; return; }
+    return showError(e.message || "Rozpoznanie zlyhalo.");
+  }
+  if (job !== state.job) return;
+  if (state.bgJob === job) { // doplnenie titulkov do už otvoreného editora (nastavenia používateľa ostávajú)
+    state.bgJob = null; state.segments = segs; segs.forEach((g) => { g.speaker = 1; });
+    computeWaveform(); bumpDyn(); invalidateResults(); buildSegments(); renderTimeline(); renderSpkList(); renderSelSpk();
+    $("spkDetect").disabled = !state.audio; syncControls(); markActive(); applyScriptFont(); asrBanner("off"); playableBanner();
+    return;
+  }
   await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
   if (job !== state.job) return;
   if (state.playable === null) state.playable = false;
-  bumpDyn(); initEditor();
+  state.segments = segs; bumpDyn(); initEditor();
 }
 
 // ---------- editor ----------
@@ -2275,6 +2310,7 @@ async function recordAspect(aspect, onProgress, job) {
 // si vyrába vlastné video/plátno, nepotrebuje viditeľnú kartu); výsledok sa uloží do state.results a ukáže
 // sa hneď, ako na daný formát prepneš ikonkou.
 async function exportAspects(list) {
+  if (asrInBg()) return; // titulky ešte nie sú hotové
   if (state.busyExport || state.playable === false) return;
   if (auth.on && auth.user) { // overí, či prihlásenie na tomto zariadení ešte platí (účet môže byť naraz najviac na 3 zariadeniach)
     const j = await authApi("me").catch(() => null);
@@ -2323,6 +2359,7 @@ async function exportAspects(list) {
 
 // ---------- štart ----------
 function reset() {
+  state.bgJob = null; $("asrBanner").hidden = true;
   state.job++; state.busyExport = false; $("exportAll").disabled = false; $("export-error").hidden = true; $("exportStatus").textContent = "";
   video.pause(); video.removeAttribute("src"); invalidateResults();
   if (state.url) { URL.revokeObjectURL(state.url); state.url = null; }

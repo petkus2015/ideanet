@@ -358,6 +358,15 @@ main{min-width:0}
 .out-prog .bar{margin:2px 0 4px}
 .out-result{width:100%;border-radius:4px;background:#000}
 .hint{color:var(--muted);font-size:12px;margin:8px 2px 0}
+.asr-banner{display:flex;align-items:center;gap:14px;margin:0 0 14px;padding:12px 16px;border:1px solid var(--line2);border-radius:14px;background:rgba(124,108,255,.10)}
+.asr-banner[hidden]{display:none}
+.asr-banner .spinner.sm{width:26px;height:26px;margin:0;border-width:3px;flex:none}
+.asr-banner .ab-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.asr-banner b{font-size:14px}.asr-banner small{color:var(--muted);font-size:12px}
+.asr-banner .bar{margin-top:4px;max-width:none}
+.asr-banner output{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:42px;text-align:end}
+.asr-banner button{width:auto;margin:0;padding:9px 14px;white-space:nowrap}
+.asr-banner.err{background:rgba(255,80,110,.10);border-color:rgba(255,80,110,.4)}
 .banner{background:#2a1d12;border:1px solid #6b4a24;color:#f0c58a;border-radius:6px;padding:12px 14px;margin:0 0 14px;font-size:13px}
 .error{color:#ff7a8a;margin:12px 0 0}
 .segments{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:340px;overflow:auto;padding-right:4px}
@@ -732,6 +741,7 @@ input[type=range]{accent-color:#7c6cff}
         </section>
 
         <section id="view-editor" hidden>
+          <div class="asr-banner" id="asrBanner" role="status" hidden><div class="spinner sm" id="asrSpin"></div><div class="ab-txt"><b id="asrTitle">Rozpoznávam reč…</b><small id="asrText">Video si zatiaľ môžeš prezerať a nastaviť formát, orez aj štýl. Titulky sa doplnia samy.</small><div class="bar"><i id="asrFill"></i></div></div><output id="asrPct">0 %</output><button type="button" class="export-all" id="asrGo" hidden>▶ Spustiť čítanie zvuku</button><button type="button" class="export-all" id="asrRetry" hidden>Skúsiť znova</button></div>
           <p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľady a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>
           <video id="video" class="vhidden" playsinline preload="auto"></video>
           <div class="outs" id="outs"></div>
