@@ -605,9 +605,9 @@ h1{font-weight:600;font-size:26px;letter-spacing:.14em;text-transform:uppercase}
 .steps{padding:8px}
 .step{border-radius:12px}
 .step b{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:600}
-.step .ic{border-radius:50%;background:transparent;border-color:var(--line2)}
+.step .ic{border-radius:50%;background:transparent;border-color:var(--line2);background-origin:border-box}
 .step.on{background:rgba(124,108,255,.12);border-color:rgba(124,108,255,.45);box-shadow:inset 0 -2px 0 #19b8e8}
-.step.on .ic{background:var(--sun);border-color:transparent;color:#fff;box-shadow:0 0 18px rgba(192,77,255,.55)}
+.step.on .ic{background:var(--sun) border-box;border-color:transparent;color:#fff;box-shadow:0 0 18px rgba(192,77,255,.55)}
 /* tlačidlá: hlavné so západom slnka, ostatné ako Starlink – priehľadné s tenkým rámom */
 .export-all{background:var(--sun);color:#fff;border-radius:999px;text-transform:uppercase;letter-spacing:.16em;font-weight:600;font-size:13px;box-shadow:0 8px 28px rgba(192,77,255,.35);transition:box-shadow .2s,transform .2s}
 .export-all:hover:not(:disabled){box-shadow:0 10px 36px rgba(255,61,138,.5);transform:translateY(-1px)}
@@ -694,7 +694,7 @@ input[type=range]{accent-color:#7c6cff}
       <span class="side-name">Subgen</span>
     </div>
     <div class="setmenu" id="setMenu" hidden>
-    <a class="nav on" href="#" data-page="work" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Titulkovanie</a>
+    <a class="nav on" href="#" data-page="work" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M6.5 11.5h3M11.5 11.5h6M6.5 15h7M15.5 15h2"/></svg>Titulkovanie</a>
     <a class="nav" href="#kniznica" data-page="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>Knižnica</a>
     <a class="nav" href="#znacka" data-page="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l9 9-9 9-9-9z"/></svg>Značka</a>
     <a class="nav" href="#analytika" data-page="analytics" id="navStats" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytika</a>
@@ -727,7 +727,7 @@ input[type=range]{accent-color:#7c6cff}
 
     <nav class="steps" id="steps" aria-label="Kroky">
       <button class="step" data-tab="upload" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg></span><span><b>Nahratie</b>Pridaj video</span></button>
-      <button class="step" data-tab="subs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></span><span><b>Titulkovanie</b>Text, rečníci, štýl</span></button>
+      <button class="step" data-tab="subs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M6.5 11.5h3M11.5 11.5h6M6.5 15h7M15.5 15h2"/></svg></span><span><b>Titulkovanie</b>Text, rečníci, štýl</span></button>
       <button class="step" data-tab="edit" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span><b>Úprava</b>Formát, výrez, strih</span></button>
       <button class="step" data-tab="export" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></span><span><b>Export</b>Stiahni súbory</span></button>
     </nav>
