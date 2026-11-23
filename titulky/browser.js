@@ -2086,10 +2086,16 @@ function renderAcct() {
 }
 // ---------- analytika (len pre správcu) ----------
 let statData = null, statDays = 30;
-async function loadStats() {
-  $("statMsg").textContent = "Načítavam…";
-  try { const r = await fetch("?auth=stats", { cache: "no-store" }); const j = await r.json(); if (!r.ok || j.error) throw new Error(j.error || "chyba"); statData = j; $("statMsg").textContent = ""; renderStats(); }
-  catch (e) { $("statMsg").textContent = "Analytiku sa nepodarilo načítať. " + (e.message || ""); }
+let statTimer = null;
+async function loadStats() { // obnova priamo v paneli; kým je Analytika otvorená, obnovuje sa aj sama každú minútu
+  const btn = $("statRefresh"); btn.classList.add("spin"); btn.disabled = true; if (!statData) $("statMsg").textContent = "Načítavam…";
+  try {
+    const r = await fetch("?auth=stats", { cache: "no-store" }); const j = await r.json(); if (!r.ok || j.error) throw new Error(j.error || "chyba");
+    statData = j; $("statMsg").textContent = ""; renderStats();
+    $("statWhen").textContent = "Aktualizované " + new Date().toLocaleTimeString(LOCALE, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  } catch (e) { $("statMsg").textContent = "Analytiku sa nepodarilo načítať. " + (e.message || ""); }
+  finally { btn.classList.remove("spin"); btn.disabled = false; }
+  clearTimeout(statTimer); statTimer = setTimeout(() => { if (page === "analytics" && !document.hidden) loadStats(); }, 60000);
 }
 function statSeries(n) {
   const out = [], today = new Date(); const days = (statData && statData.days) || {};
@@ -2580,6 +2586,8 @@ function setup() {
     updateBrandUpload(); renderBrand(); if (page === "library") renderLibrary();
   });
   document.querySelectorAll("#statRange button").forEach((b) => b.onclick = () => { statDays = +b.dataset.d; renderStats(); });
+  $("statRefresh").onclick = () => loadStats();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && page === "analytics") loadStats(); });
   addEventListener("resize", () => { if (page === "analytics") renderStats(); });
   $("addFile").onchange = (e) => { const f = e.target.files[0]; e.target.value = ""; if (f) addVideo(f); };
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };

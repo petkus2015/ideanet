@@ -105,6 +105,8 @@ const DICT = {
   "Graf návštev": ["Graf návštěv", "Visits chart", "Gráfico de visitas", "مخطط الزيارات", "Ziyaret grafiği", "विज़िट चार्ट", "Wykres wizyt", "访问图表"],
   "Graf registrácií": ["Graf registrací", "Registrations chart", "Gráfico de registros", "مخطط التسجيلات", "Kayıt grafiği", "रजिस्ट्रेशन चार्ट", "Wykres rejestracji", "注册图表"],
   "Načítavam…": ["Načítám…", "Loading…", "Cargando…", "جارٍ التحميل…", "Yükleniyor…", "लोड हो रहा है…", "Wczytuję…", "正在加载…"],
+  "Obnoviť": ["Obnovit", "Refresh", "Actualizar", "تحديث", "Yenile", "रीफ़्रेश", "Odśwież", "刷新"],
+  "Obnoviť údaje": ["Obnovit údaje", "Refresh data", "Actualizar datos", "تحديث البيانات", "Verileri yenile", "डेटा रीफ़्रेश करें", "Odśwież dane", "刷新数据"],
   "Načítavam zvuk…": ["Načítám zvuk…","Loading audio…","Cargando el audio…","جارٍ تحميل الصوت…","Ses yükleniyor…","ऑडियो लोड हो रहा है…","Wczytuję dźwięk…","正在加载音频…"],
   "Načítavam model…": ["Načítám model…","Loading model…","Cargando el modelo…","جارٍ تحميل النموذج…","Model yükleniyor…","मॉडल लोड हो रहा है…","Wczytuję model…","正在加载模型…"],
   "Sťahujem model…": ["Stahuji model…","Downloading model…","Descargando el modelo…","جارٍ تنزيل النموذج…","Model indiriliyor…","मॉडल डाउनलोड हो रहा है…","Pobieram model…","正在下载模型…"],
@@ -427,6 +429,7 @@ const DICT = {
 // Texty s premennými časťami: [vzor, { jazyk: šablóna alebo funkcia }]; $1… sa doplní (a ak je v slovníku, aj preloží).
 const pl = (n, one, few, many) => (+n === 1 ? one : +n > 1 && +n < 5 ? few : many);
 const PATTERNS = [
+  [/^Aktualizované (.+)$/, { cs: "Aktualizováno $1", en: "Updated $1", es: "Actualizado $1", ar: "آخر تحديث $1", tr: "Güncellendi $1", hi: "अपडेट $1", pl: "Zaktualizowano $1", zh: "更新于 $1" }],
   [/^Odobrať farbu (#[0-9a-fA-F]{6})$/, { cs: "Odebrat barvu $1", en: "Remove color $1", es: "Quitar color $1", ar: "إزالة اللون $1", tr: "$1 rengini kaldır", hi: "रंग $1 हटाएँ", pl: "Usuń kolor $1", zh: "移除颜色 $1" }],
   [/^Farba značky (#[0-9a-fA-F]{6})$/, { cs: "Barva značky $1", en: "Brand color $1", es: "Color de marca $1", ar: "لون العلامة $1", tr: "Marka rengi $1", hi: "ब्रांड रंग $1", pl: "Kolor marki $1", zh: "品牌颜色 $1" }],
   [/^Model sa nepodarilo stiahnuť z tohto servera \(priečinok models\/\)\. Skontroluj, či sú na FTP nahraté všetky súbory modelu aj podpriečinok onnx\/, a skús stránku obnoviť\. Technická chyba: (.+)$/, {
