@@ -437,11 +437,16 @@ const idbCache = {
 // Model môže ležať na tvojom serveri (priečinok models/ vedľa stránky), vtedy sa sťahuje odtiaľ a nie z huggingface.co.
 const LOCAL_BASE = new URL("models/", location.href).href;
 const localCheck = {};
+// Model je na serveri len vtedy, keď sú tam aj jeho veľké súbory (nielen konfigurácia). Inak sa stiahne z huggingface.co,
+// aby neúplne nahratý priečinok models/ nezablokoval rozpoznávanie ani preklad.
+const LOCAL_ONNX = { "onnx-community/whisper-large-v3-turbo": ["encoder_model_fp16.onnx", "decoder_model_merged_q4.onnx"] };
 function hasLocal(id) {
   if (location.protocol === "file:") return Promise.resolve(false);
   if (!localCheck[id]) {
-    localCheck[id] = fetch(LOCAL_BASE + id + "/config.json", { cache: "no-store" })
-      .then(async (r) => r.ok && (await r.json(), true)).catch(() => false);
+    const files = ["config.json", ...(LOCAL_ONNX[id] || ["encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"]).map((f) => "onnx/" + f)];
+    localCheck[id] = Promise.all(files.map((f) => fetch(LOCAL_BASE + id + "/" + f, { method: "HEAD", cache: "no-store" })
+      .then((r) => r.ok && !/text\/html/.test(r.headers.get("content-type") || ""), () => false))) // HTML = chybová stránka hostingu, nie súbor
+      .then((ok) => { const all = ok.every(Boolean); if (!all && ok[0]) console.warn("Model " + id + " je na serveri neúplný (chýba " + files.filter((_, i) => !ok[i]).join(", ") + "), sťahuje sa z huggingface.co."); return all; });
   }
   return localCheck[id];
 }
