@@ -601,11 +601,34 @@ function startAsrProgress(durationSec, spec) {
   }, 400);
   return () => clearInterval(iv);
 }
+// Rozpoznanie jazyka reči (Whisper to vie, transformers.js ho však samo nerobí a bez jazyka prepisuje ako angličtinu).
+// Z úseku so zvukom sa vypočíta pravdepodobnosť jazykových značiek a vyberie sa najpravdepodobnejší jazyk.
+// Jazyk rozhrania dostane malú prednosť (slovenčinu model ľahko zamení s češtinou).
+async function detectLang(asr, audio) {
+  const tok = asr.tokenizer, ids = tok.model.tokens_to_ids, sot = ids.get("<|startoftranscript|>");
+  let start = 0; // preskočí ticho alebo hudbu na začiatku: prvá sekunda s výraznejším zvukom
+  { const sec = 16000; let peak = 0; const rms = []; for (let i = 0; i + sec <= audio.length; i += sec) { let s2 = 0; for (let j = i; j < i + sec; j += 4) s2 += audio[j] * audio[j]; const r = Math.sqrt(s2 / (sec / 4)); rms.push(r); if (r > peak) peak = r; }
+    const k = rms.findIndex((r) => r > peak * 0.25); if (k > 0) start = Math.min(k, Math.max(0, rms.length - 30)) * sec; }
+  const feats = (await asr.processor(audio.subarray(start, start + 16000 * 30))).input_features;
+  const res = await asr.model({ input_features: feats, decoder_input_ids: new tf.Tensor("int64", BigInt64Array.from([BigInt(sot)]), [1, 1]) });
+  const lg = res.logits.data, V = res.logits.dims.at(-1), base = lg.length - V;
+  let best = null, bestV = -Infinity;
+  for (let id = sot + 1; id < sot + 102; id++) { // jazykové značky nasledujú hneď za <|startoftranscript|>
+    const t = tok.model.vocab[id]; const m = /^<\|([a-z]{2,3})\|>$/.exec(t || ""); if (!m) continue;
+    const v = lg[base + id] + (m[1] === LANG ? 0.8 : 0);
+    if (v > bestV) { bestV = v; best = m[1]; }
+  }
+  return best;
+}
 async function transcribeWith(model, audio, lang, spec) {
+  if (!LANGS[lang] && lang !== "auto-skip") {
+    setBusy("Rozpoznávam jazyk…", "", null);
+    try { const det = await detectLang(model, audio); if (det) { lang = det; state.detLang = det; } } catch (e) { console.warn("Jazyk sa nepodarilo rozpoznať", e); }
+  } else state.detLang = lang;
   const stop = startAsrProgress(audio.length / 16000, spec);
   try {
     const opts = { task: "transcribe", chunk_length_s: 30, stride_length_s: 5, ...(spec.light ? { no_repeat_ngram_size: 3, repetition_penalty: 1.15 } : {}) }; // menší model sa ľahšie zacyklí na jednom slove
-    if (LANGS[lang]) opts.language = LANGS[lang];
+    if (LANGS[lang]) opts.language = LANGS[lang]; else if (lang && /^[a-z]{2,3}$/.test(lang)) opts.language = lang; // aj jazyk mimo ponuky (napr. nemčina)
     if (!spec.light) try { // časy po slovách (zvýraznenie slov); na mobile sa odhadnú, šetrí to pamäť
       const wres = await model(audio, { ...opts, return_timestamps: "word" });
       const words = (wres.chunks || []).map((c) => ({ w: c.text.trim(), start: c.timestamp[0] ?? 0, end: c.timestamp[1] ?? state.duration })).filter((o) => o.w);
@@ -736,13 +759,18 @@ async function runAsr(file, job) {
   if (state.bgJob === job) { // doplnenie titulkov do už otvoreného editora (nastavenia používateľa ostávajú)
     state.bgJob = null; state.segments = segs; segs.forEach((g) => { g.speaker = 1; });
     computeWaveform(); bumpDyn(); invalidateResults(); buildSegments(); renderTimeline(); renderSpkList(); renderSelSpk();
-    $("spkDetect").disabled = !state.audio; syncControls(); markActive(); applyScriptFont(); asrBanner("off"); playableBanner();
+    $("spkDetect").disabled = !state.audio; syncControls(); markActive(); applyScriptFont(); asrBanner("off"); playableBanner(); showLangNote();
     return;
   }
   await Promise.race([state.meta, new Promise((r) => setTimeout(r, 3000))]);
   if (job !== state.job) return;
   if (state.playable === null) state.playable = false;
-  state.segments = segs; bumpDyn(); initEditor();
+  state.segments = segs; bumpDyn(); initEditor(); showLangNote();
+}
+function showLangNote() { // ukáže rozpoznaný jazyk reči s možnosťou opravy
+  const d = state.detLang, has = d && [...$("langFix").options].some((o) => o.value === d);
+  $("langNote").hidden = !has || (state.sources && state.sources.length > 1);
+  if (has) { $("langFix").value = d; $("langNoteTxt").textContent = $("lang").value === "auto" ? "rozpoznaný automaticky. Ak nesedí, vyber správny a titulky sa vytvoria znova." : "Ak nesedí, vyber správny a titulky sa vytvoria znova."; }
 }
 
 // ---------- editor ----------
@@ -2042,13 +2070,13 @@ function undoTranslate() {
   state.segments.forEach((s, i) => { if (trOriginal[i]) { s.text = trOriginal[i].text; s.words = trOriginal[i].words; } });
   trOriginal = null; bumpDyn(); invalidateResults(); buildSegments(); renderChips(tlDuration(), state.tlPxPerSec);
   $("trUndo").hidden = true; $("trProg").hidden = true; $("trMsg").textContent = "Pôvodný text je späť.";
-  $("trFrom").value = $("lang").value === "auto" ? "sk" : $("lang").value;
+  $("trFrom").value = $("lang").value === "auto" ? (LANGS[state.detLang] ? state.detLang : "sk") : $("lang").value;
 }
 function setupTranslate() {
   for (const [k, n] of Object.entries(TR_NAMES)) for (const id of ["trFrom", "trTo"]) { const o = document.createElement("option"); o.value = k; o.textContent = n; $(id).append(o); }
   $("trBtn").onclick = () => {
     const open = $("trSubs").hidden; $("trSubs").hidden = !open; $("trBtn").setAttribute("aria-expanded", String(open));
-    if (open && !trOriginal) { const src = $("lang").value === "auto" ? "sk" : $("lang").value; $("trFrom").value = src; $("trTo").value = LANG !== src && NLLB[LANG] ? LANG : (src === "en" ? "sk" : "en"); }
+    if (open && !trOriginal) { const src = $("lang").value === "auto" ? (LANGS[state.detLang] ? state.detLang : "sk") : $("lang").value; $("trFrom").value = src; $("trTo").value = LANG !== src && NLLB[LANG] ? LANG : (src === "en" ? "sk" : "en"); }
   };
   $("trGo").onclick = runTranslate; $("trUndo").onclick = undoTranslate;
 }
@@ -2483,7 +2511,7 @@ async function exportAspects(list) {
 
 // ---------- štart ----------
 function reset() {
-  state.bgJob = null; $("asrBanner").hidden = true; (state.sources || []).slice(1).forEach((x) => URL.revokeObjectURL(x.url)); state.sources = null;
+  state.bgJob = null; $("asrBanner").hidden = true; $("langNote").hidden = true; state.detLang = null; $("lang").value = "auto"; (state.sources || []).slice(1).forEach((x) => URL.revokeObjectURL(x.url)); state.sources = null;
   state.job++; state.busyExport = false; $("exportAll").disabled = false; $("export-error").hidden = true; $("exportStatus").textContent = "";
   video.pause(); video.removeAttribute("src"); invalidateResults();
   if (state.url) { URL.revokeObjectURL(state.url); state.url = null; }
@@ -2589,6 +2617,11 @@ function setup() {
   $("statRefresh").onclick = () => loadStats();
   document.addEventListener("visibilitychange", () => { if (!document.hidden && page === "analytics") loadStats(); });
   addEventListener("resize", () => { if (page === "analytics") renderStats(); });
+  [...$("lang").options].forEach((o) => { if (o.value !== "auto") { const n = document.createElement("option"); n.value = o.value; n.textContent = o.textContent; $("langFix").append(n); } });
+  $("langFix").onchange = (e) => { // oprava jazyka: titulky sa vytvoria znova v zvolenom jazyku
+    if (asrInBg() || !state.file || (state.sources && state.sources.length > 1)) return;
+    $("lang").value = e.target.value; state.bgJob = state.job; asrBanner("run"); $("langNote").hidden = true; runAsr(state.file, state.job);
+  };
   $("addFile").onchange = (e) => { const f = e.target.files[0]; e.target.value = ""; if (f) addVideo(f); };
   $("tlPlay").onclick = () => { if (video.paused) video.play().catch(() => {}); else video.pause(); };
   video.addEventListener("ended", () => { // to isté pri náhľade

@@ -380,6 +380,9 @@ main{min-width:0}
 .out-prog .bar{margin:2px 0 4px}
 .out-result{width:100%;border-radius:4px;background:#000}
 .hint{color:var(--muted);font-size:12px;margin:8px 2px 0}
+.lang-note{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:0 0 12px;font-size:13px;color:var(--muted)}
+.lang-note[hidden]{display:none}.lang-note span{color:var(--text);font-weight:600}
+.lang-note select{padding:6px 10px;border-radius:10px;border:1px solid var(--line2);background:var(--card2);color:var(--text);font:inherit;font-size:13px}
 .asr-banner{display:flex;align-items:center;gap:14px;margin:0 0 14px;padding:12px 16px;border:1px solid var(--line2);border-radius:14px;background:rgba(124,108,255,.10)}
 .asr-banner[hidden]{display:none}
 .asr-banner .spinner.sm{width:26px;height:26px;margin:0;border-width:3px;flex:none}
@@ -742,7 +745,7 @@ input[type=range]{accent-color:#7c6cff}
       <main>
         <section id="view-upload" class="card">
           <div class="rowlang"><label for="lang">1. Jazyk videa</label>
-            <select id="lang"><option value="sk" selected>Slovenčina</option><option value="auto">Rozpoznať automaticky</option><option value="cs">Čeština</option><option value="en">Angličtina</option><option value="es">Španielčina</option><option value="ar">Arabčina</option><option value="tr">Turečtina</option><option value="hi">Hindčina</option><option value="pl">Poľština</option><option value="zh">Čínština</option></select>
+            <select id="lang"><option value="auto" selected>Rozpoznať automaticky</option><option value="sk">Slovenčina</option><option value="cs">Čeština</option><option value="en">Angličtina</option><option value="es">Španielčina</option><option value="ar">Arabčina</option><option value="tr">Turečtina</option><option value="hi">Hindčina</option><option value="pl">Poľština</option><option value="zh">Čínština</option></select>
           </div>
           <label class="drop" id="drop">
             <input type="file" id="file" accept="video/*,.mp4,.m4v,.mov,.mkv,.webm,.avi,.ts,.mts,.3gp,.mpg,.mpeg,.hevc,.h265" hidden>
@@ -765,6 +768,7 @@ input[type=range]{accent-color:#7c6cff}
 
         <section id="view-editor" hidden>
           <div class="asr-banner" id="asrBanner" role="status" hidden><div class="spinner sm" id="asrSpin"></div><div class="ab-txt"><b id="asrTitle">Rozpoznávam reč…</b><small id="asrText">Video si zatiaľ môžeš prezerať a nastaviť formát, orez aj štýl. Titulky sa doplnia samy.</small><div class="bar"><i id="asrFill"></i></div></div><output id="asrPct">0 %</output><button type="button" class="export-all" id="asrGo" hidden>▶ Spustiť čítanie zvuku</button><button type="button" class="export-all" id="asrRetry" hidden>Skúsiť znova</button></div>
+          <div class="lang-note" id="langNote" hidden><span>Jazyk reči:</span> <select id="langFix" aria-label="Jazyk reči vo videu"></select><small id="langNoteTxt">rozpoznaný automaticky. Ak nesedí, vyber správny a titulky sa vytvoria znova.</small></div>
           <p class="banner" id="noplay" hidden>Prehliadač nevie prehrať obraz tohto videa (pravdepodobne kodek H.265/HEVC alebo 10-bitový H.264). Titulky sa rozpoznali zo zvuku a môžeš ich opraviť a stiahnuť ako SRT alebo VTT. Náhľady a export videa nie sú k dispozícii. Skús Safari alebo Chrome na Macu (HEVC prehrávajú), alebo video prevedieš do MP4 s H.264 a nahráš znova.</p>
           <video id="video" class="vhidden" playsinline preload="auto"></video>
           <div class="outs" id="outs"></div>
