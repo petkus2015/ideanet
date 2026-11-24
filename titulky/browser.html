@@ -256,6 +256,23 @@ main{min-width:0}
 .tv.whip .a{animation-name:tA-whip}.tv.whip .b{animation-name:tB-whip}
 .tv.spin .a{animation-name:tA-spin}.tv.spin .b{animation-name:tB-spin}
 .tv.glitch .a{animation-name:tA-glitch}.tv.glitch .b{animation-name:tB-glitch}
+.tv.slide .a{animation-name:tA-slide}.tv.slide .b{animation-name:tB-slide}
+.tv.zoomout .a{animation-name:tA-zoomout}.tv.zoomout .b{animation-name:tB-zoomout}
+.tv.flip .a{animation-name:tA-flip}.tv.flip .b{animation-name:tB-flip}
+.tv.iris .a{animation-name:tA-iris}.tv.iris .b{animation-name:tB-iris}
+.tv.wipe .a{animation-name:tA-none}.tv.wipe .b{animation-name:tB-wipe}
+.tv.bars .a{animation-name:tA-none}.tv.bars .b{animation-name:tB-bars}
+.tv.leak .a{animation-name:tA-none}.tv.leak .b{animation-name:tB-none}.tv.leak .w{animation-name:tW;background:radial-gradient(circle at 30% 40%,#ffe2a8,#ff8a3d 45%,rgba(255,60,120,.6) 70%,transparent)}
+@keyframes tA-slide{0%,30%{opacity:1;transform:translateX(0)}50%,100%{opacity:1;transform:translateX(-100%)}}
+@keyframes tB-slide{0%,30%{opacity:1;transform:translateX(100%)}50%,100%{opacity:1;transform:translateX(0)}}
+@keyframes tA-zoomout{0%,30%{opacity:1;transform:scale(1)}50%{opacity:1;transform:scale(.45)}50.1%,100%{opacity:0}}
+@keyframes tB-zoomout{0%,49.9%{opacity:0;transform:scale(.45)}50%{opacity:1;transform:scale(.45)}70%,100%{opacity:1;transform:scale(1)}}
+@keyframes tA-flip{0%,30%{opacity:1;transform:scaleX(1)}50%{opacity:1;transform:scaleX(0)}50.1%,100%{opacity:0}}
+@keyframes tB-flip{0%,49.9%{opacity:0;transform:scaleX(0)}50%{opacity:1;transform:scaleX(0)}70%,100%{opacity:1;transform:scaleX(1)}}
+@keyframes tA-iris{0%,30%{opacity:1;clip-path:circle(75% at 50% 50%)}50%{opacity:1;clip-path:circle(0% at 50% 50%)}50.1%,100%{opacity:0}}
+@keyframes tB-iris{0%,49.9%{opacity:0;clip-path:circle(0% at 50% 50%)}50%{opacity:1;clip-path:circle(0% at 50% 50%)}70%,100%{opacity:1;clip-path:circle(75% at 50% 50%)}}
+@keyframes tB-wipe{0%,30%{opacity:1;clip-path:polygon(0 0,0 0,-20% 100%,0 100%)}55%,100%{opacity:1;clip-path:polygon(0 0,120% 0,100% 100%,0 100%)}}
+@keyframes tB-bars{0%,30%{opacity:1;clip-path:inset(0 100% 0 0)}40%{clip-path:inset(0 60% 0 0)}55%,100%{opacity:1;clip-path:inset(0 0 0 0)}}
 @keyframes tA-none{0%,49.9%{opacity:1}50%,100%{opacity:0}}
 @keyframes tB-none{0%,49.9%{opacity:0}50%,100%{opacity:1}}
 @keyframes tA-fade{0%,32%{opacity:1}50%,100%{opacity:0}}

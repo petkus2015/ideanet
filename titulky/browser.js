@@ -1225,6 +1225,9 @@ function cropRect(vw, vh, W, H, crop) {
 const TRANSITIONS = [
   { id: "none", name: "Žiadny" }, { id: "fade", name: "Stmievačka" }, { id: "white", name: "Záblesk" }, { id: "blur", name: "Rozmazanie" },
   { id: "zoom", name: "Priblíženie" }, { id: "whip", name: "Švih" }, { id: "spin", name: "Otočenie" }, { id: "glitch", name: "Glitch" },
+  // moderné prechody (ako v CapCut)
+  { id: "slide", name: "Posun" }, { id: "zoomout", name: "Oddialenie" }, { id: "flip", name: "Preklopenie" }, { id: "iris", name: "Kruh" },
+  { id: "wipe", name: "Stierka" }, { id: "bars", name: "Pásy" }, { id: "leak", name: "Svetlo" },
 ];
 const EFFECTS = [
   { id: "none", name: "Žiadny" }, { id: "kenburns", name: "Zoom" }, { id: "pulse", name: "Pulz" },
@@ -1624,11 +1627,15 @@ function drawVideoLayer(ctx, vid, W, H, r, fx, look, t) {
     if (fx.type === "blur") blur = e * m * 0.04;
     if (fx.type === "zoom") scaleAt(ctx, W, H, 1 + 0.7 * e);
     if (fx.type === "whip") { whip = (fx.out ? -1 : 1) * e * W * 0.6; ctx.translate(whip, 0); blur = e * W * 0.02; }
+    const ee = fx.p < 0.5 ? 2 * fx.p * fx.p : 1 - Math.pow(-2 * fx.p + 2, 2) / 2; // plynulý rozjazd a dobeh
+    if (fx.type === "slide") { whip = (fx.out ? -1 : 1) * ee * W; ctx.translate(whip, 0); }
+    if (fx.type === "zoomout") scaleAt(ctx, W, H, 1 - 0.42 * ee);
+    if (fx.type === "flip") { ctx.translate(W / 2, 0); ctx.scale(Math.max(0.02, 1 - ee), 1); ctx.translate(-W / 2, 0); }
     if (fx.type === "spin") { ctx.translate(W / 2, H / 2); ctx.rotate((fx.out ? 1 : -1) * e * Math.PI / 2); ctx.scale(1 + 0.6 * e, 1 + 0.6 * e); ctx.translate(-W / 2, -H / 2); blur = e * m * 0.015; }
   }
   if (CANVAS_FILTER) { const f = [look && look.filter !== "none" ? FILTER_CSS[look.filter] : "", blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : ""].join(" ").trim(); ctx.filter = f || "none"; }
   ctx.drawImage(vid.el || vid, r.dx, r.dy, r.iw, r.ih);
-  if (whip) ctx.drawImage(vid.el || vid, r.dx - Math.sign(whip) * W * 0.6 * 1.0, r.dy, r.iw, r.ih); // kópia, aby za pohybom nebola čierna
+  if (whip && fx && fx.type !== "slide") ctx.drawImage(vid.el || vid, r.dx - Math.sign(whip) * W * 0.6 * 1.0, r.dy, r.iw, r.ih); // kópia, aby za pohybom nebola čierna
   ctx.restore();
   if (look && look.filter !== "none") drawFilterTint(ctx, look.filter);
   if (look && look.fx === "glitch" && (look.lt % 1.3) < 0.28) glitchFx(ctx, look.lt, 1);
@@ -1677,6 +1684,28 @@ function drawFxOverlay(ctx, W, H, fx) {
   if (!fx) return;
   if (fx.type === "fade") { ctx.fillStyle = `rgba(0,0,0,${fx.p.toFixed(3)})`; ctx.fillRect(0, 0, W, H); }
   if (fx.type === "white") { ctx.fillStyle = `rgba(255,255,255,${(fx.p * fx.p).toFixed(3)})`; ctx.fillRect(0, 0, W, H); }
+  const p = fx.p, ee = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  if (fx.type === "zoomout" || fx.type === "flip") { ctx.fillStyle = `rgba(0,0,0,${(0.35 * ee).toFixed(3)})`; ctx.fillRect(0, 0, W, H); }
+  if (fx.type === "iris") { // kruh sa zatvára do čiernej a na druhej strane otvára
+    const R = Math.hypot(W, H) / 2 * (1 - ee); ctx.save(); ctx.fillStyle = "#000"; ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.arc(W / 2, H / 2, Math.max(0, R), 0, Math.PI * 2, true); ctx.fill("evenodd"); ctx.restore();
+  }
+  if (fx.type === "wipe") { // šikmá stierka cez obraz
+    const x = (fx.out ? ee : 1 - ee) * (W + H * 0.4), sk = H * 0.4; ctx.save(); ctx.fillStyle = "#000"; ctx.beginPath();
+    if (fx.out) { ctx.moveTo(0, 0); ctx.lineTo(x, 0); ctx.lineTo(x - sk, H); ctx.lineTo(0, H); } else { ctx.moveTo(W, 0); ctx.lineTo(W, H); ctx.lineTo(W - x + sk * 0, H); ctx.lineTo(W - x + sk, 0); }
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  if (fx.type === "bars") { // pásy sa striedavo zasúvajú zľava a sprava
+    const n = 6, bh = H / n; ctx.save(); ctx.fillStyle = "#000";
+    for (let k = 0; k < n; k++) { const d = clamp(ee * 1.4 - k * 0.07, 0, 1), w = d * W; if (k % 2) ctx.fillRect(W - w, k * bh - 0.5, w, bh + 1); else ctx.fillRect(0, k * bh - 0.5, w, bh + 1); }
+    ctx.restore();
+  }
+  if (fx.type === "leak") { // teplý svetelný záblesk ako z filmu
+    ctx.save(); ctx.globalCompositeOperation = "screen"; const a = Math.sin(Math.min(1, p) * Math.PI / 2);
+    for (const [x, y, r, c] of [[0.25, 0.35, 0.9, "255,170,60"], [0.75, 0.6, 0.8, "255,80,120"], [0.5, 0.5, 0.6, "255,240,200"]]) {
+      const g = ctx.createRadialGradient(W * x, H * y, 0, W * x, H * y, Math.max(W, H) * r); g.addColorStop(0, `rgba(${c},${(0.9 * a).toFixed(3)})`); g.addColorStop(1, `rgba(${c},0)`); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+    ctx.restore();
+  }
 }
 const fxGain = (fx) => (fx && fx.type === "fade" ? 1 - fx.p : 1); // stmievačka stíši aj zvuk
 
