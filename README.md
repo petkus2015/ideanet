@@ -177,3 +177,8 @@ cez WP-Cron, cestovný poriadok GTFS raz denne. Ukladajú sa do
 python3 scripts/build_wp_plugin.py
 ```
 
+
+## Sťahovač videí
+
+Samostatná mobilná webová aplikácia na stiahnutie videí z TikToku, Instagramu, YouTube a Facebooku
+v pôvodnej kvalite je v priečinku [`stahovac/`](stahovac/README.md) (potrebuje Python server s yt-dlp).
