@@ -6,36 +6,29 @@ Klikateľný prototyp novej homepage pre **sparring.io**. Je to čisté HTML, CS
 cd sparring-redesign && python3 -m http.server 8000   # http://localhost:8000
 ```
 
-## Koncept: „Legal, in cinema“
+## Koncept
 
-Segment tvoria startupy, scaleupy, investori a agentúry z oblasti fintech, krypto, gaming a AI.
-Klient nekupuje „advokátsku kanceláriu“, ale partnera na celú cestu firmy. Preto je stránka
-postavená ako **film o ceste firmy od nápadu po exit**, rozdelený do 7 scén. Tón ostáva
-dôveryhodný (serif, pokojné tempo), ale pôsobí moderne a technologicky, čo pri právnikoch nie je bežné.
+Stránka stojí na pôvodnom obsahu a značke Sparring: navy #142643, coral #FF7075, teal #00ACAD,
+pôvodná ilustrácia mapy, logá klientov a obrázky článkov. Texty sú prevzaté z webu bez úprav.
+Písmo je IBM Plex Serif + Sans. Pri nasadení ho možno nahradiť brandovým Rooney + Komet (Adobe Fonts)
+zmenou dvoch premenných v `:root`.
 
-Brand ostáva rozpoznateľný: zachovaná je **navy #142643, coral #FF7075 a teal #00ACAD**.
-V prototype sú použité Google fonty Instrument Serif + Inter Tight. Pri nasadení ich možno
-vymeniť späť za brandové **Rooney + Komet** (Adobe Fonts) zmenou dvoch premenných v `:root`.
+Vizuál je zámerne triezvy, bez prvkov typických pre AI generované šablóny. Nie sú tu:
+- žiariace gradienty ani sklenené (blur) panely
+- monospace popisky ani číslovanie scén
+- pulzujúce bodky ani vymyslené widgety
+- farebná kurzíva v nadpisoch
 
-| Scéna | Obsah | Filmový efekt |
-|---|---|---|
-| Intro | — | Letterbox (čierne pásy sa otvoria) + odpočet 3-2-1, iba pri prvej návšteve v session, ~1,4 s, preskočiteľné klávesou |
-| 01 Opening | H1 „Your legal partner from idea to exit“ | Svetelný kužeľ projektora s prachom (canvas, reaguje na myš), anamorfický lens flare, slová H1 sa zaostria z rozmazania (focus pull) |
-| 01 Player | Cesta Idea → Setup → Seed → ESOP → Scale → Exit | UI videoprehrávača so scrubberom a kapitolami; každá kapitola hovorí, čo Sparring v danej fáze robí |
-| Logos | „Trusted by…“ | Nekonečný pás mien klientov |
-| 02 Expertise | 6 odvetví + Innovations | Horizontálny **filmový pás s perforáciou**, pri scrolle sa „pretáča“ (pinned) |
-| 03 Why | 3 piliere ako Act I–III | Postupné zaostrenie pri scrolle |
-| 04 Reviews | 5 referencií | Citácie ako titulky, prechody s rack focus, priebeh ako pri „stories“, pauza |
-| 05 Action | Let’s get started | **Klapka**, ktorá sa zaklapne pri vstupe do obrazu; čipy rovno predvyplnia tému v kontaktnom formulári |
-| 06 Insights | Blog | Ken Burns zoom na náhľadoch |
-| 07 Finale + Credits | CTA + pätička | Pätička v štýle záverečných titulkov |
+**Filmové prvky** (všetky sa vypnú pri `prefers-reduced-motion`):
 
-Na celej stránke: jemné filmové zrno, vinetácia a **HUD s timecode** (vľavo dole), ktorý
-pri scrolle ukazuje aktuálnu scénu a čas, napr. `SC 02 · EXPERTISE 00:00:47:23`.
-
-**Prístupnosť:** pri `prefers-reduced-motion` sa vypne intro, zrno, canvas, pin aj
-autoplay. Ovládanie z klávesnice, `<dialog>` pre kontakt, skip link a ovládateľný slider referencií.
-**Mobil:** filmový pás má natívny swipe so scroll-snap, HUD je skrytý a menu je burger.
+| Kde | Efekt |
+|---|---|
+| Načítanie | Čierne pásy sa otvoria (raz za session, < 1,2 s) |
+| Hero | Širokouhlý záber: čierne pásy hore a dole sa pri scrolle stiahnu, mapa má jemný parallax |
+| Celá stránka | Jemné filmové zrno |
+| Expertise | Odvetvia na filmovom páse s perforáciou, pri scrolle sa posúva do strany (na mobile swipe) |
+| Referencie | Citácie ako titulky na plátne 2.39:1 |
+| Pätička | Odkazy usporiadané ako záverečné titulky |
 
 ## Zachovanie SEO pozícií
 
@@ -47,9 +40,9 @@ Prototyp je preto navrhnutý tak, aby sa žiadna z týchto vecí nezhoršila.
 - `<title>`, meta description, robots, canonical, OG a Twitter tagy: **identické**
 - hreflang (en-GB / en-US / sk / cs) **zachovaný** a doplnený `x-default`
 - **H1 identický**: „Your legal partner from idea to exit“
-- Všetky H2 z pôvodnej stránky zostali. Odvetvia sú teraz **H3** (predtým H4), čo je lepšia hierarchia.
+- Všetky H2 z pôvodnej stránky zostali, bez nových. Odvetvia sú teraz **H3** (predtým H4).
 - **Všetky interné odkazy z pôvodnej homepage sú zachované** (0 chýbajúcich), vrátane autorov a archívov
-- Texty sekcií prevzaté takmer doslovne
+- Texty sekcií prevzaté doslovne z pôvodného webu
 - Všetok obsah je priamo v HTML. JS iba animuje a nič nevkladá, takže Google vidí všetko aj bez JS.
 
 ### Vylepšenia
@@ -88,10 +81,7 @@ Prototyp je preto navrhnutý tak, aby sa žiadna z týchto vecí nezhoršila.
    Mierne výkyvy prvé 2 týždne sú normálne.
 7. Rovnaký dizajn postupne preniesť na podstránky odvetví (`/fintech/`, `/crypto/` …), `/about-us/`, `/pricing/` a blog.
 
-## Čo je v prototype zástupné
+## Čo treba pri nasadení doriešiť
 
-- **Mená klientov v páse sú text, nie logá.** Pri nasadení použiť SVG logá z `/wp-content/uploads/` s vyplneným `alt`.
-- **Texty kapitol v „playeri“ (Idea → Exit) sú môj návrh copy** a štítky pri odvetviach (MiCA, AI Act…) sú tiež doplnené. Treba ich schváliť so Sparringom.
-- **Firmy pri referenciách** (Vision Ventures, Deepnote, LB, Neulogy, GymBeam) sú odvodené z log pri citátoch na pôvodnom webe. Treba ich overiť.
-- Náhľady článkov sú gradienty. Nahradiť featured images z WordPressu.
-- Formuláre nič neodosielajú. Napojiť na pôvodný formulár (Elementor Forms / reCAPTCHA).
+- Obrázky a logá sú načítané priamo z `sparring.io/wp-content/uploads/`. Vo WordPresse sa použijú tie isté súbory z knižnice médií.
+- Formuláre nič neodosielajú. Treba ich napojiť na pôvodný formulár (Elementor Forms / reCAPTCHA).

@@ -40,7 +40,7 @@
         "logo": "https://sparring.io/wp-content/uploads/2022/06/Sparring.svg",
         "image": "https://sparring.io/wp-content/uploads/2023/01/sparring_og_image.jpg",
         "email": "hello@sparring.io",
-        "description": "A legal & strategy service for tech visionaries — supporting 100+ innovative companies in CEE, US and global markets.",
+        "description": "A legal & strategy service for tech visionaries, supporting 100+ innovative companies in CEE, US and global markets.",
         "areaServed": ["EU", "US", "SK", "CZ"],
         "knowsAbout": ["Startup law", "Venture capital", "ESOP", "Fintech regulation", "Crypto & Web3 law", "Gaming law", "AI Act", "Intellectual property", "M&A"],
         "award": "Legal 500 ranked",
@@ -72,9 +72,10 @@
   }
   </script>
 
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -82,361 +83,244 @@
 <body>
   <a class="skip" href="#main">Skip to content</a>
 
-  <!-- ===== Kino vrstvy: zrno, vinetácia, letterbox intro ===== -->
+  <!-- Filmové zrno + úvodné otvorenie čiernych pásov -->
   <div class="grain" aria-hidden="true"></div>
-  <div class="vignette" aria-hidden="true"></div>
-  <div class="intro" aria-hidden="true">
-    <div class="intro__bar intro__bar--top"></div>
-    <div class="intro__card">
-      <span class="intro__eyebrow">A Sparring production</span>
-      <span class="intro__count" data-countdown>3</span>
-    </div>
-    <div class="intro__bar intro__bar--bottom"></div>
-  </div>
+  <div class="intro" aria-hidden="true"><div></div><div></div></div>
 
-  <!-- ===== Navigácia (všetky pôvodné interné odkazy zachované) ===== -->
   <header class="nav" data-nav>
     <div class="nav__inner">
-      <a class="logo" href="https://sparring.io/" aria-label="Sparring — home">
-        <svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 17.5c1.4 1.6 3.4 2.5 6 2.5 3 0 5-1.4 5-3.6 0-4.8-10.4-2.6-10.4-7.4C8.6 6.9 10.6 6 13.4 6c2.3 0 4 .7 5.2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <span>Sparring</span>
+      <a class="logo" href="https://sparring.io/">
+        <img src="https://sparring.io/wp-content/uploads/2022/06/Sparring.svg" alt="Sparring" width="132" height="32">
       </a>
 
       <nav class="nav__menu" aria-label="Main">
-        <div class="nav__item nav__item--mega">
-          <button class="nav__link" aria-expanded="false" aria-controls="mega-expertise" data-mega>Expertise <i aria-hidden="true">▾</i></button>
+        <div class="nav__item">
+          <button class="nav__link" aria-expanded="false" aria-controls="mega-expertise" data-mega>Expertise</button>
           <div class="mega" id="mega-expertise">
-            <a href="https://sparring.io/software/"><strong>Software</strong><span>Tailored templates, or your in-house legal team.</span></a>
-            <a href="https://sparring.io/fintech/"><strong>Fintech</strong><span>For teams bringing technology to finance.</span></a>
-            <a href="https://sparring.io/crypto/"><strong>Crypto</strong><span>Real utility for the Web3 space.</span></a>
-            <a href="https://sparring.io/digital-agencies/"><strong>Digital Agencies</strong><span>The legal arm you need to grow at scale.</span></a>
-            <a href="https://sparring.io/gaming/"><strong>Gaming</strong><span>From brand protection to in-app purchases.</span></a>
-            <a href="https://sparring.io/ai-law-and-regulations/"><strong>AI law &amp; regulations</strong><span>EU AI Act &amp; US rules — turned into your USP.</span></a>
+            <a href="https://sparring.io/software/"><strong>Software</strong>We arm you with a complete set of tailored templates, or become your inhouse team.</a>
+            <a href="https://sparring.io/fintech/"><strong>Fintech</strong>For dynamic and ambitious teams in finance.</a>
+            <a href="https://sparring.io/crypto/"><strong>Crypto</strong>Projects that bring real utility to the Web3 space.</a>
+            <a href="https://sparring.io/digital-agencies/"><strong>Digital Agencies</strong>Product development houses and marketing agencies.</a>
+            <a href="https://sparring.io/gaming/"><strong>Gaming</strong>From protecting your brand to in-app purchases.</a>
+            <a href="https://sparring.io/ai-law-and-regulations/"><strong>AI law &amp; regulations</strong>AI regulation in the EU and the US.</a>
           </div>
         </div>
         <a class="nav__link" href="https://sparring.io/about-us/">About us</a>
         <a class="nav__link" href="https://sparring.io/pricing/">Pricing</a>
-        <div class="nav__item nav__item--mega">
-          <button class="nav__link" aria-expanded="false" aria-controls="mega-resources" data-mega>Resources <i aria-hidden="true">▾</i></button>
+        <div class="nav__item">
+          <button class="nav__link" aria-expanded="false" aria-controls="mega-resources" data-mega>Resources</button>
           <div class="mega mega--sm" id="mega-resources">
-            <a href="https://sparring.io/updates/"><strong>Updates</strong><span>Legal insights to keep you in the game.</span></a>
-            <a href="https://playbook.sparring.io/en/"><strong>Playbook</strong><span>Win the startup game by knowing the rules.</span></a>
-            <a href="https://sparring.io/legal-startup-lab/"><strong>Legal Startup Lab</strong><span>Enhance your Business Law skills.</span></a>
-            <a href="https://sparring.io/careers/"><strong>Careers</strong><span>Work with us — see all open positions.</span></a>
-            <a href="https://sparring.io/offices/"><strong>Offices</strong><span>Bratislava · Prague · US</span></a>
+            <a href="https://sparring.io/updates/"><strong>Updates</strong>Our legal insights to keep you in the game.</a>
+            <a href="https://playbook.sparring.io/en/"><strong>Playbook</strong>Win the startup game by knowing the legal rules.</a>
+            <a href="https://sparring.io/legal-startup-lab/"><strong>Legal Startup Lab</strong>Enhance your Business Law skills.</a>
+            <a href="https://sparring.io/careers/"><strong>Careers</strong>Work with us. See all open positions.</a>
+            <a href="https://sparring.io/offices/"><strong>Offices</strong>Where to find us.</a>
           </div>
         </div>
       </nav>
 
       <div class="nav__right">
-        <div class="lang" role="group" aria-label="Region">
+        <div class="lang" aria-label="Region">
           <a href="https://sparring.io/" hreflang="en-GB" aria-current="true">Global</a>
           <a href="https://us.sparring.io/" hreflang="en-US">US</a>
           <a href="https://sk.sparring.io/" hreflang="sk">SK</a>
           <a href="https://cs.sparring.io/" hreflang="cs">CZ</a>
         </div>
-        <button class="btn btn--coral btn--sm" data-open-contact>Contact us</button>
-        <button class="burger" aria-label="Menu" aria-expanded="false" data-burger><span></span><span></span></button>
+        <button class="btn btn--sm" data-open-contact>Contact us</button>
+        <button class="burger" aria-label="Menu" aria-expanded="false" data-burger><span></span> <span></span></button>
       </div>
     </div>
   </header>
 
-  <!-- Timecode HUD: scroll indikátor v štýle strižne -->
-  <div class="hud" aria-hidden="true">
-    <span class="hud__rec"></span>
-    <span class="hud__scene" data-hud-scene>SC 01 · OPENING</span>
-    <span class="hud__tc" data-hud-tc>00:00:00:00</span>
-  </div>
-
   <main id="main">
 
-    <!-- ===================== SCENE 01 — HERO ===================== -->
-    <section class="hero scene" data-scene="SC 01 · OPENING">
-      <canvas class="hero__beam" data-beam aria-hidden="true"></canvas>
-      <div class="hero__flare" aria-hidden="true"></div>
-
+    <!-- HERO: širokouhlý záber 2.39:1, pásy sa pri scrolle stiahnu -->
+    <section class="hero" data-hero>
+      <div class="hero__bar hero__bar--top" aria-hidden="true"></div>
       <div class="wrap hero__grid">
         <div class="hero__copy">
-          <p class="eyebrow"><span class="dot"></span> Legal 500 ranked · CEE · US · Global</p>
-          <h1 class="hero__title" data-split>
-            Your legal partner <em>from idea to exit</em>
-          </h1>
-          <p class="hero__lead">
-            Sparring is a new breed of law firm that’s designed for innovators. Technology centric,
-            innovation first and transparent, our team has the experience of supporting
-            <strong>100+ innovative companies</strong> in their growth.
-          </p>
+          <h1>Your legal partner from idea to exit</h1>
+          <p class="hero__lead">Sparring is a new breed of law firm that’s designed for innovators. Technology centric, innovation first and transparent, our team has the experience of supporting 100+ innovative companies in their growth.</p>
           <div class="hero__cta">
-            <button class="btn btn--coral" data-open-contact>Work with us <span aria-hidden="true">→</span></button>
-            <a class="btn btn--ghost" href="https://sparring.io/about-us/">Learn more</a>
+            <button class="btn" data-open-contact>Work with us</button>
+            <a class="btn btn--line" href="https://sparring.io/about-us/">Learn more</a>
           </div>
         </div>
-
-        <!-- Scrubber: cesta firmy ako časová os videa -->
-        <div class="player" data-player>
-          <div class="player__screen">
-            <div class="player__meta">
-              <span>NOW PLAYING</span>
-              <span data-player-time>00:00</span>
-            </div>
-            <div class="player__stage" aria-live="polite">
-              <p class="player__chapter" data-player-chapter>Chapter 1 — Idea</p>
-              <p class="player__text" data-player-text>Founders’ agreement, IP assignment and the right company structure — before the first line of code ships.</p>
-            </div>
-          </div>
-          <div class="player__bar">
-            <div class="player__track"><div class="player__progress" data-player-progress></div></div>
-            <ol class="player__marks">
-              <li><button data-stage="0" class="is-on">Idea</button></li>
-              <li><button data-stage="1">Setup</button></li>
-              <li><button data-stage="2">Seed</button></li>
-              <li><button data-stage="3">ESOP</button></li>
-              <li><button data-stage="4">Scale</button></li>
-              <li><button data-stage="5">Exit</button></li>
-            </ol>
-          </div>
-        </div>
+        <figure class="hero__img">
+          <img src="https://sparring.io/wp-content/uploads/2023/01/sparring_homepage_image.png" alt="Map of Sparring offices in the US and Europe" width="560" height="560" fetchpriority="high">
+        </figure>
       </div>
-
-      <dl class="stats wrap">
-        <div><dt>Companies supported</dt><dd><span data-count="100">0</span>+</dd></div>
-        <div><dt>Team sizes we partner with</dt><dd>2–<span data-count="400">0</span></dd></div>
-        <div><dt>Markets</dt><dd>CEE · US</dd></div>
-        <div><dt>Recognition</dt><dd>Legal 500</dd></div>
-      </dl>
+      <div class="hero__bar hero__bar--bottom" aria-hidden="true"></div>
     </section>
 
-    <!-- ===================== LOGOS ===================== -->
     <section class="logos" aria-labelledby="logos-h">
-      <h2 id="logos-h" class="logos__title">Trusted by awesome companies all around the world</h2>
-      <div class="marquee" aria-hidden="false">
-        <ul class="marquee__track">
-          <li>Vacuumlabs</li><li>Deepnote</li><li>Zowie</li><li>Taiwania Capital</li><li>GymBeam</li>
-          <li>Neulogy Ventures</li><li>Vision Ventures</li><li>Sudolabs</li><li>NuFi</li><li>Streambee</li><li>Daylight</li>
-        </ul>
-        <ul class="marquee__track" aria-hidden="true">
-          <li>Vacuumlabs</li><li>Deepnote</li><li>Zowie</li><li>Taiwania Capital</li><li>GymBeam</li>
-          <li>Neulogy Ventures</li><li>Vision Ventures</li><li>Sudolabs</li><li>NuFi</li><li>Streambee</li><li>Daylight</li>
+      <div class="wrap">
+        <h2 id="logos-h">Trusted by awesome companies all around the world</h2>
+        <ul class="logos__row">
+          <li><img src="https://sparring.io/wp-content/uploads/2023/01/vacuumlabs.svg" alt="Vacuumlabs" loading="lazy"></li>
+          <li><img src="https://sparring.io/wp-content/uploads/2023/01/deepnote.svg" alt="Deepnote" loading="lazy"></li>
+          <li><img src="https://sparring.io/wp-content/uploads/2024/07/Zowie-web.png" alt="Zowie" loading="lazy"></li>
+          <li><img src="https://sparring.io/wp-content/uploads/2024/07/Taiwania-Capital-web.png" alt="Taiwania Capital" loading="lazy"></li>
+          <li><img src="https://sparring.io/wp-content/uploads/2024/07/Asset-4.svg" alt="Pixel Federation" loading="lazy"></li>
+          <li><img src="https://sparring.io/wp-content/uploads/2024/07/Asset-6.svg" alt="STRV" loading="lazy"></li>
+          <li><img src="https://sparring.io/wp-content/uploads/2024/07/Asset-7.svg" alt="Upheal" loading="lazy"></li>
         </ul>
       </div>
     </section>
 
-    <!-- ===================== SCENE 02 — EXPERTISE REEL ===================== -->
-    <section class="reel scene" data-scene="SC 02 · EXPERTISE" data-reel aria-labelledby="reel-h">
+    <!-- EXPERTISE: filmový pás, pri scrolle sa posúva do strany -->
+    <section class="reel" data-reel aria-labelledby="reel-h">
       <div class="reel__sticky">
         <div class="wrap reel__head">
-          <p class="slate">Scene 02 <span>/</span> Expertise</p>
-          <h2 id="reel-h" class="reel__title">
-            Are you
-            <span class="rotator" data-rotator>
-              <span>a startup?</span>
-              <span>an agency?</span>
-              <span>a scaleup?</span>
-              <span>an investor?</span>
-              <span>an innovator?</span>
-            </span>
-          </h2>
-          <p class="reel__lead">We offer solutions for innovative ideas and technology teams. From startup to scaleup, hear from some of the teams we have worked with.</p>
+          <h2 id="reel-h">Are you <span class="rotator" data-rotator><span>a startup?</span> <span>an agency?</span> <span>a scaleup?</span> <span>an investor?</span> <span>an innovator?</span></span></h2>
+          <p>We offer solutions for innovative ideas and technology teams. From startup to scaleup, hear from some of the teams we have worked with.</p>
         </div>
-
         <div class="reel__viewport">
-          <ol class="reel__track" data-reel-track>
-            <li class="frame" style="--hue: 178">
-              <span class="frame__no">01</span>
-              <h3>Fintech</h3>
+          <ul class="reel__track" data-reel-track>
+            <li class="frame">
+              <h3><a href="https://sparring.io/fintech/">Fintech</a></h3>
               <p>Our legal services are suited for dynamic and ambitious teams, eager to bring accessibility and flexibility through technology to finance.</p>
-              <ul class="tags"><li>PSD2 / EMI</li><li>AML</li><li>MiCA</li></ul>
-              <a class="frame__link" href="https://sparring.io/fintech/">Explore Fintech <span aria-hidden="true">→</span></a>
             </li>
-            <li class="frame" style="--hue: 356">
-              <span class="frame__no">02</span>
-              <h3>Crypto</h3>
-              <p>The world of crypto is built on decentralization, transparency, and trust in the digital ecosystem. We work with projects that bring real utility to the Web3 space for the benefit of all.</p>
-              <ul class="tags"><li>Token structuring</li><li>DAO</li><li>CASP</li></ul>
-              <a class="frame__link" href="https://sparring.io/crypto/">Explore Crypto <span aria-hidden="true">→</span></a>
+            <li class="frame">
+              <h3><a href="https://sparring.io/crypto/">Crypto</a></h3>
+              <p>The world of crypto is built on decentralization, transparency, and trust in the digital ecosystem. With our long lasting experience in this ecosystem, we work with projects that bring real utility to the Web3 space for the benefit of all.</p>
             </li>
-            <li class="frame" style="--hue: 222">
-              <span class="frame__no">03</span>
-              <h3>Digital Agencies</h3>
-              <p>The legal arm you need to grow at scale. Whether you’re supporting world class marketers, a growth hacking agency or a product development house — we are here to support you.</p>
-              <ul class="tags"><li>MSAs</li><li>IP transfer</li><li>Contractors</li></ul>
-              <a class="frame__link" href="https://sparring.io/digital-agencies/">Explore Agencies <span aria-hidden="true">→</span></a>
+            <li class="frame">
+              <h3><a href="https://sparring.io/digital-agencies/">Digital Agencies</a></h3>
+              <p>The legal arm you need to grow at scale. Whether you’re supporting a team of world class marketers, a growth hacking agency or a product development house we are here to support you.</p>
             </li>
-            <li class="frame" style="--hue: 280">
-              <span class="frame__no">04</span>
-              <h3>Gaming</h3>
-              <p>From protecting your brand to in-app purchases, all the way to expanding your business, we know the rules of the game to support your business.</p>
-              <ul class="tags"><li>IP &amp; brand</li><li>IAP</li><li>Publishing</li></ul>
-              <a class="frame__link" href="https://sparring.io/gaming/">Explore Gaming <span aria-hidden="true">→</span></a>
+            <li class="frame">
+              <h3><a href="https://sparring.io/gaming/">Gaming</a></h3>
+              <p>From protecting your brand to in app purchases, all the way to expanding your business, we know the rules of the game to support your business.</p>
             </li>
-            <li class="frame" style="--hue: 200">
-              <span class="frame__no">05</span>
-              <h3>Software</h3>
+            <li class="frame">
+              <h3><a href="https://sparring.io/software/">Software</a></h3>
               <p>We arm you with a complete set of tailored templates, or become your in-house team and support you along the way.</p>
-              <ul class="tags"><li>SaaS terms</li><li>GDPR</li><li>Licensing</li></ul>
-              <a class="frame__link" href="https://sparring.io/software/">Explore Software <span aria-hidden="true">→</span></a>
             </li>
-            <li class="frame" style="--hue: 32">
-              <span class="frame__no">06</span>
-              <h3>AI law &amp; regulations</h3>
-              <p>We keep a close eye on AI regulation in the EU and the US. We help you find a USP based on the upcoming regulation and guide you through it.</p>
-              <ul class="tags"><li>EU AI Act</li><li>Data</li><li>Compliance</li></ul>
-              <a class="frame__link" href="https://sparring.io/ai-law-and-regulations/">Explore AI law <span aria-hidden="true">→</span></a>
+            <li class="frame">
+              <h3><a href="https://sparring.io/ai-law-and-regulations/">AI law &amp; regulations</a></h3>
+              <p>We are keeping a close eye on AI regulation in the EU and the US. We can help you find a USP based on the upcoming regulation and/or we can help guide you through it.</p>
             </li>
-            <li class="frame frame--end">
-              <span class="frame__no">07</span>
-              <h3>Innovations</h3>
+            <li class="frame">
+              <h3><a href="https://sparring.io/the-law-firm-built-for-tech-companies/">Innovations</a></h3>
               <p>Whether using technology or not, we can support your ambitions from starting your business, getting your product launched or making waves in a new market.</p>
-              <a class="frame__link" href="https://sparring.io/the-law-firm-built-for-tech-companies/">The law firm built for tech <span aria-hidden="true">→</span></a>
             </li>
-          </ol>
-        </div>
-        <div class="reel__scrub wrap" aria-hidden="true"><div class="reel__scrub-fill" data-reel-fill></div></div>
-      </div>
-    </section>
-
-    <!-- ===================== SCENE 03 — WHY SPARRING ===================== -->
-    <section class="acts scene" data-scene="SC 03 · WHY SPARRING" aria-labelledby="acts-h">
-      <div class="wrap">
-        <p class="slate">Scene 03 <span>/</span> Why Sparring</p>
-        <h2 id="acts-h" class="acts__title" data-split>Lawyers who speak <em>tech.</em></h2>
-        <div class="acts__grid">
-          <article class="act" data-reveal>
-            <span class="act__no">Act I</span>
-            <h3>Global and interconnected</h3>
-            <p>With legal minds in Europe and the US we provide a seamless experience with a breadth of knowledge.</p>
-          </article>
-          <article class="act" data-reveal>
-            <span class="act__no">Act II</span>
-            <h3>Technology know-how</h3>
-            <p>A team of techie lawyers is hard to come by. We understand emerging technologies and love to tinker.</p>
-          </article>
-          <article class="act" data-reveal>
-            <span class="act__no">Act III</span>
-            <h3>Part of your team</h3>
-            <p>Did we mention we love startups? We’ve worked alongside 100+ companies, joining some as their primary legal team.</p>
-          </article>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- ===================== SCENE 04 — TESTIMONIALS (subtitles) ===================== -->
-    <section class="reviews scene" data-scene="SC 04 · REVIEWS" aria-labelledby="rev-h" data-reviews>
-      <div class="wrap">
-        <div class="reviews__grid">
-        <div class="reviews__head">
-          <p class="slate">Scene 04 <span>/</span> In their words</p>
-          <h2 id="rev-h" class="reviews__title">Our partners are companies from <span class="nowrap">2 to 400 people</span></h2>
+    <section class="why">
+      <div class="wrap why__grid">
+        <div data-reveal>
+          <h3>Global and interconnected</h3>
+          <p>With legal minds in Europe and the US we provide a seamless experience with a breadth of knowledge.</p>
         </div>
-        <div>
+        <div data-reveal>
+          <h3>Technology know-how</h3>
+          <p>A team of techie lawyers is hard to come by. We understand emerging technologies and love to tinker.</p>
+        </div>
+        <div data-reveal>
+          <h3>Part of your team</h3>
+          <p>Did we mention we love startups? We've worked alongside 100+ companies, joining some as their primary legal team.</p>
+        </div>
+      </div>
+    </section>
 
-        <div class="reviews__stage">
+    <!-- REFERENCIE ako filmové titulky -->
+    <section class="reviews" aria-labelledby="rev-h" data-reviews>
+      <div class="wrap">
+        <h2 id="rev-h">Our partners are companies from 2 to 400 people</h2>
+        <div class="reviews__screen">
           <figure class="quote is-active">
-            <blockquote>“We collaborated with Sparring on a couple of transactions and they are our preferred partner when it comes to legal questions. What I mostly appreciate is the professional and pragmatic approach to any agenda and a broad expertise in venture capital, IP and IT law.”</blockquote>
-            <figcaption><strong>Gabriel Horváth</strong> Partner · Vision Ventures</figcaption>
+            <blockquote>We collaborated with Sparring on a couple of transactions and they are our preferred partner when it comes to legal questions. What I mostly appreciate is the professional and pragmatic approach to any agenda and a broad expertise in venture capital, IP and IT law.</blockquote>
+            <figcaption>Gabriel Horváth, Partner</figcaption>
           </figure>
           <figure class="quote">
-            <blockquote>“Orientation in the legal area can be scary, but not when you have Sparring by your side. No matter how complicated your task is, they will always help and adjust it precisely to your needs.”</blockquote>
-            <figcaption><strong>Anna Skoumalova</strong> Operations Manager · Deepnote</figcaption>
+            <blockquote>Orientation in the legal area can be scary, but not when you have Sparring by your side. No matter how complicated your task is, they will always help and adjust it precisely to your needs.</blockquote>
+            <figcaption>Anna Skoumalova, Operations Manager</figcaption>
           </figure>
           <figure class="quote">
-            <blockquote>“Working with Sparring is a bliss. They obviously love their craft — they’re creative, radically candid and proud of their expertise. And what’s even better, they are super easy to talk to — succinct, responsive and reliable.”</blockquote>
-            <figcaption><strong>Erik Odrobinak</strong> BD Director · LB</figcaption>
+            <blockquote>Working with Sparring is a bliss. They obviously love their craft - they’re creative, radically candid and proud of their expertise. And what’s even better, they are super easy to talk to - they are succinct, responsive and reliable.</blockquote>
+            <figcaption>Erik Odrobinak, BD Director</figcaption>
           </figure>
           <figure class="quote">
-            <blockquote>“Sparring is unique for their flexibility and ability to adapt to the needs and potential of startups. They are not afraid of innovation of the processes and always come up with new creative solutions to any legal problems.”</blockquote>
-            <figcaption><strong>Jaro Lupták</strong> Investment Manager · Neulogy Ventures</figcaption>
+            <blockquote>Sparring is unique for their flexibility and ability to adapt to the needs and potential of startups. They are not afraid of innovation of the processes and always come up with the new creative solutions to any legal problems.</blockquote>
+            <figcaption>Jaro Lupták, Investment Manager</figcaption>
           </figure>
           <figure class="quote">
-            <blockquote>“We asked Sparring to perform internal due diligence before our investment round. Based on their findings, Sparring also fine-tuned our documents and agreements. Thanks to Sparring our investment round was a success.”</blockquote>
-            <figcaption><strong>Juraj Tobák</strong> CFO · GymBeam</figcaption>
+            <blockquote>We asked Sparring to perform internal due diligence before our investment round. Based on their findings, Sparring also fine-tuned our documents and agreements. Thanks to Sparring our investment round was a success.</blockquote>
+            <figcaption>Juraj Tobák, CFO</figcaption>
           </figure>
         </div>
-
-        <div class="reviews__controls">
-          <div class="reviews__bars" data-review-bars></div>
-          <div class="reviews__btns">
-            <button aria-label="Previous review" data-review-prev>←</button>
-            <button aria-label="Pause" data-review-toggle>❚❚</button>
-            <button aria-label="Next review" data-review-next>→</button>
-          </div>
-        </div>
-        </div>
+        <div class="reviews__nav">
+          <button data-review-prev aria-label="Previous review">Previous</button>
+          <span data-review-count>1 / 5</span>
+          <button data-review-next aria-label="Next review">Next</button>
         </div>
       </div>
     </section>
 
-    <!-- ===================== SCENE 05 — GET STARTED ===================== -->
-    <section class="start scene" data-scene="SC 05 · ACTION" aria-labelledby="start-h">
+    <section class="start" aria-labelledby="start-h">
       <div class="wrap start__inner" data-reveal>
-        <div class="clapper" aria-hidden="true">
-          <div class="clapper__top"></div>
-          <div class="clapper__body"><span>SPARRING</span><span>TAKE 01</span></div>
-        </div>
         <div>
-          <h2 id="start-h">Let’s get started</h2>
+          <h2 id="start-h">Let's get started</h2>
           <p>Book a legal audit, a consultation or find ways to cooperate with us.</p>
-          <div class="start__options">
-            <button class="chip" data-open-contact data-topic="Legal audit">Legal audit</button>
-            <button class="chip" data-open-contact data-topic="Consultation">Consultation</button>
-            <button class="chip" data-open-contact data-topic="Ongoing partnership">Ongoing partnership</button>
-            <a class="chip chip--ghost" href="https://sparring.io/pricing/">See pricing →</a>
-          </div>
         </div>
+        <button class="btn" data-open-contact>Work with us</button>
       </div>
     </section>
 
-    <!-- ===================== SCENE 06 — BLOG ===================== -->
-    <section class="blog scene" data-scene="SC 06 · INSIGHTS" aria-labelledby="blog-h">
+    <section class="blog" aria-labelledby="blog-h">
       <div class="wrap">
         <div class="blog__head">
           <div>
-            <p class="slate">Scene 06 <span>/</span> Insights</p>
             <h2 id="blog-h">Learn more on our blog</h2>
             <p>Discover our news, legal insights and Sparring Playbook manuals, podcasts and free templates.</p>
           </div>
-          <a class="btn btn--ghost" href="https://sparring.io/updates/">Read more</a>
+          <a class="btn btn--line-dark" href="https://sparring.io/updates/">Read more</a>
         </div>
-
         <div class="blog__grid">
           <article class="post" data-reveal>
             <a href="https://sparring.io/kondracki-celej-and-sparring-partner-on-polish-u-s-startup-financings-and-expansion/">
-              <div class="post__img" style="--a:#1f3a7a;--b:#00ACAD"><span class="post__tag">News</span></div>
+              <img src="https://sparring.io/wp-content/uploads/2026/09/Kondracki.jpg" alt="Kondracki Celej and Sparring" loading="lazy" width="1024" height="723">
+              <span class="post__cat">News</span>
               <h3>Kondracki Celej and Sparring partner on Polish–U.S. startup financings and expansion</h3>
             </a>
-              <p class="post__meta"><a href="https://sparring.io/2026/09/17/"><time datetime="2026-09-17">17.09.26</time></a> · <a href="https://sparring.io/author/marek/">Marek Križka</a> · 2 min read</p>
+            <p class="post__meta"><a href="https://sparring.io/2026/09/17/"><time datetime="2026-09-17">17.09.26</time></a> · <a href="https://sparring.io/author/marek/">Marek Križka</a> · 2 min read</p>
           </article>
           <article class="post" data-reveal>
             <a href="https://sparring.io/zmeny-v-osvobozeni-prijmu-z-prodeje-podilu-a-cennych-papiru-od-zdaneni-na-co-se-pripravit/" hreflang="cs">
-              <div class="post__img" style="--a:#3a1530;--b:#FF7075"><span class="post__tag">Tax</span></div>
+              <img src="https://sparring.io/wp-content/uploads/2024/04/Zmeny-v-osvobozeni-prijmu-1024x723.jpg" alt="Změny v osvobození příjmů" loading="lazy" width="1024" height="723">
+              <span class="post__cat">News</span>
               <h3 lang="cs">Změny v osvobození příjmů z prodeje podílů a cenných papírů od zdanění: na co se připravit</h3>
             </a>
-              <p class="post__meta"><a href="https://sparring.io/2024/04/04/"><time datetime="2024-04-04">04.04.24</time></a> · <a href="https://sparring.io/author/ondrej-zemek/">Ondřej Zemek</a>, <a href="https://sparring.io/author/sima-stasova/">Simona Stasová</a> · 3 min read</p>
+            <p class="post__meta"><a href="https://sparring.io/2024/04/04/"><time datetime="2024-04-04">04.04.24</time></a> · <a href="https://sparring.io/author/ondrej-zemek/">Ondřej Zemek</a>, <a href="https://sparring.io/author/sima-stasova/">Simona Stasová</a> · 3 min read</p>
           </article>
           <article class="post" data-reveal>
             <a href="https://sparring.io/navigating-esops-in-the-czech-republics-evolving-landscape/">
-              <div class="post__img" style="--a:#142643;--b:#8a7cff"><span class="post__tag">Playbook</span></div>
+              <img src="https://sparring.io/wp-content/uploads/2024/02/ESOPs-in-the-Czech-Republic-1024x723.jpg" alt="ESOPs in the Czech Republic" loading="lazy" width="1024" height="723">
+              <span class="post__cat">News</span>
               <h3>Navigating ESOPs in the Czech Republic’s Evolving Landscape</h3>
             </a>
-              <p class="post__meta"><a href="https://sparring.io/2024/02/29/"><time datetime="2024-02-29">29.02.24</time></a> · <a href="https://sparring.io/author/adam-konecny/">Adam Konečný</a>, <a href="https://sparring.io/author/sima-stasova/">Simona Stasová</a>, <a href="https://sparring.io/author/jiri-meister/">Jiri Meister</a> · 2 min read</p>
+            <p class="post__meta"><a href="https://sparring.io/2024/02/29/"><time datetime="2024-02-29">29.02.24</time></a> · <a href="https://sparring.io/author/adam-konecny/">Adam Konečný</a>, <a href="https://sparring.io/author/sima-stasova/">Simona Stasová</a>, <a href="https://sparring.io/author/jiri-meister/">Jiri Meister</a> · 2 min read</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ===================== SCENE 07 — FINAL CTA ===================== -->
-    <section class="finale scene" data-scene="SC 07 · FINALE" aria-labelledby="fin-h">
-      <div class="wrap finale__inner">
-        <h2 id="fin-h" data-split>Interested in working <em>with our team?</em></h2>
+    <section class="finale" aria-labelledby="fin-h">
+      <div class="wrap">
+        <h2 id="fin-h">Interested in working with our team?</h2>
         <p>We are ready to become your Sparring partner. Just tell us more about your company and the challenges you are facing.</p>
-        <button class="btn btn--coral btn--lg" data-open-contact>Let’s talk <span aria-hidden="true">→</span></button>
+        <button class="btn" data-open-contact>Let's talk</button>
       </div>
     </section>
 
   </main>
 
-  <!-- ===================== FOOTER — „end credits“ ===================== -->
-  <footer class="credits scene" data-scene="SC 08 · CREDITS">
+  <!-- Pätička ako záverečné titulky -->
+  <footer class="credits">
     <div class="wrap">
       <div class="credits__sub">
         <div>
@@ -444,16 +328,18 @@
           <p>Learn more about legalities affecting startups and innovative businesses.</p>
         </div>
         <form class="subscribe" onsubmit="event.preventDefault(); this.classList.add('is-sent');">
-          <label class="sr" for="sub-email">Email</label>
-          <input id="sub-email" type="email" placeholder="you@company.com" required>
-          <button class="btn btn--coral" type="submit">Sign me up</button>
+          <label for="sub-email">Email</label>
+          <div class="subscribe__row">
+            <input id="sub-email" type="email" required>
+            <button class="btn" type="submit">Sign me up</button>
+          </div>
           <small>By submitting this form you agree to Sparring processing any personal data you may provide, including your email, name and content of the message, to reply to your request. Find more in our <a href="https://sparring.io/privacy-policy/">Privacy policy</a>.</small>
-          <span class="subscribe__ok">You’re in. See you in the next episode.</span>
+          <span class="subscribe__ok">Thank you for subscribing.</span>
         </form>
       </div>
 
       <div class="credits__roll">
-        <div class="credits__col">
+        <div>
           <h3>Categories</h3>
           <a href="https://sparring.io/">Home</a>
           <a href="https://sparring.io/pricing/">Pricing</a>
@@ -461,7 +347,7 @@
           <a href="https://sparring.io/offices/">Our Location</a>
           <a href="https://sparring.io/careers/">Careers</a>
         </div>
-        <div class="credits__col">
+        <div>
           <h3>Expertise</h3>
           <a href="https://sparring.io/fintech/">Fintech</a>
           <a href="https://sparring.io/crypto/">Crypto</a>
@@ -471,26 +357,25 @@
           <a href="https://sparring.io/the-law-firm-built-for-tech-companies/">Innovators</a>
           <a href="https://sparring.io/ai-law-and-regulations/">AI law &amp; regulations</a>
         </div>
-        <div class="credits__col">
+        <div>
           <h3>Legal universe</h3>
           <a href="https://sparring.io/updates/">Updates</a>
           <a href="https://playbook.sparring.io/en/">Playbook</a>
-          <a href="https://sparring.io/legal-startup-lab/">Legal Startup Lab</a>
           <a href="https://incorponation.io/" rel="noopener">Incorponation</a>
           <a href="http://verdikto.com" rel="noopener">Verdikto</a>
           <a href="http://tramatm.com" rel="noopener">Trama</a>
         </div>
-        <div class="credits__col">
+        <div>
           <h3>Social</h3>
           <a href="https://www.facebook.com/sparring.io" rel="noopener">Facebook</a>
           <a href="https://www.linkedin.com/company/sparringlaw/" rel="noopener">LinkedIn</a>
           <a href="https://twitter.com/sparring_crypto" rel="noopener">Twitter</a>
-          <a class="credits__mail" href="mailto:hello@sparring.io">hello@sparring.io</a>
+          <a href="mailto:hello@sparring.io">hello@sparring.io</a>
         </div>
       </div>
 
       <div class="credits__end">
-        <span class="credits__badge">Legal 500 · Ranked</span>
+        <img src="https://sparring.io/wp-content/uploads/2022/06/Sparring-Legal-500-300x253.png" alt="Legal 500 rank Sparring" width="72" height="61" loading="lazy">
         <p>by SPARRING © 2026 All Rights Reserved</p>
         <nav aria-label="Legal">
           <a href="https://sparring.io/legal-notice/">Legal Notice</a>
@@ -501,26 +386,17 @@
     </div>
   </footer>
 
-  <!-- ===================== CONTACT (dialog) ===================== -->
   <dialog class="contact" data-contact aria-labelledby="contact-h">
-    <form method="dialog" class="contact__form" data-contact-form>
-      <button class="contact__close" value="cancel" aria-label="Close">×</button>
-      <p class="slate">Take 01 <span>/</span> Contact</p>
+    <form method="dialog" class="contact__form">
       <h2 id="contact-h">Contact us</h2>
       <p>Start sparring with us today by sharing more about your unique situation and vision, and discover how our expert team can provide the support and assistance you need.</p>
-      <div class="contact__topics" data-topics>
-        <button type="button" class="chip is-on">Consultation</button>
-        <button type="button" class="chip">Legal audit</button>
-        <button type="button" class="chip">Ongoing partnership</button>
-        <button type="button" class="chip">Fundraising</button>
-      </div>
-      <label>Email<input type="email" required placeholder="you@company.com"></label>
-      <label>Your name<input type="text" required placeholder="Jane Founder"></label>
-      <label>Message<textarea rows="4" placeholder="Stage, market, what keeps you up at night…"></textarea></label>
+      <label>Email<input type="email" required></label>
+      <label>Your name<input type="text" required></label>
+      <label>Message<textarea rows="5"></textarea></label>
       <small>By submitting this form you agree to Sparring processing any personal data you may provide, including your email, name and content of the message, to reply to your request. Find out more in our <a href="https://sparring.io/privacy-policy/">Privacy Policy</a>.</small>
       <div class="contact__actions">
-        <button class="btn btn--ghost" value="cancel" formnovalidate>Cancel</button>
-        <button class="btn btn--coral" value="send">Send</button>
+        <button class="btn btn--line-dark" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn" value="send">Send</button>
       </div>
     </form>
   </dialog>
