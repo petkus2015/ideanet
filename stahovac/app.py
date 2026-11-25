@@ -18,6 +18,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import unicodedata
 import threading
 import time
 import uuid
@@ -192,8 +193,9 @@ def build_options(info: dict) -> list[dict]:
 
     best = max(videos, key=rank)
     original = describe(best)
+    # presný formát + záloha; „bv*+ba“ samo by k videu so zvukom (TikTok) pridalo druhú stopu
     original.update(id="original", label="Originál", hint="Najvyššia kvalita, bez prekódovania",
-                    spec="bv*+ba/b")
+                    spec=f"{original['spec']}/bv+ba/b")
     options = [original]
 
     # jedna možnosť na každé nižšie rozlíšenie (podľa kratšej strany – funguje aj pre video na výšku)
@@ -214,18 +216,30 @@ def build_options(info: dict) -> list[dict]:
         if len(options) >= 6:
             break
 
-    # MP4 s H.264 – prehrá každý telefón (pri YouTube býva originál vo VP9/AV1)
-    if original["codec"] not in ("H.264", "") and any(
-            (f.get("vcodec") or "").startswith("avc") for f in videos):
-        avc = max((f for f in videos if (f.get("vcodec") or "").startswith("avc")), key=rank)
-        opt = describe(avc)
-        opt.update(id="compat", label="MP4 (H.264)", hint="Prehrá každý telefón",
-                   spec="bv*[vcodec^=avc]+ba[ext=m4a]/bv*[vcodec^=avc]+ba/b[ext=mp4]")
-        options.append(opt)
+    # MP4 s H.264 – prehrá každý telefón (originál býva VP9/AV1 na YouTube, H.265 na TikToku)
+    avcs = [f for f in videos if short_codec(f.get("vcodec")) == "H.264"]
+    if original["codec"] not in ("H.264", "") and avcs:
+        opt = describe(max(avcs, key=rank))
+        same = next((o for o in options if o.get("spec") == opt["spec"]), None)
+        if same:   # táto verzia už je v zozname podľa rozlíšenia – len ju označíme
+            same["hint"] = "Prehrá každý telefón"
+        else:
+            opt.update(id="compat", label="MP4 (H.264)", hint="Prehrá každý telefón",
+                       spec=f"{opt['spec']}/bv[vcodec^=avc]+ba/b[vcodec^=avc]")
+            options.append(opt)
 
-    options.append({"id": "audio", "label": "Iba zvuk", "hint": "Originálna zvuková stopa",
-                    "spec": "ba/b", "size": best_audio_size or None, "audio": True,
-                    "codec": (best_audio or {}).get("acodec", "").split(".")[0].upper() if best_audio else ""})
+    # Zvuk: ak má platforma oddelené stopy (YouTube, Instagram, FB), vezmeme najlepšiu zvukovú.
+    # Ak sú všetky videá so zvukom (TikTok), vytiahneme zvuk z videa – samostatná stopa
+    # na TikToku býva len hudba, nie skutočný zvuk videa.
+    split_streams = any(not has_audio(f) for f in videos)
+    if split_streams and best_audio:
+        a_spec, a_size, a_codec = "ba/b", best_audio_size or None, best_audio.get("acodec") or ""
+    else:
+        muxed = max((f for f in videos if has_audio(f)), key=lambda f: -(f.get("height") or 0), default=best)
+        a_spec, a_size, a_codec = muxed["format_id"], None, muxed.get("acodec") or ""
+    options.append({"id": "audio", "label": "Iba zvuk", "hint": "Zvuková stopa z videa",
+                    "spec": a_spec, "size": a_size, "audio": True,
+                    "codec": a_codec.split(".")[0].upper() if a_codec != "none" else ""})
     return options
 
 
@@ -272,6 +286,21 @@ def remux_to_mp4(path: str) -> str:
         return path
 
 
+def nice_filename(path: str, title: str | None, video_id: str | None) -> str:
+    """Čitateľný názov bez znakov, ktoré prehliadače odmietajú (napr. „...“, lomky, emoji)."""
+    ext = os.path.splitext(path)[1].lower()
+    name = re.sub(r"#\S+", " ", title or "")                  # hashtagy preč
+    # bez diakritiky – niektoré prehliadače inak názov zahodia a uložia „download“
+    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+    name = re.sub(r"[^\w\s\-]", " ", name, flags=re.UNICODE)    # len písmená, čísla, medzery, pomlčky
+    name = re.sub(r"\s+", " ", name).strip(" -_")[:60].rstrip(" -_")
+    if not name:
+        name = "video"
+    if video_id:
+        name += f" - {re.sub(r'[^\w-]', '', video_id)[:24]}"
+    return name + ext
+
+
 def run_job(job_id: str, url: str, spec: str, audio_only: bool) -> None:
     job = JOBS[job_id]
     out_dir = os.path.join(WORK_DIR, job_id)
@@ -310,6 +339,8 @@ def run_job(job_id: str, url: str, spec: str, audio_only: bool) -> None:
     )
     if audio_only:
         opts["merge_output_format"] = None
+        # z video súboru ponecháme len zvukovú stopu, bez prekódovania
+        opts["postprocessors"] = [{"key": "FFmpegExtractAudio", "preferredcodec": "best"}]
 
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
@@ -322,7 +353,8 @@ def run_job(job_id: str, url: str, spec: str, audio_only: bool) -> None:
         if not audio_only:
             job.update(status="processing")
             path = remux_to_mp4(path)
-        job.update(status="done", percent=100, path=path, filename=os.path.basename(path),
+        job.update(status="done", percent=100, path=path,
+                   filename=nice_filename(path, info.get("title"), info.get("id")),
                    size=os.path.getsize(path), finished=time.time())
     except UserError as exc:
         job.update(status="error", error=str(exc), finished=time.time())
@@ -347,6 +379,24 @@ def cleanup_loop() -> None:
 
 
 threading.Thread(target=cleanup_loop, daemon=True).start()
+
+
+# --------------------------------------------------------------------------- náhľady
+
+THUMBS: dict[str, tuple[str, float]] = {}   # token -> (url, čas)
+
+
+def register_thumb(url: str | None) -> str | None:
+    """Náhľad posielame cez server – Instagram/TikTok inak obrázky na cudzej stránke blokujú."""
+    if not url or not url.startswith(("http://", "https://")):
+        return None
+    now = time.time()
+    for k, (_, t) in list(THUMBS.items()):
+        if now - t > JOB_TTL:
+            THUMBS.pop(k, None)
+    token = uuid.uuid4().hex
+    THUMBS[token] = (url, now)
+    return f"/api/thumb/{token}"
 
 
 # --------------------------------------------------------------------------- API
@@ -383,7 +433,7 @@ def api_info():
         title=info.get("title") or info.get("description") or "Video",
         uploader=info.get("uploader") or info.get("channel") or info.get("creator"),
         duration=info.get("duration"),
-        thumbnail=thumb,
+        thumbnail=register_thumb(thumb),
         width=options[0].get("width"),
         height=options[0].get("height"),
         options=options,
@@ -412,6 +462,23 @@ def get_job(job_id: str) -> dict:
     if not job:
         abort(404)
     return job
+
+
+@app.get("/api/thumb/<token>")
+def api_thumb(token: str):
+    item = THUMBS.get(token)
+    if not item:
+        abort(404)
+    try:
+        with yt_dlp.YoutubeDL(base_opts()) as ydl:
+            resp = ydl.urlopen(item[0])
+            ctype = resp.headers.get("Content-Type", "image/jpeg")
+            data = resp.read(5 * 1024 * 1024)
+    except Exception:  # noqa: BLE001
+        abort(404)
+    if not ctype.startswith("image/"):
+        abort(404)
+    return app.response_class(data, mimetype=ctype, headers={"Cache-Control": "private, max-age=3600"})
 
 
 @app.get("/api/jobs/<job_id>")
