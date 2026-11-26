@@ -44,9 +44,14 @@
     const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
     return (h ? `${h}:${String(m).padStart(2, '0')}` : m) + ':' + String(r).padStart(2, '0');
   };
+  // nájde odkaz aj v dlhšom texte; doplní https:// keď chýba (napr. „facebook.com/reel/…“)
   const extractUrl = (text) => {
-    const m = (text || '').match(/https?:\/\/[^\s<>"']+/i);
-    return m ? m[0] : (text || '').trim();
+    const t = text || '';
+    const m = t.match(/https?:\/\/[^\s<>"']+/i)
+      || t.match(/(?:^|\s)((?:[\w-]+\.)*(?:tiktok\.com|instagram\.com|instagr\.am|youtube\.com|youtu\.be|facebook\.com|fb\.watch|fb\.com)\/[^\s<>"']*)/i);
+    if (!m) return t.trim();
+    const u = m[1] || m[0];
+    return /^https?:\/\//i.test(u) ? u : `https://${u}`;
   };
   const platformOf = (text) => {
     try {
@@ -144,7 +149,8 @@
     el.duration.textContent = fmtDur(v.duration);
     el.duration.hidden = !v.duration;
     el.title.textContent = v.title;
-    el.uploader.textContent = v.uploader ? `@${String(v.uploader).replace(/^@/, '')}` : '';
+    // @prezývka (TikTok) vs. meno stránky so medzerami (Facebook)
+    el.uploader.textContent = v.uploader ? (/\s/.test(v.uploader) ? String(v.uploader) : `@${String(v.uploader).replace(/^@/, '')}`) : '';
     el.uploader.hidden = !v.uploader;
     el.dims.textContent = v.width && v.height
       ? `Originál: ${v.width} × ${v.height}${v.width < v.height ? ' (na výšku)' : ''}` : '';

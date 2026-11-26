@@ -18,8 +18,8 @@ Wedos, Active24, Forpsi). Databáza netreba.
 Čo funguje na akom hostingu (setup.php to ukáže):
 - Hosting povoľuje spúšťať programy → TikTok, Instagram, YouTube, Facebook
   v pôvodnej kvalite.
-- Hosting spúšťanie programov zakazuje → funguje TikTok (čisté PHP).
-  Pre ostatné platformy treba VPS alebo hosting s Pythonom
+- Hosting spúšťanie programov zakazuje → funguje TikTok a Facebook (čisté PHP).
+  Pre Instagram a YouTube treba VPS alebo hosting s Pythonom
   (Python verzia aplikácie je v repozitári, priečinok stahovac/).
 
 Poznámky:

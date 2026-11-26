@@ -73,9 +73,16 @@ class UserError(Exception):
         self.status = status
 
 
+def normalize_url(url: str) -> str:
+    url = (url or "").strip()
+    if url and not re.match(r"^[a-z][a-z0-9+.-]*://", url, re.I):
+        url = "https://" + url.lstrip("/")      # „facebook.com/reel/…“ bez https://
+    return url
+
+
 def detect_platform(url: str) -> str:
     try:
-        parsed = urlparse(url.strip())
+        parsed = urlparse(normalize_url(url))
     except ValueError:
         raise UserError("Toto nevyzerá ako platný odkaz.")
     if parsed.scheme not in ("http", "https") or not parsed.hostname:
@@ -123,6 +130,30 @@ def friendly_error(exc: Exception) -> str:
     if "max-filesize" in low or "larger than max" in low:
         return "Video je príliš veľké."
     return "Video sa nepodarilo načítať. Skontrolujte odkaz a skúste znova."
+
+
+TITLE_PREFIX = re.compile(
+    r"^\s*(?:(?:reakcie|reactions?|zobrazenia|views?|komentáre|comments?)\s*:?\s*[\d.,\s]*[kmKM]?"
+    r"|[\d.,\s]*[kmKM]?\s*(?:reakci\w*|reactions?|zobrazen\w*|views?|komentár\w*|comments?))\s*[|·•]\s*",
+    re.I)
+
+
+def clean_title(title: str | None, uploader: str | None = None) -> str | None:
+    """Facebook/Instagram dávajú do názvu „Reakcie: 11 | popis | autor“ – necháme len popis."""
+    if not title:
+        return title
+    t = title.strip()
+    for _ in range(3):
+        t2 = TITLE_PREFIX.sub("", t)
+        if t2 == t:
+            break
+        t = t2
+    if uploader and t.endswith(" | " + uploader):
+        t = t[: -len(" | " + uploader)]
+    t = re.sub(r"\s+", " ", t).strip(" |·")
+    if len(t) > 140:
+        t = t[:140].rsplit(" ", 1)[0] + "…"
+    return t or title
 
 
 def has_video(fmt: dict) -> bool:
@@ -180,6 +211,9 @@ def build_options(info: dict) -> list[dict]:
     formats = info.get("formats") or [info]
     for f in formats:
         f["_duration"] = duration
+        # Facebook „hd“/„sd“ = progresívne MP4 (H.264 + AAC), kodek v údajoch chýba
+        if f.get("format_id") in ("hd", "sd") and not f.get("vcodec") and not f.get("acodec"):
+            f["vcodec"], f["acodec"] = "avc1", "mp4a"
 
     videos = [f for f in formats if has_video(f) and (f.get("url") or f.get("fragments") or f.get("manifest_url"))]
     if not videos:
@@ -235,7 +269,10 @@ def build_options(info: dict) -> list[dict]:
     # MP4 s H.264 – prehrá každý telefón (originál býva VP9/AV1 na YouTube, H.265 na TikToku)
     avcs = [f for f in videos if short_codec(f.get("vcodec")) == "H.264"]
     if original["codec"] not in ("H.264", "") and avcs:
-        opt = describe(max(avcs, key=rank))
+        avc = max(avcs, key=lambda f: (rank(f), f.get("format_id") == "hd"))
+        opt = describe(avc)
+        if not opt.get("height") and avc.get("format_id") == "hd":
+            opt["codec"] = "H.264 HD"
         same = next((o for o in options if o.get("spec") == opt["spec"]), None)
         if same:   # táto verzia už je v zozname podľa rozlíšenia – len ju označíme
             same["hint"] = "Prehrá každý telefón"
@@ -369,7 +406,7 @@ def run_job(job_id: str, url: str, spec: str, audio_only: bool) -> None:
             job.update(status="processing")
             path = remux_to_mp4(path)
         job.update(status="done", percent=100, path=path,
-                   filename=nice_filename(path, info.get("title"), info.get("id")),
+                   filename=nice_filename(path, clean_title(info.get("title"), info.get("uploader")), info.get("id")),
                    size=os.path.getsize(path), finished=time.time())
     except UserError as exc:
         job.update(status="error", error=str(exc), finished=time.time())
@@ -423,7 +460,7 @@ def handle_user_error(exc: UserError):
 
 @app.post("/api/info")
 def api_info():
-    url = ((request.get_json(silent=True) or {}).get("url") or "").strip()
+    url = normalize_url((request.get_json(silent=True) or {}).get("url") or "")
     if not url:
         raise UserError("Vložte odkaz na video.")
     platform = detect_platform(url)
@@ -445,7 +482,7 @@ def api_info():
     return jsonify(
         platform=platform,
         url=info.get("webpage_url") or url,
-        title=info.get("title") or info.get("description") or "Video",
+        title=clean_title(info.get("title") or info.get("description"), info.get("uploader")) or "Video",
         uploader=info.get("uploader") or info.get("channel") or info.get("creator"),
         duration=info.get("duration"),
         thumbnail=register_thumb(thumb),
@@ -458,7 +495,7 @@ def api_info():
 @app.post("/api/download")
 def api_download():
     data = request.get_json(silent=True) or {}
-    url = (data.get("url") or "").strip()
+    url = normalize_url(data.get("url") or "")
     spec = (data.get("spec") or "bv*+ba/b").strip()
     detect_platform(url)
     if len(spec) > 200 or not re.fullmatch(r"[\w\-+/*\[\]^=<>.,: ]+", spec):

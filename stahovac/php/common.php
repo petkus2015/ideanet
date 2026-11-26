@@ -33,9 +33,18 @@ class UserError extends Exception
     }
 }
 
+function normalize_url(string $url): string
+{
+    $url = trim($url);
+    if ($url !== '' && !preg_match('#^[a-z][a-z0-9+.-]*://#i', $url)) {
+        $url = 'https://' . ltrim($url, '/');   // „facebook.com/reel/…“ bez https://
+    }
+    return $url;
+}
+
 function platform_of(string $url): string
 {
-    $parts = parse_url(trim($url));
+    $parts = parse_url(normalize_url($url));
     if (!$parts || !in_array($parts['scheme'] ?? '', ['http', 'https'], true) || empty($parts['host'])) {
         throw new UserError('Vložte celý odkaz začínajúci na https://');
     }
@@ -48,6 +57,32 @@ function platform_of(string $url): string
         }
     }
     throw new UserError('Podporované sú odkazy z TikToku, Instagramu, YouTube a Facebooku.');
+}
+
+/** Facebook/Instagram dávajú do názvu „Reakcie: 11 | popis | autor“ – necháme len popis. */
+function clean_title(?string $title, ?string $uploader = null): ?string
+{
+    if ($title === null || trim($title) === '') {
+        return $title;
+    }
+    $t = trim($title);
+    $re = '/^\s*(?:(?:reakcie|reactions?|zobrazenia|views?|komentáre|comments?)\s*:?\s*[\d.,\s]*[kmKM]?'
+        . '|[\d.,\s]*[kmKM]?\s*(?:reakci\w*|reactions?|zobrazen\w*|views?|komentár\w*|comments?))\s*[|·•]\s*/iu';
+    for ($i = 0; $i < 3; $i++) {
+        $n = preg_replace($re, '', $t);
+        if ($n === null || $n === $t) {
+            break;
+        }
+        $t = $n;
+    }
+    if ($uploader && str_ends_with($t, ' | ' . $uploader)) {
+        $t = substr($t, 0, -strlen(' | ' . $uploader));
+    }
+    $t = trim((string) preg_replace('/\s+/u', ' ', $t), " |·");
+    if (function_exists('mb_strlen') && mb_strlen($t) > 140) {
+        $t = preg_replace('/\s+\S*$/u', '', mb_substr($t, 0, 140)) . '…';
+    }
+    return $t !== '' ? $t : $title;
 }
 
 function ensure_dirs(): void

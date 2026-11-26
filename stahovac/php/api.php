@@ -149,7 +149,7 @@ function short_codec(?string $c): string
 
 function api_info(array $in): array
 {
-    $url = trim((string) ($in['url'] ?? ''));
+    $url = normalize_url((string) ($in['url'] ?? ''));
     if ($url === '') {
         throw new UserError('Vložte odkaz na video.');
     }
@@ -163,17 +163,20 @@ function api_info(array $in): array
         if (is_array($info)) {
             return info_from_ytdlp($info, $platform, $url);
         }
-        if ($platform !== 'tiktok') {
+        if (!in_array($platform, ['tiktok', 'facebook'], true)) {
             throw new UserError(friendly_error($err ?: $out), 422);
         }
-        // TikTok: skúsime ešte čisté PHP
+        // TikTok a Facebook: skúsime ešte čisté PHP
     }
     if ($platform === 'tiktok') {
         return info_from_tiktok($url);
     }
+    if ($platform === 'facebook') {
+        return info_from_facebook($url);
+    }
     $name = ['youtube' => 'YouTube', 'instagram' => 'Instagram', 'facebook' => 'Facebook'][$platform] ?? $platform;
     if (!can_run()) {
-        throw new UserError("Tento webhosting nedovoľuje sťahovanie z platformy $name (zakazuje spúšťanie programov). Funguje TikTok.", 503);
+        throw new UserError("Tento webhosting nedovoľuje sťahovanie z platformy $name (zakazuje spúšťanie programov). Funguje TikTok a Facebook.", 503);
     }
     throw new UserError("Pre $name treba na serveri nainštalovať yt-dlp. Otvorte setup.php.", 503);
 }
@@ -200,6 +203,14 @@ function info_from_ytdlp(array $info, string $platform, string $url): array
     $hasFF = ffmpeg_path() !== null;
     $dur = $info['duration'] ?? null;
     $formats = $info['formats'] ?? [$info];
+    foreach ($formats as &$f) {
+        // Facebook „hd“/„sd“ = progresívne MP4 (H.264 + AAC), kodek v údajoch chýba
+        if (in_array($f['format_id'] ?? '', ['hd', 'sd'], true) && empty($f['vcodec']) && empty($f['acodec'])) {
+            $f['vcodec'] = 'avc1';
+            $f['acodec'] = 'mp4a';
+        }
+    }
+    unset($f);
 
     $isVideo = fn($f) => ($f['vcodec'] ?? null) !== 'none' && !in_array($f['ext'] ?? '', ['mhtml', 'jpg', 'png', 'webp'], true)
         && (($f['vcodec'] ?? null) !== null || !empty($f['height']));
@@ -224,7 +235,8 @@ function info_from_ytdlp(array $info, string $platform, string $url): array
     usort($audios, fn($a, $b) => ($b['abr'] ?? $b['tbr'] ?? 0) <=> ($a['abr'] ?? $a['tbr'] ?? 0));
     $bestAudio = $audios[0] ?? null;
 
-    $rank = fn($f) => [$f['height'] ?? 0, $f['width'] ?? 0, $f['fps'] ?? 0, $f['tbr'] ?? 0, $hasAudio($f) ? 1 : 0];
+    $rank = fn($f) => [$f['height'] ?? 0, $f['width'] ?? 0, $f['fps'] ?? 0, $f['tbr'] ?? 0, $hasAudio($f) ? 1 : 0,
+        ($f['format_id'] ?? '') === 'hd' ? 1 : 0];
     usort($videos, fn($a, $b) => $rank($b) <=> $rank($a));
 
     $describe = function ($f) use ($hasAudio, $bestAudio, $size, $hasFF) {
@@ -274,6 +286,9 @@ function info_from_ytdlp(array $info, string $platform, string $url): array
                 }
                 unset($x);
                 if (!$dup) {
+                    if (empty($o['height']) && ($f['format_id'] ?? '') === 'hd') {
+                        $o['codec'] = 'H.264 HD';
+                    }
                     $options[] = array_merge($o, ['id' => 'compat', 'label' => 'MP4 (H.264)', 'hint' => 'Prehrá každý telefón']);
                 }
                 break;
@@ -299,7 +314,7 @@ function info_from_ytdlp(array $info, string $platform, string $url): array
     return [
         'platform' => $platform,
         'url' => $info['webpage_url'] ?? $url,
-        'title' => $info['title'] ?? $info['description'] ?? 'Video',
+        'title' => clean_title($info['title'] ?? $info['description'] ?? null, $info['uploader'] ?? null) ?: 'Video',
         'uploader' => $info['uploader'] ?? $info['channel'] ?? $info['creator'] ?? null,
         'duration' => $dur,
         'thumbnail' => register_thumb($thumb),
@@ -412,6 +427,137 @@ function info_from_tiktok(string $url): array
     ];
 }
 
+// ------------------------------------------------------------------- Facebook bez yt-dlp
+
+function fb_video_id(?string $url): ?string
+{
+    if ($url && preg_match('#/(?:reel|reels|videos|watch/live)/(?:[^/?]+/)?(\d{6,})|[?&](?:v|video_id)=(\d{6,})#', $url, $m)) {
+        return $m[1] !== '' ? $m[1] : ($m[2] ?? null);
+    }
+    return null;
+}
+
+function facebook_item(string $url, string $jar): array
+{
+    [$code, $html, $eff] = http_get($url, ['Accept: text/html,application/xhtml+xml', 'Sec-Fetch-Mode: navigate',
+        'Sec-Fetch-Dest: document'], $jar);
+    if ($code >= 400 || $html === '') {
+        throw new UserError('Facebook stránku sa nepodarilo načítať. Skúste to znova.', 422);
+    }
+    $meta = function (string $prop) use ($html): ?string {
+        return preg_match('#<meta (?:property|name)="' . preg_quote($prop, '#') . '" content="([^"]*)"#', $html, $m)
+            ? html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5) : null;
+    };
+    $vid = fb_video_id($eff) ?? fb_video_id($url) ?? fb_video_id($meta('og:url'));
+
+    // DASH stopy (originál): ID videa je zakódované v parametri efg odkazu
+    $reps = [];
+    preg_match_all('/\{"representation_id":"(\w+)","mime_type":"([^"]+)","codecs":"([^"]*)","base_url":"([^"]+)"([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/',
+        $html, $all, PREG_SET_ORDER);
+    foreach ($all as $r) {
+        $u = json_decode('"' . $r[4] . '"');
+        if (!is_string($u)) {
+            continue;
+        }
+        parse_str((string) parse_url($u, PHP_URL_QUERY), $q);
+        $efg = json_decode((string) base64_decode(strtr((string) ($q['efg'] ?? ''), '-_', '+/')), true) ?: [];
+        $rv = isset($efg['video_id']) ? (string) $efg['video_id'] : null;
+        if ($vid === null && $rv !== null) {
+            $vid = $rv;                       // odkaz bez ID: prvé video na stránke
+        }
+        if ($rv !== $vid || isset($reps[$r[1]])) {
+            continue;
+        }
+        $num = fn($k) => preg_match('/"' . $k . '":(\d+)/', $r[5], $m) ? (int) $m[1] : null;
+        $reps[$r[1]] = ['id' => $r[1], 'audio' => str_starts_with(stripslashes($r[2]), 'audio'), 'codec' => $r[3],
+            'url' => $u, 'width' => $num('width'), 'height' => $num('height'), 'bw' => $num('bandwidth'),
+            'dur' => $efg['duration_s'] ?? null];
+    }
+
+    // progresívne MP4 (H.264 so zvukom) – hľadáme blok, ktorý patrí tomuto videu
+    $hd = $sd = $thumb = null;
+    $off = 0;
+    while (($pos = strpos($html, '"browser_native_hd_url"', $off)) !== false) {
+        $off = $pos + 20;
+        $win = substr($html, max(0, $pos - 4000), 8000);
+        if ($vid !== null && !str_contains($win, '"' . $vid . '"')) {
+            continue;
+        }
+        $get = fn($k) => preg_match('/"' . $k . '":"([^"]+)"/', $win, $m) ? json_decode('"' . $m[1] . '"') : null;
+        $hd = $get('browser_native_hd_url');
+        $sd = $get('browser_native_sd_url');
+        $thumb = preg_match('/"preferred_thumbnail":\{"image":\{"uri":"([^"]+)"/', $win, $m) ? json_decode('"' . $m[1] . '"') : null;
+        break;
+    }
+    if (!$reps && !$hd && !$sd) {
+        throw new UserError('Video sa nenašlo. Súkromné videá a videá len pre priateľov sa stiahnuť nedajú.', 422);
+    }
+    $title = $meta('og:description') ?: $meta('og:title');
+    $dur = null;
+    foreach ($reps as $r) {
+        $dur = $dur ?? $r['dur'];
+    }
+    return ['id' => $vid, 'url' => $eff ?: $url, 'title' => clean_title($title) ?: 'Facebook video',
+        'thumb' => $thumb ?: $meta('og:image'), 'duration' => $dur, 'hd' => $hd, 'sd' => $sd, 'reps' => $reps];
+}
+
+function info_from_facebook(string $url): array
+{
+    $jar = tempnam(DATA_DIR . '/tmp', 'ck');
+    try {
+        $fb = facebook_item($url, $jar);
+    } finally {
+        @unlink($jar);
+    }
+    $hasFF = ffmpeg_path() !== null;
+    $videos = array_values(array_filter($fb['reps'], fn($r) => !$r['audio'] && $r['height']));
+    $audios = array_values(array_filter($fb['reps'], fn($r) => $r['audio']));
+    usort($videos, fn($a, $b) => [$b['height'], $b['bw']] <=> [$a['height'], $a['bw']]);
+    usort($audios, fn($a, $b) => $b['bw'] <=> $a['bw']);
+    $a = $audios[0] ?? null;
+    $est = fn($r) => $r && $r['bw'] && $r['dur'] ? (int) ($r['bw'] * $r['dur'] / 8) : null;
+
+    $options = [];
+    if ($hasFF && $videos && $a) {   // originál = najlepší obraz + zvuk, spojené bez prekódovania
+        $mk = fn($v, $id, $label, $hint) => ['id' => $id, 'label' => $label, 'hint' => $hint, 'width' => $v['width'],
+            'height' => $v['height'], 'fps' => null, 'codec' => short_codec($v['codec']),
+            'size' => $est($v) && $est($a) ? $est($v) + $est($a) : null, 'spec' => 'fb:' . $v['id'] . '+' . $a['id']];
+        $options[] = $mk($videos[0], 'original', 'Originál', 'Najvyššia kvalita, bez prekódovania');
+        $short = fn($v) => min($v['height'], $v['width'] ?: $v['height']);
+        $seen = [$short($videos[0]) => true];
+        foreach ($videos as $v) {
+            $k = $short($v);
+            if (!isset($seen[$k])) {
+                $seen[$k] = true;
+                $options[] = $mk($v, "r$k", "{$k}p", 'Menší súbor');
+            }
+        }
+    }
+    if ($fb['hd']) {
+        $options[] = $options
+            ? ['id' => 'compat', 'label' => 'MP4 (H.264)', 'hint' => 'Prehrá každý telefón', 'codec' => 'H.264 HD',
+                'width' => null, 'height' => null, 'fps' => null, 'size' => null, 'spec' => 'fb:hd']
+            : ['id' => 'original', 'label' => 'HD', 'hint' => 'Najlepšia kvalita na tomto hostingu (bez ffmpeg)',
+                'codec' => 'H.264', 'width' => null, 'height' => null, 'fps' => null, 'size' => null, 'spec' => 'fb:hd'];
+    }
+    if ($fb['sd'] && !$hasFF) {
+        $options[] = ['id' => 'sd', 'label' => 'SD', 'hint' => 'Menší súbor', 'codec' => 'H.264', 'width' => null,
+            'height' => null, 'fps' => null, 'size' => null, 'spec' => 'fb:sd'];
+    }
+    if (!$options) {
+        throw new UserError('Toto video má oddelený obraz a zvuk – na serveri treba nainštalovať ffmpeg (setup.php).', 422);
+    }
+    if ($a) {
+        $options[] = ['id' => 'audio', 'label' => 'Iba zvuk', 'hint' => 'Zvuková stopa z videa', 'audio' => true,
+            'spec' => 'fb:' . $a['id'], 'size' => $est($a), 'codec' => strtoupper(explode('.', $a['codec'])[0])];
+    }
+    return [
+        'platform' => 'facebook', 'url' => $fb['url'], 'title' => $fb['title'], 'uploader' => null,
+        'duration' => $fb['duration'], 'thumbnail' => register_thumb($fb['thumb']),
+        'width' => $options[0]['width'], 'height' => $options[0]['height'], 'options' => $options,
+    ];
+}
+
 // =================================================================== sťahovanie
 
 function active_jobs(): int
@@ -428,7 +574,7 @@ function active_jobs(): int
 
 function api_download(array $in): void
 {
-    $url = trim((string) ($in['url'] ?? ''));
+    $url = normalize_url((string) ($in['url'] ?? ''));
     $spec = trim((string) ($in['spec'] ?? 'b'));
     $audio = !empty($in['audio']);
     $platform = platform_of($url);
@@ -443,11 +589,11 @@ function api_download(array $in): void
     mkdir($dir, 0755, true);
     $meta = ['url' => $url, 'spec' => $spec, 'audio' => $audio, 'platform' => $platform, 'created' => time()];
 
-    if (str_starts_with($spec, 'tt:')) {
+    if (str_starts_with($spec, 'tt:') || str_starts_with($spec, 'fb:')) {
         $meta['engine'] = 'php';
         save_json("$dir/meta.json", $meta);
         respond_and_continue(['id' => $id]);
-        run_tiktok_job($id, $meta);
+        run_php_job($id, $meta);
         return;
     }
     $ytdlp = ytdlp_cmd();
@@ -495,6 +641,7 @@ function start_ytdlp_job(string $id, array $ytdlp, string $url, string $spec, bo
         '-f', $spec, '-o', 'out.%(ext)s', '--max-filesize', MAX_FILESIZE_MB . 'M',
         '--socket-timeout', '20', '--retries', '3', '--concurrent-fragments', '4',
         '--print-to-file', '%(title)s', 'title.txt', '--print-to-file', '%(id)s', 'id.txt',
+        '--print-to-file', '%(uploader)s', 'uploader.txt',
     ]);
     $ff = ffmpeg_path();
     if ($ff) {
@@ -520,7 +667,49 @@ function start_ytdlp_job(string $id, array $ytdlp, string $url, string $spec, bo
     }
 }
 
-function run_tiktok_job(string $id, array $meta): void
+/** Čo stiahnuť pri sťahovaní bez yt-dlp (TikTok, Facebook). */
+function php_plan(array $meta, string $jar): array
+{
+    $spec = $meta['spec'];
+    if (str_starts_with($spec, 'tt:')) {
+        $item = tiktok_item($meta['url'], $jar);
+        $vars = tiktok_variants($item);
+        $sel = $vars[0];
+        foreach ($vars as $x) {
+            if ($x['id'] === substr($spec, 3)) {
+                $sel = $x;
+            }
+        }
+        return ['title' => (string) ($item['desc'] ?? 'TikTok video'), 'id' => (string) ($item['id'] ?? ''),
+            'headers' => ['Referer: https://www.tiktok.com/'],
+            'parts' => [['urls' => $sel['urls'], 'file' => 'out.mp4', 'size' => $sel['size']]]];
+    }
+    $fb = facebook_item($meta['url'], $jar);
+    $what = substr($spec, 3);
+    $parts = [];
+    if ($what === 'hd' || $what === 'sd') {
+        $u = $fb[$what] ?? $fb['hd'] ?? $fb['sd'];
+        if (!$u) {
+            throw new UserError('Táto kvalita už nie je dostupná. Načítajte video znova.');
+        }
+        $parts[] = ['urls' => [$u], 'file' => 'out.mp4', 'size' => null];
+    } else {
+        $ids = explode('+', $what);
+        foreach ($ids as $rid) {
+            $r = $fb['reps'][$rid] ?? null;
+            if (!$r) {
+                throw new UserError('Táto kvalita už nie je dostupná. Načítajte video znova.');
+            }
+            $file = count($ids) > 1 ? ($r['audio'] ? 'a.m4a' : 'v.mp4') : ($r['audio'] ? 'out.m4a' : 'out.mp4');
+            $parts[] = ['urls' => [$r['url']], 'file' => $file,
+                'size' => $r['bw'] && $r['dur'] ? (int) ($r['bw'] * $r['dur'] / 8) : null];
+        }
+    }
+    return ['title' => $fb['title'], 'id' => (string) $fb['id'], 'headers' => ['Referer: https://www.facebook.com/'],
+        'parts' => $parts];
+}
+
+function run_php_job(string $id, array $meta): void
 {
     $dir = job_dir($id);
     $progress = function (array $p) use ($dir) {
@@ -528,54 +717,68 @@ function run_tiktok_job(string $id, array $meta): void
     };
     $jar = tempnam(DATA_DIR . '/tmp', 'ck');
     try {
-        $item = tiktok_item($meta['url'], $jar);
-        $gear = substr($meta['spec'], 3);
-        $vars = tiktok_variants($item);
-        $sel = null;
-        foreach ($vars as $x) {
-            if ($x['id'] === $gear) {
-                $sel = $x;
-            }
+        $plan = php_plan($meta, $jar);
+        file_put_contents("$dir/title.txt", $plan['title']);
+        file_put_contents("$dir/id.txt", $plan['id']);
+        $total = 0;
+        foreach ($plan['parts'] as $p) {
+            $total = $p['size'] && $total !== null ? $total + $p['size'] : null;
         }
-        $sel = $sel ?? $vars[0];
-        file_put_contents("$dir/title.txt", (string) ($item['desc'] ?? 'TikTok video'));
-        file_put_contents("$dir/id.txt", (string) ($item['id'] ?? ''));
-        $out = "$dir/out.mp4";
-        $last = 0.0;
+        $doneBefore = 0;
         $start = microtime(true);
-        $ok = false;
-        foreach ($sel['urls'] as $u) {
-            $ok = http_download($u, $out, ['Referer: https://www.tiktok.com/'], $jar,
-                function (int $now, int $total) use (&$last, $start, $progress, $dir, $sel) {
-                    if (is_file("$dir/cancel")) {
-                        return true;
-                    }
-                    $t = microtime(true);
-                    if ($t - $last > 0.4) {
-                        $last = $t;
-                        $total = $total ?: (int) ($sel['size'] ?? 0);
-                        $speed = $now / max(0.001, $t - $start);
-                        $progress(['status' => 'downloading', 'downloaded' => $now, 'total' => $total ?: null,
-                            'speed' => $speed, 'eta' => $total && $speed ? (int) (($total - $now) / $speed) : null]);
-                    }
-                    return false;
-                });
-            if ($ok) {
-                break;
+        $last = 0.0;
+        foreach ($plan['parts'] as $i => $part) {
+            $ok = false;
+            foreach ($part['urls'] as $u) {
+                $ok = http_download($u, "$dir/{$part['file']}", $plan['headers'], $jar,
+                    function (int $now, int $partTotal) use (&$last, $start, $progress, $dir, &$doneBefore, $total, $plan, $i) {
+                        if (is_file("$dir/cancel")) {
+                            return true;
+                        }
+                        $t = microtime(true);
+                        if ($t - $last > 0.4) {
+                            $last = $t;
+                            $all = $total ?: (count($plan['parts']) === 1 && $partTotal ? $partTotal : null);
+                            $got = $doneBefore + $now;
+                            $speed = $got / max(0.001, $t - $start);
+                            $progress(['status' => 'downloading', 'stream' => $i + 1, 'downloaded' => $got,
+                                'total' => $all, 'speed' => $speed,
+                                'eta' => $all && $speed ? max(0, (int) (($all - $got) / $speed)) : null]);
+                        }
+                        return false;
+                    });
+                if ($ok) {
+                    break;
+                }
+            }
+            if (is_file("$dir/cancel")) {
+                file_put_contents("$dir/exit", 'cancelled');
+                return;
+            }
+            if (!$ok) {
+                throw new UserError('Video sa nepodarilo stiahnuť. Skúste to znova.');
+            }
+            $doneBefore += (int) filesize("$dir/{$part['file']}");
+        }
+        $ff = ffmpeg_path();
+        if (is_file("$dir/v.mp4") && is_file("$dir/a.m4a")) {   // spojenie obrazu a zvuku bez prekódovania
+            if (!$ff) {
+                throw new UserError('Na spojenie obrazu a zvuku treba ffmpeg (setup.php).');
+            }
+            $progress(['status' => 'processing']);
+            [$c] = run([$ff, '-y', '-v', 'error', '-i', "$dir/v.mp4", '-i', "$dir/a.m4a", '-map', '0:v', '-map', '1:a',
+                '-c', 'copy', '-movflags', '+faststart', "$dir/out.mp4"], 600);
+            @unlink("$dir/v.mp4");
+            @unlink("$dir/a.m4a");
+            if ($c !== 0) {
+                throw new UserError('Obraz a zvuk sa nepodarilo spojiť.');
             }
         }
-        if (is_file("$dir/cancel")) {
-            file_put_contents("$dir/exit", 'cancelled');
-            return;
-        }
-        if (!$ok) {
-            throw new UserError('Video sa nepodarilo stiahnuť z TikToku. Skúste to znova.');
-        }
-        if (!empty($meta['audio']) && ($ff = ffmpeg_path())) {
+        if (!empty($meta['audio']) && is_file("$dir/out.mp4") && $ff) {   // TikTok: zvuk z videa
             $progress(['status' => 'processing']);
-            [$c] = run([$ff, '-y', '-v', 'error', '-i', $out, '-vn', '-c:a', 'copy', "$dir/out.m4a"], 300);
+            [$c] = run([$ff, '-y', '-v', 'error', '-i', "$dir/out.mp4", '-vn', '-c:a', 'copy', "$dir/out.m4a"], 300);
             if ($c === 0) {
-                @unlink($out);
+                @unlink("$dir/out.mp4");
             }
         }
         file_put_contents("$dir/exit", '0');
@@ -655,9 +858,10 @@ function job_status(string $id): array
 
 function download_name(string $dir, string $file): string
 {
-    $title = @file_get_contents("$dir/title.txt") ?: null;
+    $title = trim((string) @file_get_contents("$dir/title.txt")) ?: null;
+    $uploader = trim((string) @file_get_contents("$dir/uploader.txt")) ?: null;
     $vid = trim((string) @file_get_contents("$dir/id.txt")) ?: null;
-    return nice_filename($title ? trim($title) : null, $vid, strtolower(pathinfo($file, PATHINFO_EXTENSION)));
+    return nice_filename(clean_title($title, $uploader), $vid, strtolower(pathinfo($file, PATHINFO_EXTENSION)));
 }
 
 function cancel_job(string $id): array

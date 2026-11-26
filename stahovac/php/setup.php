@@ -123,7 +123,7 @@ $checks[] = ['PHP 8.0 alebo novší', version_compare(PHP_VERSION, '8.0', '>='),
 $checks[] = ['Rozšírenie cURL', function_exists('curl_init'), function_exists('curl_init') ? 'Áno' : 'Zapnite ho v nastaveniach hostingu', true];
 $writable = is_writable(DATA_DIR) && is_writable(BIN_DIR);
 $checks[] = ['Zápis do priečinkov data/ a bin/', $writable, $writable ? 'Áno' : 'Nastavte práva 755 (cez FTP klienta)', true];
-$checks[] = ['Spúšťanie programov (proc_open)', can_run(), can_run() ? 'Povolené' : 'Zakázané – pôjde len TikTok', false];
+$checks[] = ['Spúšťanie programov (proc_open)', can_run(), can_run() ? 'Povolené' : 'Zakázané – pôjde TikTok a Facebook', false];
 $ytdlp = ytdlp_cmd();
 $ytv = $ytdlp ? (json_decode((string) file_get_contents(BIN_DIR . '/engine.json'), true)['version'] ?? '?') : null;
 $checks[] = ['yt-dlp (YouTube, Instagram, Facebook)', (bool) $ytdlp, $ytdlp ? "Verzia $ytv" : 'Nenainštalovaný', false];
@@ -193,7 +193,7 @@ $ready = $checks[0][1] && $checks[1][1] && $checks[2][1];
     <p><?php
       if ($ytdlp && $ff) echo 'Všetko: TikTok, Instagram, YouTube a Facebook v pôvodnej kvalite.';
       elseif ($ytdlp) echo 'TikTok, Instagram, Facebook. YouTube len do 360p (na vyššie treba ffmpeg).';
-      elseif ($ready) echo 'TikTok (čisté PHP). Pre ostatné platformy nainštalujte yt-dlp – ak to hosting nedovolí, treba VPS.';
+      elseif ($ready) echo 'TikTok a Facebook (čisté PHP). Pre Instagram a YouTube nainštalujte yt-dlp – ak to hosting nedovolí, treba VPS.';
       else echo 'Najprv opravte červené položky.';
     ?></p>
     <a class="btn" href="./">Otvoriť aplikáciu</a>
