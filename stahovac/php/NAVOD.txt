@@ -1,0 +1,30 @@
+SŤAHOVAČ VIDEÍ – inštalácia na webhosting (FTP)
+================================================
+
+Požiadavky: Linux webhosting s PHP 8.0+ a cURL (bežný hosting, napr. Websupport,
+Wedos, Active24, Forpsi). Databáza netreba.
+
+1. Rozbaľte ZIP. Vznikne priečinok „stahovac“.
+2. Cez FTP (napr. FileZilla) ho nahrajte na hosting, napr. do koreňa webu.
+   Aplikácia potom bude na adrese  https://vasa-domena.sk/stahovac/
+3. Priečinkom „data“ a „bin“ nastavte práva 755 (vo FileZille: pravý klik →
+   Prístupové práva súboru). Väčšinou sú už správne.
+4. V prehliadači otvorte  https://vasa-domena.sk/stahovac/setup.php
+   a kliknite na „Nainštalovať všetko“. Stiahne sa yt-dlp a ffmpeg (asi minúta,
+   zaberú cca 210 MB miesta na hostingu).
+5. Otvorte  https://vasa-domena.sk/stahovac/  – hotovo. Na telefóne ju cez
+   „Pridať na plochu“ máte ako aplikáciu (vyžaduje HTTPS).
+
+Čo funguje na akom hostingu (setup.php to ukáže):
+- Hosting povoľuje spúšťať programy → TikTok, Instagram, YouTube, Facebook
+  v pôvodnej kvalite.
+- Hosting spúšťanie programov zakazuje → funguje TikTok (čisté PHP).
+  Pre ostatné platformy treba VPS alebo hosting s Pythonom
+  (Python verzia aplikácie je v repozitári, priečinok stahovac/).
+
+Poznámky:
+- Stiahnuté súbory sa na serveri mažú po 30 minútach (priečinok data/).
+- yt-dlp sa raz týždenne aktualizuje sám; ručne cez setup.php → „Aktualizovať“.
+- Instagram a Facebook niekedy blokujú servery hostingov. Vtedy pomôže
+  aktualizácia yt-dlp alebo iný server.
+- Sťahujte len obsah, ku ktorému máte práva, alebo na osobné použitie.

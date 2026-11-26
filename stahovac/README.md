@@ -18,6 +18,13 @@ Prehliadač nevie video z týchto platforiem vytiahnuť sám (CORS, podpisy odka
 stopy obrazu a zvuku). Preto beží malý Python backend s [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 a `ffmpeg`. Statický hosting (GitHub Pages) **nestačí**.
 
+## Webhosting cez FTP (PHP verzia)
+
+Pre bežný webhosting bez Pythonu je pripravená PHP verzia (`php/`). ZIP na nahratie
+cez FTP vytvorí `./build_web.sh` → `dist/stahovac-web.zip`; postup je v `php/NAVOD.txt`.
+Po nahratí otvorte `setup.php` – stiahne na hosting yt-dlp a ffmpeg. Ak hosting
+zakazuje spúšťanie programov, funguje aspoň TikTok (čisté PHP).
+
 ## Spustenie lokálne
 
 ```bash

@@ -36,6 +36,21 @@ MAX_FILESIZE = int(os.environ.get("STAHOVAC_MAX_MB", "2048")) * 1024 * 1024
 
 os.makedirs(WORK_DIR, exist_ok=True)
 
+
+def find_ffmpeg() -> str | None:
+    """ffmpeg zo systému, inak z balíčka imageio-ffmpeg (netreba ho inštalovať ručne)."""
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:  # noqa: BLE001
+        return None
+
+
+FFMPEG = find_ffmpeg()
+
 PLATFORMS = {
     "youtube": ("youtube.com", "youtu.be", "youtube-nocookie.com"),
     "tiktok": ("tiktok.com",),
@@ -88,6 +103,7 @@ def base_opts() -> dict:
         "retries": 3,
         "geo_bypass": True,
         "http_headers": {"Accept-Language": "sk,en;q=0.8"},
+        **({"ffmpeg_location": FFMPEG} if FFMPEG else {}),
     }
 
 
@@ -262,19 +278,18 @@ def remux_to_mp4(path: str) -> str:
 
     Telefóny (najmä iPhone) MKV neotvoria, MP4 áno. Kvalita sa nemení.
     """
-    if path.lower().endswith(".mp4") or not shutil.which("ffmpeg"):
+    if path.lower().endswith(".mp4") or not FFMPEG:
         return path
     try:
-        probe = subprocess.run(
-            ["ffprobe", "-v", "error", "-show_entries", "stream=codec_type,codec_name", "-of", "json", path],
-            capture_output=True, text=True, timeout=60, check=True)
-        streams = json.loads(probe.stdout).get("streams", [])
-        vcodecs = {s["codec_name"] for s in streams if s.get("codec_type") == "video"}
-        acodecs = {s["codec_name"] for s in streams if s.get("codec_type") == "audio"}
+        # kodeky zistíme z výpisu „ffmpeg -i“ (ffprobe nemusí byť k dispozícii)
+        probe = subprocess.run([FFMPEG, "-hide_banner", "-i", path], capture_output=True, text=True, timeout=60)
+        streams = re.findall(r"Stream #\d+:\d+.*?: (Video|Audio): (\w+)", probe.stderr)
+        vcodecs = {c for t, c in streams if t == "Video" and c not in ("mjpeg", "png")}
+        acodecs = {c for t, c in streams if t == "Audio"}
         if not vcodecs or not vcodecs <= MP4_VIDEO or not acodecs <= MP4_AUDIO:
             return path
         target = os.path.splitext(path)[0] + ".mp4"
-        cmd = ["ffmpeg", "-y", "-v", "error", "-i", path, "-map", "0:v", "-map", "0:a?", "-c", "copy",
+        cmd = [FFMPEG, "-y", "-v", "error", "-i", path, "-map", "0:v", "-map", "0:a?", "-c", "copy",
                "-movflags", "+faststart"]
         if "hevc" in vcodecs:
             cmd += ["-tag:v", "hvc1"]  # aby HEVC prehral aj iPhone
@@ -489,6 +504,7 @@ def api_job(job_id: str):
     return jsonify(public)
 
 
+@app.post("/api/jobs/<job_id>/cancel")
 @app.delete("/api/jobs/<job_id>")
 def api_cancel(job_id: str):
     get_job(job_id)["cancel"] = True
@@ -516,5 +532,28 @@ def static_files(name: str):
     return send_from_directory(STATIC_DIR, name)
 
 
+def local_ips() -> list[str]:
+    import socket
+    ips = set()
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("10.255.255.255", 1))
+            ips.add(sock.getsockname()[0])
+    except OSError:
+        pass
+    return sorted(ip for ip in ips if not ip.startswith("127."))
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "8080")), threaded=True)
+    port = int(os.environ.get("PORT", "8080"))
+    print("\n  Sťahovač videí beží")
+    print(f"  Na tomto počítači:  http://localhost:{port}")
+    for ip in local_ips():
+        print(f"  Z telefónu (rovnaká Wi-Fi):  http://{ip}:{port}")
+    if not FFMPEG:
+        print("  POZOR: chýba ffmpeg – spájanie obrazu a zvuku nebude fungovať.")
+    print("  Ukončíte zatvorením okna alebo Ctrl+C\n")
+    if os.environ.get("STAHOVAC_OPEN_BROWSER") == "1":
+        import webbrowser
+        threading.Timer(1.5, lambda: webbrowser.open(f"http://localhost:{port}")).start()
+    app.run(host="0.0.0.0", port=port, threaded=True)

@@ -14,6 +14,10 @@
     toast: $('toast'),
   };
 
+  // Python server: /api/…  ·  PHP hosting (FTP): index.html nastaví window.STAHOVAC_API = 'api.php'
+  const API_BASE = window.STAHOVAC_API || null;
+  const apiUrl = (path) => (API_BASE ? `${API_BASE}?r=${encodeURIComponent(path)}` : `/api/${path}`);
+
   const PLATFORM_NAMES = { tiktok: 'TikTok', instagram: 'Instagram', youtube: 'YouTube', facebook: 'Facebook', other: 'Web' };
   const PATTERNS = {
     tiktok: /(^|\.)tiktok\.com$/i,
@@ -119,7 +123,7 @@
     el.fetch.disabled = true;
     el.url.blur();
     try {
-      current = await api('/api/info', { method: 'POST', body: JSON.stringify({ url }) });
+      current = await api(apiUrl('info'), { method: 'POST', body: JSON.stringify({ url }) });
       renderResult();
       addHistory(current);
     } catch (err) {
@@ -197,7 +201,7 @@
     el.progress.hidden = false;
     setProgress('Pripravujem…', null, '');
     try {
-      const { id } = await api('/api/download', {
+      const { id } = await api(apiUrl('download'), {
         method: 'POST',
         body: JSON.stringify({ url: current.url, spec: selected.spec, audio: !!selected.audio }),
       });
@@ -230,7 +234,7 @@
     const id = job.id;
     let s;
     try {
-      s = await api(`/api/jobs/${id}`);
+      s = await api(apiUrl(`jobs/${id}`));
     } catch {
       if (job && job.id === id) job.timer = setTimeout(poll, 1500);
       return;
@@ -265,7 +269,7 @@
     job = null;
     el.cancel.hidden = true;
     setProgress('Hotovo', 100, `${s.filename} · ${fmtBytes(s.size)}`);
-    const href = `/api/jobs/${id}/file`;
+    const href = apiUrl(`jobs/${id}/file`);
     triggerSave(href, s.filename);
     vibrate(40);
     toast('Video sa ukladá do zariadenia');
@@ -288,7 +292,7 @@
     if (job) {
       clearTimeout(job.timer);
       if (!silent) { /* */ }
-      fetch(`/api/jobs/${job.id}`, { method: 'DELETE' }).catch(() => {});
+      fetch(apiUrl(`jobs/${job.id}/cancel`), { method: 'POST' }).catch(() => {});
       job = null;
     }
     resetDownloadButton();
