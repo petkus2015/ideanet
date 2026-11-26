@@ -2,7 +2,7 @@ TITULKY: verzia pre PHP webhosting (FTP)
 =========================================
 
 Čo nahrať (do jedného priečinka, napr. subdoména captions.tvojweb.sk):
-  index.php, app.html
+  index.php, app.html, favicon.ico, favicon-32.png, apple-touch-icon.png
 
 Požiadavky:
   - PHP 7.4 alebo novšie (stačí obyčajný webhosting)
