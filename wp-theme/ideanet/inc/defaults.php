@@ -63,7 +63,7 @@ function ideanet_defaults() {
 
 		'fotky_eyebrow' => 'Fotky',
 		'fotky_title'   => 'Fotosady od klientov',
-		'fotky_note'    => 'Ku každej zakázke, kde som aj fotil, patrí celá sada. Klik na dlaždicu ju otvorí.',
+		'fotky_note'    => 'Ku každej zákazke, kde som aj fotil, patrí celá sada. Klik na kartu ju otvorí.',
 
 		'webdizajn_eyebrow' => 'Weby',
 		'webdizajn_title'   => 'Webdizajn',

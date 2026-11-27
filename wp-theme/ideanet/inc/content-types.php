@@ -49,9 +49,9 @@ function ideanet_post_types() {
 			'labels'   => array( 'Fotosada', 'Fotky — sady klientov' ),
 			'menu'     => 'dashicons-format-gallery',
 			'supports' => array( 'title', 'excerpt', 'thumbnail', 'page-attributes' ),
-			'help'     => 'Jedna sada = jeden klient, pre ktorého ste fotili. Nadpis je názov klienta, výpis je veta pod ním. Náhľadový obrázok je dlaždica; keď ho nevyplníte, použije sa prvá fotka zo sady.',
+			'help'     => 'Jedna sada = jeden klient, pre ktorého ste fotili. Nadpis je názov klienta, výpis je veta pod ním. Náhľadový obrázok je obrázok na karte; keď ho nevyplníte, použije sa prvá fotka zo sady.',
 			'fields'   => array(
-				'cat'   => array( 'Kategória', 'text', 'Štítok na dlaždici — napríklad Gastro alebo Event.' ),
+				'cat'   => array( 'Kategória', 'text', 'Štítok na karte — napríklad Gastro alebo Event.' ),
 				'fotky' => array( 'Fotky v sade', 'gallery', 'Vyberte naraz aj desať fotiek. Poradie zmeníte potiahnutím, krížikom fotku zo sady vyhodíte.' ),
 			),
 		),
@@ -795,6 +795,29 @@ function ideanet_gallery_thumb( $id ) {
 		esc_url( $src ),
 		esc_attr__( 'Vyhodiť zo sady', 'ideanet' )
 	);
+}
+
+/**
+ * Počet fotiek aj so správne skloneným slovom.
+ *
+ * Slovenčina skloňuje podľa počtu — 1 fotka, 2 až 4 fotky, 5 a viac
+ * fotiek. V CSS sa to spraviť nedá, preto to rieši PHP.
+ *
+ * @param int $n Počet fotiek.
+ * @return string Napríklad „10 fotiek“.
+ */
+function ideanet_pocet_fotiek( $n ) {
+	$n = (int) $n;
+
+	if ( 1 === $n ) {
+		$slovo = __( 'fotka', 'ideanet' );
+	} elseif ( $n >= 2 && $n <= 4 ) {
+		$slovo = __( 'fotky', 'ideanet' );
+	} else {
+		$slovo = __( 'fotiek', 'ideanet' );
+	}
+
+	return $n . ' ' . $slovo;
 }
 
 /**

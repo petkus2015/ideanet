@@ -18,6 +18,7 @@
   --blue-2:#2a5bd7;
   --magenta-2:#c81e7a;
   --violet:#8b2bff;
+  --cyan:#2ad4e6;    /* štvrtý pás — fotosady */
 
   /* text */
   --text:#f2f4ff;
@@ -1198,32 +1199,59 @@ body.is-locked{overflow:hidden}
 /* ── fotky: dlaždice so sadami ─────────────
    Jedna dlaždica = jedna zákazka. Klik otvorí celú sadu v prehliadači
    nižšie. Dlaždica je tlačidlo, nie div — kvôli klávesnici. */
-.tiles{display:grid;gap:clamp(1rem,2vw,1.5rem);grid-template-columns:repeat(auto-fill,minmax(min(100%,268px),1fr))}
-.tile{
-  display:flex;flex-direction:column;text-align:left;padding:0;cursor:pointer;
-  border-radius:var(--radius);overflow:hidden;
-  border:1px solid var(--line);background:rgba(5,8,22,.6);color:inherit;
-  font:inherit;transition:transform .3s,box-shadow .3s,border-color .3s;
+/* ── fotosady: pás sád od klientov ──
+   Tvar karty ako pri vizuáloch, len je to tlačidlo — otvára celú sadu.
+   Navyše štítok s počtom, nech je vidieť, že za kartou je viac fotiek. */
+.rail--sets{--card-w:clamp(230px, 24vw, 322px)}
+.set{
+  position:relative;flex:0 0 auto;
+  width:var(--card-w);
+  aspect-ratio:4/5;
+  padding:0;text-align:left;color:inherit;font:inherit;cursor:pointer;
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  background:var(--navy);
+  border:1px solid var(--line);
+  scroll-snap-align:center;
+  box-shadow:var(--shadow);
+  transition:transform .45s cubic-bezier(.2,.8,.3,1), box-shadow .45s, border-color .3s, opacity .45s;
+  transform:scale(.9);opacity:.55;
+  isolation:isolate;
 }
-.tile:hover,.tile:focus-visible{transform:translateY(-4px);box-shadow:0 30px 70px -40px rgba(255,45,148,.85)}
-.tile__media{position:relative;display:block;aspect-ratio:4/3;background:var(--bg-2);overflow:hidden}
-.tile__media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.8,.3,1)}
-.tile:hover .tile__media img{transform:scale(1.04)}
-.tile__count{
-  position:absolute;right:.7rem;bottom:.7rem;height:28px;padding:0 .7rem;
-  display:inline-flex;align-items:center;gap:.3rem;white-space:nowrap;border-radius:999px;
-  font-size:.82rem;font-weight:700;color:#fff;
-  background:rgba(4,5,14,.72);border:1px solid var(--line-2);backdrop-filter:blur(6px);
+.set.is-active{
+  transform:scale(1);opacity:1;
+  border-color:rgba(42,212,230,.5);
+  box-shadow:var(--shadow), 0 0 70px -18px rgba(42,212,230,.8);
 }
-.tile__count::after{content:"fotiek";font-weight:500;color:var(--muted);font-size:.74rem}
-.tile__body{display:flex;flex-direction:column;gap:.25rem;padding:1rem 1.1rem 1.2rem}
-.tile__cat{
-  align-self:flex-start;font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-  color:#ffa8d4;padding:.2rem .55rem;border-radius:999px;margin-bottom:.2rem;
-  background:rgba(255,45,148,.14);border:1px solid rgba(255,45,148,.35);
+.set img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.set__count{
+  position:absolute;top:.7rem;right:.7rem;z-index:2;
+  height:28px;padding:0 .7rem;
+  display:inline-flex;align-items:center;white-space:nowrap;
+  border-radius:999px;font-size:.74rem;font-weight:600;color:var(--text);
+  background:rgba(4,7,18,.74);border:1px solid var(--line-2);backdrop-filter:blur(6px);
 }
-.tile__name{font-family:var(--display);font-size:1.02rem;font-weight:700;letter-spacing:-.02em}
-.tile__note{color:var(--muted);font-size:.86rem;line-height:1.45}
+.set__meta{
+  position:absolute;inset:auto 0 0;z-index:2;padding:2.4rem 1.2rem 1.1rem;
+  display:grid;gap:.25rem;justify-items:start;
+  background:linear-gradient(to top, rgba(4,7,18,.96) 0 52%, rgba(4,7,18,.78) 76%, transparent);
+}
+.set__cat{
+  justify-self:start;font-size:.64rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:#9fe9f2;
+  padding:.22rem .55rem;border-radius:999px;
+  background:rgba(42,212,230,.16);border:1px solid rgba(42,212,230,.42);
+}
+.set__name{margin:.15rem 0 0;font-family:var(--display);font-size:1.02rem;font-weight:700;letter-spacing:-.02em}
+/* Karta má pevný pomer, dlhý popis nemá kam rásť — nad dva riadky sa oreže. */
+.set__note{
+  color:var(--muted);font-size:.82rem;line-height:1.45;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+
+/* tyrkysové ovládanie pre tento pás */
+.reels--sets .reels__arrow:hover{background:var(--cyan);border-color:transparent;color:#04121a}
+.reels--sets .rail__dots button.is-active{background:var(--cyan);box-shadow:0 0 14px rgba(42,212,230,.85)}
 
 /* ── prehliadač fotiek ─────────────────────
    Vlastný, nie ten od videí: tam je rám 9:16 a dáta reelsov. */
@@ -1403,8 +1431,8 @@ body.is-locked{overflow:hidden}
   .brand{margin-right:auto}
   .reels__arrow{display:none}
   :root{--card-w:clamp(230px, 68vw, 300px)}
-  .rail--webs{--card-w:clamp(252px, 72vw, 320px)}
-  .web__meta{padding:2rem 1rem .9rem}
+  .rail--webs,.rail--sets{--card-w:clamp(252px, 72vw, 320px)}
+  .web__meta,.set__meta{padding:2rem 1rem .9rem}
 }
 @media (max-width:560px){
   /* Na úzkom displeji je telefón nízky a štítky sú dlhé, takže

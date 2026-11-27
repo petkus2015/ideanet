@@ -98,23 +98,24 @@ Keď video nevyplníte, karta zostane na plagáte a nespadne.
 
 ### Fotky — sady klientov
 
-Sekcia **Fotky** na úvodnej stránke, hneď pod Reels. Jedna dlaždica je
-jedna zákazka, pre ktorú ste aj fotili; klik ju otvorí v prehliadači
-fotiek so šípkami, miniatúrami a listovaním prstom.
+Sekcia **Fotky** na úvodnej stránke, hneď pod Reels. Je to posúvací
+pás ako pri vizuáloch. Jedna karta je jedna zákazka, pre ktorú ste aj
+fotili; klik ju otvorí v prehliadači fotiek so šípkami, miniatúrami
+a listovaním prstom.
 
 Pridávate ich v IDEANET → **Fotky — sady klientov**:
 
 - **Nadpis** je názov klienta, **Výpis** veta pod ním, **Kategória**
-  štítok na dlaždici.
+  štítok na karte.
 - **Fotky v sade**: *Pridať fotky z knižnice* otvorí knižnicu médií,
   kde ich označíte naraz — podržte Ctrl, alebo ťahajte myšou cez ne.
   Pridať sa dajú aj na viackrát, nová sada sa pripočíta k tej doterajšej.
 - **Poradie** zmeníte potiahnutím miniatúry, krížikom fotku zo sady
   vyhodíte. Z knižnice médií sa nezmaže, len prestane patriť do sady.
-- **Náhľadový obrázok** je obrázok na dlaždici. Keď ho nevyplníte,
+- **Náhľadový obrázok** je obrázok na karte. Keď ho nevyplníte,
   použije sa prvá fotka zo sady.
 
-Na dlaždici sa fotka oreže na pomer 4:3, v prehliadači sa zobrazí celá —
+Na karte sa fotka oreže na pomer 4:5, v prehliadači sa zobrazí celá —
 na šírku aj na výšku, nič sa neoreže. Odporúčaná veľkosť je dlhšia strana
 aspoň 1600 px; WordPress si z nej sám spraví menšie verzie pre miniatúry.
 

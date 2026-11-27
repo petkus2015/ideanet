@@ -8,6 +8,18 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.19.3
+
+- Sekcia **Fotky** je posúvací pás ako vizuály a weby, nie mriežka
+  dlaždíc. Karta má pomer 4:5 a názov, popis aj štítok ležia na nej;
+  klik ju otvorí, ale ťahanie pásu už nie.
+- Počet fotiek na karte sa už skloňuje — *1 fotka*, *3 fotky*,
+  *10 fotiek*. Predtým to slovo dopĺňalo CSS, ktoré počet nevie
+  prečítať, takže tam stálo aj „3 fotiek“.
+- Popis na karte sa nad dva riadky oreže, aby dlhý text kartu
+  nerozbil.
+- Vo vete pod nadpisom sekcie bol preklep „zakázke“.
+
 ## 1.19.2
 
 - Ukážky v sekcii **Webdizajn** majú rovnaký tvar ako ukážky vizuálov:

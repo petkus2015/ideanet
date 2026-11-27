@@ -542,6 +542,18 @@
     });
   }
 
+  /* ── pás s fotosadami ───────────────────── */
+  const setRail = $('#setRail');
+  if (setRail) {
+    const setDots = $('#setDots');
+    createRail({
+      rail: setRail,
+      cards: $$('.set', setRail),
+      dots: setDots ? $$('button', setDots) : [],
+      prev: $('#prevSet'), next: $('#nextSet'),   // bez ukazovateľa priebehu — stačia guličky
+    });
+  }
+
   /* ── pás s ukážkami webov ──────────────────── */
   const webRail = $('#webRail');
   if (webRail) {
@@ -1185,15 +1197,20 @@
 
 /* ═══════════════════════════════════════════════
    FOTKY — prehliadač sád
-   Dlaždica nesie svoje fotky v data-fotky. Prehliadač
+   Karta nesie svoje fotky v data-fotky. Prehliadač
    vznikne až pri prvom otvorení, aby stránka nenosila
    markup, ktorý väčšina návštevníkov nikdy neuvidí.
    ═══════════════════════════════════════════════ */
 (() => {
   'use strict';
 
-  const dlazdice = [...document.querySelectorAll('.tile[data-fotky]')];
-  if (!dlazdice.length) return;
+  const karty = [...document.querySelectorAll('.set[data-fotky]')];
+  if (!karty.length) return;
+
+  /* Pás sa dá ťahať a karta je tlačidlo, takže ťahanie myšou skončí
+     klikom. Ten sadu otvoriť nesmie. */
+  const pasSad = document.querySelector('#setRail');
+  const tahalo = () => !!pasSad && pasSad.dataset.moved === '1';
 
   const IKONA = {
     zavri: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
@@ -1299,7 +1316,10 @@
     if (odkial) odkial.focus();
   }
 
-  dlazdice.forEach(karta => karta.addEventListener('click', () => otvor(karta)));
+  karty.forEach(karta => karta.addEventListener('click', () => {
+    if (tahalo()) return;
+    otvor(karta);
+  }));
 
   addEventListener('keydown', (e) => {
     if (!obal || obal.hidden) return;
