@@ -1273,7 +1273,9 @@ body.is-locked{overflow:hidden}
 /* ── webdizajn: pás zvislých ukážok webov ──
    Rovnaký pás ako pri videách a vizuáloch, len pomer 9:16 a fialový
    odtieň ovládania, nech sa tri pásy od seba odlíšia. */
-.rail--webs{--card-w:clamp(228px, 23vw, 300px)}
+.rail--webs{--card-w:clamp(176px, 17vw, 230px)}
+/* Pomer 9:16 robí z karty dvakrát takú výšku ako šírku, takže
+   rovnako široká ako pri reelsoch by bola neúmerne vysoká. */
 .web{
   position:relative;flex:0 0 auto;
   width:var(--card-w);
@@ -1306,25 +1308,25 @@ body.is-locked{overflow:hidden}
 .web.is-playing .web__play{opacity:0;background:linear-gradient(180deg,rgba(4,5,14,0),rgba(4,5,14,.3))}
 .web.is-playing:hover .web__play,.web.is-playing .web__play:focus-visible{opacity:1}
 .web__play span{
-  width:56px;height:56px;border-radius:50%;display:grid;place-items:center;
+  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
   background:rgba(255,45,148,.92);box-shadow:0 18px 44px -18px rgba(255,45,148,.95);
   transition:transform .25s;
 }
 .web__media:hover .web__play span{transform:scale(1.08)}
-.web__play svg{width:21px;height:21px;fill:#fff}
+.web__play svg{width:18px;height:18px;fill:#fff}
 .web__play .ico-play{margin-left:3px}
 .web__play .ico-pause{display:none}
 .web.is-playing .web__play .ico-play{display:none}
 .web.is-playing .web__play .ico-pause{display:block}
 .web__cat{
-  position:absolute;top:.6rem;left:.6rem;padding:.22rem .6rem;border-radius:999px;
-  font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#cbb0ff;
-  background:rgba(139,43,255,.22);border:1px solid rgba(139,43,255,.45);backdrop-filter:blur(6px);
+  position:absolute;top:.5rem;left:.5rem;padding:.2rem .52rem;border-radius:999px;
+  font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#d9c4ff;
+  background:rgba(16,6,38,.82);border:1px solid rgba(139,43,255,.55);backdrop-filter:blur(6px);
 }
-.web__body{padding:1rem 1.1rem 1.2rem;display:flex;flex-direction:column;gap:.3rem;flex:1}
-.web__body h3{margin:0;font-size:1rem}
-.web__body p{margin:0;color:var(--muted);font-size:.86rem}
-.web__body .btn{margin-top:.9rem;align-self:flex-start}
+.web__body{padding:.8rem .9rem 1rem;display:flex;flex-direction:column;gap:.25rem;flex:1}
+.web__body h3{margin:0;font-size:.92rem}
+.web__body p{margin:0;color:var(--muted);font-size:.78rem}
+.web__body .btn{margin-top:.75rem;align-self:flex-start;padding:.5rem .9rem;font-size:.78rem}
 
 /* fialové ovládanie pre tento pás */
 .reels--webs .reels__arrow:hover{background:var(--violet);border-color:transparent}
@@ -1382,6 +1384,7 @@ body.is-locked{overflow:hidden}
   .brand{margin-right:auto}
   .reels__arrow{display:none}
   :root{--card-w:clamp(230px, 68vw, 300px)}
+  .rail--webs{--card-w:clamp(190px, 54vw, 232px)}
 }
 @media (max-width:560px){
   /* Na úzkom displeji je telefón nízky a štítky sú dlhé, takže

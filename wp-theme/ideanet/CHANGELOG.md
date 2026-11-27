@@ -8,6 +8,14 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.19.1
+
+- Ukážky v sekcii **Webdizajn** sú menšie. Pomer 9:16 z nich robil karty
+  dvakrát také vysoké ako široké, takže na obrazovku sa zmestili sotva
+  dve; teraz sú vidieť všetky štyri naraz.
+- Štítok kategórie na ukážke má tmavé pozadie. Ležal na screenshote
+  webu, a ten býva svetlý — fialová na fialovej sa naň strácala.
+
 ## 1.19.0
 
 - Nová sekcia **Fotky** pod Reels: dlaždice so sadami fotiek od
