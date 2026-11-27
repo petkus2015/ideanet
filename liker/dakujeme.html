@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ďakujeme — Zlatý Žĺtok</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FBFBFD" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23B5172F'/><ellipse cx='16' cy='17' rx='8' ry='10' fill='%23F2C14E'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@1,9..144,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-loaded">
+<header class="topbar">
+  <a class="logo" href="./">
+    <span class="logo__mark" aria-hidden="true"></span>
+    <span class="logo__text">Zlatý Žĺtok<small>vaječné likéry</small></span>
+  </a>
+</header>
+<main class="thanks">
+  <div class="thanks__card">
+    <div class="thanks__bottle" id="bottle"></div>
+    <span class="demo-flag" id="demo" hidden>Demo — Stripe nie je nastavený</span>
+    <p class="eyebrow" id="eyebrow">Objednávka prijatá</p>
+    <h1 class="big" id="title">Ďakujeme!</h1>
+    <p class="lead" id="msg" style="margin-inline:auto">Ozveme sa vám e-mailom s potvrdením.</p>
+    <p class="thanks__box" id="box" hidden></p>
+    <div class="btns" style="justify-content:center">
+      <a class="btn btn--red" href="./">Späť na web</a>
+    </div>
+  </div>
+</main>
+<script src="art.js"></script>
+<script>
+(function () {
+  'use strict';
+  var q = new URLSearchParams(location.search);
+  var order = q.get('order') || '';
+  var method = q.get('method');
+  var session = q.get('session_id');
+  var $ = function (id) { return document.getElementById(id); };
+  var money = new Intl.NumberFormat('sk-SK', { style: 'currency', currency: 'EUR' });
+
+  fetch('data/products.json').then(function (r) { return r.json(); }).then(function (c) {
+    $('bottle').innerHTML = ZZArt.bottle(c.products[0]);
+  }).catch(function () {});
+
+  function clearCart() { try { localStorage.removeItem('zz-cart'); } catch (e) {} }
+
+  if (!/^ZZ-\d{6}-[0-9A-F]{6}$/.test(order)) {
+    $('eyebrow').textContent = 'Hmm';
+    $('title').textContent = 'Nič tu nie je';
+    $('msg').textContent = 'Táto stránka sa zobrazí po odoslaní objednávky.';
+    return;
+  }
+
+  if (q.get('demo')) $('demo').hidden = false;
+
+  fetch('api/order-status?order=' + encodeURIComponent(order) + (session ? '&session_id=' + encodeURIComponent(session) : ''))
+    .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(render)
+    .catch(function () {
+      var last = null;
+      try { last = JSON.parse(localStorage.getItem('zz-last-order')); } catch (e) {}
+      if (last && last.id === order) return render(last);
+      $('msg').textContent = 'Objednávku ' + order + ' sme zaznamenali. Potvrdenie vám príde e-mailom.';
+    });
+
+  function render(o) {
+      var name = o.firstName ? ', ' + o.firstName : '';
+      $('box').hidden = false;
+      $('box').textContent = 'Číslo objednávky: ' + (o.id || order) + ' · ' + money.format(o.total / 100);
+      if (o.payment === 'cod') {
+        clearCart();
+        $('eyebrow').textContent = 'Objednávka na dobierku prijatá';
+        $('title').textContent = 'Ďakujeme' + name + '!';
+        $('msg').textContent = 'Fľaše zabalíme a odošleme do 2 pracovných dní. Sumu zaplatíte kuriérovi pri prevzatí.';
+      } else if (o.status === 'paid' || o.status === 'demo') {
+        clearCart();
+        $('eyebrow').textContent = o.status === 'demo' ? 'Testovacia objednávka' : 'Platba prijatá';
+        $('title').textContent = 'Ďakujeme' + name + '!';
+        $('msg').textContent = 'Platba prebehla v poriadku. Potvrdenie objednávky vám pošleme e-mailom.';
+      } else {
+        $('eyebrow').textContent = 'Overujeme platbu';
+        $('title').textContent = 'Moment…';
+        $('msg').textContent = 'Platbu ešte overujeme. Ak ste ju dokončili, potvrdenie vám príde e-mailom. Stránku môžete o chvíľu obnoviť.';
+      }
+  }
+})();
+</script>
+</body>
+</html>
