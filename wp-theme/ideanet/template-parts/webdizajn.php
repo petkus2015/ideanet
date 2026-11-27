@@ -1,9 +1,10 @@
 <?php
 /**
- * Webdizajn — zvislé ukážky hotových webov.
+ * Webdizajn — ukážky hotových webov.
  *
- * Každá karta je 9:16 video, ktoré sa spustí klikom, a pod ním
- * tlačidlo na živý náhľad webu.
+ * Karta má rovnaký tvar ako ukážka vizuálu — pomer 4:5 a popis
+ * položený na médiu. Klik na médium spustí video, tlačidlo v popise
+ * otvorí web naživo.
  *
  * @package IDEANET
  */
@@ -65,10 +66,6 @@ $cta = ideanet_opt( 'webdizajn_cta' );
 							</video>
 						<?php endif; ?>
 
-						<?php if ( $kat ) : ?>
-							<span class="web__cat"><?php echo esc_html( $kat ); ?></span>
-						<?php endif; ?>
-
 						<?php if ( $mp4 || $webm ) : ?>
 							<button class="web__play" type="button" aria-label="<?php
 								/* translators: %s: názov webu. */
@@ -82,7 +79,10 @@ $cta = ideanet_opt( 'webdizajn_cta' );
 						<?php endif; ?>
 					</div>
 
-					<div class="web__body">
+					<div class="web__meta">
+						<?php if ( $kat ) : ?>
+							<span class="web__cat"><?php echo esc_html( $kat ); ?></span>
+						<?php endif; ?>
 						<h3><?php echo esc_html( $nazov ); ?></h3>
 						<?php if ( $veta ) : ?>
 							<p><?php echo esc_html( $veta ); ?></p>

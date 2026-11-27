@@ -8,6 +8,17 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.19.2
+
+- Ukážky v sekcii **Webdizajn** majú rovnaký tvar ako ukážky vizuálov:
+  pomer 4:5 a názov, popis aj tlačidlo položené priamo na karte, nie
+  pod ňou. Zvislé karty 9:16 boli dvakrát také vysoké ako široké
+  a z pásu sa tým stal stĺp.
+- Popis na karte sa nad dva riadky oreže, aby dlhý text kartu
+  nerozbil. Celý text má zákazník na webe za tlačidlom.
+- Veta pod nadpisom sekcie hovorila „tlačidlom pod ňou"; tlačidlo je
+  teraz na karte. Kto si vetu prepísal, tomu zostane jeho.
+
 ## 1.19.1
 
 - Ukážky v sekcii **Webdizajn** sú menšie. Pomer 9:16 z nich robil karty

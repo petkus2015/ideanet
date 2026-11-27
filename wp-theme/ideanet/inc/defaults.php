@@ -67,7 +67,7 @@ function ideanet_defaults() {
 
 		'webdizajn_eyebrow' => 'Weby',
 		'webdizajn_title'   => 'Webdizajn',
-		'webdizajn_note'    => 'Prejdite si web tak, ako ho uvidí zákazník na mobile. Klik spustí ukážku, tlačidlom pod ňou otvoríte web naživo.',
+		'webdizajn_note'    => 'Pozrite sa, ako web funguje. Klik na kartu spustí ukážku, tlačidlo na nej otvorí web naživo.',
 		'webdizajn_cta'     => 'Živý náhľad',
 
 		'sluzby_eyebrow' => 'Služby',

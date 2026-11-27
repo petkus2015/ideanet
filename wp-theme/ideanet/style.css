@@ -4,7 +4,7 @@ Theme URI: https://github.com/petkus2015/ideanet
 Author: Peter Miškus
 Author URI: https://ideanet.sk
 Description: Téma pre videotvorcu — vertikálne Reels, vizuály a identita, cenník s tromi pohľadmi, interaktívna kalkulačka a formulár na dopyt. Celý obsah, menu, videá, obrázky, texty aj ceny sa upravujú vo WordPresse, bez zásahu do kódu a bez ďalších pluginov.
-Version: 1.19.1
+Version: 1.19.2
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -1294,66 +1294,85 @@ body.is-locked{overflow:hidden}
   .gal__strip button{width:58px}
 }
 
-/* ── webdizajn: pás zvislých ukážok webov ──
-   Rovnaký pás ako pri videách a vizuáloch, len pomer 9:16 a fialový
-   odtieň ovládania, nech sa tri pásy od seba odlíšia. */
-.rail--webs{--card-w:clamp(176px, 17vw, 230px)}
-/* Pomer 9:16 robí z karty dvakrát takú výšku ako šírku, takže
-   rovnako široká ako pri reelsoch by bola neúmerne vysoká. */
+/* ── webdizajn: pás ukážok webov ──
+   Tvar aj správanie ako pás vizuálov — pomer 4:5, text položený na
+   obrázku — len s fialovým odtieňom a tlačidlom prehrávania, lebo
+   ukážka je video. */
+.rail--webs{--card-w:clamp(230px, 24vw, 322px)}
 .web{
   position:relative;flex:0 0 auto;
   width:var(--card-w);
-  display:flex;flex-direction:column;
-  border-radius:var(--radius-lg);overflow:hidden;
-  background:rgba(5,8,22,.72);border:1px solid var(--line);
-  scroll-snap-align:center;box-shadow:var(--shadow);
+  aspect-ratio:4/5;
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  background:var(--navy);
+  border:1px solid var(--line);
+  scroll-snap-align:center;
+  box-shadow:var(--shadow);
   transition:transform .45s cubic-bezier(.2,.8,.3,1), box-shadow .45s, border-color .3s, opacity .45s;
-  transform:scale(.9);opacity:.55;isolation:isolate;
+  transform:scale(.9);opacity:.55;
+  isolation:isolate;
 }
 .web.is-active{
   transform:scale(1);opacity:1;
   border-color:rgba(139,43,255,.5);
   box-shadow:var(--shadow), 0 0 70px -18px rgba(139,43,255,.95);
 }
-.web__media{
-  position:relative;aspect-ratio:9/16;background:var(--bg-2);
-  border-bottom:1px solid var(--line);cursor:pointer;
-}
+
+/* Médium vypĺňa celú kartu a je to zároveň plocha na klik. Popis nad
+   ním má vyšší z-index, takže klik na tlačidlo náhľadu video nespustí. */
+.web__media{position:absolute;inset:0;cursor:pointer}
 .web__media img,.web__media video{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:top center;
 }
 .web__media video{opacity:0;transition:opacity .35s}
 .web.is-playing .web__media video{opacity:1}
+
 .web__play{
   position:absolute;inset:0;width:100%;height:100%;display:grid;place-items:center;
-  background:linear-gradient(180deg,rgba(4,5,14,.1),rgba(4,5,14,.55));
+  background:linear-gradient(180deg,rgba(4,5,14,.1),rgba(4,5,14,.45));
   border:0;cursor:pointer;color:#fff;transition:opacity .3s,background .3s;
 }
-.web.is-playing .web__play{opacity:0;background:linear-gradient(180deg,rgba(4,5,14,0),rgba(4,5,14,.3))}
+.web.is-playing .web__play{opacity:0;background:linear-gradient(180deg,rgba(4,5,14,0),rgba(4,5,14,.25))}
 .web.is-playing:hover .web__play,.web.is-playing .web__play:focus-visible{opacity:1}
 .web__play span{
-  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
   background:rgba(255,45,148,.92);box-shadow:0 18px 44px -18px rgba(255,45,148,.95);
-  transition:transform .25s;
+  transition:transform .25s;margin-bottom:14%;
 }
 .web__media:hover .web__play span{transform:scale(1.08)}
-.web__play svg{width:18px;height:18px;fill:#fff}
+.web__play svg{width:19px;height:19px;fill:#fff}
 .web__play .ico-play{margin-left:3px}
 .web__play .ico-pause{display:none}
 .web.is-playing .web__play .ico-play{display:none}
 .web.is-playing .web__play .ico-pause{display:block}
-.web__cat{
-  position:absolute;top:.5rem;left:.5rem;padding:.2rem .52rem;border-radius:999px;
-  font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#d9c4ff;
-  background:rgba(16,6,38,.82);border:1px solid rgba(139,43,255,.55);backdrop-filter:blur(6px);
+
+.web__meta{
+  position:absolute;inset:auto 0 0;z-index:2;padding:2.4rem 1.2rem 1.1rem;
+  display:grid;gap:.25rem;justify-items:start;
+  /* Hustejší prechod ako pri vizuáloch: pod popisom leží screenshot
+     webu, a ten býva svetlý. */
+  background:linear-gradient(to top, rgba(4,7,18,.97) 0 52%, rgba(4,7,18,.8) 76%, transparent);
 }
-.web__body{padding:.8rem .9rem 1rem;display:flex;flex-direction:column;gap:.25rem;flex:1}
-.web__body h3{margin:0;font-size:.92rem}
-.web__body p{margin:0;color:var(--muted);font-size:.78rem}
-.web__body .btn{margin-top:.75rem;align-self:flex-start;padding:.5rem .9rem;font-size:.78rem}
+.web__cat{
+  justify-self:start;font-size:.64rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:#cbb0ff;
+  padding:.22rem .55rem;border-radius:999px;
+  background:rgba(139,43,255,.2);border:1px solid rgba(139,43,255,.45);
+}
+.web__meta h3{margin:.15rem 0 0;font-size:1.02rem}
+/* Karta má pevný pomer 4:5, takže dlhý popis nemá kam rásť —
+   nad dva riadky sa oreže. Celý text je na webe za tlačidlom. */
+.web__meta p{
+  margin:0;font-size:.82rem;color:var(--muted);
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+.web__meta .btn{margin-top:.6rem}
 
 /* fialové ovládanie pre tento pás */
 .reels--webs .reels__arrow:hover{background:var(--violet);border-color:transparent}
+.reels--webs .rail__progress span{background:linear-gradient(90deg,var(--violet),#c9a4ff)}
 .reels--webs .rail__dots button.is-active{background:var(--violet);box-shadow:0 0 14px rgba(139,43,255,.85)}
 
 /* ── stránka 404 ─────────────────────────── */
@@ -1408,7 +1427,8 @@ body.is-locked{overflow:hidden}
   .brand{margin-right:auto}
   .reels__arrow{display:none}
   :root{--card-w:clamp(230px, 68vw, 300px)}
-  .rail--webs{--card-w:clamp(190px, 54vw, 232px)}
+  .rail--webs{--card-w:clamp(252px, 72vw, 320px)}
+  .web__meta{padding:2rem 1rem .9rem}
 }
 @media (max-width:560px){
   /* Na úzkom displeji je telefón nízky a štítky sú dlhé, takže
