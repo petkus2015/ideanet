@@ -216,6 +216,8 @@ const DICT = {
   "Zvýrazňovať práve vyslovené slovo": ["Zvýrazňovat právě vyslovené slovo","Highlight the word being spoken","Resaltar la palabra que se pronuncia","تمييز الكلمة المنطوقة","Söylenen kelimeyi vurgula","बोले जा रहे शब्द को हाइलाइट करें","Podświetlaj wypowiadane słowo","高亮正在说的词"],
   "Farba zvýraznenia": ["Barva zvýraznění","Highlight color","Color de resaltado","لون التمييز","Vurgu rengi","हाइलाइट का रंग","Kolor podświetlenia","高亮颜色"],
   "Dynamický štýl: meniť polohu pri každej fráze": ["Dynamický styl: měnit pozici u každé fráze","Dynamic style: change position for each phrase","Estilo dinámico: cambiar la posición en cada frase","النمط الديناميكي: تغيير الموضع مع كل عبارة","Dinamik stil: her ifadede konumu değiştir","डायनैमिक स्टाइल: हर वाक्यांश पर जगह बदलें","Styl dynamiczny: zmieniaj pozycję przy każdej frazie","动态样式：每个短语改变位置"],
+  "VEĽKÉ PÍSMENÁ (kapitálky)": ["VELKÁ PÍSMENA","CAPITAL LETTERS","MAYÚSCULAS","أحرف كبيرة","BÜYÜK HARFLER","बड़े अक्षर","WIELKIE LITERY","大写字母"],
+  "Karamel": ["Karamel","Caramel","Caramelo","كراميل","Karamel","कैरामल","Karmel","焦糖"],
   "Dynamický štýl: VEĽKÉ PÍSMENA (kapitálky)": ["Dynamický styl: VELKÁ PÍSMENA","Dynamic style: CAPITAL LETTERS","Estilo dinámico: MAYÚSCULAS","النمط الديناميكي: أحرف كبيرة","Dinamik stil: BÜYÜK HARFLER","डायनैमिक स्टाइल: बड़े अक्षर","Styl dynamiczny: WIELKIE LITERY","动态样式：大写字母"],
   "Vlastný štýl (upravený)": ["Vlastní styl (upravený)","Custom style (edited)","Estilo propio (editado)","نمط مخصص (معدّل)","Özel stil (düzenlendi)","अपनी स्टाइल (बदली हुई)","Własny styl (zmieniony)","自定义样式（已修改）"],
   "Modern": ["Moderní","Modern","Moderno","عصري","Modern","मॉडर्न","Nowoczesny","现代"],

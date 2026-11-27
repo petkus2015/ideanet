@@ -59,6 +59,8 @@ const PRESETS = [
   { hl: "#00b8fc", id: "modry", name: "PS blue", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#00007d", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" },
   { hl: "#f8a0b6", id: "cerveny", name: "PS red", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#f50306", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" }, // ako PS blue, len červený
   { hl: "#ffffff", id: "slowdown", name: "Slow down", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.4, bold: true, anim: "slowdown", lineH: 1.3, y: 0.58, position: null },
+  // Karamel: VEĽKÉ písmená, vyslovované slovo v karamelovom rámčeku, ešte nevyslovené slová priesvitné (štýl reels)
+  { hl: "#cc925c", id: "karamel", name: "Karamel", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.6, bold: true, caps: true, anim: "box", snap: true, boxText: "#ffffff", dimNext: 0.45, lineH: 1.45, y: 0.47, position: null },
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true, anim: "none" },
@@ -2387,9 +2389,15 @@ function renderSample(box, st, scale = 1) {
   }
   const sp = document.createElement("span"); sp.className = "t"; sp.textContent = "Ahoj svet";
   sp.style.cssText = `font-family:"${st.font}",${SCRIPT_FALLBACK};font-weight:${st.weight ?? (st.bold ? 700 : 400)};font-style:${st.italic ? "italic" : "normal"};font-size:${16 * scale}px;color:${st.color}`;
+  if (st.caps) sp.style.textTransform = "uppercase"; // cez CSS, aby ukážku preložil aj prepínač jazyka
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
   else if (st.shadow) sp.style.textShadow = "0 1px 4px rgba(0,0,0,.7)";
   else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = "Ahoj "; const b2 = document.createElement("span"); b2.textContent = "svet"; b2.style.color = st.hl; sp.append(a, b2); } }
+  if (st.anim === "box" && st.dimNext != null) { // rámček na prvom slove, ďalšie priesvitné
+    sp.textContent = ""; sp.style.whiteSpace = "nowrap"; sp.style.fontSize = 13.5 * scale + "px"; const a = document.createElement("span"), b2 = document.createElement("span");
+    a.textContent = "Ahoj"; a.style.cssText = `background:${st.hl};border-radius:4px;padding:0 .18em`;
+    b2.textContent = "svet"; b2.style.opacity = st.dimNext; sp.append(a, " ", b2);
+  }
   box.append(sp);
 }
 // Štýl s vlastnou animáciou (Slow down) ju zapne; pri prechode z neho na iný štýl sa jeho animácia vypne.
@@ -2867,7 +2875,8 @@ function drawCaption(ctx, seg, t, W, H, st) {
   const px = Math.min(W, H) * st.size / 100, lh = px * (st.lineH ?? 1.25), padX = st.bgOpacity > 0 ? px * .3 : 0;
   ctx.font = `${st.italic ? "italic " : ""}${st.weight ?? (st.bold ? 700 : 400)} ${px}px "${st.font}", ${SCRIPT_FALLBACK}`;
   ctx.textBaseline = "middle"; ctx.lineJoin = "round";
-  const words = wordsFor(seg); let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
+  const words = wordsFor(seg); if (st.caps) words.forEach((o) => { o.w = o.w.toLocaleUpperCase(); });
+  let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
   const lines = wrapWords(ctx, words, W * 0.84 - 2 * padX), total = lines.length * lh, sp = ctx.measureText(" ").width;
   const blockW = Math.max(...lines.map((l) => l.w)) + 2 * padX;
   const cx = clamp(st.x * W, blockW / 2, Math.max(blockW / 2, W - blockW / 2));
@@ -2898,7 +2907,7 @@ function drawCaption(ctx, seg, t, W, H, st) {
   });
   const hl = st.hl || "#ffe066";
   if (anim === "box" && active >= 0) { // farebný rámček, ktorý plynulo prejde na vyslovené slovo
-    const a = pos[active], b = pos[Math.max(0, active - 1)], k = active > 0 ? easeOut(clamp((t - words[active].start) / 0.12, 0, 1)) : 1;
+    const a = pos[active], b = pos[Math.max(0, active - 1)], k = active > 0 && !st.snap ? easeOut(clamp((t - words[active].start) / 0.12, 0, 1)) : 1;
     const bx = b.x + (a.x - b.x) * k, bw = b.ww + (a.ww - b.ww) * k, by = b.y + (a.y - b.y) * k, pad = px * 0.18;
     ctx.fillStyle = hl; ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(bx - pad, by - px * 0.62, bw + 2 * pad, px * 1.24, px * 0.22); else ctx.rect(bx - pad, by - px * 0.62, bw + 2 * pad, px * 1.24);
@@ -2916,7 +2925,8 @@ function drawCaption(ctx, seg, t, W, H, st) {
     if (anim === "bounce" && n === active) { dy = -Math.sin(clamp(since / 0.3, 0, 1) * Math.PI) * px * 0.32; color = st.highlight ? hl : color; }
     if (anim === "zoom" && n === active) { scale = 1 + 0.24 * easeOut(clamp(since / 0.12, 0, 1)); color = hl; }
     if (anim === "glow" && n === active) { glow = true; color = hl; }
-    if (anim === "box" && n === active) color = lumOf(hl) > 0.6 ? "#111111" : "#ffffff";
+    if (anim === "box" && n === active) color = st.boxText || (lumOf(hl) > 0.6 ? "#111111" : "#ffffff");
+    if (st.dimNext != null && since < 0 && !reveal) a = st.dimNext; // ešte nevyslovené slovo je priesvitné
     if (anim === "karaoke") color = n < active || (n === active && since >= dur) ? hl : st.color;
     ctx.save(); ctx.globalAlpha = alpha * a;
     const cxw = P.x + P.ww / 2, cy = P.y + dy;
