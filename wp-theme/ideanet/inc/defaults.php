@@ -61,6 +61,10 @@ function ideanet_defaults() {
 		'vizualy_title'   => 'Vizuály a identita',
 		'vizualy_note'    => 'Logo, farby, písma a šablóny pre siete. Aby profil vyzeral ako jedna značka, nie ako zbierka príspevkov od rôznych ľudí.',
 
+		'fotky_eyebrow' => 'Fotky',
+		'fotky_title'   => 'Fotosady od klientov',
+		'fotky_note'    => 'Ku každej zakázke, kde som aj fotil, patrí celá sada. Klik na dlaždicu ju otvorí.',
+
 		'webdizajn_eyebrow' => 'Weby',
 		'webdizajn_title'   => 'Webdizajn',
 		'webdizajn_note'    => 'Prejdite si web tak, ako ho uvidí zákazník na mobile. Klik spustí ukážku, tlačidlom pod ňou otvoríte web naživo.',

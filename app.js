@@ -1019,3 +1019,130 @@
   addEventListener('scroll', prepni, { passive: true });
   addEventListener('resize', () => { zmeraj(); prepni(); }, { passive: true });
 })();
+
+
+/* ═══════════════════════════════════════════════
+   FOTKY — prehliadač sád
+   Dlaždica nesie svoje fotky v data-fotky. Prehliadač
+   vznikne až pri prvom otvorení, aby stránka nenosila
+   markup, ktorý väčšina návštevníkov nikdy neuvidí.
+   ═══════════════════════════════════════════════ */
+(() => {
+  'use strict';
+
+  const dlazdice = [...document.querySelectorAll('.tile[data-fotky]')];
+  if (!dlazdice.length) return;
+
+  const IKONA = {
+    zavri: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    vlavo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    vpravo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+
+  let obal = null, obraz = null, pas = null, titulok = null;
+  let fotky = [], kde = 0, odkial = null;
+
+  function postav() {
+    obal = document.createElement('div');
+    obal.className = 'gal';
+    obal.hidden = true;
+    obal.setAttribute('role', 'dialog');
+    obal.setAttribute('aria-modal', 'true');
+    obal.innerHTML =
+      '<div class="gal__top">' +
+        '<p class="gal__title"></p>' +
+        '<button type="button" class="gal__close" aria-label="Zavrieť">' + IKONA.zavri + '</button>' +
+      '</div>' +
+      '<div class="gal__stage">' +
+        '<button type="button" class="gal__nav gal__nav--prev" aria-label="Predchádzajúca fotka">' + IKONA.vlavo + '</button>' +
+        '<img alt="">' +
+        '<button type="button" class="gal__nav gal__nav--next" aria-label="Ďalšia fotka">' + IKONA.vpravo + '</button>' +
+      '</div>' +
+      '<div class="gal__strip" role="tablist" aria-label="Fotky v sade"></div>';
+    document.body.appendChild(obal);
+
+    obraz   = obal.querySelector('.gal__stage img');
+    pas     = obal.querySelector('.gal__strip');
+    titulok = obal.querySelector('.gal__title');
+
+    obal.querySelector('.gal__close').addEventListener('click', zavri);
+    obal.querySelector('.gal__nav--prev').addEventListener('click', () => krok(-1));
+    obal.querySelector('.gal__nav--next').addEventListener('click', () => krok(1));
+    obal.addEventListener('click', (e) => { if (e.target === obal) zavri(); });
+
+    /* Potiahnutie prstom po fotke listuje. */
+    let x0 = 0, y0 = 0;
+    const stage = obal.querySelector('.gal__stage');
+    stage.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0];
+      if (!t) return;
+      const dx = t.clientX - x0;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(t.clientY - y0)) krok(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  }
+
+  function ukaz(i) {
+    if (!fotky.length) return;
+    kde = (i + fotky.length) % fotky.length;
+    const f = fotky[kde];
+    obraz.src = f.full;
+    obraz.alt = f.alt || '';
+    titulok.innerHTML = '';
+    titulok.append(titulok.dataset.nazov || '');
+    const pod = document.createElement('span');
+    pod.textContent = (kde + 1) + ' / ' + fotky.length;
+    titulok.appendChild(pod);
+    [...pas.children].forEach((b, j) => {
+      b.classList.toggle('is-active', j === kde);
+      b.setAttribute('aria-selected', j === kde ? 'true' : 'false');
+    });
+    const akt = pas.children[kde];
+    if (akt && akt.scrollIntoView) akt.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
+
+  const krok = (o) => ukaz(kde + o);
+
+  function otvor(karta) {
+    let data;
+    try { data = JSON.parse(karta.dataset.fotky || '[]'); } catch (e) { return; }
+    if (!Array.isArray(data) || !data.length) return;
+
+    if (!obal) postav();
+    fotky = data;
+    odkial = karta;
+    titulok.dataset.nazov = karta.dataset.nazov || '';
+
+    pas.innerHTML = '';
+    fotky.forEach((f, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.innerHTML = '<img src="' + f.thumb + '" alt="" loading="lazy">';
+      b.addEventListener('click', () => ukaz(i));
+      pas.appendChild(b);
+    });
+
+    obal.hidden = false;
+    document.body.classList.add('is-locked');
+    ukaz(0);
+    obal.querySelector('.gal__close').focus();
+  }
+
+  function zavri() {
+    if (!obal) return;
+    obal.hidden = true;
+    obraz.removeAttribute('src');
+    document.body.classList.remove('is-locked');
+    if (odkial) odkial.focus();
+  }
+
+  dlazdice.forEach(karta => karta.addEventListener('click', () => otvor(karta)));
+
+  addEventListener('keydown', (e) => {
+    if (!obal || obal.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); zavri(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); krok(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); krok(-1); }
+  });
+})();

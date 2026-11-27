@@ -1195,6 +1195,81 @@ body.is-locked{overflow:hidden}
 .reels--static .shot,
 .reels--static .web{transform:none;opacity:1}
 
+/* ── fotky: dlaždice so sadami ─────────────
+   Jedna dlaždica = jedna zákazka. Klik otvorí celú sadu v prehliadači
+   nižšie. Dlaždica je tlačidlo, nie div — kvôli klávesnici. */
+.tiles{display:grid;gap:clamp(1rem,2vw,1.5rem);grid-template-columns:repeat(auto-fill,minmax(min(100%,268px),1fr))}
+.tile{
+  display:flex;flex-direction:column;text-align:left;padding:0;cursor:pointer;
+  border-radius:var(--radius);overflow:hidden;
+  border:1px solid var(--line);background:rgba(5,8,22,.6);color:inherit;
+  font:inherit;transition:transform .3s,box-shadow .3s,border-color .3s;
+}
+.tile:hover,.tile:focus-visible{transform:translateY(-4px);box-shadow:0 30px 70px -40px rgba(255,45,148,.85)}
+.tile__media{position:relative;display:block;aspect-ratio:4/3;background:var(--bg-2);overflow:hidden}
+.tile__media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.8,.3,1)}
+.tile:hover .tile__media img{transform:scale(1.04)}
+.tile__count{
+  position:absolute;right:.7rem;bottom:.7rem;height:28px;padding:0 .7rem;
+  display:inline-flex;align-items:center;gap:.3rem;white-space:nowrap;border-radius:999px;
+  font-size:.82rem;font-weight:700;color:#fff;
+  background:rgba(4,5,14,.72);border:1px solid var(--line-2);backdrop-filter:blur(6px);
+}
+.tile__count::after{content:"fotiek";font-weight:500;color:var(--muted);font-size:.74rem}
+.tile__body{display:flex;flex-direction:column;gap:.25rem;padding:1rem 1.1rem 1.2rem}
+.tile__cat{
+  align-self:flex-start;font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:#ffa8d4;padding:.2rem .55rem;border-radius:999px;margin-bottom:.2rem;
+  background:rgba(255,45,148,.14);border:1px solid rgba(255,45,148,.35);
+}
+.tile__name{font-family:var(--display);font-size:1.02rem;font-weight:700;letter-spacing:-.02em}
+.tile__note{color:var(--muted);font-size:.86rem;line-height:1.45}
+
+/* ── prehliadač fotiek ─────────────────────
+   Vlastný, nie ten od videí: tam je rám 9:16 a dáta reelsov. */
+.gal[hidden]{display:none!important}
+.gal{
+  position:fixed;inset:0;z-index:70;display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:clamp(.6rem,1.5vw,1rem);
+  padding:clamp(.8rem,2vw,1.6rem);
+  background:rgba(2,3,10,.96);backdrop-filter:blur(14px);
+}
+.gal__top{display:flex;align-items:center;gap:1rem;justify-content:space-between}
+.gal__title{font-family:var(--display);font-size:1.05rem;font-weight:700}
+.gal__title span{display:block;font-family:var(--font);font-weight:500;font-size:.82rem;color:var(--muted-2);margin-top:.15rem}
+.gal__stage{position:relative;display:grid;place-items:center;min-height:0}
+.gal__stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:14px;box-shadow:var(--shadow)}
+.gal__nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:52px;height:52px;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+  background:rgba(255,255,255,.07);border:1px solid var(--line-2);color:#fff;transition:.22s;
+}
+.gal__nav:hover{background:var(--magenta);border-color:transparent}
+.gal__nav svg{width:22px;height:22px}
+.gal__nav--prev{left:0}
+.gal__nav--next{right:0}
+.gal__strip{display:flex;gap:.5rem;overflow-x:auto;padding:.2rem;scrollbar-width:none}
+.gal__strip::-webkit-scrollbar{display:none}
+.gal__strip button{
+  flex:0 0 auto;width:76px;aspect-ratio:4/3;padding:0;cursor:pointer;overflow:hidden;
+  border-radius:10px;border:1px solid var(--line);background:var(--bg-2);
+  opacity:.5;transition:opacity .25s,border-color .25s,transform .25s;
+}
+.gal__strip button img{width:100%;height:100%;object-fit:cover;display:block}
+.gal__strip button.is-active{opacity:1;border-color:var(--magenta);transform:translateY(-2px)}
+.gal__close{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:none;
+  background:rgba(255,255,255,.07);border:1px solid var(--line-2);color:#fff;transition:.22s;
+}
+.gal__close:hover{background:var(--magenta);border-color:transparent}
+.gal__close svg{width:20px;height:20px}
+
+@media (max-width:560px){
+  .gal__nav{width:44px;height:44px}
+  .gal__strip button{width:58px}
+}
+
 /* ── webdizajn: pás zvislých ukážok webov ──
    Rovnaký pás ako pri videách a vizuáloch, len pomer 9:16 a fialový
    odtieň ovládania, nech sa tri pásy od seba odlíšia. */

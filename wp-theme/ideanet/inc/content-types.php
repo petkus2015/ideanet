@@ -45,6 +45,17 @@ function ideanet_post_types() {
 			),
 		),
 
+		'ideanet_fotoset' => array(
+			'labels'   => array( 'Fotosada', 'Fotky — sady klientov' ),
+			'menu'     => 'dashicons-format-gallery',
+			'supports' => array( 'title', 'excerpt', 'thumbnail', 'page-attributes' ),
+			'help'     => 'Jedna sada = jeden klient, pre ktorého ste fotili. Nadpis je názov klienta, výpis je veta pod ním. Náhľadový obrázok je dlaždica; keď ho nevyplníte, použije sa prvá fotka zo sady.',
+			'fields'   => array(
+				'cat'   => array( 'Kategória', 'text', 'Štítok na dlaždici — napríklad Gastro alebo Event.' ),
+				'fotky' => array( 'Fotky v sade', 'gallery', 'Vyberte naraz aj desať fotiek. Poradie zmeníte potiahnutím, krížikom fotku zo sady vyhodíte.' ),
+			),
+		),
+
 		'ideanet_web' => array(
 			'labels'   => array( 'Ukážka webu', 'Webdizajn — ukážky' ),
 			'menu'     => 'dashicons-desktop',
@@ -455,6 +466,27 @@ function ideanet_meta_box_html( $post ) {
 				$hint = '';
 				break;
 
+			case 'gallery':
+				$ids = ideanet_gallery_ids( $value );
+				printf(
+					'<input type="hidden" id="%1$s" name="%2$s" value="%3$s" class="ideanet-gallery-value">',
+					esc_attr( $id ),
+					esc_attr( $name ),
+					esc_attr( implode( ',', $ids ) )
+				);
+				echo '<div class="ideanet-gallery" data-target="' . esc_attr( $id ) . '">';
+				foreach ( $ids as $att ) {
+					ideanet_gallery_thumb( $att );
+				}
+				echo '</div>';
+				printf(
+					'<p><button type="button" class="button ideanet-gallery-pick" data-target="%1$s">%2$s</button> <span class="description ideanet-gallery-count">%3$s</span></p>',
+					esc_attr( $id ),
+					esc_html__( 'Pridať fotky z knižnice', 'ideanet' ),
+					esc_html( sprintf( /* translators: %d: počet fotiek. */ _n( '%d fotka v sade', '%d fotiek v sade', count( $ids ), 'ideanet' ), count( $ids ) ) )
+				);
+				break;
+
 			case 'media':
 				printf(
 					'<input type="url" id="%1$s" name="%2$s" value="%3$s" class="large-text" style="max-width:32rem"> <button type="button" class="button ideanet-pick" data-target="%1$s" data-type="%4$s">%5$s</button>',
@@ -519,6 +551,8 @@ function ideanet_save_meta( $post_id ) {
 			continue;
 		} elseif ( 'textarea' === $field[1] ) {
 			$value = sanitize_textarea_field( wp_unslash( $_POST[ $name ] ) );
+		} elseif ( 'gallery' === $field[1] ) {
+			$value = implode( ',', ideanet_gallery_ids( wp_unslash( $_POST[ $name ] ) ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- ideanet_gallery_ids prepustí len kladné čísla.
 		} elseif ( 'media' === $field[1] ) {
 			$value = esc_url_raw( wp_unslash( $_POST[ $name ] ) );
 		} else {
@@ -548,6 +582,16 @@ function ideanet_admin_assets( $hook ) {
 	}
 
 	wp_enqueue_media();
+	wp_enqueue_script( 'jquery-ui-sortable' );
+	wp_add_inline_style(
+		'wp-admin',
+		'.ideanet-gallery{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+		.ideanet-gallery:empty{display:none}
+		.ideanet-gallery__item{position:relative;width:88px;height:88px;border-radius:6px;overflow:hidden;border:1px solid #c3c4c7;background:#f0f0f1;cursor:move}
+		.ideanet-gallery__item img{width:100%;height:100%;object-fit:cover;display:block}
+		.ideanet-gallery__x{position:absolute;top:2px;right:2px;width:22px;height:22px;line-height:1;border:0;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;font-size:16px}
+		.ideanet-gallery__item.ui-sortable-helper{opacity:.85}'
+	);
 	wp_add_inline_script(
 		'media-views',
 		"jQuery(function($){
@@ -556,6 +600,45 @@ function ideanet_admin_assets( $hook ) {
 				var b=$(this), target=$('#'+b.data('target')), type=b.data('type')||'image';
 				var frame=wp.media({title:'" . esc_js( __( 'Vyberte súbor', 'ideanet' ) ) . "',library:{type:type},multiple:false});
 				frame.on('select',function(){ target.val(frame.state().get('selection').first().toJSON().url); });
+				frame.open();
+			});
+
+			/* Sada fotiek: ID sa držia v skrytom poli, poradie miniatúr je poradie v sade. */
+			function zapis(wrap){
+				var ids=[];
+				wrap.find('.ideanet-gallery__item').each(function(){ ids.push($(this).data('id')); });
+				$('#'+wrap.data('target')).val(ids.join(','));
+				wrap.closest('td').find('.ideanet-gallery-count').text(
+					ids.length===1 ? '1 " . esc_js( __( 'fotka v sade', 'ideanet' ) ) . "' : ids.length+' " . esc_js( __( 'fotiek v sade', 'ideanet' ) ) . "'
+				);
+			}
+
+			$('.ideanet-gallery').each(function(){
+				$(this).sortable({ items:'.ideanet-gallery__item', tolerance:'pointer', update:function(){ zapis($(this)); } });
+			});
+
+			$(document).on('click','.ideanet-gallery__x',function(e){
+				e.preventDefault();
+				var wrap=$(this).closest('.ideanet-gallery');
+				$(this).closest('.ideanet-gallery__item').remove();
+				zapis(wrap);
+			});
+
+			$(document).on('click','.ideanet-gallery-pick',function(e){
+				e.preventDefault();
+				var cil=$(this).data('target');
+				var wrap=$('.ideanet-gallery').filter(function(){ return $(this).data('target')===cil; });
+				var frame=wp.media({title:'" . esc_js( __( 'Vyberte fotky do sady', 'ideanet' ) ) . "',library:{type:'image'},multiple:'add',button:{text:'" . esc_js( __( 'Pridať do sady', 'ideanet' ) ) . "'}});
+				frame.on('select',function(){
+					frame.state().get('selection').each(function(att){
+						var a=att.toJSON();
+						if (wrap.find('.ideanet-gallery__item[data-id=\"'+a.id+'\"]').length) { return; }
+						var src=(a.sizes&&a.sizes.thumbnail)?a.sizes.thumbnail.url:a.url;
+						wrap.append('<span class=\"ideanet-gallery__item\" data-id=\"'+a.id+'\"><img src=\"'+src+'\" alt=\"\"><button type=\"button\" class=\"ideanet-gallery__x\">&times;</button></span>');
+					});
+					if (!wrap.data('ui-sortable')) { wrap.sortable({ items:'.ideanet-gallery__item', tolerance:'pointer', update:function(){ zapis($(this)); } }); }
+					zapis(wrap);
+				});
 				frame.open();
 			});
 		});"
@@ -674,6 +757,72 @@ function ideanet_image( $post, $size, $key ) {
 	}
 
 	return ideanet_media_url( ideanet_meta( $post->ID, $key ) );
+}
+
+/**
+ * Zoznam ID fotiek zo sady, len kladné čísla a bez duplicít.
+ *
+ * @param string $raw Uložená hodnota, čísla oddelené čiarkou.
+ * @return int[]
+ */
+function ideanet_gallery_ids( $raw ) {
+	$out = array();
+
+	foreach ( explode( ',', (string) $raw ) as $part ) {
+		$id = (int) trim( $part );
+		if ( $id > 0 && ! in_array( $id, $out, true ) ) {
+			$out[] = $id;
+		}
+	}
+
+	return $out;
+}
+
+/**
+ * Jedna miniatúra v poli so sadou fotiek.
+ *
+ * @param int $id ID prílohy.
+ */
+function ideanet_gallery_thumb( $id ) {
+	$src = wp_get_attachment_image_url( $id, 'thumbnail' );
+	if ( ! $src ) {
+		return;
+	}
+
+	printf(
+		'<span class="ideanet-gallery__item" data-id="%1$d"><img src="%2$s" alt=""><button type="button" class="ideanet-gallery__x" aria-label="%3$s">&times;</button></span>',
+		(int) $id,
+		esc_url( $src ),
+		esc_attr__( 'Vyhodiť zo sady', 'ideanet' )
+	);
+}
+
+/**
+ * Fotky jednej sady pripravené na výpis.
+ *
+ * @param int $post_id ID sady.
+ * @param int $limit   Najviac koľko.
+ * @return array<int,array{full:string,thumb:string,alt:string,w:int,h:int}>
+ */
+function ideanet_gallery_photos( $post_id, $limit = 40 ) {
+	$out = array();
+
+	foreach ( array_slice( ideanet_gallery_ids( ideanet_meta( $post_id, 'fotky' ) ), 0, $limit ) as $id ) {
+		$full = wp_get_attachment_image_src( $id, 'large' );
+		if ( ! $full ) {
+			continue;
+		}
+		$thumb = wp_get_attachment_image_url( $id, 'medium' );
+		$out[] = array(
+			'full'  => $full[0],
+			'thumb' => $thumb ? $thumb : $full[0],
+			'alt'   => (string) get_post_meta( $id, '_wp_attachment_image_alt', true ),
+			'w'     => (int) $full[1],
+			'h'     => (int) $full[2],
+		);
+	}
+
+	return $out;
 }
 
 /**

@@ -96,6 +96,30 @@ prípadne cez Nastavenia → Výpis) je popis pod ním.
 
 Keď video nevyplníte, karta zostane na plagáte a nespadne.
 
+### Fotky — sady klientov
+
+Sekcia **Fotky** na úvodnej stránke, hneď pod Reels. Jedna dlaždica je
+jedna zákazka, pre ktorú ste aj fotili; klik ju otvorí v prehliadači
+fotiek so šípkami, miniatúrami a listovaním prstom.
+
+Pridávate ich v IDEANET → **Fotky — sady klientov**:
+
+- **Nadpis** je názov klienta, **Výpis** veta pod ním, **Kategória**
+  štítok na dlaždici.
+- **Fotky v sade**: *Pridať fotky z knižnice* otvorí knižnicu médií,
+  kde ich označíte naraz — podržte Ctrl, alebo ťahajte myšou cez ne.
+  Pridať sa dajú aj na viackrát, nová sada sa pripočíta k tej doterajšej.
+- **Poradie** zmeníte potiahnutím miniatúry, krížikom fotku zo sady
+  vyhodíte. Z knižnice médií sa nezmaže, len prestane patriť do sady.
+- **Náhľadový obrázok** je obrázok na dlaždici. Keď ho nevyplníte,
+  použije sa prvá fotka zo sady.
+
+Na dlaždici sa fotka oreže na pomer 4:3, v prehliadači sa zobrazí celá —
+na šírku aj na výšku, nič sa neoreže. Odporúčaná veľkosť je dlhšia strana
+aspoň 1600 px; WordPress si z nej sám spraví menšie verzie pre miniatúry.
+
+Kým nie je založená ani jedna sada, sekcia sa na webe nezobrazí.
+
 ### Webdizajn — ukážky webov
 
 Sekcia **Webdizajn** na úvodnej stránke, hneď pod vizuálmi. Je to

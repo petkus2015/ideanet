@@ -8,6 +8,20 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.19.0
+
+- Nová sekcia **Fotky** pod Reels: dlaždice so sadami fotiek od
+  klientov. Jedna dlaždica je jedna zákazka, klik otvorí celú sadu
+  v prehliadači so šípkami, miniatúrami, klávesnicou a listovaním
+  prstom.
+- Nový typ obsahu **Fotky — sady klientov**. Fotky sa vyberajú naraz
+  v knižnici médií, poradie sa mení potiahnutím miniatúry a krížikom sa
+  fotka zo sady vyhodí (z knižnice sa nezmaže).
+- Dve ukážkové sady sa doplnia aj na weboch, ktoré tému mali zapnutú
+  skôr. Sú to len farebné výplne — nahraďte ich vlastnými fotkami.
+- Nadpis sekcie sa mení v Prispôsobiť → Nadpisy sekcií, dá sa tam aj
+  vypnúť. Kým nie je založená ani jedna sada, sekcia sa nezobrazí.
+
 ## 1.18.0
 
 - Ukážky webov sú listovací pás, nie mriežka — šípky, guličky, ťahanie

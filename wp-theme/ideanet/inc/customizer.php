@@ -258,6 +258,7 @@ function ideanet_customizer_map() {
 function ideanet_customizer_sections_fields() {
 	$sections = array(
 		'portfolio'  => __( 'Portfólio', 'ideanet' ),
+		'fotky'      => __( 'Fotky', 'ideanet' ),
 		'vizualy'    => __( 'Vizuály', 'ideanet' ),
 		'webdizajn'  => __( 'Webdizajn', 'ideanet' ),
 		'sluzby'     => __( 'Služby', 'ideanet' ),
@@ -517,7 +518,7 @@ add_action( 'customize_preview_init', 'ideanet_customize_preview_js' );
  * @return array<string,string[]> Výber v stránke => zoznam nastavení.
  */
 function ideanet_edit_map() {
-	$sekcie = array( 'portfolio', 'vizualy', 'webdizajn', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'podmienky' );
+	$sekcie = array( 'portfolio', 'fotky', 'vizualy', 'webdizajn', 'sluzby', 'prekoho', 'proces', 'referencie', 'cennik', 'podmienky' );
 
 	$map = array(
 		'.nav .brand'       => array( 'brand_name', 'brand_co', 'brand_co_bold', 'brand_photo' ),

@@ -166,6 +166,7 @@ function ideanet_seed() {
 	}
 
 	ideanet_seed_baliky();
+	ideanet_seed_fotky();
 	ideanet_seed_weby( $assets );
 	ideanet_seed_redizajn( $assets );
 	ideanet_seed_menus();
@@ -299,6 +300,113 @@ function ideanet_seed_baliky() {
 		$i++
 	);
 }
+
+/**
+ * Naimportuje súbor z témy do knižnice médií.
+ *
+ * Fotky v sade sú prílohy, nie adresy — inak by sa nedali vyberať
+ * v knižnici ani zmenšovať. Ukážkové fotky preto treba do knižnice
+ * skopírovať.
+ *
+ * @param string $cesta Cesta k súboru v téme.
+ * @return int ID prílohy, alebo 0.
+ */
+function ideanet_import_fotky( $cesta ) {
+	if ( ! file_exists( $cesta ) ) {
+		return 0;
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+
+	$obsah = file_get_contents( $cesta ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- vlastný súbor témy, nie vzdialená adresa.
+	if ( false === $obsah ) {
+		return 0;
+	}
+
+	$nahrate = wp_upload_bits( basename( $cesta ), null, $obsah );
+	if ( ! empty( $nahrate['error'] ) ) {
+		return 0;
+	}
+
+	$typ = wp_check_filetype( $nahrate['file'] );
+	$id  = wp_insert_attachment(
+		array(
+			'post_mime_type' => $typ['type'],
+			'post_title'     => sanitize_file_name( basename( $cesta, '.jpg' ) ),
+			'post_status'    => 'inherit',
+		),
+		$nahrate['file']
+	);
+
+	if ( is_wp_error( $id ) || ! $id ) {
+		return 0;
+	}
+
+	wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $nahrate['file'] ) );
+
+	return (int) $id;
+}
+
+/**
+ * Dve ukážkové fotosady do sekcie Fotky.
+ */
+function ideanet_seed_fotky() {
+	if ( get_posts( array( 'post_type' => 'ideanet_fotoset', 'post_status' => 'any', 'posts_per_page' => 1 ) ) ) {
+		return;
+	}
+
+	$sady = array(
+		array( 'kaviaren', 'Kaviareň u Nás', 'Gastro', 'Otvorenie prevádzky — interiér, káva a ľudia.' ),
+		array( 'event', 'Firemný večer', 'Event', 'Reportáž z galavečera, od príchodu hostí po kapelu.' ),
+	);
+
+	foreach ( $sady as $i => $sada ) {
+		$ids = array();
+
+		for ( $n = 1; $n <= 7; $n++ ) {
+			$cesta = get_theme_file_path( 'assets/media/fotky/' . $sada[0] . '-' . str_pad( (string) $n, 2, '0', STR_PAD_LEFT ) . '.jpg' );
+			$id    = ideanet_import_fotky( $cesta );
+			if ( $id ) {
+				$ids[] = $id;
+			}
+		}
+
+		if ( ! $ids ) {
+			continue;
+		}
+
+		$post_id = ideanet_seed_post(
+			'ideanet_fotoset',
+			$sada[1],
+			'',
+			array(
+				'cat'   => $sada[2],
+				'fotky' => implode( ',', $ids ),
+			),
+			$i,
+			$sada[3]
+		);
+
+		if ( ! is_wp_error( $post_id ) ) {
+			set_post_thumbnail( $post_id, $ids[0] );
+		}
+	}
+}
+
+/**
+ * Jednorazové doplnenie sekcie Fotky na už bežiacom webe.
+ */
+function ideanet_fotky_setup() {
+	if ( get_option( 'ideanet_fotky_setup' ) ) {
+		return;
+	}
+
+	ideanet_register_post_types();
+	ideanet_seed_fotky();
+
+	update_option( 'ideanet_fotky_setup', 1 );
+}
+add_action( 'admin_init', 'ideanet_fotky_setup' );
 
 /**
  * Zvislé ukážky webov do sekcie Webdizajn.
