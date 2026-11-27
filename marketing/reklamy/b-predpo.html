@@ -1,0 +1,32 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><link rel="stylesheet" href="spolocne.css"><style>
+.ad{padding:76px 70px}
+h1{font-size:76px;max-width:16ch}
+h1 em{font-style:normal;color:#ff2d94}
+.pair{display:flex;gap:40px;align-items:center;justify-content:center;flex:1;padding:44px 0 10px}
+.ph{flex:none;display:flex;flex-direction:column;align-items:center;gap:22px}
+.lbl{font-size:24px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#9aa3c7}
+.ph--po .lbl{color:#fff;background:#ff2d94;padding:8px 22px;border-radius:999px}
+.frame{
+  /* Výšku berie zo zvyšku plátna, šírku dopočíta pomer — tak sa zmestí
+     do štvorca aj do 4:5 bez toho, aby pätička vypadla. */
+  height:min(711px, calc(100vh - 530px));width:auto;aspect-ratio:9/16;
+  border-radius:40px;overflow:hidden;
+  border:9px solid #161c33;background:#fff;
+  box-shadow:0 50px 110px -40px rgba(0,0,0,.95);
+}
+.ph--po .frame{border-color:#2b1b45;box-shadow:0 50px 110px -40px rgba(255,45,148,.75)}
+.frame img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.ph--pred .frame img{object-fit:contain;object-position:top center;background:#fff}
+</style></head><body>
+<div class="ad">
+  <h1>Ten istý web.<br><em>O sedem dní.</em></h1>
+  <div class="pair">
+    <div class="ph ph--pred"><span class="lbl">Pred</span><div class="frame"><img src="stary-1.jpg" alt=""></div></div>
+    <div class="ph ph--po"><span class="lbl">Po</span><div class="frame"><img src="novy-1.jpg" alt=""></div></div>
+  </div>
+  <div class="foot">
+    <span class="brand">IDEA<b>NET</b><span>Peter Miškus</span></span>
+    <p class="note"><b>600 €</b> namiesto 890 €<br>{{TERMIN}}</p>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px}
+body{
+  background:#04050e;color:#f2f4ff;
+  font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+.ad{
+  position:relative;width:1080px;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:84px 76px;
+}
+/* farebná žiara ako na webe */
+.ad::before{
+  content:"";position:absolute;inset:-20% -14% 22%;z-index:0;
+  background:
+    radial-gradient(44% 46% at 76% 24%, rgba(255,45,148,.62), transparent 64%),
+    radial-gradient(42% 44% at 20% 14%, rgba(139,43,255,.58), transparent 62%),
+    radial-gradient(54% 44% at 50% 2%, rgba(77,134,255,.36), transparent 66%);
+  filter:blur(26px);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0 54%,transparent 96%);
+}
+.ad > *{position:relative;z-index:1}
+
+.flag{
+  align-self:flex-start;
+  display:inline-flex;align-items:center;gap:14px;
+  padding:16px 30px;border-radius:999px;color:#fff;
+  font-size:26px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  background:linear-gradient(120deg,#ff2d94,#8b2bff);
+  box-shadow:0 30px 70px -30px rgba(255,45,148,.9);
+}
+.grad{
+  background:linear-gradient(105deg,#ff2d94 0%,#ff7ac0 45%,#8b2bff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+h1,h2,.num{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.035em;line-height:1.02}
+
+.foot{display:flex;align-items:flex-end;justify-content:space-between;gap:30px}
+.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:40px;letter-spacing:-.02em}
+.brand b{color:#ff2d94}
+.brand span{display:block;font-family:'Inter',sans-serif;font-weight:600;font-size:20px;letter-spacing:.24em;color:#6f78a0;margin-top:6px}
+.note{text-align:right;font-size:28px;line-height:1.35;color:#9aa3c7;max-width:48%}
+.note b{color:#f2f4ff;font-weight:600}
+
+/* Stredný blok drží zvyšok výšky, aby 4:5 nebolo prázdne. */
+.ad > .fill{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;padding-bottom:7%}
