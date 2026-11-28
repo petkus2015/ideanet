@@ -35,11 +35,11 @@ function ideanet_defaults() {
 		'brand_co_bold'   => '',
 
 		/* ── hero ──────────────────────────────── */
-		'hero_eyebrow'    => 'Som videotvorca, grafik a content creator · BA · ZA · Brno',
+		'hero_eyebrow'    => 'Som videotvorca, fotograf, grafik a webdizajnér · BA · ZA · Brno',
 		'hero_title'      => 'Prídem, natočím,',
 		'hero_title_2'    => 'zostrihám a',
 		'hero_title_hl'   => 'máte obsah',
-		'hero_lead'       => 'Mesačná tvorba vertikálneho videa pre firmy, ktoré nechcú riešiť produkciu a nechcú obsah vygenerovaný cez AI. Raz mesačne prídem na dve až tri hodiny a vy máte hotové Reels na celý mesiac — na Instagram, TikTok aj YouTube Shorts.',
+		'hero_lead'       => 'Točím a fotím eventy a hotový obsah ide von ešte v ten deň, kým je aktuálny. Pripravujem vizuály pre kampane aj bežné príspevky na siete. Staviam weby, ktoré odporúča Google aj AI. Umelú inteligenciu mám v postupe, nie vo výsledku — zrýchľuje mi prípravu a rutinu, zábery a fotky sú vždy skutočné.',
 		'hero_flow'       => "Nápady a témy\nNatáčací blok\nStrih a titulky\nHotový obsah",
 		'hero_cta1'       => 'Spočítať si cenu',
 		'hero_cta1_url'   => '#cennik',

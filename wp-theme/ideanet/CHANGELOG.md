@@ -8,6 +8,17 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.21.1
+
+- Nový text v úvodnej obrazovke. Doterajší sľuboval len mesačnú tvorbu
+  Reels, hoci na webe je aj fotenie, vizuály a weby — kto prišiel kvôli
+  webu, z prvej obrazovky sa o ňom nedozvedel nič.
+- Riadok nad nadpisom hovorí *videotvorca, fotograf, grafik
+  a webdizajnér*.
+- Z textu zmizlo „nechcú obsah vygenerovaný cez AI". Nahradila ho veta,
+  že AI je v postupe, nie vo výsledku — inak by si to s prácou, do
+  ktorej AI zapájate, protirečilo.
+
 ## 1.21.0
 
 - Pod menom v hlavičke aj v pätičke je **Freelancer** namiesto
