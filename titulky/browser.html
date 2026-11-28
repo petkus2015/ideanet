@@ -10,8 +10,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c6cff'/%3E%3Cstop offset='1' stop-color='%2319b8e8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url%28%23g%29'/%3E%3Crect x='11' y='16' width='42' height='32' rx='6' fill='none' stroke='%23fff' stroke-width='4.5'/%3E%3Cpath d='M19 30h9M33 30h12M19 39h16M40 39h5' stroke='%23fff' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#060916">
 <link rel="canonical" href="https://subgen.ideanet.sk/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,400;0,700;1,800&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Cairo:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;700;900&display=swap">
@@ -720,21 +719,18 @@ input[type=range]{accent-color:#7c6cff}
    zaoblené karty, tlačidlá ako pilulky, priesvitné lišty s rozmazaním, krátke plynulé animácie.
    Video, náhľady štýlov a strihová časová os ostávajú tmavé (obsah, nie rozhranie). */
 :root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;--disp:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;--ease:cubic-bezier(.25,.1,.25,1);
-  color-scheme:dark;--bg:#000;--side:rgba(28,28,30,.72);--card:#1c1c1e;--card2:#2c2c2e;--card3:#3a3a3c;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);
-  --text:#f5f5f7;--text2:#d1d1d6;--muted:#98989d;--a:#0a84ff;--a-hover:#409cff;--b:#64d2ff;--on-a:#fff;--grad:var(--a);--sun:var(--a);
-  --hover:rgba(255,255,255,.07);--fill:rgba(118,118,128,.24);--sel:rgba(10,132,255,.2);--danger:#ff453a;--ok:#30d158;--warn:#ffd60a;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);--pop:#2c2c2e;--glass:saturate(180%) blur(20px)}
-@media (prefers-color-scheme:light){:root{color-scheme:light;--bg:#f5f5f7;--side:rgba(255,255,255,.72);--card:#fff;--card2:#f5f5f7;--card3:#e8e8ed;--line:rgba(0,0,0,.08);--line2:rgba(0,0,0,.14);
-  --text:#1d1d1f;--text2:#424245;--muted:#6e6e73;--a:#0071e3;--a-hover:#0077ed;--b:#0066cc;--hover:rgba(0,0,0,.05);--fill:rgba(118,118,128,.12);--sel:rgba(0,113,227,.1);
-  --danger:#d70015;--ok:#248a3d;--warn:#b25000;--shadow:0 1px 2px rgba(0,0,0,.04),0 8px 28px rgba(0,0,0,.08);--pop:#fff}}
-html,body{background:var(--bg)!important;color:var(--text)}
+  color-scheme:dark;--bg:#060916;--side:rgba(7,11,29,.82);--card:rgba(13,19,46,.72);--card2:#111836;--card3:#1b2350;--line:rgba(130,150,255,.12);--line2:rgba(130,150,255,.22);
+  --text:#eef0fb;--text2:#c8cbe6;--muted:#8c93b8;--a:#7c6cff;--a-hover:#8f81ff;--b:#19b8e8;--on-a:#fff;
+  --grad:linear-gradient(90deg,#7c6cff,#19b8e8);--sun:linear-gradient(135deg,#6c5cff,#c04dff 40%,#ff3d8a 70%,#ff9a3d);
+  --hover:rgba(124,108,255,.08);--fill:rgba(130,150,255,.12);--sel:rgba(124,108,255,.16);--danger:#ff5c7a;--ok:#30d158;--warn:#ffae42;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.35);--pop:#0b1130;--glass:saturate(160%) blur(16px)}
+html,body{color:var(--text)}
 body{font-family:var(--font);font-size:15px;line-height:1.47;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
-.app{background:var(--bg)!important}
-::selection{background:color-mix(in srgb,var(--a) 30%,transparent)}
+::selection{background:rgba(124,108,255,.5)}
 /* písmo: žiadne VEĽKÉ štítky s rozostupmi, hierarchia veľkosťou a hrúbkou */
 h1,h2,h3,.side-name,.step b,.plabel,.panel h3,.card h3,.card-title,.side-h,.lsec,.nav,.mbox h2,.mtabs button,.tb .lbl,.cbt,.ct-hd b,.tname,.fuse,.export-all,.btn,.mini,.mini-btn,.libpos button,.speeds button,.cut-head,.sellbl,.drop strong,.tr-btn,.trsubs-row label,.plan strong,.stat-card small{font-family:var(--disp);text-transform:none!important;letter-spacing:-.01em!important}
 h1{font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.025em!important;line-height:1.1}
-.grad{background:none!important;color:var(--text)!important;-webkit-text-fill-color:currentColor}
+.grad{background:var(--grad)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent;color:transparent!important}
 .sub{color:var(--muted);font-size:15px;letter-spacing:-.01em;margin-top:6px}
 .plabel,.panel h3,.card h3,.side-h,.lsec,.sellbl,.card-title{font-size:13px!important;font-weight:600!important;color:var(--text)!important}
 .lsec{font-size:17px!important;margin:28px 0 12px}
@@ -745,8 +741,8 @@ h1{font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.025em!importa
 .mbox,.selbar,.setmenu,.spk-menu{background:var(--pop)!important;border:1px solid var(--line2)!important;border-radius:14px!important;box-shadow:0 20px 60px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.12)!important}
 .mbox{border-radius:20px!important;padding:30px 28px 24px}
 .modal{background:rgba(0,0,0,.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.logo,.side .logo,.mlogo{background:var(--a)!important;box-shadow:none!important;border-radius:10px;color:#fff}
-.avatar{background:var(--card3)!important;color:var(--text)!important;box-shadow:none!important}
+.logo,.side .logo,.mlogo{background:var(--sun)!important;box-shadow:0 0 20px rgba(192,77,255,.45)!important;border-radius:10px;color:#fff}
+.avatar{background:var(--sun)!important;color:#fff!important;box-shadow:0 0 16px rgba(192,77,255,.4)!important}
 .side-name{font-size:17px!important;font-weight:700;letter-spacing:-.02em!important}
 /* navigácia */
 .nav{font-size:15px;color:var(--text2);border-radius:10px;padding:10px 12px;min-height:44px}
@@ -759,12 +755,12 @@ h1{font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.025em!importa
 .step:hover:not(:disabled){background:var(--hover)}
 .step b{font-size:15px!important;font-weight:600!important;color:var(--text2)!important}
 .step .ic{border-radius:50%!important;border:0!important;background:var(--fill)!important;color:var(--text2);box-shadow:none!important}
-.step.on{background:var(--card)!important;box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 1px var(--line)!important}
+.step.on{background:rgba(124,108,255,.14)!important;box-shadow:0 0 0 1px rgba(124,108,255,.45),inset 0 -2px 0 #19b8e8!important}
 .step.on b{color:var(--text)!important}
-.step.on .ic{background:var(--a)!important;color:#fff!important}
+.step.on .ic{background:var(--sun)!important;color:#fff!important;box-shadow:0 0 18px rgba(192,77,255,.5)!important}
 /* tlačidlá: hlavné plné v akcentovej farbe, ostatné sivé pilulky */
-.export-all{background:var(--a)!important;color:var(--on-a)!important;border:0;border-radius:980px!important;font-size:17px!important;font-weight:600;padding:14px 22px;min-height:50px;box-shadow:none!important;transition:background .2s var(--ease),transform .2s var(--ease)}
-.export-all:hover:not(:disabled){background:var(--a-hover)!important;transform:none}
+.export-all{background:var(--sun)!important;color:var(--on-a)!important;border:0;border-radius:980px!important;font-size:17px!important;font-weight:600;padding:14px 22px;min-height:50px;box-shadow:0 8px 28px rgba(192,77,255,.3)!important;transition:box-shadow .2s var(--ease),transform .2s var(--ease)}
+.export-all:hover:not(:disabled){box-shadow:0 10px 36px rgba(255,61,138,.45)!important;transform:translateY(-1px)}
 .export-all:active:not(:disabled){transform:scale(.98)}
 .btn,.mini,.mini-btn,.fuse,.libpos button,.row-btns button,.stat-refresh,.seg-btns button,.add-btn,.tr-btn,.login-btn,.gear,.icon-btn,.tl-play,.transport button,.asr-banner button{background:var(--fill)!important;border:0!important;color:var(--text)!important;border-radius:980px!important;font-size:14px!important;font-weight:500;letter-spacing:-.01em!important;transition:background .2s var(--ease)}
 .btn{padding:10px 20px;min-height:44px}
@@ -775,8 +771,9 @@ h1{font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.025em!importa
 .gear{width:44px;height:44px}
 .icon-btn{width:36px;height:36px}
 .tl-play{width:40px;height:40px}
-.fcard.on .fuse,.libpos button.on,.mini-btn.on,.seg-btns button.on{background:var(--a)!important;color:#fff!important}
-.tr-btn svg,.support-link svg,.segments .segment button:first-child,.trsubs-arrow,.drop-icon{color:var(--a)!important;text-shadow:none!important}
+.fcard.on .fuse,.libpos button.on,.mini-btn.on,.seg-btns button.on{background:var(--sun)!important;color:#fff!important}
+.tr-btn svg,.support-link svg,.segments .segment button:first-child,.trsubs-arrow{color:#5fd4ff!important}
+.drop-icon{color:#19b8e8!important;text-shadow:0 0 18px rgba(25,184,232,.6)!important}
 .btn-stop{background:color-mix(in srgb,var(--danger) 14%,transparent)!important;border:0!important;color:var(--danger)!important;border-radius:980px!important;min-height:44px}
 .btn-stop:hover{background:var(--danger)!important;color:#fff!important}
 .ghost-btn{border:0!important;background:var(--fill)!important;color:var(--text)!important;border-radius:980px!important;min-height:40px;font-size:14px}
@@ -786,11 +783,11 @@ h1{font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.025em!importa
 /* výbery: dlaždice, voľby, prepínače */
 .opt,.trt,.speeds button,.cbt,.spk-row,.segment,.part{border-radius:12px!important;background:var(--card2)!important;border:1px solid transparent!important;color:var(--text2)}
 .opt:hover,.trt:hover,.speeds button:hover,.cbt:hover:not(:disabled){background:var(--card3)!important}
-.opt.on,.trt.on,.speeds button.on{background:var(--sel)!important;border-color:var(--a)!important;color:var(--text)!important;box-shadow:none!important}
+.opt.on,.trt.on,.speeds button.on{background:var(--sel)!important;border-color:#7c6cff!important;color:#fff!important;box-shadow:0 0 18px rgba(124,108,255,.3)!important}
 .tile,.atile,.stile{border-radius:14px!important;border:1px solid var(--line2)!important;box-shadow:none!important}
-.tile.on,.atile.on,.stile.on,.lcard.on,.fcard.on{border-color:var(--a)!important;box-shadow:0 0 0 2px var(--a)!important}
+.tile.on,.atile.on,.stile.on,.lcard.on,.fcard.on{border-color:#7c6cff!important;box-shadow:0 0 0 1px #7c6cff,0 0 22px rgba(124,108,255,.35)!important}
 .tile .tname,.atile .tname{background:var(--card2)!important;color:var(--text2)!important;font-size:12px;padding:6px 0}
-.tile.on .tname,.atile.on .tname{color:var(--a)!important;font-weight:600}
+.tile.on .tname,.atile.on .tname{color:#fff!important;font-weight:600}
 .cbt svg{color:var(--a)}
 .spk-row.on{background:color-mix(in srgb,var(--c) 14%,var(--card2))!important;border-color:var(--c)!important;box-shadow:none!important}
 .segment{border:1px solid transparent!important}
@@ -801,10 +798,10 @@ h1{font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.025em!importa
 .sw{background:var(--card3);width:51px;height:31px}
 .sw::after{width:27px;height:27px;top:2px;left:2px;box-shadow:0 2px 4px rgba(0,0,0,.2)}
 .sw[aria-checked=true]::after{left:22px}
-.sw[aria-checked=true],.switch[aria-checked=true],[role=switch][aria-checked=true]{background:var(--ok)!important}
+.sw[aria-checked=true],.switch[aria-checked=true],[role=switch][aria-checked=true]{background:var(--grad)!important}
 .mtabs{background:var(--fill)!important;border-radius:10px!important;padding:2px}
 .mtabs button{border-radius:8px!important;font-size:14px;color:var(--text)!important;min-height:36px}
-.mtabs button.on{background:var(--card)!important;color:var(--text)!important;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.mtabs button.on{background:#fff!important;color:#000!important}
 /* formuláre */
 select,input[type=color],.mform input,.seg-search,.brand-tools input[type=text],.lang-note select,.trsubs-row select,#tlSpeed{background-color:var(--card2)!important;color:var(--text)!important;border:1px solid var(--line2)!important;border-radius:10px!important;font-size:15px;min-height:40px}
 select:focus,.mform input:focus,.seg-search:focus,.brand-tools input[type=text]:focus{border-color:var(--a)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--a) 25%,transparent);outline:none}
@@ -824,14 +821,14 @@ input[type=range]{accent-color:var(--a)!important}
 summary{font-size:15px;min-height:44px;align-items:center}
 /* stav, priebeh, hlásenia */
 .bar{background:var(--fill)!important;height:6px}
-.bar i,.out-prog .bar i,.plan .bar i{background:var(--a)!important}
+.bar i,.out-prog .bar i,.plan .bar i{background:var(--grad)!important}
 .spinner{border-color:var(--fill);border-top-color:var(--a)}
 .asr-banner{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:var(--shadow)}
 .asr-banner.err{background:color-mix(in srgb,var(--danger) 10%,var(--card))!important;border-color:color-mix(in srgb,var(--danger) 40%,transparent)!important}
 .banner{background:color-mix(in srgb,var(--warn) 12%,var(--card));border:1px solid color-mix(in srgb,var(--warn) 35%,transparent);color:var(--text);border-radius:14px}
 .error,.mmsg{color:var(--danger)}
 .mok,.mmsg.ok{color:var(--ok)}
-.plan strong{background:none!important;-webkit-text-fill-color:currentColor;color:var(--text)!important;font-size:22px;font-weight:700}
+.plan strong{background:var(--sun)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent;color:transparent!important;font-size:22px;font-weight:700}
 .stat-card strong{font-weight:700;letter-spacing:-.02em}
 .lg .c1{background:var(--a)}
 /* menu účtu */
@@ -855,27 +852,9 @@ summary{font-size:15px;min-height:44px;align-items:center}
 .spk-del:hover{color:var(--danger);border-color:transparent;background:color-mix(in srgb,var(--danger) 12%,transparent)}
 .chip.active,.ctr.sel{outline-color:var(--a)}
 /* náhľady a obsah ostávajú tmavé aj vo svetlom režime */
-.tile .tsample,.atile .asmp,.sample,.stile{background:#2c2c2e!important}
+
 .pv canvas,.out-result,.lcard canvas{border-radius:10px}
-/* časová os strihu: tmavá pracovná plocha s akcentovou farbou namiesto neónov */
-#timelineCard.cut-mode{background:#1c1c1e!important;border-color:#000!important}
-.ct-tools,.ct-heads,.ct-tc{background:#2c2c2e!important}
-.clip{background:#1f2a44!important;box-shadow:inset 0 0 0 1px rgba(10,132,255,.6)!important}
-.clip .cl-name{background:#24406b!important}
-.clip.sel{box-shadow:inset 0 0 0 2px #ffd60a!important}
-.clip.sel .cl-name{background:#0a84ff!important}
-.trim{background:#ffd60a!important}
-.aclip{background:#10302a!important;box-shadow:inset 0 0 0 1px rgba(48,209,88,.55)!important}
-.aclip.sel{box-shadow:inset 0 0 0 2px #ffd60a!important}
-.ct-playhead,.tl-playhead{background:#ff453a!important;box-shadow:none!important}
-.ct-playhead::before{background:#ff453a!important}
-.ctr.on{background:#0a84ff!important;color:#fff!important}
-.ct-hd::before{background:#0a84ff}.ct-hd.a::before{background:#30d158}
-.tb.red svg{color:#ff453a}
-.ct-add{border-color:rgba(10,132,255,.6);background:rgba(10,132,255,.14)}
-.ct-add:hover{background:rgba(10,132,255,.3);border-color:#0a84ff}
 .tl-scroll{border-radius:12px;background:var(--card2)}
-.tl-band{background:color-mix(in srgb,var(--a) 22%,transparent);border-color:var(--a)}
 /* prístupnosť: viditeľné zameranie, dostatočné ciele dotyku */
 :focus-visible{outline:3px solid color-mix(in srgb,var(--a) 70%,transparent)!important;outline-offset:2px}
 .segments .spk{min-height:32px}
