@@ -987,40 +987,6 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 .glow.is-on{opacity:1}
 @media (hover:none),(prefers-reduced-motion:reduce){.glow{display:none}}
 
-/* ── nárazová vlna pri kliknutí ────────────
-   Vlna na hladine, nie prstenec: úzky pás z prechodu bez ostrej čiary,
-   rozostrený, s nízkou sýtosťou. Amplitúda klesá s polomerom, takže
-   opacita padá rýchlejšie, než sa pás rozťahuje — vlna sa rozplynie,
-   nezmizne. Dve za sebou, druhá pomalšia a slabšia (ozvena). */
-.ripple{
-  position:fixed;z-index:70;pointer-events:none;
-  width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;
-}
-.ripple::before,.ripple::after{
-  content:"";position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle,
-    transparent 50%,
-    rgba(255,45,148,.42) 61%,
-    rgba(160,110,255,.18) 75%,
-    transparent 89%);
-  filter:blur(1px);
-  will-change:transform,opacity;
-  /* rýchly nábeh, dlhý dojazd — vlna sa spomaľuje, nezastaví */
-  animation:ripple 1.15s cubic-bezier(.17,.72,.28,1) forwards;
-}
-.ripple::after{
-  animation-duration:1.7s;
-  animation-delay:.11s;
-  opacity:.42;
-}
-@keyframes ripple{
-  from{transform:scale(.55);opacity:.68}
-  30%{opacity:.54}
-  65%{opacity:.24}
-  to{transform:scale(11);opacity:0}
-}
-@media (prefers-reduced-motion:reduce){.ripple{display:none}}
-
 /* ── ikony sociálnych sietí ────────────────── */
 .socials{display:flex;gap:.5rem;align-items:center}
 .socials a{
@@ -1044,6 +1010,22 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 /* bez zalamovania tvorí päť odkazov jeden dlhý riadok, ktorý na úzkom
    displeji pretláčal celú stránku do strany */
 .footer__links{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem 1.2rem;font-size:.86rem;color:var(--muted)}
+/* Kontaktné a fakturačné údaje — vlastný riadok pod pätičkou, nie
+   ďalšia položka do radu s odkazmi: sú to dvojice popis/hodnota. */
+.footer__legal{margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid var(--line)}
+.footer__legal-title{
+  margin:0 0 .9rem;font-family:var(--font);font-size:.64rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);
+}
+.legal{
+  margin:0;display:grid;gap:.5rem 1.8rem;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));
+}
+.legal__row{display:grid;gap:.1rem}
+.legal dt{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
+.legal dd{margin:0;font-size:.88rem;color:var(--muted)}
+.legal dd a{color:var(--muted)}
+.legal dd a:hover{color:var(--magenta)}
 .footer__links a:hover{color:var(--magenta)}
 
 /* ── lightbox ────────────────────────────── */

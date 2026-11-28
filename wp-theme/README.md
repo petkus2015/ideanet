@@ -57,6 +57,24 @@ hľadajú najčastejšie, sú hneď pod ňou: **Kontakt a siete** a **Formulár*
 | E-mail, telefón, prezývku, fakty pod kontaktom | IDEANET → **Kontakt a siete** |
 | Kam chodia dopyty, popisy polí, hlášky formulára | IDEANET → **Formulár** |
 
+### Údaje v pätičke
+
+Pod odkazmi v pätičke stojí blok **Kontaktné a fakturačné údaje**.
+Vypĺňa sa v Prispôsobiť → IDEANET → **11 · Pätička**:
+
+- **Obchodné meno** je meno, na ktoré fakturujete — *Peter Miškus —
+  Ideanet*. V hlavičke je pritom *Peter Miškus · Freelancer*, to je
+  len popis, nie obchodné meno.
+- **Adresa**, **IČO** a **DIČ** sú na začiatku prázdne. Vyplňte ich
+  a objavia sa; prázdne polia sa nevypíšu, aby v pätičke nestál
+  nadpis bez hodnoty.
+- **Riadok o DPH** je veta *Nie som platca DPH.*
+- **E-mail a telefón** sa doťahujú z IDEANET → *Kontakt a siete*, aby
+  neboli uložené dvakrát a nerozišli sa.
+
+Riadok pod menom v hlavičke zmeníte v Prispôsobiť → IDEANET →
+**1 · Značka a hlavička**, pole *Riadok pod menom*.
+
 ### Služby — cesty spolupráce
 
 Karty nad cenníkom. Každá je jeden záznam v IDEANET → **Služby**, poradie

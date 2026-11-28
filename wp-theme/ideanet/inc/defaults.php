@@ -31,8 +31,8 @@ function ideanet_defaults() {
 		   Hore ladí s úvodom, po odskrolovaní stmavne na druhú hodnotu. */
 		'theme_color'     => '#452370',
 		'theme_color_2'   => '#05060f',
-		'brand_co'        => 'IDEA',
-		'brand_co_bold'   => 'NET',
+		'brand_co'        => 'Freelancer',
+		'brand_co_bold'   => '',
 
 		/* ── hero ──────────────────────────────── */
 		'hero_eyebrow'    => 'Som videotvorca, grafik a content creator · BA · ZA · Brno',
@@ -287,7 +287,16 @@ function ideanet_defaults() {
 		'e404_cta'         => 'Späť na úvod',
 
 		/* ── pätička ───────────────────────────── */
-		'footer_text' => '© {rok} Peter Miškus — IDEANET · videotvorca, grafik a content creator.',
+		'footer_text' => '© {rok} Peter Miškus · videotvorca, grafik a content creator.',
+
+		/* Údaje do pätičky. Prázdne polia sa nevypíšu, nech tam nestojí
+		   prázdny riadok s nadpisom. */
+		'legal_title' => 'Kontaktné a fakturačné údaje',
+		'legal_name'  => 'Peter Miškus — Ideanet',
+		'legal_addr'  => '',
+		'legal_ico'   => '',
+		'legal_dic'   => '',
+		'legal_vat'   => 'Nie som platca DPH.',
 		'skip_label'  => 'Preskočiť na portfólio',
 		'nav_cta'     => 'Nezáväzný dopyt',
 	);

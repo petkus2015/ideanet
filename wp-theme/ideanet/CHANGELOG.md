@@ -8,6 +8,21 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.21.0
+
+- Pod menom v hlavičke aj v pätičke je **Freelancer** namiesto
+  IDEANET. Obchodné meno **Peter Miškus — Ideanet** sa presunulo tam,
+  kam patrí — do údajov v pätičke.
+- Nový blok **Kontaktné a fakturačné údaje** v pätičke: obchodné meno,
+  adresa, IČO, DIČ, e-mail, telefón a riadok o DPH. Adresa, IČO a DIČ
+  sú prázdne, vyplňte ich v Prispôsobiť → IDEANET → 11 · Pätička.
+  Prázdne pole sa nevypíše. E-mail a telefón sa berú z *Kontakt
+  a siete*, aby neboli uložené dvakrát.
+- Z copyrightu v pätičke zmizlo „— IDEANET", meno firmy je o riadok
+  nižšie.
+- **Vlna pri kliknutí je preč.** Rozbiehala sa pri každom kliknutí
+  kdekoľvek na stránke, aj pri obyčajnom kliku do prázdna.
+
 ## 1.20.0
 
 - Štvrtá cesta spolupráce — **Kontrakt**. Pre klientov, ktorí nechcú

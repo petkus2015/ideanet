@@ -308,6 +308,62 @@ function ideanet_brand( $href = '#top' ) {
 }
 
 /**
+ * Kontaktné a fakturačné údaje v pätičke.
+ *
+ * Vypíše len riadky, ktoré sú vyplnené — nevyplnené IČO by inak
+ * zostalo na webe ako prázdny riadok s nadpisom. E-mail a telefón
+ * berie z kontaktu, aby neboli na dvoch miestach a nerozišli sa.
+ */
+function ideanet_legal_html() {
+	$email = ideanet_opt( 'contact_email' );
+	$tel   = ideanet_opt( 'contact_phone' );
+
+	$riadky = array(
+		array( __( 'Obchodné meno', 'ideanet' ), ideanet_opt( 'legal_name' ), '' ),
+		array( __( 'Adresa', 'ideanet' ), ideanet_opt( 'legal_addr' ), '' ),
+		array( __( 'IČO', 'ideanet' ), ideanet_opt( 'legal_ico' ), '' ),
+		array( __( 'DIČ', 'ideanet' ), ideanet_opt( 'legal_dic' ), '' ),
+		array( __( 'E-mail', 'ideanet' ), $email, $email ? 'mailto:' . $email : '' ),
+		array( __( 'Telefón', 'ideanet' ), $tel, $tel ? 'tel:' . preg_replace( '/[^+0-9]/', '', $tel ) : '' ),
+		array( __( 'DPH', 'ideanet' ), ideanet_opt( 'legal_vat' ), '' ),
+	);
+
+	$riadky = array_filter(
+		$riadky,
+		function ( $r ) {
+			return '' !== trim( (string) $r[1] );
+		}
+	);
+
+	if ( ! $riadky ) {
+		return;
+	}
+
+	$nadpis = ideanet_opt( 'legal_title' );
+	?>
+	<div class="wrap footer__legal">
+		<?php if ( $nadpis ) : ?>
+			<h2 class="footer__legal-title"><?php echo esc_html( $nadpis ); ?></h2>
+		<?php endif; ?>
+		<dl class="legal">
+			<?php foreach ( $riadky as $r ) : ?>
+				<div class="legal__row">
+					<dt><?php echo esc_html( $r[0] ); ?></dt>
+					<dd>
+						<?php if ( $r[2] ) : ?>
+							<a href="<?php echo esc_url( $r[2] ); ?>"><?php echo esc_html( $r[1] ); ?></a>
+						<?php else : ?>
+							<?php echo esc_html( $r[1] ); ?>
+						<?php endif; ?>
+					</dd>
+				</div>
+			<?php endforeach; ?>
+		</dl>
+	</div>
+	<?php
+}
+
+/**
  * Či sa má sekcia vôbec vypísať.
  *
  * @param string $slug Názov sekcie.

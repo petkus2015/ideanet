@@ -29,8 +29,8 @@ function ideanet_customizer_map() {
 			'fields' => array(
 				'brand_photo'   => array( __( 'Fotka vedľa mena', 'ideanet' ), 'image', __( 'Štvorcová, aspoň 320 × 320 px.', 'ideanet' ) ),
 				'brand_name'    => array( __( 'Meno a priezvisko', 'ideanet' ), 'text' ),
-				'brand_co'      => array( __( 'Názov firmy — prvá časť', 'ideanet' ), 'text', __( 'Napríklad IDEA.', 'ideanet' ) ),
-				'brand_co_bold' => array( __( 'Názov firmy — zvýraznená časť', 'ideanet' ), 'text', __( 'Napríklad NET.', 'ideanet' ) ),
+				'brand_co'      => array( __( 'Riadok pod menom', 'ideanet' ), 'text', __( 'Napríklad Freelancer. Obchodné meno patrí do údajov v pätičke.', 'ideanet' ) ),
+				'brand_co_bold' => array( __( 'Riadok pod menom — zvýraznená časť', 'ideanet' ), 'text', __( 'Keď chcete druhú polovicu nápisu odlíšiť. Väčšinou zostane prázdne.', 'ideanet' ) ),
 				'nav_cta'       => array( __( 'Tlačidlo v hlavičke', 'ideanet' ), 'text' ),
 				'skip_label'    => array( __( 'Odkaz pre čítačky obrazovky', 'ideanet' ), 'text' ),
 				'theme_color'   => array( __( 'Farba lišty prehliadača hore', 'ideanet' ), 'color', __( 'Na mobile si prehliadač týmto zafarbí pruh nad stránkou. Má ladiť s úvodnou obrazovkou.', 'ideanet' ) ),
@@ -245,6 +245,12 @@ function ideanet_customizer_map() {
 			'title'  => __( '11 · Pätička', 'ideanet' ),
 			'fields' => array(
 				'footer_text' => array( __( 'Text v pätičke', 'ideanet' ), 'area', __( '{rok} doplní aktuálny rok.', 'ideanet' ) ),
+				'legal_title' => array( __( 'Nadpis nad údajmi', 'ideanet' ), 'text' ),
+				'legal_name'  => array( __( 'Obchodné meno', 'ideanet' ), 'text', __( 'Meno, na ktoré fakturujete — napríklad Peter Miškus — Ideanet.', 'ideanet' ) ),
+				'legal_addr'  => array( __( 'Adresa', 'ideanet' ), 'text', __( 'Ulica, mesto a PSČ. Prázdne pole sa nevypíše.', 'ideanet' ) ),
+				'legal_ico'   => array( __( 'IČO', 'ideanet' ), 'text' ),
+				'legal_dic'   => array( __( 'DIČ', 'ideanet' ), 'text' ),
+				'legal_vat'   => array( __( 'Riadok o DPH', 'ideanet' ), 'text', __( 'Napríklad Nie som platca DPH.', 'ideanet' ) ),
 			),
 		),
 	);
@@ -554,6 +560,7 @@ function ideanet_edit_map() {
 		'#kontakt #contactForm'   => array( 'form_name', 'form_name_ph', 'form_email', 'form_email_ph', 'form_type', 'form_msg', 'form_msg_ph', 'form_submit', 'form_gdpr', 'form_to', 'form_subject', 'form_ok', 'form_err' ),
 
 		'.footer__inner p'  => array( 'footer_text' ),
+		'.footer__legal'    => array( 'legal_title', 'legal_name', 'legal_addr', 'legal_ico', 'legal_dic', 'legal_vat' ),
 		'.footer .socials'  => array( 'social_instagram', 'social_tiktok', 'social_youtube', 'social_facebook' ),
 	);
 

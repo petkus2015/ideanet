@@ -30,6 +30,8 @@ defined( 'ABSPATH' ) || exit;
 		</nav>
 		<?php ideanet_socials_html(); ?>
 	</div>
+
+	<?php ideanet_legal_html(); ?>
 </footer>
 
 <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Prehrávač videa', 'ideanet' ); ?>">
