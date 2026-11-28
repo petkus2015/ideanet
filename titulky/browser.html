@@ -1074,6 +1074,12 @@ summary{font-size:15px;min-height:44px;align-items:center}
           </div>
           <p class="hint" id="posHint" style="margin:8px 0 0">Titulky môžeš aj potiahnuť priamo v náhľade.</p>
         </div>
+        <details id="adv"><summary>Pokročilé</summary><div class="body">
+          <label class="check"><input type="checkbox" id="highlight"> Zvýrazňovať práve vyslovené slovo</label>
+          <div class="inline"><input type="color" id="hl"><span class="hint" style="margin:0">Farba zvýraznenia</span></div>
+          <label class="check"><input type="checkbox" id="roam"> Dynamický štýl: meniť polohu pri každej fráze</label>
+          <label class="check"><input type="checkbox" id="caps"> VEĽKÉ PÍSMENÁ (kapitálky)</label>
+        </div></details>
         <div class="pgroup"><div class="plabel">Vzhľad (veľkosť)</div>
           <div class="inline"><span style="color:var(--muted)">A</span><input type="range" id="size" min="3" max="12" step="0.5" aria-label="Veľkosť titulkov"><output id="sizeOut"></output></div>
         </div>
@@ -1084,12 +1090,6 @@ summary{font-size:15px;min-height:44px;align-items:center}
             <p class="hint" id="fontMsg" style="margin:6px 0 0">Súbor TTF, OTF, WOFF alebo WOFF2. Font ostane len v tomto prehliadači.</p></div>
           <div><div class="plabel">Podklad</div><div class="inline"><input type="color" id="bg"><input type="range" id="bgOpacity" min="0" max="100" step="5" aria-label="Priehľadnosť podkladu"><output id="bgOpacityOut"></output></div>
             <p class="hint" style="margin:6px 0 0">0 % = bez podkladu, text dostane obrys.</p></div>
-        </div></details>
-        <details id="adv"><summary>Pokročilé</summary><div class="body">
-          <label class="check"><input type="checkbox" id="highlight"> Zvýrazňovať práve vyslovené slovo</label>
-          <div class="inline"><input type="color" id="hl"><span class="hint" style="margin:0">Farba zvýraznenia</span></div>
-          <label class="check"><input type="checkbox" id="roam"> Dynamický štýl: meniť polohu pri každej fráze</label>
-          <label class="check"><input type="checkbox" id="caps"> VEĽKÉ PÍSMENÁ (kapitálky)</label>
         </div></details>
         </section>
         <section id="pane-edit" hidden>
