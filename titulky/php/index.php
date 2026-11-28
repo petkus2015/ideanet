@@ -145,7 +145,7 @@ if (($_GET['fonts'] ?? '') === 'upload') { // nahranie fontu
 $cfg = is_file(__DIR__ . '/config.php') ? (include __DIR__ . '/config.php') : [];
 if (!is_array($cfg)) $cfg = [];
 $cfg += ['stripe_secret_key' => '', 'stripe_webhook_secret' => '', 'payment_link' => '', 'price_label' => '4,90 € ročne',
-         'mail_from' => '', 'stripe_api' => 'https://api.stripe.com', 'site_name' => 'Subgen', 'admin_emails' => [], 'free_emails' => []];
+         'mail_from' => '', 'stripe_api' => 'https://api.stripe.com', 'site_name' => 'Subgen', 'admin_emails' => [], 'free_emails' => [], 'setup_key' => ''];
 
 function authStart() {
     global $https;
@@ -221,6 +221,44 @@ function tooMany($d, $what, $max, $sec) { // jednoduchá ochrana proti skúšani
     $list[] = time(); $a[$k] = $list;
     foreach ($a as $kk => $v) if (!array_filter($v, fn($t) => $t > time() - 86400)) unset($a[$kk]);
     writeJson($f, $a); return false;
+}
+
+// Nastavenie hesla bez e-mailu: https://…/?setup=KLUC (setup_key v config.php), len pre e-maily z free_emails
+// a admin_emails. Užitočné, keď hosting neposiela e-maily. Po nastavení kľúč z config.php vymaž.
+if (isset($_GET['setup'])) {
+    header('Content-Type: text/html; charset=utf-8'); header('X-Robots-Tag: noindex'); header('Cache-Control: no-store');
+    $key = (string)$_GET['setup'];
+    if (strlen((string)$cfg['setup_key']) < 16 || !hash_equals((string)$cfg['setup_key'], $key)) { http_response_code(404); exit('Odkaz je neplatný.'); }
+    $msg = ''; $ok = false;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        authStart(); dataInit($dataDir);
+        $email = trim((string)($_POST['email'] ?? '')); $pw = (string)($_POST['password'] ?? '');
+        $allowed = isFreeEmail($email) || in_array(mb_strtolower($email), array_map('mb_strtolower', (array)$cfg['admin_emails']), true);
+        if (tooMany($dataDir, 'setup', 10, 900)) $msg = 'Príliš veľa pokusov. Skús to o 15 minút.';
+        elseif (!$allowed) $msg = 'Tento e-mail nie je v config.php (free_emails alebo admin_emails).';
+        elseif (mb_strlen($pw) < 8) $msg = 'Heslo musí mať aspoň 8 znakov.';
+        else {
+            $lock = fopen($dataDir . '/.lock', 'c'); flock($lock, LOCK_EX);
+            $users = readJson($dataDir . '/users.php'); $k = userKey($email);
+            $users[$k] = ($users[$k] ?? ['email' => $email, 'until' => 0, 'customer' => '', 'created' => time()]);
+            $users[$k]['hash'] = password_hash($pw, PASSWORD_DEFAULT);
+            deviceLogin($users, $k, 'all'); writeJson($dataDir . '/users.php', $users); flock($lock, LOCK_UN);
+            header('Location: ./', true, 303); exit;
+        }
+    }
+    $e = fn($v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+    echo '<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Subgen: nastavenie hesla</title>'
+       . '<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#060916;color:#eef0fb;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}'
+       . 'form{width:min(360px,calc(100vw - 32px));padding:28px;border:1px solid rgba(130,150,255,.22);border-radius:18px;background:rgba(13,19,46,.9);display:flex;flex-direction:column;gap:12px}'
+       . 'h1{margin:0 0 4px;font-size:22px}label{display:flex;flex-direction:column;gap:6px;font-size:14px;color:#c8cbe6}'
+       . 'input{min-height:44px;padding:10px 12px;border-radius:10px;border:1px solid rgba(130,150,255,.22);background:#111836;color:#eef0fb;font:inherit}'
+       . 'button{min-height:48px;border:0;border-radius:999px;background:linear-gradient(135deg,#6c5cff,#c04dff 40%,#ff3d8a 70%,#ff9a3d);color:#fff;font:600 16px inherit;cursor:pointer}'
+       . 'p{margin:0;color:#ff8fa3;font-size:14px}</style></head><body><form method="post"><h1>Nastavenie hesla</h1>'
+       . ($msg ? '<p>' . $e($msg) . '</p>' : '')
+       . '<label>E-mail<input type="email" name="email" required autocomplete="username" value="' . $e($_POST['email'] ?? '') . '"></label>'
+       . '<label>Nové heslo (aspoň 8 znakov)<input type="password" name="password" required minlength="8" autocomplete="new-password"></label>'
+       . '<button type="submit">Nastaviť heslo a prihlásiť</button></form></body></html>';
+    exit;
 }
 
 if (isset($_GET['auth'])) {
@@ -341,8 +379,12 @@ if (isset($_GET['auth'])) {
             $resets[hash('sha256', $tok)] = ['email' => $u['email'], 'exp' => time() + 3600]; writeJson($dataDir . '/resets.php', $resets);
             $link = ($https ? 'https' : 'http') . '://' . $host . strtok($_SERVER['REQUEST_URI'] ?? '/', '?') . '?reset=' . $tok;
             $from = $cfg['mail_from'] ?: ('no-reply@' . preg_replace('/:\d+$/', '', $host));
-            @mail($u['email'], '=?UTF-8?B?' . base64_encode($cfg['site_name'] . ': nové heslo') . '?=', "Nové heslo si nastavíš tu (platí 1 hodinu):\n\n" . $link . "\n\nAk si o zmenu nežiadal(a), správu ignoruj.\n",
-                "From: " . $from . "\r\nContent-Type: text/plain; charset=utf-8");
+            $subj = '=?UTF-8?B?' . base64_encode($cfg['site_name'] . ': nové heslo') . '?=';
+            $body = "Nové heslo si nastavíš tu (platí 1 hodinu):\n\n" . $link . "\n\nAk si o zmenu nežiadal(a), správu ignoruj.\n";
+            $hdr = "From: " . $cfg['site_name'] . " <" . $from . ">\r\nReply-To: " . $from . "\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: 8bit";
+            $sent = function_exists('mail') && @mail($u['email'], $subj, $body, $hdr, '-f' . $from); // -f: odosielateľ aj pre poštový server (inak to hosting často zahodí)
+            if (!$sent && function_exists('mail')) $sent = @mail($u['email'], $subj, $body, $hdr);
+            if (!$sent) error_log('Subgen: e-mail na obnovu hesla sa nepodarilo odoslať (funkcia mail() na hostingu nefunguje).');
         }
         jsonOut(['ok' => true]);
     }

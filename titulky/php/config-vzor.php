@@ -17,4 +17,7 @@ return [
     // E-maily s bezplatným prístupom (všetky funkcie, bez platby, natrvalo). Účet si založia cez
     // "Zabudnuté heslo?" v prihlásení: príde im odkaz na nastavenie hesla.
     'free_emails' => [],
+    // Voliteľné: ak hosting neposiela e-maily, heslo pre free_emails a admin_emails si nastavíš cez
+    // https://subgen.ideanet.sk/?setup=<kľúč>. Kľúč = dlhý náhodný text (aspoň 16 znakov). Potom ho vymaž.
+    'setup_key' => '',
 ];
