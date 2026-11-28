@@ -844,6 +844,17 @@ summary{font-size:15px;min-height:44px;align-items:center}
 .trsubs-row label{font-size:12px!important;color:var(--muted)!important;font-weight:500}
 .lang-note span{color:var(--text)}
 @media(max-width:1000px){.setmenu{background:var(--pop)!important}}
+/* výber písiem: ukážka ako skutočné titulky, obľúbené, poradie */
+.fcanvas{display:block;width:100%;height:auto;aspect-ratio:480/210;border-radius:12px;background:#15151a}
+.fcard{cursor:grab}.fcard.dragging{opacity:.45}.fcard.dropto{outline:2px dashed var(--a);outline-offset:3px}
+.fcard.fav{border-color:rgba(255,190,80,.45)!important}
+.ffav{border:0;background:none;color:#ffbe50;font-size:20px;line-height:1;width:32px;height:32px;margin:-4px 0 -4px -6px;border-radius:50%;cursor:pointer;flex:none}
+.ffav[aria-pressed=false]{color:var(--muted)}.ffav:hover{background:var(--hover)}
+.fmoves{display:inline-flex;gap:2px;margin-left:auto}
+.fmove{width:32px;height:32px;border:0;border-radius:50%;background:var(--fill);color:var(--text);font-size:15px;cursor:pointer;padding:0}
+.fmove:hover:not(:disabled){background:var(--card3)}.fmove:disabled{opacity:.3;cursor:default}
+.fmoves+.fuse{margin-left:6px!important}
+.fcard .fmeta{flex-wrap:wrap;row-gap:8px}.fcard .fmeta b{flex:1 1 0;min-width:110px;font-size:14px}.fcard .fuse{white-space:nowrap}
 /* text, ktorý bol natvrdo biely, sa riadi režimom */
 .fsample{color:var(--text)!important}
 .cut-head .dot{background:var(--text)}
@@ -1179,6 +1190,7 @@ summary{font-size:15px;min-height:44px;align-items:center}
       <input type="checkbox" id="fontRights" hidden><span id="fontRightsRow" hidden></span>
       <p class="hint" id="brandMsg" role="status" style="margin:-8px 0 14px"></p>
       <div class="brand-tools"><input type="text" id="fontSampleText" value="Ahoj, toto sú moje titulky" aria-label="Text ukážky" maxlength="80"></div>
+      <p class="hint" style="margin:0 0 10px">Hviezdičkou dáš písmo medzi obľúbené (navrch). Poradie zmeníš potiahnutím karty alebo šípkami.</p>
       <div class="fgrid" id="fontGrid"></div>
     </section>
 

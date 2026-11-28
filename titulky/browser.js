@@ -2014,17 +2014,54 @@ function renderSwatches() { // rýchly výber farby značky pri farbe textu, pod
     });
   });
 }
+// Poradie písiem a obľúbené (len v tomto prehliadači). Obľúbené sú navrchu, poradie sa mení potiahnutím alebo šípkami.
+const FORDER_KEY = "titulky-fontOrder", FFAV_KEY = "titulky-fontFav";
+const lsGet = (k) => { try { const v = JSON.parse(localStorage.getItem(k) || "[]"); return Array.isArray(v) ? v : []; } catch { return []; } };
+let fontOrder = lsGet(FORDER_KEY), fontFav = new Set(lsGet(FFAV_KEY));
+function fontList() {
+  const all = [...new Set([...sharedFonts, ...customFonts, ...FONTS])];
+  const ord = [...fontOrder.filter((n) => all.includes(n)), ...all.filter((n) => !fontOrder.includes(n))];
+  return [...ord.filter((n) => fontFav.has(n)), ...ord.filter((n) => !fontFav.has(n))];
+}
+function saveFontOrder(list) {
+  fontOrder = list; try { localStorage.setItem(FORDER_KEY, JSON.stringify(fontOrder)); localStorage.setItem(FFAV_KEY, JSON.stringify([...fontFav])); } catch {}
+  syncFontSelect(); renderBrand();
+}
+function syncFontSelect() { // výber písma v nastaveniach titulkov v rovnakom poradí
+  const sel = $("font"); if (!sel) return; const cur = sel.value, list = fontList();
+  const opts = new Map([...sel.options].map((o) => [o.value, o]));
+  list.forEach((n) => { let o = opts.get(n); if (!o) { o = document.createElement("option"); o.value = o.textContent = n; } sel.append(o); });
+  sel.value = cur;
+}
+// Ukážka písma = skutočné titulky: kreslí ju ten istý kód ako náhľad a export, s aktuálnym štýlom (len iné písmo).
+function drawFontSample(cv, name, text) {
+  const st0 = activeStyle(), W = cv.width, H = cv.height, ctx = cv.getContext("2d");
+  const st = { ...st0, font: name, x: 0.5, y: 0.5, roam: false, size: 21 };
+  const reveal = ["slowdown", "pop", "fade", "typewriter", "slide"].includes(st.anim);
+  if (reveal) st.anim = "none";
+  const ws = text.split(/\s+/).filter(Boolean), first = st.anim === "box" || st.dimNext != null || st.highlight || ["karaoke", "bounce", "zoom", "glow"].includes(st.anim);
+  const seg = { start: 0, end: 10, text: ws.join(" "), words: ws.map((w, i) => ({ w, start: first && i > 0 ? 9 : 0, end: first && i > 0 ? 10 : 9 })) };
+  ctx.clearRect(0, 0, W, H); ctx.fillStyle = "#15151a"; ctx.fillRect(0, 0, W, H);
+  try { if (st.dynamic) { ctx.font = `800 ${H * 0.2}px "${name}", ${SCRIPT_FALLBACK}`; ctx.fillStyle = st.color; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText((st.caps ? text.toUpperCase() : text).slice(0, 24), W / 2, H / 2); ctx.textAlign = "left"; }
+    else drawCaption(ctx, seg, 0.5, W, H, st); } catch {}
+}
 function renderBrand() {
   const grid = $("fontGrid"); grid.textContent = "";
-  const text = $("fontSampleText").value.trim() || tr("Ahoj, toto sú moje titulky"), cur = activeStyle().font;
-  [...sharedFonts, ...customFonts, ...FONTS].forEach((name) => {
+  const text = $("fontSampleText").value.trim() || tr("Ahoj, toto sú moje titulky"), cur = activeStyle().font, list = fontList();
+  const move = (name, d) => { const l = fontList(), i = l.indexOf(name), j = i + d; if (j < 0 || j >= l.length || fontFav.has(l[j]) !== fontFav.has(name)) return; [l[i], l[j]] = [l[j], l[i]]; saveFontOrder(l); grid.querySelector(`.fcard[data-name="${CSS.escape(name)}"] .fmove[data-d="${d}"]`)?.focus(); };
+  list.forEach((name, idx) => {
     const own = customFonts.has(name), shared = sharedFonts.has(name); ensureFont(name);
-    const c = document.createElement("div"); c.className = "fcard" + (name === cur ? " on" : "");
-    const smp = document.createElement("div"); smp.className = "fsample"; smp.textContent = text; smp.style.fontFamily = `"${name}", ${SCRIPT_FALLBACK}`; smp.style.fontWeight = name === "Bebas Neue" ? 400 : 700;
+    const c = document.createElement("div"); c.className = "fcard" + (name === cur ? " on" : "") + (fontFav.has(name) ? " fav" : ""); c.dataset.name = name; c.draggable = true;
+    const cv = document.createElement("canvas"); cv.className = "fcanvas"; cv.width = 480; cv.height = 210; cv.setAttribute("role", "img"); cv.setAttribute("aria-label", text + " · " + name);
+    drawFontSample(cv, name, text);
+    { const st = activeStyle(), w = st.weight ?? (st.bold ? 700 : 400); document.fonts.load(`${st.italic ? "italic " : ""}${w} 40px "${name}"`, LATIN_X + text).then(() => drawFontSample(cv, name, text)).catch(() => {}); }
     const meta = document.createElement("div"); meta.className = "fmeta";
+    const star = document.createElement("button"); star.type = "button"; star.className = "ffav"; star.setAttribute("aria-pressed", fontFav.has(name)); star.textContent = fontFav.has(name) ? "★" : "☆";
+    star.title = fontFav.has(name) ? "Odobrať z obľúbených" : "Pridať k obľúbeným"; star.setAttribute("aria-label", star.title + ": " + name);
+    star.onclick = () => { fontFav.has(name) ? fontFav.delete(name) : fontFav.add(name); saveFontOrder(fontList()); };
     const nm = document.createElement("b"); nm.textContent = name; nm.title = name;
     const tag = document.createElement("span"); tag.className = "ftag" + (own ? " own" : shared ? " shared" : ""); tag.textContent = own ? "Vlastný" : shared ? "Spoločný" : "Vstavaný";
-    meta.append(nm, tag);
+    meta.append(star, nm, tag);
     if (own) {
       const del = document.createElement("button"); del.type = "button"; del.className = "spk-del"; del.title = "Odobrať font"; del.setAttribute("aria-label", "Odobrať font " + name);
       del.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
@@ -2032,8 +2069,25 @@ function renderBrand() {
     }
     const use = document.createElement("button"); use.type = "button"; use.className = "fuse"; use.textContent = name === cur ? "Použitý" : "Použiť";
     use.onclick = () => { const st = activeStyle(); st.font = name; st.preset = null; bumpDyn(); syncControls(); renderBrand(); $("brandMsg").textContent = `Titulky${multiSpk() ? " rečníka " + spkById(state.cur).name : ""} teraz používajú font „${name}“.`; };
-    meta.append(use);
-    c.append(smp, meta); grid.append(c);
+    const mv = document.createElement("span"); mv.className = "fmoves";
+    [[-1, "↑", "Posunúť vyššie"], [1, "↓", "Posunúť nižšie"]].forEach(([d, ch, lbl]) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "fmove"; b.dataset.d = d; b.textContent = ch; b.title = lbl; b.setAttribute("aria-label", lbl + ": " + name);
+      const j = idx + d; b.disabled = j < 0 || j >= list.length || fontFav.has(list[j]) !== fontFav.has(name);
+      b.onclick = () => move(name, d); mv.append(b);
+    });
+    meta.append(mv, use);
+    // potiahnutie karty na iné miesto (počítač)
+    c.addEventListener("dragstart", (e) => { e.dataTransfer.setData("text/plain", name); e.dataTransfer.effectAllowed = "move"; c.classList.add("dragging"); });
+    c.addEventListener("dragend", () => { c.classList.remove("dragging"); grid.querySelectorAll(".dropto").forEach((x) => x.classList.remove("dropto")); });
+    c.addEventListener("dragover", (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; c.classList.add("dropto"); });
+    c.addEventListener("dragleave", () => c.classList.remove("dropto"));
+    c.addEventListener("drop", (e) => {
+      e.preventDefault(); const from = e.dataTransfer.getData("text/plain"); if (!from || from === name) return;
+      const l = fontList().filter((n) => n !== from), at = l.indexOf(name) + (list.indexOf(from) < list.indexOf(name) ? 1 : 0);
+      if (fontFav.has(name)) fontFav.add(from); else fontFav.delete(from); // presun do skupiny, kam bolo pustené
+      l.splice(at, 0, from); saveFontOrder(l);
+    });
+    c.append(cv, meta); grid.append(c);
   });
 }
 async function removeFont(name) {
@@ -2361,7 +2415,7 @@ function fontsDb() {
 const customFonts = new Set(), fontFaces = new Map();
 function addFontOption(name) {
   if ([...$("font").options].some((o) => o.value === name)) return;
-  const o = document.createElement("option"); o.value = o.textContent = name; $("font").append(o);
+  const o = document.createElement("option"); o.value = o.textContent = name; $("font").append(o); syncFontSelect();
 }
 async function registerFont(name, buf) {
   const face = new FontFace(name, buf, { weight: "100 900", style: "normal" }); // jeden súbor platí pre všetky hrúbky
@@ -2462,9 +2516,10 @@ function renderSample(box, st, scale = 1) {
   if (st.bgOpacity > 0) sp.style.background = `rgba(${rgbOf(st.bg)},${st.bgOpacity / 100})`;
   else if (st.shadow) sp.style.textShadow = "0 1px 4px rgba(0,0,0,.7)";
   else { const c = st.stroke || "#000", o = st.stroke ? 2 : 1; sp.style.textShadow = `-${o}px 0 ${c},${o}px 0 ${c},0 -${o}px ${c},0 ${o}px ${c},-${o}px -${o}px ${c},${o}px ${o}px ${c},-${o}px ${o}px ${c},${o}px -${o}px ${c}`; if (st.highlight) { sp.textContent = ""; const a = document.createElement("span"); a.textContent = "Ahoj "; const b2 = document.createElement("span"); b2.textContent = "svet"; b2.style.color = st.hl; sp.append(a, b2); } }
-  if (st.anim === "box" && st.dimNext != null) { // rámček na prvom slove, ďalšie priesvitné
-    sp.textContent = ""; sp.style.whiteSpace = "nowrap"; sp.style.fontSize = 13.5 * scale + "px"; const a = document.createElement("span"), b2 = document.createElement("span");
-    a.textContent = "Ahoj"; a.style.cssText = `background:${st.hl};border-radius:4px;padding:0 .18em`;
+  if (st.anim === "box" && st.dimNext != null) { // rámček na prvom slove, ďalšie priesvitné; ako v titulkoch: bez obrysu a tieňa
+    sp.textContent = ""; sp.style.whiteSpace = "nowrap"; sp.style.fontSize = 13.5 * scale + "px"; sp.style.textShadow = st.shadow ? sp.style.textShadow : "none"; sp.style.lineHeight = "1";
+    const a = document.createElement("span"), b2 = document.createElement("span");
+    a.textContent = "Ahoj"; a.style.cssText = `display:inline-block;background:${st.hl};color:${st.boxText || "#fff"};border-radius:.17em;padding:.27em .15em .24em;line-height:.74em`;
     b2.textContent = "svet"; b2.style.opacity = st.dimNext; sp.append(a, " ", b2);
   }
   box.append(sp);
@@ -2630,7 +2685,7 @@ function reset() {
   bumpDyn(); $("upload-error").hidden = true; $("file").value = ""; show("upload");
 }
 function setup() {
-  FONTS.forEach((f) => { const o = document.createElement("option"); o.value = o.textContent = f; $("font").append(o); });
+  FONTS.forEach((f) => { const o = document.createElement("option"); o.value = o.textContent = f; $("font").append(o); }); syncFontSelect();
   PRESETS.forEach((p) => { // ukážky štýlov
     const t = document.createElement("button"); t.className = "tile"; t.dataset.id = p.id; t.setAttribute("aria-label", "Štýl " + p.name);
     const smp = document.createElement("div"); smp.className = "tsample"; renderSample(smp, { ...p, on: true }, 0.9);
