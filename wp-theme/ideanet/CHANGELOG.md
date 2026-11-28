@@ -8,6 +8,17 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.21.2
+
+- Úvodná obrazovka je prepísaná ako osobná prezentácia, nie zoznam
+  služieb. Text stojí na tom, že obsah má krátku trvanlivosť, a končí
+  na hranici, kde AI pomáha a kde nie.
+- Nadpis je **Natočím, nafotím, zostrihám aj postavím.** Doterajší
+  sľuboval len video, hoci pod ním sa hovorí aj o fotení, vizuáloch
+  a weboch.
+- Riadok nad nadpisom už nezačína slovom „Som", aby sa neopakoval
+  s vetou pod ním.
+
 ## 1.21.1
 
 - Nový text v úvodnej obrazovke. Doterajší sľuboval len mesačnú tvorbu

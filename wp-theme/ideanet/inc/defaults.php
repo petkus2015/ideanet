@@ -35,11 +35,11 @@ function ideanet_defaults() {
 		'brand_co_bold'   => '',
 
 		/* ── hero ──────────────────────────────── */
-		'hero_eyebrow'    => 'Som videotvorca, fotograf, grafik a webdizajnér · BA · ZA · Brno',
-		'hero_title'      => 'Prídem, natočím,',
-		'hero_title_2'    => 'zostrihám a',
-		'hero_title_hl'   => 'máte obsah',
-		'hero_lead'       => 'Točím a fotím eventy a hotový obsah ide von ešte v ten deň, kým je aktuálny. Pripravujem vizuály pre kampane aj bežné príspevky na siete. Staviam weby, ktoré odporúča Google aj AI. Umelú inteligenciu mám v postupe, nie vo výsledku — zrýchľuje mi prípravu a rutinu, zábery a fotky sú vždy skutočné.',
+		'hero_eyebrow'    => 'Videotvorca, fotograf, grafik a webdizajnér · BA · ZA · Brno',
+		'hero_title'      => 'Natočím, nafotím,',
+		'hero_title_2'    => 'zostrihám aj',
+		'hero_title_hl'   => 'postavím',
+		'hero_lead'       => 'Obsah má krátku trvanlivosť. Preto na evente točím aj fotím naraz a prvé veci sú vonku ešte v ten deň, kým o nich má kto hovoriť. Ku kampani dorobím vizuály aj posty, značke postavím web, ktorý nájde Google a odporučí aj AI. Nástroje si píšem sám, takže čo sa dá zautomatizovať, zautomatizujem — AI robí prípravu a rutinu. Zábery a fotky nie.',
 		'hero_flow'       => "Nápady a témy\nNatáčací blok\nStrih a titulky\nHotový obsah",
 		'hero_cta1'       => 'Spočítať si cenu',
 		'hero_cta1_url'   => '#cennik',
