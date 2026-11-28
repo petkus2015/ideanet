@@ -844,6 +844,13 @@ summary{font-size:15px;min-height:44px;align-items:center}
 .trsubs-row label{font-size:12px!important;color:var(--muted)!important;font-weight:500}
 .lang-note span{color:var(--text)}
 @media(max-width:1000px){.setmenu{background:var(--pop)!important}}
+/* obľúbené štýly a animácie */
+.favwrap{position:relative;display:flex;min-width:0}.favwrap>.tile,.favwrap>.atile{flex:1;min-width:0;width:100%}
+.tfav{position:absolute;top:3px;right:3px;z-index:2;width:24px;height:24px;padding:0;border:0;border-radius:50%;background:rgba(6,9,22,.6);color:#fff;font-size:13px;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s}
+.favwrap:hover .tfav,.tfav:focus-visible,.favwrap.fav .tfav{opacity:1}.favwrap.fav .tfav,.lfav[aria-pressed=true]{color:#ffbe50}
+@media (hover:none){.tfav{opacity:.85}}
+.lfav{position:static;opacity:1;background:none;color:var(--muted);margin:-4px 0 -4px -6px;flex:none}.lfav:hover{background:var(--hover)}
+.lcard.fav{border-color:rgba(255,190,80,.45)!important}
 /* výber písiem: ukážka ako skutočné titulky, obľúbené, poradie */
 .fcanvas{display:block;width:100%;height:auto;aspect-ratio:480/210;border-radius:12px;background:#15151a}
 .fcard{cursor:grab}.fcard.dragging{opacity:.45}.fcard.dropto{outline:2px dashed var(--a);outline-offset:3px}

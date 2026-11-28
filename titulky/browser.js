@@ -2112,14 +2112,15 @@ function renderLibrary() {
   document.querySelectorAll(".libpos button").forEach((b) => { const on = Math.abs(+b.dataset.y - libY()) < 0.01; b.classList.toggle("on", on); b.setAttribute("aria-checked", String(on)); });
   const grid = $("libGrid"); grid.textContent = ""; libCards = []; LIB_CHUNKS = LIB_CHUNKS || buildChunks(LIB_SEGS);
   const curPreset = activeStyle().preset;
-  PRESETS.forEach((p) => {
-    const c = document.createElement("div"); c.className = "lcard" + (p.id === curPreset ? " on" : "");
+  favOrder("styles", PRESETS.map((x) => x.id)).map((id) => PRESETS.find((x) => x.id === id)).forEach((p) => {
+    const c = document.createElement("div"); c.className = "lcard" + (p.id === curPreset ? " on" : "") + (favs.styles.has(p.id) ? " fav" : "");
     const cv = document.createElement("canvas"); cv.width = 400; cv.height = 500; cv.setAttribute("role", "img"); cv.setAttribute("aria-label", "Animovaná ukážka štýlu " + p.name);
     const foot = document.createElement("div"); foot.className = "lfoot";
     const nm = document.createElement("b"); nm.textContent = p.name;
     const use = document.createElement("button"); use.type = "button"; use.className = "fuse"; use.textContent = p.id === curPreset ? "Použitý" : "Použiť";
     use.onclick = () => { applyPreset(p); setPage("work"); };
-    foot.append(nm, use); c.append(cv, foot); grid.append(c);
+    const star = favStar("styles", p.id, p.name, () => { sortFavs("styles"); renderLibrary(); }); star.classList.add("lfav");
+    foot.append(star, nm, use); c.append(cv, foot); grid.append(c); star._upd();
     libCards.push({ cv, ctx: cv.getContext("2d"), st: { ...p, preset: p.id, on: true, x: 0.5, y: libY(), position: null, roam: false, highlight: p.highlight ?? true, anim: p.anim || "none" } });
   });
   const ag = $("libAnimGrid"); ag.textContent = ""; // animácie v aktuálnom štýle (alebo Modern, ak je vybraný Dynamický)
@@ -2684,22 +2685,44 @@ function reset() {
   state.segments = []; state.out = null; state.results = {}; state.playable = null; state.audio = null; resetSpeakers();
   bumpDyn(); $("upload-error").hidden = true; $("file").value = ""; show("upload");
 }
+// Obľúbené štýly a animácie (len v tomto prehliadači): hviezdička na dlaždici, obľúbené sú v ponuke navrchu.
+const FAVS_KEY = "titulky-favs";
+const favs = (() => { try { const v = JSON.parse(localStorage.getItem(FAVS_KEY) || "{}"); return { styles: new Set(v.styles || []), anims: new Set(v.anims || []) }; } catch { return { styles: new Set(), anims: new Set() }; } })();
+const saveFavs = () => { try { localStorage.setItem(FAVS_KEY, JSON.stringify({ styles: [...favs.styles], anims: [...favs.anims] })); } catch {} };
+const favOrder = (kind, ids) => [...ids.filter((id) => favs[kind].has(id)), ...ids.filter((id) => !favs[kind].has(id))];
+function favStar(kind, id, name, onChange) {
+  const s = document.createElement("button"); s.type = "button"; s.className = "tfav";
+  const upd = () => { const on = favs[kind].has(id); s.textContent = on ? "★" : "☆"; s.setAttribute("aria-pressed", String(on)); s.title = on ? "Odobrať z obľúbených" : "Pridať k obľúbeným"; s.setAttribute("aria-label", s.title + ": " + name); s.parentElement?.classList.toggle("fav", on); };
+  s.onclick = (e) => { e.stopPropagation(); favs[kind].has(id) ? favs[kind].delete(id) : favs[kind].add(id); saveFavs(); upd(); onChange(); };
+  s._upd = upd; return s;
+}
+function favWrap(kind, id, name, tile) {
+  const w = document.createElement("div"); w.className = "favwrap"; w.dataset.id = id;
+  const st = favStar(kind, id, name, () => sortFavs(kind)); w.append(tile, st); st._upd(); return w;
+}
+function sortFavs(kind) {
+  const box = $(kind), ids = favOrder(kind, kind === "styles" ? PRESETS.map((p) => p.id) : ANIMS.map((a) => a.id));
+  [...box.children].sort((a, b) => ids.indexOf(a.dataset.id) - ids.indexOf(b.dataset.id)).forEach((w) => box.append(w));
+  if (kind === "styles" && page === "library") renderLibrary();
+}
 function setup() {
   FONTS.forEach((f) => { const o = document.createElement("option"); o.value = o.textContent = f; $("font").append(o); }); syncFontSelect();
   PRESETS.forEach((p) => { // ukážky štýlov
     const t = document.createElement("button"); t.className = "tile"; t.dataset.id = p.id; t.setAttribute("aria-label", "Štýl " + p.name);
     const smp = document.createElement("div"); smp.className = "tsample"; renderSample(smp, { ...p, on: true }, 0.9);
     const nm = document.createElement("span"); nm.className = "tname"; nm.textContent = p.name;
-    t.append(smp, nm); t.onclick = () => applyPreset(p); $("styles").append(t);
+    t.append(smp, nm); t.onclick = () => applyPreset(p); $("styles").append(favWrap("styles", p.id, p.name, t));
   });
+  sortFavs("styles");
   ANIMS.forEach((x) => { // dlaždice animácií s pohyblivou ukážkou
     const b = document.createElement("button"); b.type = "button"; b.className = "atile"; b.dataset.id = x.id; b.setAttribute("role", "radio"); b.setAttribute("aria-label", "Animácia " + x.name);
     const smp = document.createElement("span"); smp.className = "asmp a-" + x.id;
     const w1 = document.createElement("i"), w2 = document.createElement("i"); w1.textContent = "Ahoj"; w2.textContent = "svet"; smp.append(w1, w2);
     const nm = document.createElement("span"); nm.className = "tname"; nm.textContent = x.name;
     b.append(smp, nm); b.onclick = () => { activeStyle().anim = x.id; syncControls(); if (video.paused && state.out) { const i = segmentAt(video.currentTime); video.currentTime = (i >= 0 ? state.segments[i].start : video.currentTime) + 0.01; video.play().catch(() => {}); } };
-    $("anims").append(b);
+    $("anims").append(favWrap("anims", x.id, x.name, b));
   });
+  sortFavs("anims");
   document.querySelectorAll("#aspects .opt").forEach((b) => b.onclick = () => { state.aspect = b.dataset.v; buildOut(); syncControls(); });
   document.querySelectorAll("#positions .opt").forEach((b) => b.onclick = () => { const q = getPos(state.aspect, editSpk()); q.position = b.dataset.v; q.x = 0.5; q.y = POS_Y[b.dataset.v]; syncControls(); });
   // Rečníci: pridať, voliteľne rozpoznať podľa hlasu, zavrieť menu pri titulku klikom mimo neho.
