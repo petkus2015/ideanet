@@ -443,12 +443,48 @@ const localCheck = {};
 // aby neúplne nahratý priečinok models/ nezablokoval rozpoznávanie ani preklad.
 const LOCAL_ONNX = { "onnx-community/whisper-large-v3-turbo": ["encoder_model_fp16.onnx", "decoder_model_merged_q4.onnx"],
   "subgen/whisper-large-v3-turbo-sk": ["encoder_model_fp16.onnx", "decoder_model_merged_fp16.onnx"] };
+// Veľký súbor modelu môže byť na serveri rozdelený na časti (súbor.onnx.part1, .part2, …), napr. kvôli limitu pri nahrávaní.
+// Prehliadač ich potom stiahne za sebou ako jeden súbor (splitParts + joinFetch).
+const splitParts = {};
+const fileOk = (url) => fetch(url, { method: "HEAD", cache: "no-store" }).then((r) => r.ok && !/text\/html/.test(r.headers.get("content-type") || ""), () => false); // HTML = chybová stránka hostingu, nie súbor
+async function localFile(url) {
+  if (await fileOk(url)) return true;
+  if (!/\.onnx$/.test(url)) return false;
+  const parts = [];
+  while (parts.length < 50 && await fileOk(url + ".part" + (parts.length + 1))) parts.push(url + ".part" + (parts.length + 1));
+  if (parts.length) splitParts[url] = parts;
+  return parts.length > 0;
+}
+function joinFetch(orig) {
+  return async (input, init = {}) => {
+    const url = typeof input === "string" ? input : input.url, parts = splitParts[url];
+    if (!parts || (init.method && init.method !== "GET")) return orig(input, init);
+    const sizes = await Promise.all(parts.map((u) => orig(u, { method: "HEAD", cache: "no-store" }).then((r) => +r.headers.get("content-length") || 0)));
+    let i = 0, reader = null;
+    const body = new ReadableStream({
+      async pull(c) {
+        for (;;) {
+          if (!reader) {
+            if (i >= parts.length) { c.close(); return; }
+            const r = await orig(parts[i++], { signal: init.signal });
+            if (!r.ok) throw new Error("Časť modelu " + parts[i - 1] + " sa nepodarilo stiahnuť (" + r.status + ").");
+            reader = r.body.getReader();
+          }
+          const { done, value } = await reader.read();
+          if (done) { reader = null; continue; }
+          c.enqueue(value); return;
+        }
+      },
+      cancel() { if (reader) reader.cancel(); },
+    });
+    return new Response(body, { status: 200, headers: { "content-length": String(sizes.reduce((a, b) => a + b, 0)), "content-type": "application/octet-stream" } });
+  };
+}
 function hasLocal(id) {
   if (location.protocol === "file:") return Promise.resolve(false);
   if (!localCheck[id]) {
     const files = ["config.json", ...(LOCAL_ONNX[id] || ["encoder_model_quantized.onnx", "decoder_model_merged_quantized.onnx"]).map((f) => "onnx/" + f)];
-    localCheck[id] = Promise.all(files.map((f) => fetch(LOCAL_BASE + id + "/" + f, { method: "HEAD", cache: "no-store" })
-      .then((r) => r.ok && !/text\/html/.test(r.headers.get("content-type") || ""), () => false))) // HTML = chybová stránka hostingu, nie súbor
+    localCheck[id] = Promise.all(files.map((f) => localFile(LOCAL_BASE + id + "/" + f)))
       .then((ok) => { const all = ok.every(Boolean); if (!all && ok[0]) console.warn("Model " + id + " je na serveri neúplný (chýba " + files.filter((_, i) => !ok[i]).join(", ") + "), sťahuje sa z huggingface.co."); return all; });
   }
   return localCheck[id];
@@ -602,7 +638,7 @@ async function loadModel(spec, quiet) {
   ];
   let lastErr = null;
   const origFetch = window.fetch, onStall = () => { if (!quiet) setBusy("Sťahujem model…", "Sťahovanie sa zaseklo, skúšam znova…"); };
-  window.fetch = stallGuardFetch(origFetch, onStall);
+  window.fetch = stallGuardFetch(joinFetch(origFetch), onStall);
   // Zdroj, z ktorého sa sťahovanie zaseklo, sa skúsi ešte raz (už stiahnuté súbory sú uložené), potom ďalší zdroj.
   try {
   for (const a of attempts.flatMap((x) => [x, { ...x, retry: true }])) {

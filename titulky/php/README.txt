@@ -82,6 +82,9 @@ Presnejšia slovenčina na počítači (notebook, desktop)
   Chybovosť slov je okolo 5,6 % (všeobecný model mal 18 %, menší model až 48 %). Modely sú prevedené pre Subgen, len zo ZIP-u:
     models/subgen/whisper-large-v3-turbo-sk   (~1,6 GB, najpresnejší, pre prehliadače s grafickou kartou, WebGPU: Chrome, Edge)
     models/subgen/whisper-small-sk            (~290 MB, pre počítače bez WebGPU)
+  ZIP-y: subgen-model-sk-1-small.zip (small) a subgen-model-sk-2 až 7-turbo.zip (najpresnejší). Rozbaľ všetky do toho istého
+  priečinka (vedľa index.php) a nahraj priečinok models/ cez FTP. Veľké súbory najpresnejšieho modelu sú rozdelené na časti
+  (napr. encoder_model_fp16.onnx.part1 až .part4). Nespájaj ich, prehliadač si ich poskladá sám.
   Ak je jazyk videa "Rozpoznať automaticky", jazyk sa najprv zistí všeobecným modelom models/Xenova/whisper-small
   a slovenský model sa načíta len pri slovenskej reči. Iné jazyky prepisuje všeobecný model ako doteraz.
   Mobil slovenské modely nepoužíva.
