@@ -2212,7 +2212,7 @@ async function loadAuth() {
 function renderAcct() {
   const u = auth.user;
   $("acctName").textContent = u ? u.email : "Hosť";
-  $("acctPlan").textContent = u ? (u.active ? "Aktívne do " + new Date(u.until * 1000).toLocaleDateString(LOCALE) : "Predplatné vypršalo") : "4,90 € ročne";
+  $("acctPlan").textContent = u ? (u.free ? "Bezplatný prístup" : u.active ? "Aktívne do " + new Date(u.until * 1000).toLocaleDateString(LOCALE) : "Predplatné vypršalo") : "4,90 € ročne";
   $("acctAv").textContent = u ? u.email[0].toUpperCase() : "?";
   $("loginBtn").disabled = !auth.on; $("loginLbl").textContent = u ? "Odhlásiť sa" : "Prihlásiť sa";
   $("navStats").hidden = !(u && u.admin); if (!(u && u.admin) && page === "analytics") setPage("work");

@@ -14,4 +14,7 @@ return [
     'site_name' => 'Subgen',
     // E-maily správcov: po prihlásení uvidia v menu Analytiku (návštevy a registrácie v čase)
     'admin_emails' => [],
+    // E-maily s bezplatným prístupom (všetky funkcie, bez platby, natrvalo). Účet si založia cez
+    // "Zabudnuté heslo?" v prihlásení: príde im odkaz na nastavenie hesla.
+    'free_emails' => [],
 ];

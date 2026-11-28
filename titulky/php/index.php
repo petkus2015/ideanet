@@ -145,7 +145,7 @@ if (($_GET['fonts'] ?? '') === 'upload') { // nahranie fontu
 $cfg = is_file(__DIR__ . '/config.php') ? (include __DIR__ . '/config.php') : [];
 if (!is_array($cfg)) $cfg = [];
 $cfg += ['stripe_secret_key' => '', 'stripe_webhook_secret' => '', 'payment_link' => '', 'price_label' => '4,90 € ročne',
-         'mail_from' => '', 'stripe_api' => 'https://api.stripe.com', 'site_name' => 'Subgen', 'admin_emails' => []];
+         'mail_from' => '', 'stripe_api' => 'https://api.stripe.com', 'site_name' => 'Subgen', 'admin_emails' => [], 'free_emails' => []];
 
 function authStart() {
     global $https;
@@ -164,7 +164,10 @@ function stripeGet($path) { // čítanie zo Stripe API tajným kľúčom zo serv
 }
 function userKey($email) { return mb_strtolower(trim($email)); }
 function isAdmin($u) { global $cfg; return $u && in_array(mb_strtolower($u['email']), array_map('mb_strtolower', (array)$cfg['admin_emails']), true); }
-function userPublic($u) { return $u ? ['email' => $u['email'], 'until' => (int)$u['until'], 'active' => (int)$u['until'] > time(), 'admin' => isAdmin($u)] : null; }
+// Bezplatný prístup (free_emails v config.php): účet je aktívny natrvalo bez platby.
+function isFreeEmail($email) { global $cfg; return in_array(mb_strtolower(trim((string)$email)), array_map('mb_strtolower', (array)$cfg['free_emails']), true); }
+function userPublic($u) { if (!$u) return null; $free = isFreeEmail($u['email']);
+    return ['email' => $u['email'], 'until' => $free ? 4102444800 : (int)$u['until'], 'active' => $free || (int)$u['until'] > time(), 'free' => $free, 'admin' => isAdmin($u)]; }
 // ---------- analytika (len pre správcu) ----------
 // Počíta návštevy stránky a registrácie po dňoch, bez cookies a bez externých služieb. Unikátny návštevník je
 // odtlačok IP + prehliadača s denne meneným tajným kľúčom; ukladá sa len počas dňa, potom sa zahodí (súkromie).
@@ -272,7 +275,7 @@ if (isset($_GET['auth'])) {
         $users = readJson($dataDir . '/users.php'); $u = !empty($_SESSION['email']) ? ($users[userKey($_SESSION['email'])] ?? null) : null;
         if (!$u || !isset($u['devices'][(string)($_SESSION['dev'] ?? '')]) || !isAdmin($u)) jsonOut(['error' => 'Len pre správcu.'], 403);
         $st = readJson($dataDir . '/stats.php'); $days = $st['days'] ?? []; ksort($days);
-        $paid = 0; foreach ($users as $x) if ((int)($x['until'] ?? 0) > time()) $paid++;
+        $paid = 0; foreach ($users as $x) if ((int)($x['until'] ?? 0) > time() || isFreeEmail($x['email'] ?? '')) $paid++;
         jsonOut(['days' => $days, 'users' => count($users), 'active' => $paid]);
     }
     $b = needPost();
@@ -328,6 +331,10 @@ if (isset($_GET['auth'])) {
     if ($act === 'forgot') { // obnova hesla e-mailom (vždy rovnaká odpoveď, aby sa nedalo zisťovať, kto má účet)
         if (tooMany($dataDir, 'forgot', 5, 3600)) jsonOut(['error' => 'Príliš veľa pokusov. Skús to neskôr.'], 429);
         $u = $users[userKey($b['email'] ?? '')] ?? null;
+        if (!$u && isFreeEmail($b['email'] ?? '') && filter_var($b['email'], FILTER_VALIDATE_EMAIL)) { // bezplatný účet sa založí bez platby, heslo si nastaví z e-mailu
+            $k = userKey($b['email']); $users[$k] = ['email' => trim($b['email']), 'until' => 0, 'customer' => '', 'created' => time()];
+            writeJson($dataDir . '/users.php', $users); $u = $users[$k];
+        }
         if ($u) {
             $tok = bin2hex(random_bytes(20)); $resets = readJson($dataDir . '/resets.php');
             foreach ($resets as $h => $r) if ($r['exp'] < time()) unset($resets[$h]);
