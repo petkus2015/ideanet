@@ -8,6 +8,16 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.19.4
+
+- Skrolovanie stránky cez pás už pásom nepohýba. Keď kurzor prešiel
+  cez reels, vizuály, weby alebo fotosady, pás si zvislé točenie
+  zobral pre seba — stránka zastala a pás odišiel nabok. Teraz sa
+  pás hne jedine gestom do strán.
+- Kolieskom myši sa pás už neposunie vôbec; na to sú šípky po
+  stranách, guličky pod pásom a ťahanie myšou. Na touchpade
+  a dotykovom displeji funguje šmyk do strán ako predtým.
+
 ## 1.19.3
 
 - Sekcia **Fotky** je posúvací pás ako vizuály a weby, nie mriežka

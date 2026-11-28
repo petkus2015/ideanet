@@ -477,7 +477,15 @@
     let wheelTimer = null;
 
     rail.addEventListener('wheel', (e) => {
-      const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      /* Zvislé točenie patrí stránke. Keď sme ho brávali tiež, pás pod
+         kurzorom zastavil skrolovanie a odišiel nabok. Hranica nie je
+         len „viac do strany ako dole“ — šmyk prstom po touchpade nie je
+         nikdy presne vodorovný, takže vodorovná zložka musí prevládať
+         zreteľne. Koliesko myši dáva deltaX nulovú, tam teda pásom
+         nepohne nič — na to sú šípky, guličky a ťahanie. */
+      const d = e.deltaX;
+      if (Math.abs(d) < Math.abs(e.deltaY) * 1.3 || Math.abs(d) < 2) return;
+
       const atEdge = (d < 0 && rail.scrollLeft <= 0) || (d > 0 && rail.scrollLeft >= maxScroll - 1);
       if (atEdge) return;                              // na kraji nech skroluje stránka
       e.preventDefault();
