@@ -59,8 +59,8 @@ const PRESETS = [
   { hl: "#00b8fc", id: "modry", name: "PS blue", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#00007d", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" },
   { hl: "#f8a0b6", id: "cerveny", name: "PS red", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#f50306", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" }, // ako PS blue, len červený
   { hl: "#ffffff", id: "slowdown", name: "Slow down", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.4, bold: true, anim: "slowdown", lineH: 1.3, y: 0.58, position: null },
-  // Karamel: VEĽKÉ písmená, vyslovované slovo v karamelovom rámčeku, ešte nevyslovené slová priesvitné (štýl reels)
-  { hl: "#cc925c", id: "karamel", name: "Karamel", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.6, bold: true, caps: true, anim: "box", snap: true, boxText: "#ffffff", dimNext: 0.45, lineH: 1.45, y: 0.47, position: null },
+  // Prime: VEĽKÉ písmená, vyslovované slovo v karamelovom rámčeku, ešte nevyslovené slová priesvitné (štýl reels)
+  { hl: "#cc925c", id: "prime", name: "Prime", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.6, bold: true, caps: true, anim: "box", snap: true, boxText: "#ffffff", dimNext: 0.45, lineH: 1.45, y: 0.47, position: null },
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true, anim: "none" },
@@ -441,7 +441,8 @@ const LOCAL_BASE = new URL("models/", location.href).href;
 const localCheck = {};
 // Model je na serveri len vtedy, keď sú tam aj jeho veľké súbory (nielen konfigurácia). Inak sa stiahne z huggingface.co,
 // aby neúplne nahratý priečinok models/ nezablokoval rozpoznávanie ani preklad.
-const LOCAL_ONNX = { "onnx-community/whisper-large-v3-turbo": ["encoder_model_fp16.onnx", "decoder_model_merged_q4.onnx"] };
+const LOCAL_ONNX = { "onnx-community/whisper-large-v3-turbo": ["encoder_model_fp16.onnx", "decoder_model_merged_q4.onnx"],
+  "subgen/whisper-large-v3-turbo-sk": ["encoder_model_fp16.onnx", "decoder_model_merged_fp16.onnx"] };
 function hasLocal(id) {
   if (location.protocol === "file:") return Promise.resolve(false);
   if (!localCheck[id]) {
@@ -478,19 +479,46 @@ async function warmUpModel() {
   if (MOCK || IS_MOBILE) return; // na mobile by model v pamäti spolu so zvukom videa zhodil stránku
   let have = null; try { have = localStorage.getItem(MODEL_KEY); } catch {}
   if (!have) return;
-  try { const spec = (await preferLocal(await bestModels())).find((x) => x.id === have); if (spec) await ensureModel(spec, true); } catch { /* načíta sa pri nahratí */ }
+  try { const spec = [...await skModels(), ...await preferLocal(await bestModels())].find((x) => x.id === have); if (spec) await ensureModel(spec, true); } catch { /* načíta sa pri nahratí */ }
 }
 // Vyberie sa vždy najpresnejší model, ktorý prehliadač zvládne: large-v3-turbo na grafickej karte (WebGPU),
 // inak small. Ak zlyhá najpresnejší, skúsi sa ďalší.
 // Mobil (najmä iPhone) má na kartu prehliadača málo pamäte: väčší model ho zhodí a stránka sa obnoví.
 const PROXY_OK = !/[?&]noproxy\b/.test(location.search);
 const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+let gpuCheck = null;
+const hasGpu = () => gpuCheck || (gpuCheck = (async () => { try { return !!(navigator.gpu && await navigator.gpu.requestAdapter()); } catch { return false; } })());
+// Slovenčina na počítači: Whisper doladený na slovenčinu (KInIT, licencia MIT/Apache), chybovosť slov 5,6 % namiesto 18 %.
+// Používa sa len z vlastného servera (models/subgen/…), na huggingface.co v tvare pre prehliadač nie je.
+const SK_MODELS = [
+  { id: "subgen/whisper-large-v3-turbo-sk", label: "large-v3-turbo SK", gpu: true, sk: true, opts: { device: "webgpu", dtype: { encoder_model: "fp16", decoder_model_merged: "fp16" } } },
+  { id: "subgen/whisper-small-sk", label: "small SK", sk: true, opts: {} },
+];
+async function skModels() {
+  if (IS_MOBILE) return [];
+  const gpu = await hasGpu(), list = SK_MODELS.filter((m) => !m.gpu || gpu), ok = await Promise.all(list.map((m) => hasLocal(m.id)));
+  return list.filter((_, i) => ok[i]);
+}
+const isSkModel = (id) => SK_MODELS.some((m) => m.id === id);
+// Jazyk reči pred načítaním slovenského modelu (ten vie len po slovensky): už načítaným všeobecným modelom, inak všeobecným small
+// (base jazyk spoľahlivo nerozozná, slovenčinu v teste určil ako fínčinu).
+let langDetModel = null;
+async function quickDetect(audio) {
+  try {
+    let m = asr && !isSkModel(asrId) ? asr : langDetModel;
+    if (!m) { setBusy("Rozpoznávam jazyk…", "", null); m = langDetModel = await loadModel({ id: "Xenova/whisper-small", label: "small (jazyk)", opts: {} }, false); }
+    setBusy("Rozpoznávam jazyk…", "", null);
+    let det = await detectLang(m, audio); const sc = detectLang.scores || {};
+    if ((det === "cs" || det === "pl") && LANG !== det && sc.sk > sc[det] - 1.5) det = "sk"; // slovenčinu všeobecný model ľahko zamení s češtinou či poľštinou
+    return det;
+  } catch (e) { console.warn("Jazyk sa nepodarilo rozpoznať", e); return null; }
+}
 async function bestModels() {
   if (IS_MOBILE) return [{ id: "Xenova/whisper-base", label: "base", opts: {}, light: true }];
   const list = [];
   if (navigator.gpu) {
     try {
-      if (await navigator.gpu.requestAdapter()) list.push({ id: "onnx-community/whisper-large-v3-turbo", label: "large-v3-turbo", opts: { device: "webgpu", dtype: { encoder_model: "fp16", decoder_model_merged: "q4" } } });
+      if (await hasGpu()) list.push({ id: "onnx-community/whisper-large-v3-turbo", label: "large-v3-turbo", opts: { device: "webgpu", dtype: { encoder_model: "fp16", decoder_model_merged: "q4" } } });
     } catch { /* WebGPU nie je k dispozícii */ }
   }
   list.push({ id: "Xenova/whisper-small", label: "small", opts: {} });
@@ -619,10 +647,10 @@ async function detectLang(asr, audio) {
   const feats = (await asr.processor(audio.subarray(start, start + 16000 * 30))).input_features;
   const res = await asr.model({ input_features: feats, decoder_input_ids: new tf.Tensor("int64", BigInt64Array.from([BigInt(sot)]), [1, 1]) });
   const lg = res.logits.data, V = res.logits.dims.at(-1), base = lg.length - V;
-  let best = null, bestV = -Infinity;
+  let best = null, bestV = -Infinity; const scores = detectLang.scores = {};
   for (let id = sot + 1; id < sot + 102; id++) { // jazykové značky nasledujú hneď za <|startoftranscript|>
     const t = tok.model.vocab[id]; const m = /^<\|([a-z]{2,3})\|>$/.exec(t || ""); if (!m) continue;
-    const v = lg[base + id] + (m[1] === LANG ? 0.8 : 0);
+    const v = lg[base + id] + (m[1] === LANG ? 0.8 : 0); scores[m[1]] = v;
     if (v > bestV) { bestV = v; best = m[1]; }
   }
   return best;
@@ -672,8 +700,13 @@ async function recognize(file, _unused, lang) {
   state.audio = audio;
   if (!state.duration && !state.recDur) state.duration = audio.length / 16000;
   setBusy("Načítavam zvuk…", "", phasePct("audio", 1));
-  let lastError = null;
-  for (const spec of await preferLocal(await bestModels())) {
+  let lastError = null, list = await preferLocal(await bestModels());
+  const sk = await skModels(); // na počítači sa slovenčina prepisuje modelom doladeným na slovenčinu
+  if (sk.length) {
+    if (!LANGS[lang]) { const det = await quickDetect(audio); if (det) { lang = det; state.detLang = det; } }
+    if (lang === "sk") list = [...sk, ...list];
+  }
+  for (const spec of list) {
     try {
       const model = await ensureModel(spec, false);
       setBusy("Rozpoznávam reč…", "", phasePct("model", 1));

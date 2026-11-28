@@ -76,3 +76,12 @@ Preklad titulkov na mobile
     models/subgen/opus-mt-sk-en, models/subgen/opus-mt-en-sk   (slovenčina, prevedené pre Subgen, len zo ZIP-u)
     models/Xenova/opus-mt-XX-en a opus-mt-en-XX pre cs, es, ar, hi, zh, pl-en, tr-en a opus-mt-en-mul (poľština, turečtina)
   Na mobile sa používa aj menší model rozpoznávania reči models/Xenova/whisper-base.
+
+Presnejšia slovenčina na počítači (notebook, desktop)
+  Slovenská reč sa na počítači prepisuje modelmi doladenými na slovenčinu (KInIT, licencia MIT a Apache 2.0).
+  Chybovosť slov je okolo 5,6 % (všeobecný model mal 18 %, menší model až 48 %). Modely sú prevedené pre Subgen, len zo ZIP-u:
+    models/subgen/whisper-large-v3-turbo-sk   (~1,6 GB, najpresnejší, pre prehliadače s grafickou kartou, WebGPU: Chrome, Edge)
+    models/subgen/whisper-small-sk            (~290 MB, pre počítače bez WebGPU)
+  Ak je jazyk videa "Rozpoznať automaticky", jazyk sa najprv zistí všeobecným modelom models/Xenova/whisper-small
+  a slovenský model sa načíta len pri slovenskej reči. Iné jazyky prepisuje všeobecný model ako doteraz.
+  Mobil slovenské modely nepoužíva.
