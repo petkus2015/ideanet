@@ -4,7 +4,7 @@ Theme URI: https://github.com/petkus2015/ideanet
 Author: Peter Miškus
 Author URI: https://ideanet.sk
 Description: Téma pre videotvorcu — vertikálne Reels, vizuály a identita, cenník s tromi pohľadmi, interaktívna kalkulačka a formulár na dopyt. Celý obsah, menu, videá, obrázky, texty aj ceny sa upravujú vo WordPresse, bez zásahu do kódu a bez ďalších pluginov.
-Version: 1.22.0
+Version: 1.22.1
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -1037,9 +1037,16 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 
 /* Prstenec nabehne až po prílete — počas zmenšovania by sa s fotkou
    škálovala aj hrúbka čiary a vyzeralo by to ako chyba. */
+/* Veľkosť prstenca prichádza v pixeloch z JS (--prstenec). SVG si ju
+   z percent ani z insetu nedopočíta spoľahlivo — má vlastný pomer strán
+   a výsledok vyšiel sploštený a posunutý nabok. */
 .foto__prstenec{
-  position:absolute;inset:-18px;width:calc(100% + 36px);height:calc(100% + 36px);
-  transform:rotate(-90deg);opacity:0;transition:opacity .3s ease;pointer-events:none;
+  position:absolute;left:50%;top:50%;
+  /* img,svg,video majú v reštarte max-width:100%, čo prstenec orezalo
+     späť na šírku fotky — preto je tu výslovne zrušený. */
+  width:var(--prstenec);height:var(--prstenec);max-width:none;
+  transform:translate(-50%,-50%) rotate(-90deg);
+  opacity:0;transition:opacity .3s ease;pointer-events:none;
 }
 .foto.is-max .foto__prstenec{opacity:1}
 .foto__prstenec circle{fill:none;stroke-width:1.2;stroke-linecap:round}

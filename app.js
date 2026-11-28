@@ -1207,9 +1207,14 @@
   /* Kam fotka letí a aký transform ju vráti na miniatúru. */
   function geometria() {
     const r = zdroj.getBoundingClientRect();
-    const S = Math.round(Math.min(innerWidth * 0.62, innerHeight * 0.52, 320));
-    const tx = Math.round((innerWidth - S) / 2);
-    const ty = Math.round((innerHeight - S) / 2);
+    /* clientWidth, nie innerWidth: innerWidth ráta aj posuvník, takže
+       na počítači by fotka sedela o pár pixelov vpravo od stredu. */
+    const doska = document.documentElement;
+    const W = doska.clientWidth || innerWidth;
+    const H = doska.clientHeight || innerHeight;
+    const S = Math.round(Math.min(W * 0.62, H * 0.52, 320));
+    const tx = Math.round((W - S) / 2);
+    const ty = Math.round((H - S) / 2);
     const naMiniaturu = 'translate(' + (r.left - tx) + 'px,' + (r.top - ty) + 'px) scale(' + (r.width / S) + ')';
     return { S: S, tx: tx, ty: ty, naMiniaturu: naMiniaturu };
   }
@@ -1245,6 +1250,9 @@
     const g = geometria();
     figura.style.width = g.S + 'px';
     figura.style.height = g.S + 'px';
+    /* Prstenec obchádza fotku o 18 px. Veľkosť mu dávame v pixeloch —
+       z percent si ju SVG dopočíta nespoľahlivo. */
+    figura.style.setProperty('--prstenec', (g.S + 36) + 'px');
     figura.style.left = g.tx + 'px';
     figura.style.top = g.ty + 'px';
 

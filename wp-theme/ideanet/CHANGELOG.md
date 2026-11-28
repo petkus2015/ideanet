@@ -8,6 +8,16 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.22.1
+
+- Prstenec okolo fotky na strede bol sploštený a posunutý nabok.
+  Reštart má pre obrázky max-width:100 %, čo prstencu zrezalo šírku na
+  šírku fotky, zatiaľ čo výška zostala väčšia — z kruhu sa stal ovál
+  a vykreslil sa mimo stredu. Teraz je fotka aj prstenec presne na
+  sebe, s rovnakou medzerou dookola.
+- Fotka sa centruje podľa šírky plochy bez posuvníka, nie podľa šírky
+  okna. Na počítači sedela o niekoľko pixelov vpravo od stredu.
+
 ## 1.22.0
 
 - Klik na fotku v značke ju prenesie doprostred obrazovky. Prstenec
