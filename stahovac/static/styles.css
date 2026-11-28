@@ -11,13 +11,16 @@
   --fill-2: rgba(120, 120, 128, .2);
   --line: rgba(60, 60, 67, .18);      /* separator */
   --text: #000000;
-  --muted: rgba(60, 60, 67, .6);      /* secondaryLabel */
-  --muted-2: rgba(60, 60, 67, .3);    /* tertiaryLabel */
-  --accent: #FF2D55;          /* systemPink */
-  --accent-tint: rgba(255, 45, 85, .1);
+  /* Fixed per Apple HIG: contrast, WCAG AA 4.5:1 for text and button labels - Audit by HIG Compliance Auditor (Omraj Kumar) */
+  --muted: #6C6C70;                   /* secondaryLabel, stmavené pre AA */
+  --muted-2: rgba(60, 60, 67, .3);    /* tertiaryLabel - len okraje, nie text */
+  --placeholder: #6C6C70;
+  --accent: #D70F45;          /* tmavšia systemPink: biely text 5.2:1 */
+  --accent-ink: #C20D3E;      /* ružový text: 4.6-5.5:1 aj na podfarbení */
+  --accent-tint: rgba(215, 15, 69, .1);
   --on-accent: #FFFFFF;
-  --ok: #34C759;
-  --err: #FF3B30;
+  --ok: #248A3D;
+  --err: #C4141C;
   --glass: rgba(242, 242, 247, .78);
   --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
   --radius: 16px;
@@ -25,6 +28,8 @@
   --ease: cubic-bezier(.32, .72, 0, 1);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -38,10 +43,12 @@
     --text: #FFFFFF;
     --muted: rgba(235, 235, 245, .6);
     --muted-2: rgba(235, 235, 245, .3);
-    --accent: #FF375F;
-    --accent-tint: rgba(255, 55, 95, .16);
-    --ok: #30D158;
-    --err: #FF453A;
+    --placeholder: rgba(235, 235, 245, .5);
+    --accent: #D70F45;
+    --accent-ink: #FF8FA6;
+    --accent-tint: rgba(255, 100, 130, .16);
+    --ok: #1F8A3A;
+    --err: #FF6961;
     --glass: rgba(0, 0, 0, .72);
     --shadow: none;
   }
@@ -52,12 +59,14 @@ html, body { margin: 0; height: 100%; }
 body {
   background: var(--bg);
   color: var(--text);
-  font: 17px/1.29 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 1.0625rem/1.29 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: -.022em;
   -webkit-font-smoothing: antialiased;
 }
 svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer; }
+/* Fixed per Apple HIG: no text selection or callout on controls - Audit by HIG Compliance Auditor (Omraj Kumar) */
+button, .chip { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 [hidden] { display: none !important; }
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; border-radius: 12px; }
 
@@ -81,7 +90,7 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
 
 /* ---------- hlavička: veľký nadpis ako v iOS ---------- */
 .topbar {
-  padding: calc(14px + var(--safe-top)) 20px 10px;
+  padding: calc(14px + var(--safe-top)) calc(20px + var(--safe-right)) 10px calc(20px + var(--safe-left)); /* HIG: safe areas */
   position: relative; z-index: 2;
   background: var(--glass);
   -webkit-backdrop-filter: var(--material); backdrop-filter: var(--material);
@@ -92,13 +101,13 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
   background: var(--accent); color: var(--on-accent);
 }
 .logo svg { width: 24px; height: 24px; stroke-width: 2.4; }
-.brand h1 { margin: 0; font-size: 34px; line-height: 1.1; font-weight: 700; letter-spacing: -.03em; }
-.brand p { margin: 2px 0 0; color: var(--muted); font-size: 15px; letter-spacing: -.01em; }
+.brand h1 { margin: 0; font-size: 2.125rem; line-height: 1.1; font-weight: 700; letter-spacing: -.03em; }
+.brand p { margin: 2px 0 0; color: var(--muted); font-size: 0.9375rem; letter-spacing: -.01em; }
 
 /* ---------- obsah ---------- */
 .screen {
   flex: 1; overflow-y: auto; overscroll-behavior: contain;
-  padding: 8px 16px calc(24px + var(--safe-bottom));
+  padding: 8px calc(16px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(16px + var(--safe-left));
   display: flex; flex-direction: column; gap: 16px;
   scrollbar-width: none;
 }
@@ -111,7 +120,7 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
   padding: 16px;
   box-shadow: var(--shadow);
 }
-.label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 8px 2px; font-weight: 400; letter-spacing: -.005em; }
+.label { display: block; font-size: 0.8125rem; color: var(--muted); margin: 0 0 8px 2px; font-weight: 400; letter-spacing: -.005em; }
 .field {
   display: flex; align-items: center; gap: 4px;
   background: var(--fill); border-radius: 12px;
@@ -120,15 +129,15 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
 .field:focus-within { box-shadow: 0 0 0 2px var(--accent); }
 .field input {
   flex: 1; min-width: 0; height: 46px; border: 0; outline: 0; background: transparent;
-  color: var(--text); font-size: 17px; letter-spacing: -.022em;
+  color: var(--text); font-size: 1.0625rem; letter-spacing: -.022em;
 }
-.field input::placeholder { color: var(--muted-2); }
+.field input::placeholder { color: var(--placeholder); }
 .icon-btn { border: 0; background: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
 .icon-btn svg { width: 14px; height: 14px; stroke-width: 2.6; padding: 3px; box-sizing: content-box; border-radius: 50%; background: var(--fill-2); }
 
 .platforms { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }
 .chip {
-  font-size: 13px; font-weight: 500; padding: 5px 11px; border-radius: 980px;
+  font-size: 0.8125rem; font-weight: 500; padding: 5px 11px; border-radius: 980px;
   background: var(--fill); color: var(--muted);
   transition: background-color .25s var(--ease), color .25s var(--ease);
 }
@@ -137,20 +146,27 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
 .actions { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 50px; padding: 0 16px; border-radius: 14px; border: 0; font-weight: 600; font-size: 17px;
+  min-height: 50px; padding: 0 16px; border-radius: 14px; border: 0; font-weight: 600; font-size: 1.0625rem;
   transition: transform .2s var(--ease), opacity .2s, background-color .2s;
 }
 .btn:active { transform: scale(.97); opacity: .85; }
 .btn:disabled { opacity: .4; pointer-events: none; }
 .btn.primary { background: var(--accent); color: var(--on-accent); }
-.btn.ghost { background: var(--accent-tint); color: var(--accent); }
+.btn.ghost { background: var(--accent-tint); color: var(--accent-ink); }
 .btn.big { width: 100%; min-height: 54px; margin-top: 12px; }
 .btn.done { background: var(--ok); color: #FFFFFF; }
 
 .notice {
-  border-radius: 14px; padding: 12px 16px; font-size: 15px;
-  background: color-mix(in srgb, var(--err) 12%, transparent); color: var(--err);
+  border-radius: 14px; padding: 12px 16px; font-size: 0.9375rem;
+  background: color-mix(in srgb, var(--err) 10%, var(--card)); color: var(--err);
   animation: pop .35s var(--ease);
+  display: flex; gap: 10px; align-items: flex-start;
+}
+/* Fixed per Apple HIG: meaning never conveyed by color alone - Audit by HIG Compliance Auditor (Omraj Kumar) */
+.notice::before {
+  content: "!"; flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--err); color: var(--card);
+  font-weight: 700; font-size: .8125rem; line-height: 1;
 }
 
 /* ---------- skeleton ---------- */
@@ -169,16 +185,16 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
 .media.noimg { height: 160px; background: var(--fill); }
 .media.noimg img { display: none; }
 .badge, .duration {
-  position: absolute; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 980px; color: #FFFFFF;
+  position: absolute; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 980px; color: #FFFFFF;
   background: rgba(0, 0, 0, .45); backdrop-filter: var(--material); -webkit-backdrop-filter: var(--material);
 }
 .badge { top: 10px; left: 10px; }
 .duration { bottom: 10px; right: 10px; font-variant-numeric: tabular-nums; }
 .meta { padding: 14px 16px 2px; }
-.meta h2 { margin: 0 0 4px; font-size: 17px; font-weight: 600; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
-.meta p { margin: 0; color: var(--muted); font-size: 15px; }
-.meta .dims { margin-top: 2px; font-size: 13px; }
-.section-title { margin: 0; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .02em; font-weight: 400; }
+.meta h2 { margin: 0 0 4px; font-size: 1.0625rem; font-weight: 600; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+.meta p { margin: 0; color: var(--muted); font-size: 0.9375rem; }
+.meta .dims { margin-top: 2px; font-size: 0.8125rem; }
+.section-title { margin: 0; font-size: 0.8125rem; color: var(--muted); text-transform: uppercase; letter-spacing: .02em; font-weight: 400; }
 .result .section-title { padding: 18px 16px 8px; }
 
 /* možnosti kvality: zoskupený zoznam ako v Nastaveniach */
@@ -195,9 +211,9 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
 .option[aria-checked="true"] .radio::after { content: ""; width: 6px; height: 10px; margin-top: -2px; border: solid var(--on-accent); border-width: 0 2px 2px 0; transform: rotate(45deg); }
 .option .txt { flex: 1; min-width: 0; }
 .option .name { font-weight: 500; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.option .tag { font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: 2px 7px; border-radius: 980px; background: var(--accent-tint); color: var(--accent); }
-.option .sub { font-size: 13px; color: var(--muted); }
-.option .size { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.option .tag { font-size: 0.6875rem; font-weight: 600; letter-spacing: .02em; padding: 2px 7px; border-radius: 980px; background: var(--accent-tint); color: var(--accent-ink); }
+.option .sub { font-size: 0.8125rem; color: var(--muted); }
+.option .size { font-size: 0.9375rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .result > .btn { width: calc(100% - 32px); margin: 16px 16px 0; }
 .result > .btn:last-child { margin-bottom: 16px; }
 .result > .btn.primary:not(:last-child) { margin-bottom: 0; }
@@ -205,17 +221,17 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
 #download:has(+ #cancel[hidden]) { margin-bottom: 16px; }
 
 .progress { margin: 16px 16px 0; }
-.progress-head { display: flex; justify-content: space-between; font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+.progress-head { display: flex; justify-content: space-between; font-size: 0.9375rem; font-weight: 500; margin-bottom: 8px; }
 .progress-head #progressPct { font-variant-numeric: tabular-nums; color: var(--muted); }
 .bar { height: 6px; border-radius: 99px; background: var(--fill); overflow: hidden; }
 .bar span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--accent); transition: width .3s var(--ease); }
 .bar.indeterminate span { width: 35% !important; animation: indet 1.2s infinite ease-in-out; }
 @keyframes indet { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
-.progress-sub { margin: 6px 0 0; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1em; }
+.progress-sub { margin: 6px 0 0; font-size: 0.8125rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1em; }
 
 /* ---------- história: zoskupený zoznam ---------- */
 .history-head { display: flex; justify-content: space-between; align-items: center; margin: 4px 4px 4px 16px; }
-.link { border: 0; background: none; color: var(--accent); font-weight: 400; font-size: 15px; min-height: 44px; padding: 0 12px; }
+.link { border: 0; background: none; color: var(--accent-ink); font-weight: 400; font-size: 0.9375rem; min-height: 44px; padding: 0 12px; }
 .history ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-radius: var(--radius); background: var(--card); overflow: hidden; box-shadow: var(--shadow); }
 .history li { position: relative; }
 .history li + li::before { content: ""; position: absolute; top: 0; left: 80px; right: 0; height: 1px; background: var(--line); transform: scaleY(.5); transform-origin: top; z-index: 1; }
@@ -226,16 +242,16 @@ button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer
 }
 .history li button:active { background: var(--fill); }
 .history img, .history .ph { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex: none; background: var(--fill); }
-.history .h-title { font-weight: 500; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.history .h-sub { font-size: 13px; color: var(--muted); }
+.history .h-title { font-weight: 500; font-size: 0.9375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history .h-sub { font-size: 0.8125rem; color: var(--muted); }
 .history .h-txt { min-width: 0; flex: 1; }
 
-.legal { color: var(--muted); font-size: 12px; line-height: 1.4; text-align: center; margin: 6px 16px 0; }
+.legal { color: var(--muted); font-size: 0.75rem; line-height: 1.4; text-align: center; margin: 6px 16px 0; }
 
 .toast {
   position: fixed; left: 50%; top: calc(16px + var(--safe-top)); transform: translate(-50%, -16px) scale(.96);
   background: var(--glass); -webkit-backdrop-filter: var(--material); backdrop-filter: var(--material);
-  color: var(--text); font-weight: 500; font-size: 15px; padding: 12px 20px; border-radius: 980px;
+  color: var(--text); font-weight: 500; font-size: 0.9375rem; padding: 12px 20px; border-radius: 980px;
   box-shadow: 0 0 0 1px var(--line), 0 10px 30px rgba(0, 0, 0, .15);
   opacity: 0; pointer-events: none; transition: opacity .25s, transform .45s var(--ease); z-index: 50; max-width: calc(100% - 32px);
 }

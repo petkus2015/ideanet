@@ -30,6 +30,13 @@
     document.body.style.overflow = 'hidden';
     const yes = $('#age-yes');
     yes.focus();
+    // WCAG 2.4.3: Tab cykluje len medzi tlačidlami dialógu
+    gate.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const f = gate.querySelectorAll('button, a[href]'); const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
     yes.addEventListener('click', () => {
       store.set('zz-age', true);
       gate.hidden = true;
@@ -403,6 +410,7 @@
       if (el.name === 'phone' && valid) valid = el.value.replace(/[^\d]/g, '').length >= 9;
       const wrap = el.closest('.field, .check');
       if (wrap) wrap.classList.toggle('is-invalid', !valid);
+      if (valid) el.removeAttribute('aria-invalid'); else el.setAttribute('aria-invalid', 'true'); // WCAG 3.3.1
       if (!valid) { ok = false; first = first || el; }
     });
     if (first) first.focus({ preventScroll: false });
@@ -412,7 +420,7 @@
   form.addEventListener('change', (e) => { if (e.target.name === 'payment') renderCart(); });
   form.addEventListener('input', (e) => {
     const wrap = e.target.closest('.is-invalid');
-    if (wrap && e.target.checkValidity()) wrap.classList.remove('is-invalid');
+    if (wrap && e.target.checkValidity()) { wrap.classList.remove('is-invalid'); e.target.removeAttribute('aria-invalid'); }
   });
 
   form.addEventListener('submit', async (e) => {

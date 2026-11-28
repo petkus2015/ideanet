@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 OUT=dist/stahovac
 rm -rf dist && mkdir -p "$OUT"
-cp static/styles.css static/app.js static/manifest.webmanifest static/icon.svg static/sw.js "$OUT/"
+cp static/styles.css static/app.js static/manifest.webmanifest static/icon.svg static/apple-touch-icon.png static/icon-192.png static/icon-512.png static/sw.js "$OUT/"
 cp php/api.php php/common.php php/setup.php "$OUT/"
 cp php/NAVOD.txt "$OUT/NAVOD.txt"
 # index.html: rozhranie volá api.php namiesto /api/…
