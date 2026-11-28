@@ -8,6 +8,12 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.21.3
+
+- Aktívna karta v pásoch (reels, vizuály, fotosady, weby) už nemá
+  farebný rám. Svetlá čiara okolo boxu bila do očí viac než samotná
+  karta. Žiara aj zväčšenie zostávajú — tie kartu označia dosť.
+
 ## 1.21.2
 
 - Úvodná obrazovka je prepísaná ako osobná prezentácia, nie zoznam

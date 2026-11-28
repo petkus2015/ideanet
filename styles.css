@@ -440,7 +440,9 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
   transform:scale(.9);opacity:.55;
   isolation:isolate;
 }
-.reel.is-active{transform:scale(1);opacity:1;border-color:rgba(255,45,148,.45);box-shadow:var(--shadow),0 0 70px -22px rgba(255,45,148,.85)}
+/* Aktívnu kartu označuje žiara a mierka, nie farebný rám — svetlá
+   čiara okolo boxu bije do očí viac než samotná karta. */
+.reel.is-active{transform:scale(1);opacity:1;box-shadow:var(--shadow),0 0 70px -22px rgba(255,45,148,.85)}
 .reel__media{position:absolute;inset:0}
 .reel__media img,.reel__media video{width:100%;height:100%;object-fit:cover}
 .reel__media video{position:absolute;inset:0;opacity:0;transition:opacity .35s}
@@ -553,7 +555,6 @@ section[id]{scroll-margin-top:clamp(72px,9vh,96px)}
 }
 .shot.is-active{
   transform:scale(1);opacity:1;
-  border-color:rgba(77,134,255,.5);
   box-shadow:var(--shadow), 0 0 70px -18px rgba(77,134,255,.95);
 }
 .shot img{width:100%;height:100%;object-fit:cover}
@@ -1202,7 +1203,6 @@ body.is-locked{overflow:hidden}
 }
 .set.is-active{
   transform:scale(1);opacity:1;
-  border-color:rgba(42,212,230,.5);
   box-shadow:var(--shadow), 0 0 70px -18px rgba(42,212,230,.8);
 }
 .set img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -1301,7 +1301,6 @@ body.is-locked{overflow:hidden}
 }
 .web.is-active{
   transform:scale(1);opacity:1;
-  border-color:rgba(139,43,255,.5);
   box-shadow:var(--shadow), 0 0 70px -18px rgba(139,43,255,.95);
 }
 
