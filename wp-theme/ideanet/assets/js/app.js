@@ -1323,3 +1323,143 @@
     if (e.key === 'ArrowLeft') { e.preventDefault(); krok(-1); }
   });
 })();
+
+/* ═══════════════════════════════════════════════
+   FOTKA NA STRED
+   Klik na fotku v značke ju prenesie doprostred
+   obrazovky, prstenec odpočíta päť sekúnd a fotka
+   sa vráti na svoje miesto.
+
+   Letí jeden prvok, nie dva: cieľová poloha sa
+   nastaví rovno a začiatok sa dorobí transformom
+   späť na miniatúru. Preto sa aj pri zmene veľkosti
+   okna trafí tam, kde fotka naozaj je.
+   ═══════════════════════════════════════════════ */
+(() => {
+  'use strict';
+
+  const znacky = [...document.querySelectorAll('.brand__mark')];
+  if (!znacky.length) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const CAS = 5000;          /* koľko fotka vydrží na strede */
+  const PRESTAVBA = 700;     /* poistka, keby transitionend neprišiel */
+
+  let vrstva = null, figura = null, obraz = null;
+  let zdroj = null, casovac = null, poistka = null, otvorene = false;
+
+  function postav() {
+    vrstva = document.createElement('div');
+    vrstva.className = 'foto-vrstva';
+    vrstva.hidden = true;
+    vrstva.innerHTML =
+      '<figure class="foto">' +
+        '<img alt="">' +
+        '<svg class="foto__prstenec" viewBox="0 0 100 100" aria-hidden="true">' +
+          '<circle class="foto__draha" cx="50" cy="50" r="48"></circle>' +
+          '<circle class="foto__cas" cx="50" cy="50" r="48"></circle>' +
+        '</svg>' +
+      '</figure>';
+    document.body.appendChild(vrstva);
+    figura = vrstva.querySelector('.foto');
+    obraz = vrstva.querySelector('img');
+    vrstva.addEventListener('click', zavri);
+  }
+
+  /* Kam fotka letí a aký transform ju vráti na miniatúru. */
+  function geometria() {
+    const r = zdroj.getBoundingClientRect();
+    const S = Math.round(Math.min(innerWidth * 0.62, innerHeight * 0.52, 320));
+    const tx = Math.round((innerWidth - S) / 2);
+    const ty = Math.round((innerHeight - S) / 2);
+    const naMiniaturu = 'translate(' + (r.left - tx) + 'px,' + (r.top - ty) + 'px) scale(' + (r.width / S) + ')';
+    return { S: S, tx: tx, ty: ty, naMiniaturu: naMiniaturu };
+  }
+
+  /* Prvý transitionend transformu, inak poistka. */
+  function poPrelete(co) {
+    let hotovo = false;
+    const raz = (e) => {
+      if (e && e.propertyName !== 'transform') return;
+      if (hotovo) return;
+      hotovo = true;
+      figura.removeEventListener('transitionend', raz);
+      clearTimeout(poistka);
+      co();
+    };
+    figura.addEventListener('transitionend', raz);
+    clearTimeout(poistka);
+    poistka = setTimeout(raz, PRESTAVBA);
+  }
+
+  function otvor(mark) {
+    if (otvorene) return;
+    if (!vrstva) postav();
+
+    const img = mark.querySelector('img');
+    if (!img) return;
+
+    otvorene = true;
+    zdroj = mark;
+    obraz.src = img.currentSrc || img.src;
+    obraz.alt = img.alt || '';
+
+    const g = geometria();
+    figura.style.width = g.S + 'px';
+    figura.style.height = g.S + 'px';
+    figura.style.left = g.tx + 'px';
+    figura.style.top = g.ty + 'px';
+
+    /* Posadiť na miniatúru bez animácie a až potom pustiť prechod. */
+    figura.classList.remove('is-max');
+    figura.style.transition = 'none';
+    figura.style.transform = g.naMiniaturu;
+    vrstva.hidden = false;
+    void figura.offsetWidth;
+
+    mark.style.visibility = 'hidden';
+
+    requestAnimationFrame(() => {
+      vrstva.classList.add('is-in');
+      figura.style.transition = '';
+      figura.style.transform = 'none';
+      poPrelete(() => {
+        figura.classList.add('is-max');     /* spustí prstenec */
+        casovac = setTimeout(zavri, CAS);
+      });
+    });
+  }
+
+  function zavri() {
+    if (!otvorene) return;
+    otvorene = false;
+    clearTimeout(casovac);
+
+    figura.classList.remove('is-max');
+    /* Medzitým sa mohlo skrolovať, tak sa pýtame nanovo. */
+    figura.style.transform = geometria().naMiniaturu;
+    vrstva.classList.add('is-out');
+    vrstva.classList.remove('is-in');
+
+    poPrelete(() => {
+      vrstva.hidden = true;
+      vrstva.classList.remove('is-out');
+      obraz.removeAttribute('src');
+      if (zdroj) zdroj.style.visibility = '';
+      zdroj = null;
+    });
+  }
+
+  znacky.forEach(mark => {
+    mark.style.cursor = 'pointer';
+    mark.addEventListener('click', (e) => {
+      e.preventDefault();      /* značka je odkaz — klik na fotku ho nesmie otvoriť */
+      e.stopPropagation();
+      otvor(mark);
+    });
+  });
+
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') zavri(); });
+  addEventListener('scroll', zavri, { passive: true });
+  addEventListener('resize', zavri);
+})();

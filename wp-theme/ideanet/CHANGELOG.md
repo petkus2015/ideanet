@@ -8,6 +8,16 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.22.0
+
+- Klik na fotku v značke ju prenesie doprostred obrazovky. Prstenec
+  okolo nej odpočíta päť sekúnd a fotka sa animáciou vráti späť na
+  svoje miesto. Zavrieť sa dá aj skôr — klikom, klávesom Esc alebo
+  odskrolovaním.
+- Funguje v hlavičke aj v pätičke, na mobile aj na počítači. Kto má
+  v systéme vypnuté animácie, tomu sa nespustí a klik na značku ho
+  ako doteraz vezme na úvod.
+
 ## 1.21.3
 
 - Aktívna karta v pásoch (reels, vizuály, fotosady, weby) už nemá
