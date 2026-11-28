@@ -10,7 +10,8 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c6cff'/%3E%3Cstop offset='1' stop-color='%2319b8e8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url%28%23g%29'/%3E%3Crect x='11' y='16' width='42' height='32' rx='6' fill='none' stroke='%23fff' stroke-width='4.5'/%3E%3Cpath d='M19 30h9M33 30h12M19 39h16M40 39h5' stroke='%23fff' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#060916">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 <link rel="canonical" href="https://subgen.ideanet.sk/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,400;0,700;1,800&family=Poppins:wght@400;700&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Cairo:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;700;900&display=swap">
@@ -714,6 +715,184 @@ input[type=range]{accent-color:#7c6cff}
 .drop:hover,.drop.over{border-color:#7c6cff;background:rgba(124,108,255,.08)}
 .drop strong{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-weight:600}
 .drop-icon{color:#19b8e8;text-shadow:0 0 18px rgba(25,184,232,.6)}
+/* ===== vzhľad: moderný, podľa Apple HIG pre web =====
+   systémové písmo, neutrálne plochy, jedna akcentová farba, svetlý aj tmavý režim podľa systému,
+   zaoblené karty, tlačidlá ako pilulky, priesvitné lišty s rozmazaním, krátke plynulé animácie.
+   Video, náhľady štýlov a strihová časová os ostávajú tmavé (obsah, nie rozhranie). */
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;--disp:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;--ease:cubic-bezier(.25,.1,.25,1);
+  color-scheme:dark;--bg:#000;--side:rgba(28,28,30,.72);--card:#1c1c1e;--card2:#2c2c2e;--card3:#3a3a3c;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);
+  --text:#f5f5f7;--text2:#d1d1d6;--muted:#98989d;--a:#0a84ff;--a-hover:#409cff;--b:#64d2ff;--on-a:#fff;--grad:var(--a);--sun:var(--a);
+  --hover:rgba(255,255,255,.07);--fill:rgba(118,118,128,.24);--sel:rgba(10,132,255,.2);--danger:#ff453a;--ok:#30d158;--warn:#ffd60a;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);--pop:#2c2c2e;--glass:saturate(180%) blur(20px)}
+@media (prefers-color-scheme:light){:root{color-scheme:light;--bg:#f5f5f7;--side:rgba(255,255,255,.72);--card:#fff;--card2:#f5f5f7;--card3:#e8e8ed;--line:rgba(0,0,0,.08);--line2:rgba(0,0,0,.14);
+  --text:#1d1d1f;--text2:#424245;--muted:#6e6e73;--a:#0071e3;--a-hover:#0077ed;--b:#0066cc;--hover:rgba(0,0,0,.05);--fill:rgba(118,118,128,.12);--sel:rgba(0,113,227,.1);
+  --danger:#d70015;--ok:#248a3d;--warn:#b25000;--shadow:0 1px 2px rgba(0,0,0,.04),0 8px 28px rgba(0,0,0,.08);--pop:#fff}}
+html,body{background:var(--bg)!important;color:var(--text)}
+body{font-family:var(--font);font-size:15px;line-height:1.47;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.app{background:var(--bg)!important}
+::selection{background:color-mix(in srgb,var(--a) 30%,transparent)}
+/* písmo: žiadne VEĽKÉ štítky s rozostupmi, hierarchia veľkosťou a hrúbkou */
+h1,h2,h3,.side-name,.step b,.plabel,.panel h3,.card h3,.card-title,.side-h,.lsec,.nav,.mbox h2,.mtabs button,.tb .lbl,.cbt,.ct-hd b,.tname,.fuse,.export-all,.btn,.mini,.mini-btn,.libpos button,.speeds button,.cut-head,.sellbl,.drop strong,.tr-btn,.trsubs-row label,.plan strong,.stat-card small{font-family:var(--disp);text-transform:none!important;letter-spacing:-.01em!important}
+h1{font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.025em!important;line-height:1.1}
+.grad{background:none!important;color:var(--text)!important;-webkit-text-fill-color:currentColor}
+.sub{color:var(--muted);font-size:15px;letter-spacing:-.01em;margin-top:6px}
+.plabel,.panel h3,.card h3,.side-h,.lsec,.sellbl,.card-title{font-size:13px!important;font-weight:600!important;color:var(--text)!important}
+.lsec{font-size:17px!important;margin:28px 0 12px}
+/* plochy */
+.side{background:var(--side)!important;-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);border-right:1px solid var(--line)!important}
+.card,.panel,.steps,#timelineCard,.lcard,.fcard,.out,.stat-card,.plan{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:var(--shadow);-webkit-backdrop-filter:none;backdrop-filter:none}
+.card,.panel{padding:18px 20px}
+.mbox,.selbar,.setmenu,.spk-menu{background:var(--pop)!important;border:1px solid var(--line2)!important;border-radius:14px!important;box-shadow:0 20px 60px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.12)!important}
+.mbox{border-radius:20px!important;padding:30px 28px 24px}
+.modal{background:rgba(0,0,0,.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.logo,.side .logo,.mlogo{background:var(--a)!important;box-shadow:none!important;border-radius:10px;color:#fff}
+.avatar{background:var(--card3)!important;color:var(--text)!important;box-shadow:none!important}
+.side-name{font-size:17px!important;font-weight:700;letter-spacing:-.02em!important}
+/* navigácia */
+.nav{font-size:15px;color:var(--text2);border-radius:10px;padding:10px 12px;min-height:44px}
+.nav.on{background:var(--fill)!important;color:var(--text)!important;box-shadow:none!important}
+.nav[data-page]:not(.on):hover{background:var(--hover);color:var(--text)}
+[dir=rtl] .nav.on{box-shadow:none!important}
+/* kroky */
+.steps{padding:6px!important;border-radius:16px!important;background:var(--side)!important;-webkit-backdrop-filter:var(--glass)!important;backdrop-filter:var(--glass)!important}
+.step{border-radius:12px!important;border:0!important;color:var(--muted);min-height:44px;transition:background .2s var(--ease)}
+.step:hover:not(:disabled){background:var(--hover)}
+.step b{font-size:15px!important;font-weight:600!important;color:var(--text2)!important}
+.step .ic{border-radius:50%!important;border:0!important;background:var(--fill)!important;color:var(--text2);box-shadow:none!important}
+.step.on{background:var(--card)!important;box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 1px var(--line)!important}
+.step.on b{color:var(--text)!important}
+.step.on .ic{background:var(--a)!important;color:#fff!important}
+/* tlačidlá: hlavné plné v akcentovej farbe, ostatné sivé pilulky */
+.export-all{background:var(--a)!important;color:var(--on-a)!important;border:0;border-radius:980px!important;font-size:17px!important;font-weight:600;padding:14px 22px;min-height:50px;box-shadow:none!important;transition:background .2s var(--ease),transform .2s var(--ease)}
+.export-all:hover:not(:disabled){background:var(--a-hover)!important;transform:none}
+.export-all:active:not(:disabled){transform:scale(.98)}
+.btn,.mini,.mini-btn,.fuse,.libpos button,.row-btns button,.stat-refresh,.seg-btns button,.add-btn,.tr-btn,.login-btn,.gear,.icon-btn,.tl-play,.transport button,.asr-banner button{background:var(--fill)!important;border:0!important;color:var(--text)!important;border-radius:980px!important;font-size:14px!important;font-weight:500;letter-spacing:-.01em!important;transition:background .2s var(--ease)}
+.btn{padding:10px 20px;min-height:44px}
+.mini,.mini-btn,.fuse,.libpos button,.row-btns button,.seg-btns button,.add-btn,.tr-btn{min-height:36px;padding:7px 14px}
+.btn:hover,.mini:hover,.mini-btn:hover,.fuse:hover,.libpos button:hover,.row-btns button:hover,.stat-refresh:hover,.seg-btns button:hover,.add-btn:hover,.tr-btn:hover,.tr-btn[aria-expanded=true],.login-btn:hover,.gear:hover,.gear[aria-expanded=true],.icon-btn:hover,.tl-play:hover,.asr-banner button:hover{background:var(--card3)!important;color:var(--text)!important}
+.login-btn{border-radius:12px!important;justify-content:flex-start}
+.gear,.icon-btn{border-radius:50%!important}
+.gear{width:44px;height:44px}
+.icon-btn{width:36px;height:36px}
+.tl-play{width:40px;height:40px}
+.fcard.on .fuse,.libpos button.on,.mini-btn.on,.seg-btns button.on{background:var(--a)!important;color:#fff!important}
+.tr-btn svg,.support-link svg,.segments .segment button:first-child,.trsubs-arrow,.drop-icon{color:var(--a)!important;text-shadow:none!important}
+.btn-stop{background:color-mix(in srgb,var(--danger) 14%,transparent)!important;border:0!important;color:var(--danger)!important;border-radius:980px!important;min-height:44px}
+.btn-stop:hover{background:var(--danger)!important;color:#fff!important}
+.ghost-btn{border:0!important;background:var(--fill)!important;color:var(--text)!important;border-radius:980px!important;min-height:40px;font-size:14px}
+.ghost-btn:hover{background:var(--card3)!important}
+.ghost-btn svg{color:var(--a)}
+.mlink,.acct-set{color:var(--a)!important}
+/* výbery: dlaždice, voľby, prepínače */
+.opt,.trt,.speeds button,.cbt,.spk-row,.segment,.part{border-radius:12px!important;background:var(--card2)!important;border:1px solid transparent!important;color:var(--text2)}
+.opt:hover,.trt:hover,.speeds button:hover,.cbt:hover:not(:disabled){background:var(--card3)!important}
+.opt.on,.trt.on,.speeds button.on{background:var(--sel)!important;border-color:var(--a)!important;color:var(--text)!important;box-shadow:none!important}
+.tile,.atile,.stile{border-radius:14px!important;border:1px solid var(--line2)!important;box-shadow:none!important}
+.tile.on,.atile.on,.stile.on,.lcard.on,.fcard.on{border-color:var(--a)!important;box-shadow:0 0 0 2px var(--a)!important}
+.tile .tname,.atile .tname{background:var(--card2)!important;color:var(--text2)!important;font-size:12px;padding:6px 0}
+.tile.on .tname,.atile.on .tname{color:var(--a)!important;font-weight:600}
+.cbt svg{color:var(--a)}
+.spk-row.on{background:color-mix(in srgb,var(--c) 14%,var(--card2))!important;border-color:var(--c)!important;box-shadow:none!important}
+.segment{border:1px solid transparent!important}
+.segment.active{border-color:var(--a)!important}
+.segment.sel{background:var(--sel)!important;border-color:var(--a)!important}
+.segments.spk-on .segment{border-left:3px solid var(--c)!important}
+[dir=rtl] .segments.spk-on .segment{border-left:1px solid transparent!important;border-right:3px solid var(--c)!important}
+.sw{background:var(--card3);width:51px;height:31px}
+.sw::after{width:27px;height:27px;top:2px;left:2px;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.sw[aria-checked=true]::after{left:22px}
+.sw[aria-checked=true],.switch[aria-checked=true],[role=switch][aria-checked=true]{background:var(--ok)!important}
+.mtabs{background:var(--fill)!important;border-radius:10px!important;padding:2px}
+.mtabs button{border-radius:8px!important;font-size:14px;color:var(--text)!important;min-height:36px}
+.mtabs button.on{background:var(--card)!important;color:var(--text)!important;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+/* formuláre */
+select,input[type=color],.mform input,.seg-search,.brand-tools input[type=text],.lang-note select,.trsubs-row select,#tlSpeed{background-color:var(--card2)!important;color:var(--text)!important;border:1px solid var(--line2)!important;border-radius:10px!important;font-size:15px;min-height:40px}
+select:focus,.mform input:focus,.seg-search:focus,.brand-tools input[type=text]:focus{border-color:var(--a)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--a) 25%,transparent);outline:none}
+.seg-search{font-size:15px}
+input[type=range]{accent-color:var(--a)!important}
+.segment textarea{font-size:15px;line-height:1.4;color:var(--text)}
+.segment button,.segments .segment button:first-child{color:var(--a)!important;font-size:13px;font-variant-numeric:tabular-nums}
+/* nahratie */
+.drop{background:var(--card2)!important;border:2px dashed var(--line2)!important;border-radius:18px!important;padding:56px 24px!important;transition:border-color .2s var(--ease),background .2s var(--ease)}
+.drop:hover,.drop.over{border-color:var(--a)!important;background:var(--sel)!important}
+.drop strong{font-size:19px;font-weight:600}
+.drop-icon{font-size:34px}
+.fdrop{border-radius:14px;color:var(--text2)}
+.fdrop:hover,.fdrop.over{background:var(--sel)!important;border-color:var(--a)}
+.rowlang,.card-title,.out-head,summary,.check,.mform label,.mfeat,.side-set label,.spk-group,.fdrop{color:var(--text2)!important}
+.rowlang{font-size:15px}
+summary{font-size:15px;min-height:44px;align-items:center}
+/* stav, priebeh, hlásenia */
+.bar{background:var(--fill)!important;height:6px}
+.bar i,.out-prog .bar i,.plan .bar i{background:var(--a)!important}
+.spinner{border-color:var(--fill);border-top-color:var(--a)}
+.asr-banner{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:var(--shadow)}
+.asr-banner.err{background:color-mix(in srgb,var(--danger) 10%,var(--card))!important;border-color:color-mix(in srgb,var(--danger) 40%,transparent)!important}
+.banner{background:color-mix(in srgb,var(--warn) 12%,var(--card));border:1px solid color-mix(in srgb,var(--warn) 35%,transparent);color:var(--text);border-radius:14px}
+.error,.mmsg{color:var(--danger)}
+.mok,.mmsg.ok{color:var(--ok)}
+.plan strong{background:none!important;-webkit-text-fill-color:currentColor;color:var(--text)!important;font-size:22px;font-weight:700}
+.stat-card strong{font-weight:700;letter-spacing:-.02em}
+.lg .c1{background:var(--a)}
+/* menu účtu */
+.acct{border-radius:12px;min-height:52px}
+.acct:hover,.acct[aria-expanded=true]{background:var(--hover)!important;border-color:transparent!important}
+.acct-chev{color:var(--muted)!important}
+.support-link{border:0!important;background:var(--fill);border-radius:12px;min-height:44px}
+.support-link:hover{background:var(--card3)!important}
+.side-empty{border-radius:14px;font-size:14px}
+.spk-menu button:hover,.spk-menu button:focus-visible{background:var(--hover)!important}
+.spk-menu .check{color:var(--a)}
+.trsubs{background:var(--card2)!important;border:0!important;border-radius:14px!important}
+.trsubs-row label{font-size:12px!important;color:var(--muted)!important;font-weight:500}
+.lang-note span{color:var(--text)}
+@media(max-width:1000px){.setmenu{background:var(--pop)!important}}
+/* text, ktorý bol natvrdo biely, sa riadi režimom */
+.fsample{color:var(--text)!important}
+.cut-head .dot{background:var(--text)}
+.sel-x:hover,.acct:hover .acct-chev,.acct[aria-expanded=true] .acct-chev{color:var(--text)!important}
+.ftag.own{border-color:var(--line2);color:var(--warn)}.ftag.shared{border-color:var(--line2);color:var(--ok)}
+.spk-del:hover{color:var(--danger);border-color:transparent;background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.chip.active,.ctr.sel{outline-color:var(--a)}
+/* náhľady a obsah ostávajú tmavé aj vo svetlom režime */
+.tile .tsample,.atile .asmp,.sample,.stile{background:#2c2c2e!important}
+.pv canvas,.out-result,.lcard canvas{border-radius:10px}
+/* časová os strihu: tmavá pracovná plocha s akcentovou farbou namiesto neónov */
+#timelineCard.cut-mode{background:#1c1c1e!important;border-color:#000!important}
+.ct-tools,.ct-heads,.ct-tc{background:#2c2c2e!important}
+.clip{background:#1f2a44!important;box-shadow:inset 0 0 0 1px rgba(10,132,255,.6)!important}
+.clip .cl-name{background:#24406b!important}
+.clip.sel{box-shadow:inset 0 0 0 2px #ffd60a!important}
+.clip.sel .cl-name{background:#0a84ff!important}
+.trim{background:#ffd60a!important}
+.aclip{background:#10302a!important;box-shadow:inset 0 0 0 1px rgba(48,209,88,.55)!important}
+.aclip.sel{box-shadow:inset 0 0 0 2px #ffd60a!important}
+.ct-playhead,.tl-playhead{background:#ff453a!important;box-shadow:none!important}
+.ct-playhead::before{background:#ff453a!important}
+.ctr.on{background:#0a84ff!important;color:#fff!important}
+.ct-hd::before{background:#0a84ff}.ct-hd.a::before{background:#30d158}
+.tb.red svg{color:#ff453a}
+.ct-add{border-color:rgba(10,132,255,.6);background:rgba(10,132,255,.14)}
+.ct-add:hover{background:rgba(10,132,255,.3);border-color:#0a84ff}
+.tl-scroll{border-radius:12px;background:var(--card2)}
+.tl-band{background:color-mix(in srgb,var(--a) 22%,transparent);border-color:var(--a)}
+/* prístupnosť: viditeľné zameranie, dostatočné ciele dotyku */
+:focus-visible{outline:3px solid color-mix(in srgb,var(--a) 70%,transparent)!important;outline-offset:2px}
+.segments .spk{min-height:32px}
+/* priečinkové lišty pre RTL a jazyky so špeciálnym písmom */
+:root[lang=ar] body{font-family:"Cairo",var(--font)}
+:root[lang=hi] body{font-family:var(--font),"Noto Sans Devanagari"}
+:root[lang=zh] body{font-family:var(--font),"Noto Sans SC"}
+/* pohyb */
+.card,.tile,.atile,.opt,.trt,.lcard,.fcard{transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease),transform .2s var(--ease)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media(max-width:820px){
+  .side{position:sticky!important;top:0;z-index:70;padding:10px 16px!important;padding-top:max(10px,env(safe-area-inset-top))!important;border-bottom:1px solid var(--line)!important}
+  .content{padding:20px 16px calc(24px + env(safe-area-inset-bottom))}
+  .step b{font-size:12px!important}
+  .steps{top:64px}
+  .card,.panel{padding:16px}
+}
 </style>
 </head>
 <body>
