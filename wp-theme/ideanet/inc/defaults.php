@@ -71,8 +71,8 @@ function ideanet_defaults() {
 		'webdizajn_cta'     => 'Živý náhľad',
 
 		'sluzby_eyebrow' => 'Služby',
-		'sluzby_title'   => 'Tri spôsoby spolupráce',
-		'sluzby_note'    => 'Vyberte si, čo sedí na vašu situáciu. Každá cesta má vlastný cenník — kliknutím sa dostanete rovno k nemu.',
+		'sluzby_title'   => 'Štyri spôsoby spolupráce',
+		'sluzby_note'    => 'Vyberte si, čo sedí na vašu situáciu. Pri prvých troch sa kliknutím dostanete rovno k cenníku, kontrakt riešime dohodou.',
 
 		'vcene_title' => 'Čo je vždy v cene',
 		'vcene_note'  => 'Rovnaký štandard pri každom balíku — nič z tohto nie je príplatok.',

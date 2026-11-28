@@ -93,18 +93,17 @@ function ideanet_post_types() {
 		),
 
 		'ideanet_sluzba' => array(
-			'labels'   => array( 'Služba', 'Služby (tri cesty)' ),
+			'labels'   => array( 'Služba', 'Služby (cesty spolupráce)' ),
 			'menu'     => 'dashicons-screenoptions',
 			'supports' => array( 'title', 'editor', 'page-attributes' ),
-			'help'     => 'Tri karty v sekcii Služby. Obsah je odsek pod nadpisom.',
+			'help'     => 'Karty v sekcii Služby. Obsah je odsek pod nadpisom. Ceny sem nepatria — tie sú v cenníku.',
 			'fields'   => array(
 				'tag'      => array( 'Štítok', 'text', 'Napríklad Pre firmy.' ),
 				'features' => array( 'Odrážky', 'textarea', 'Jedna na riadok.' ),
-				'price'    => array( 'Cena', 'text', 'Napríklad od <b>390 €</b> / mesiac — tučné písmo cez &lt;b&gt;.' ),
-				'target'   => array( 'Otvorí v cenníku', 'select', 'Na ktorú záložku cenníka karta odkazuje.', array(
-					'firmy'    => 'Pre firmy',
-					'agentury' => 'Pre agentúry',
-					'eventy'   => 'Eventy',
+				'note'     => array( 'Riadok pod odrážkami', 'text', 'Krátka veta na spodku karty — napríklad Polovičný úväzok alebo dohodou. Ceny sem nepíšte, tie patria do cenníka. Tučné písmo cez &lt;b&gt;.' ),
+				'target'   => array( 'Kam karta vedie', 'select', 'Cenník pre karty s balíkmi, kontakt tam, kde sa rozsah dohaduje.', array(
+					'cennik'  => 'Cenník',
+					'kontakt' => 'Kontakt',
 				) ),
 				'best'     => array( 'Zvýrazniť kartu', 'checkbox', 'Vyzdvihne kartu farebným rámom.' ),
 			),

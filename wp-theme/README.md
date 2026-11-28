@@ -49,13 +49,28 @@ hľadajú najčastejšie, sú hneď pod ňou: **Kontakt a siete** a **Formulár*
 | Ukážky vizuálov | **Vizuály a identita** |
 | Ceny a balíky v cenníku | **Balíky a ceny** |
 | Referencie klientov | **Referencie** |
-| Tri karty v sekcii Služby | **Služby** |
+| Karty v sekcii Služby (cesty spolupráce) | **Služby** |
 | Kroky v sekcii Proces | **Proces** |
 | Podmienky spolupráce | **Podmienky** |
 | Dopyty, ktoré prišli z formulára | **Prijaté dopyty** |
 | Fotku vedľa mena | Prispôsobiť → IDEANET → Značka a hlavička |
 | E-mail, telefón, prezývku, fakty pod kontaktom | IDEANET → **Kontakt a siete** |
 | Kam chodia dopyty, popisy polí, hlášky formulára | IDEANET → **Formulár** |
+
+### Služby — cesty spolupráce
+
+Karty nad cenníkom. Každá je jeden záznam v IDEANET → **Služby**, poradie
+nastavíte cez *Poradie* v boxe Vlastnosti stránky.
+
+- **Nadpis** je názov cesty, **obsah** odsek pod ním, **Štítok** je
+  bublina hore.
+- **Odrážky** sú štítky pod textom, jedna na riadok.
+- **Riadok pod odrážkami** je veta na spodku karty, oddelená čiarou —
+  napríklad *Polovičný úväzok alebo dohodou*. **Ceny sem nepíšte**,
+  tie patria do cenníka; v tejto sekcii sa neuvádzajú.
+- **Kam karta vedie**: *Cenník* pre karty s balíkmi, *Kontakt* tam, kde
+  sa rozsah dohaduje.
+- **Zvýrazniť kartu** dá karte farebný rám. Zapnite ho najviac jednej.
 
 ### Video v úvodnej obrazovke
 

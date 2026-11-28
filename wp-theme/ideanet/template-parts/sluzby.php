@@ -1,6 +1,9 @@
 <?php
 /**
- * Služby — tri cesty spolupráce a zoznam „čo je vždy v cene".
+ * Služby — cesty spolupráce a zoznam „čo je vždy v cene".
+ *
+ * Ceny sem nepatria. Karta vedie do cenníka, alebo rovno na kontakt,
+ * keď sa rozsah dohaduje.
  *
  * @package IDEANET
  */
@@ -22,7 +25,8 @@ $vcene = ideanet_lines( 'vcene_items' );
 					$target = ideanet_meta( $lane->ID, 'target' );
 					$items  = array_filter( array_map( 'trim', preg_split( '/\R/', ideanet_meta( $lane->ID, 'features' ) ) ) );
 					?>
-					<a class="lane<?php echo $best ? ' lane--best' : ''; ?> reveal" href="#cennik" data-tab="<?php echo esc_attr( $target ? $target : 'firmy' ); ?>">
+					<?php $kontakt = ( 'kontakt' === $target ); ?>
+					<a class="lane<?php echo $best ? ' lane--best' : ''; ?> reveal" href="<?php echo $kontakt ? '#kontakt' : '#cennik'; ?>">
 						<?php if ( ideanet_meta( $lane->ID, 'tag' ) ) : ?>
 							<span class="lane__tag"><?php echo esc_html( ideanet_meta( $lane->ID, 'tag' ) ); ?></span>
 						<?php endif; ?>
@@ -35,8 +39,8 @@ $vcene = ideanet_lines( 'vcene_items' );
 								<?php endforeach; ?>
 							</ul>
 						<?php endif; ?>
-						<?php if ( ideanet_meta( $lane->ID, 'price' ) ) : ?>
-							<span class="lane__price"><?php echo wp_kses( ideanet_meta( $lane->ID, 'price' ), ideanet_kses() ); ?></span>
+						<?php if ( ideanet_meta( $lane->ID, 'note' ) ) : ?>
+							<span class="lane__note"><?php echo wp_kses( ideanet_meta( $lane->ID, 'note' ), ideanet_kses() ); ?></span>
 						<?php endif; ?>
 					</a>
 				<?php endforeach; ?>

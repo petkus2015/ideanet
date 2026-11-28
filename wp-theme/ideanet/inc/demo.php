@@ -97,17 +97,17 @@ function ideanet_seed() {
 			'Poviete mi, čo potrebujete komunikovať. Navrhnem témy, raz mesačne prídem a za pár hodín vznikne obsah na celý mesiac.',
 			'Pre firmy',
 			"1 – 2 Reels mesačne\nNámety v cene\nFixná mesačná cena",
-			'od <b>390 €</b> / mesiac',
-			'firmy',
+			'',
+			'cennik',
 			'',
 		),
 		array(
 			'White-label produkcia',
 			'Preberám celú produkčnú časť Reels pre vašich klientov. Vy komunikujete s klientom, ja natáčam a strihám. Fakturujem vám, nie im.',
 			'Pre agentúry',
-			"Natáčanie + hotové Reels\nDodanie do 24 hodín\nNDA za 30 €",
-			'od <b>120 €</b> / produkcia',
-			'agentury',
+			"Natáčanie + hotové Reels\nDodanie do 24 hodín\nNDA na požiadanie",
+			'',
+			'cennik',
 			'1',
 		),
 		array(
@@ -115,8 +115,17 @@ function ideanet_seed() {
 			'Konferencia, otvorenie prevádzky alebo launch — hlavné video dostanete ešte v deň eventu, pripravené na IG aj TikTok.',
 			'Eventy',
 			"Same-day Reel alebo do 24 h\nRezervovaný termín",
-			'od <b>350 €</b> / event',
-			'eventy',
+			'',
+			'cennik',
+			'',
+		),
+		array(
+			'Kontrakt',
+			'Keď video nepotrebujete po kampaniach, ale stále. Dohodneme pevný rozsah hodín v mesiaci, ja ich držím voľné a vy neriešite zakaždým termín ani novú ponuku.',
+			'Dlhodobo',
+			"Pevne rezervovaný čas každý mesiac\nNatáčanie, strih aj grafika pod jednou rukou\nPrednosť pri súrnych termínoch",
+			'Polovičný úväzok alebo dohodou — podľa voľných kapacít.',
+			'kontakt',
 			'',
 		),
 	);
@@ -129,7 +138,7 @@ function ideanet_seed() {
 			array(
 				'tag'      => $s[2],
 				'features' => $s[3],
-				'price'    => $s[4],
+				'note'     => $s[4],
 				'target'   => $s[5],
 				'best'     => $s[6],
 			),
@@ -462,6 +471,93 @@ function ideanet_weby_setup() {
 	update_option( 'ideanet_weby_setup', 1 );
 }
 add_action( 'admin_init', 'ideanet_weby_setup' );
+
+/**
+ * Štvrtá cesta spolupráce — Kontrakt — a ceny preč z kariet služieb.
+ *
+ * Karty vznikli pri aktivácii, takže na už bežiacom webe sa nová sama
+ * neobjaví. Ceny z nich idú preč, patria do cenníka; mažú sa len tie
+ * nasadené témou, čo si niekto prepísal, zostáva v databáze.
+ */
+function ideanet_kontrakt_setup() {
+	if ( get_option( 'ideanet_kontrakt_setup' ) ) {
+		return;
+	}
+
+	ideanet_register_post_types();
+
+	$sluzby = get_posts(
+		array(
+			'post_type'      => 'ideanet_sluzba',
+			'post_status'    => 'any',
+			'posts_per_page' => 50,
+			'orderby'        => 'menu_order',
+			'order'          => 'ASC',
+		)
+	);
+
+	/* Nerobíme nič na webe, kde sekcia Služby ani nevznikla. */
+	if ( ! $sluzby ) {
+		update_option( 'ideanet_kontrakt_setup', 1 );
+		return;
+	}
+
+	$nasadene = array(
+		'od <b>390 €</b> / mesiac',
+		'od <b>120 €</b> / produkcia',
+		'od <b>350 €</b> / event',
+	);
+
+	$posledny = 0;
+	$uz_je    = false;
+
+	foreach ( $sluzby as $sluzba ) {
+		$posledny = max( $posledny, (int) $sluzba->menu_order );
+
+		if ( 'Kontrakt' === $sluzba->post_title ) {
+			$uz_je = true;
+		}
+
+		$cena = get_post_meta( $sluzba->ID, '_ideanet_price', true );
+		if ( in_array( $cena, $nasadene, true ) ) {
+			delete_post_meta( $sluzba->ID, '_ideanet_price' );
+		}
+
+		$odrazky = get_post_meta( $sluzba->ID, '_ideanet_features', true );
+		if ( is_string( $odrazky ) && false !== strpos( $odrazky, 'NDA za 30 €' ) ) {
+			update_post_meta( $sluzba->ID, '_ideanet_features', str_replace( 'NDA za 30 €', 'NDA na požiadanie', $odrazky ) );
+		}
+	}
+
+	if ( ! $uz_je ) {
+		ideanet_seed_post(
+			'ideanet_sluzba',
+			'Kontrakt',
+			'Keď video nepotrebujete po kampaniach, ale stále. Dohodneme pevný rozsah hodín v mesiaci, ja ich držím voľné a vy neriešite zakaždým termín ani novú ponuku.',
+			array(
+				'tag'      => 'Dlhodobo',
+				'features' => "Pevne rezervovaný čas každý mesiac\nNatáčanie, strih aj grafika pod jednou rukou\nPrednosť pri súrnych termínoch",
+				'note'     => 'Polovičný úväzok alebo dohodou — podľa voľných kapacít.',
+				'target'   => 'kontakt',
+			),
+			$posledny + 1
+		);
+	}
+
+	/* Nadpis sekcie hovoril o troch cestách a o cenníku pri každej. */
+	$stary_nadpis = 'Tri spôsoby spolupráce';
+	if ( $stary_nadpis === get_theme_mod( 'ideanet_sluzby_title', $stary_nadpis ) ) {
+		set_theme_mod( 'ideanet_sluzby_title', 'Štyri spôsoby spolupráce' );
+	}
+
+	$stara_veta = 'Vyberte si, čo sedí na vašu situáciu. Každá cesta má vlastný cenník — kliknutím sa dostanete rovno k nemu.';
+	if ( $stara_veta === get_theme_mod( 'ideanet_sluzby_note', $stara_veta ) ) {
+		set_theme_mod( 'ideanet_sluzby_note', 'Vyberte si, čo sedí na vašu situáciu. Pri prvých troch sa kliknutím dostanete rovno k cenníku, kontrakt riešime dohodou.' );
+	}
+
+	update_option( 'ideanet_kontrakt_setup', 1 );
+}
+add_action( 'admin_init', 'ideanet_kontrakt_setup' );
 
 /**
  * Podstránka s ponukou redizajnu webov a dve ukážky pred/po.

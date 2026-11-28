@@ -8,6 +8,24 @@ Pri nahrávaní novej témy cez Vzhľad → Témy → Pridať novú → Nahrať 
 WordPress ukáže obe čísla vedľa seba — súčasné a nahrávané —, takže je
 vidieť, čo sa čím nahrádza.
 
+## 1.20.0
+
+- Štvrtá cesta spolupráce — **Kontrakt**. Pre klientov, ktorí nechcú
+  video po kampaniach, ale priebežne; rozsah sa dohaduje, preto karta
+  vedie rovno na kontakt, nie do cenníka.
+- **Ceny z kariet služieb sú preč.** Patria do cenníka a karty naň aj
+  tak odkazujú; dve ceny na jednej stránke sa rozchádzajú hneď, ako sa
+  jedna z nich zmení. Pole *Cena* vystriedal *Riadok pod odrážkami* —
+  krátka veta na spodku karty, napríklad *Polovičný úväzok alebo
+  dohodou*. Ceny, ktoré nasadila téma, sa pri aktualizácii zmažú;
+  čo ste si tam napísali sami, zostane v databáze, len sa už
+  nezobrazí.
+- Nadpis sekcie hovoril o troch cestách a o tom, že každá má vlastný
+  cenník. Oboje sa opravilo — ak ste si text neprepísali.
+- V odrážke *NDA za 30 €* bola tiež cena, je z nej *NDA na požiadanie*.
+- Pole *Otvorí v cenníku* ponúkalo tri záložky, ktoré v cenníku už
+  nie sú. Zostal výber **Cenník** alebo **Kontakt**.
+
 ## 1.19.4
 
 - Skrolovanie stránky cez pás už pásom nepohýba. Keď kurzor prešiel
