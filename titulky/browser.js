@@ -60,7 +60,7 @@ const PRESETS = [
   { hl: "#f8a0b6", id: "cerveny", name: "PS red", font: "Montserrat", italic: true, weight: 800, color: "#ffffff", stroke: "#f50306", strokeW: 0.2, lineH: 1.35, bg: "#000000", bgOpacity: 0, size: 6.8, bold: true, highlight: true, y: 0.5, position: "middle" }, // ako PS blue, len červený
   { hl: "#ffffff", id: "slowdown", name: "Slow down", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.4, bold: true, anim: "slowdown", lineH: 1.3, y: 0.58, position: null },
   // Prime: VEĽKÉ písmená, vyslovované slovo v karamelovom rámčeku, ešte nevyslovené slová priesvitné (štýl reels)
-  { hl: "#cc925c", id: "prime", name: "Prime", font: "Poppins", weight: 600, color: "#ffffff", shadow: true, bg: "#000000", bgOpacity: 0, size: 5.6, bold: true, caps: true, anim: "box", snap: true, boxText: "#ffffff", dimNext: 0.45, lineH: 1.45, y: 0.47, position: null },
+  { hl: "#cca06c", id: "prime", name: "Prime", font: "Inter", weight: 700, color: "#ffffff", shadow: false, bg: "#000000", bgOpacity: 0, size: 5.6, bold: true, caps: true, anim: "box", snap: true, boxText: "#ffffff", dimNext: 0.55, lineH: 1.5, y: 0.47, position: null },
   { hl: "#ffe066", id: "dynamic", name: "Dynamický", dynamic: true, roam: true, caps: true, y: 0.6, font: "Inter", color: "#ffffff", bg: "#000000", bgOpacity: 0, size: 8, bold: true },
 ];
 const state = { aspect: "9:16", style: { ...PRESETS[0], preset: "modern", highlight: false, on: true, anim: "none" },
@@ -2513,7 +2513,7 @@ async function recordAspect(aspect, onProgress, job) {
   if (!window.MediaRecorder) throw new Error("Tento prehliadač nevie nahrávať video. Použi Chrome, Edge alebo Firefox.");
   const { W, H } = exportSize(aspect), st = styleFor(aspect), stOf = (sp, seg) => styleFor(aspect, sp, seg), crop = { ...state.crop[aspect] };
   { const all = state.segments.map((x) => x.text).join(" "); await Promise.all(SCRIPTS.filter((sc) => sc.re.test(all)).flatMap((sc) => [400, 700, 800].map((w) => document.fonts.load(`${w} 40px "${sc.font}"`, all.slice(0, 300)).catch(() => {})))); } // písma pre arabčinu, hindčinu, čínštinu
-  await Promise.all([st, ...state.spk.map((x) => stOf(x.id)), ...state.segments.filter((x) => x.styleOv).map((x) => stOf(x.speaker || 1, x))].flatMap((x) => [400, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`).catch(() => {}))));
+  await Promise.all([st, ...state.spk.map((x) => stOf(x.id)), ...state.segments.filter((x) => x.styleOv).map((x) => stOf(x.speaker || 1, x))].flatMap((x) => [400, 600, 700, 800].map((wt) => document.fonts.load(`${x.italic ? "italic " : ""}${wt} 40px "${x.font}"`, LATIN_X).catch(() => {}))));
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
   const ev = await makeConcat(false);
@@ -2878,7 +2878,7 @@ function drawChunk(ctx, c, t, W, H, st) {
       const o = c.words[k], text = st.caps ? o.w.toUpperCase() : o.w.toLowerCase();
       const px = base * (li === 0 ? 1 : 0.82);
       const font = `${st.bold ? 800 : 600} ${px}px "${st.font}", ${SCRIPT_FALLBACK}`; // jeden druh písma pre všetky slová
-      ctx.font = font;
+      ctx.font = font; warmFont(font.replace(/[\d.]+px/, "40px"));
       arr.push({ o, k, font, px, text, w: ctx.measureText(text).width });
     }
     lines.push(arr);
@@ -2939,10 +2939,16 @@ const RTL_RE = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
 const isRtl = (text) => RTL_RE.test(text || "");
 const easeBack = (k) => { const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); }; // s miernym preskokom
 const lumOf = (hex) => { const [r, g, b] = rgbOf(hex).split(",").map(Number); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; };
+// Písmo z Google Fonts je rozdelené podľa znakov; canvas si sám nevypýta časť s diakritikou (Č, Š, Ž, ľ…),
+// preto sa pri prvom použití písma načíta aj ona a kým nie je, nakreslí sa náhradným písmom len na okamih.
+const LATIN_X = "AaČčŠšŽžŤťĎďŇňĽľĹĺŔŕÁáÄäÉéÍíÓóÔôÚúÝýĚěŘřŮůŁłĄąĘęŃńŚśŹźŻżĞğİıŞşÇçÖöÜüÑñ¿¡";
+const fontWarm = new Set();
+function warmFont(font) { if (fontWarm.has(font)) return; fontWarm.add(font); try { document.fonts.load(font, LATIN_X).catch(() => {}); } catch {} }
 function drawCaption(ctx, seg, t, W, H, st) {
   const anim = st.anim || "none";
   const px = Math.min(W, H) * st.size / 100, lh = px * (st.lineH ?? 1.25), padX = st.bgOpacity > 0 ? px * .3 : 0;
   ctx.font = `${st.italic ? "italic " : ""}${st.weight ?? (st.bold ? 700 : 400)} ${px}px "${st.font}", ${SCRIPT_FALLBACK}`;
+  warmFont(`${st.italic ? "italic " : ""}${st.weight ?? (st.bold ? 700 : 400)} 40px "${st.font}"`);
   ctx.textBaseline = "middle"; ctx.lineJoin = "round";
   const words = wordsFor(seg); if (st.caps) words.forEach((o) => { o.w = o.w.toLocaleUpperCase(); });
   let active = -1; words.forEach((o, n) => { if (t >= o.start) active = n; });
@@ -2977,9 +2983,14 @@ function drawCaption(ctx, seg, t, W, H, st) {
   const hl = st.hl || "#ffe066";
   if (anim === "box" && active >= 0) { // farebný rámček, ktorý plynulo prejde na vyslovené slovo
     const a = pos[active], b = pos[Math.max(0, active - 1)], k = active > 0 && !st.snap ? easeOut(clamp((t - words[active].start) / 0.12, 0, 1)) : 1;
-    const bx = b.x + (a.x - b.x) * k, bw = b.ww + (a.ww - b.ww) * k, by = b.y + (a.y - b.y) * k, pad = px * 0.18;
+    const bx = b.x + (a.x - b.x) * k, bw = b.ww + (a.ww - b.ww) * k, by = b.y + (a.y - b.y) * k;
+    let pad = px * 0.18, top = by - px * 0.62, h = px * 1.24, rad = px * 0.22;
+    if (st.caps) { // VEĽKÉ písmená: rámček presne okolo výšky veľkých písmen, text v ňom vycentrovaný (ako v návrhu)
+      const m = ctx.measureText("H"), asc = m.actualBoundingBoxAscent, desc = m.actualBoundingBoxDescent, cap = asc + desc;
+      if (cap > 0) { const mid = by + (desc - asc) / 2; h = cap * 1.72; top = mid - h / 2; pad = cap * 0.2; rad = cap * 0.24; }
+    }
     ctx.fillStyle = hl; ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(bx - pad, by - px * 0.62, bw + 2 * pad, px * 1.24, px * 0.22); else ctx.rect(bx - pad, by - px * 0.62, bw + 2 * pad, px * 1.24);
+    if (ctx.roundRect) ctx.roundRect(bx - pad, top, bw + 2 * pad, h, rad); else ctx.rect(bx - pad, top, bw + 2 * pad, h);
     ctx.fill();
   }
   const outline = (txt, x, y) => { if (st.bgOpacity <= 0 && anim !== "box" && !st.shadow) { ctx.strokeStyle = st.stroke || "#000"; ctx.lineWidth = px * (st.strokeW ?? .16); ctx.strokeText(txt, x, y); } };
